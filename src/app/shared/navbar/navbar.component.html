@@ -1,1 +1,29 @@
-<p>navbar works!</p>
+<div class="toggle-navbar">
+  <button class="toggle-menu" type="button" mat-button (click)="isOpen = !isOpen">
+    <p> {{ isOpen ? 'Workspace-Menu schließen' : 'Workspace-Menu öffnen' }}</p>
+    <span class="material-symbols-outlined">
+      {{ isOpen ? 'bottom_panel_open' : 'top_panel_open' }}
+    </span>
+  </button>
+</div>
+
+<mat-drawer-container class="navbar-container" autosize>
+    <mat-drawer #drawer [(opened)]="isOpen" class="sidenav-container" mode="side">
+      <div class="navbar-header">
+        <img src="assets/icon/devspace.png" alt="devspace">
+          <span class="material-symbols-outlined">
+              edit_square
+          </span>
+      </div>
+
+        @if (showFiller) {
+        <p>Lorem, ipsum dolor sit amet consectetur.</p>
+        }
+        <button (click)="showFiller = !showFiller" mat-raised-button>
+        Toggle extra text
+        </button>
+    </mat-drawer>
+</mat-drawer-container>
+
+
+
