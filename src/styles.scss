@@ -1,23 +1,35 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    font-family: Nunito, "Helvetica Neue", sans-serif;
-}
-
-
-@font-face {
-    font-family: Nunito;
-    src: url(assets/fonts/Nunito-Regular.ttf);
-    font-weight: normal;
+  box-sizing: border-box;
+  margin: 0;
+  font-family: Nunito, "Helvetica Neue", sans-serif;
 }
 
 @font-face {
-    font-family: Nunito;
-    src: url(assets/fonts/Nunito-Bold.ttf);
-    font-weight: bold;
+  font-family: Nunito;
+  src: url(assets/fonts/Nunito-Regular.ttf);
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: Nunito;
+  src: url(assets/fonts/Nunito-Bold.ttf);
+  font-weight: bold;
+}
+
+.blue {
+  color: #444df2;
+}
+
+.fs-18 {
+  font-size: 18px;
 }
