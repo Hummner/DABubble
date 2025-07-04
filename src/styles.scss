@@ -1,19 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    font-family: Nunito, "Helvetica Neue", sans-serif;
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
 }
 
-
-@font-face {
-    font-family: Nunito;
-    src: url(assets/fonts/Nunito-Regular.ttf);
-    font-weight: normal;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  font-family: Nunito, "Helvetica Neue", sans-serif;
 }
 
 @font-face {
@@ -32,6 +30,36 @@ body { margin: 0}
   font-size: 24px;
   display: inline-block;
   vertical-align: middle;
+  font-family: Nunito;
+  src: url(assets/fonts/Nunito-Regular.ttf);
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: Nunito;
+  src: url(assets/fonts/Nunito-Bold.ttf);
+  font-weight: bold;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  font-family: 'Material Symbols Outlined';
+  font-size: 24px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+.blue {
+  color: #444df2;
+}
+
+.fs-18 {
+  font-size: 18px;
 }
 
 
