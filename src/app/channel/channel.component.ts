@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import { ThreadComponent } from './thread/thread.component';
 
 @Component({
   selector: 'app-channel',
   standalone: true,
-  imports: [MatIconModule, MatSidenavModule],
+  imports: [MatIconModule, MatSidenavModule, ThreadComponent],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss'
 })
