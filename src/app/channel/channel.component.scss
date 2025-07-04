@@ -1,23 +1,43 @@
 section {
     background-color: white;
     border-radius: 30px;
-    display: flex;
-    flex-direction: row;
     gap: 64px;
+    display: flex;
+    height: calc(100vh - 100px);
+}
+
+
+:host {
+    width: 100%;
+}
+
+.container {
+    width: 100%;
+    padding: 24px;
+    background-color: #ECEEFE;
 }
 
 .content {
-    width: 989px;
-    height: 940px;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background-color: white;
+    border-radius: 30px;
+    height: 100%;
+}
+
+.main-content {
+    display: flex;
 }
 
 .channel-name {
     font-weight: bold;
 }
+
+
+
+
 
 .add-member-icon {
     width: 40px;
@@ -108,9 +128,11 @@ footer {
         cursor: pointer;
     }
 
-       &:hover img {
-        filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);;
+    &:hover img {
+        filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+        ;
     }
+
     >img {
         width: 24px;
         height: 24px;
@@ -133,6 +155,7 @@ footer {
         height: 100%;
         border: none;
         resize: none;
+
         &:focus {
             outline: none;
         }
@@ -180,6 +203,7 @@ main {
     align-items: center;
     border-radius: 100%;
     overflow: hidden;
+
     >img {
         width: 100%;
         height: 100%;
@@ -230,21 +254,19 @@ main {
 
 }
 
-.reverse{
+.reverse {
     flex-direction: row-reverse !important;
 }
 
 .reverse-backround {
     background-color: #797EF3 !important;
     border-radius: 30px 0 30px 30px !important;
+
     >p {
         color: white !important;
     }
 }
 
-
-
-
-
-
-
+.small-container {
+    width: 500px !important;
+}
