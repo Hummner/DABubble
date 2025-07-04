@@ -1,4 +1,7 @@
+@if(this.router.url !== "/" && this.router.url !== "/signup"){
 <app-header></app-header>
+}
+
 <section>
-    <router-outlet></router-outlet>
+  <router-outlet></router-outlet>
 </section>
