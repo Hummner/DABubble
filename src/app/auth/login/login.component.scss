@@ -128,3 +128,80 @@
     cursor: pointer;
   }
 }
+
+.greeting {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(#797ef3, #313ae5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
+.greeting-container {
+  width: 700px;
+  height: 188px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  // opacity:1;
+}
+
+.greeting-logo {
+  position: absolute;
+  animation-name: shiftLogo;
+  animation-duration: 2s;
+  left: calc(10% - 70px);
+  z-index: 3;
+  transition: transform 1s ease-in-out, width 1s ease-in-out;
+}
+
+.greeting.hide {
+  opacity: 0;
+}
+
+@keyframes shiftLogo {
+  0% {
+    left: calc(50% - 74px);
+  }
+  100% {
+    left: calc(10% - 70px);
+  }
+}
+
+.greeting-name {
+  position: absolute;
+  animation-name: shiftName;
+  animation-duration: 2s;
+  left: 30%;
+  opacity: 1;
+}
+
+@keyframes shiftName {
+  0% {
+    left: -30%;
+    opacity: 0;
+  }
+  50% {
+    left: -10%;
+    opacity: 0;
+  }
+  100% {
+    left: 30%;
+    opacity: 1;
+  }
+}
+// .greeting-logo {
+//   width: 150px;
+//   position: absolute;
+//   transition: transform 1s ease-in-out, width 1s ease-in-out;
+// }
+
+// .greeting.hide {
+//   opacity: 0;
+//   pointer-events: none;
+// }
