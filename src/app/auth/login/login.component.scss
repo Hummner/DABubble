@@ -23,6 +23,11 @@
   align-items: center;
   padding: 40px;
 }
+
+.create-acc {
+  cursor: pointer;
+}
+
 .login-dialog {
   background-color: #fdfdfd;
   width: 600px;
@@ -113,5 +118,13 @@
   > p {
     margin: 0;
     padding: 5px;
+  }
+}
+
+.login-footer {
+  display: flex;
+  gap: 30px;
+  > p {
+    cursor: pointer;
   }
 }
