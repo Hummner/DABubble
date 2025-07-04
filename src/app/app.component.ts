@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { collection, onSnapshot, Firestore } from '@angular/fire/firestore';
 import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
