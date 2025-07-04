@@ -1,0 +1,247 @@
+section {
+    background-color: white;
+    border-radius: 30px;
+}
+
+.content {
+    width: 989px;
+    height: 940px;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.channel-name {
+    font-weight: bold;
+}
+
+.add-member-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #ECEEFE;
+    border-radius: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.add-member-icon:hover img {
+    filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+    transform: scale(1.1);
+}
+
+header {
+    height: 96px;
+    box-shadow: 0px 2px 10px 0px #00000014;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 45px;
+}
+
+.members {
+    display: flex;
+}
+
+.member-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: -10px;
+
+    >img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+    }
+}
+
+main {
+    display: flex;
+    flex: 1;
+}
+
+footer {
+    display: flex;
+    height: 145px;
+    border: 1px solid #ADB0D9;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 25px 45px;
+    ;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.input-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.icons {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.input-icon {
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background-color: #ECEEFE;
+        cursor: pointer;
+    }
+
+       &:hover img {
+        filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);;
+    }
+    >img {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.send-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.text-area {
+    display: flex;
+    flex: 1;
+
+    >textarea {
+        width: 100%;
+        height: 100%;
+        border: none;
+        resize: none;
+        &:focus {
+            outline: none;
+        }
+    }
+}
+
+.placeholder {
+    width: 100%;
+    height: 1px;
+    background-color: #ADB0D9;
+    margin: 12px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.placeholder-date {
+    border: 1px solid #ADB0D9;
+    border-radius: 20px;
+    padding: 4px 8px;
+    width: fit-content;
+    background-color: white;
+
+}
+
+main {
+    padding: 25px 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.ticket {
+    display: flex;
+    gap: 24px;
+    padding: 20px;
+
+}
+
+.member-img-ticket {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    overflow: hidden;
+    >img {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.message {
+    background-color: #ECEEFE;
+    border-radius: 0 30px 30px 30px;
+    padding: 15px;
+    font-size: 18px;
+
+    >p {
+        margin: 0;
+    }
+}
+
+.name-date {
+    display: flex;
+    gap: 24px;
+}
+
+.msg-name {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.answers {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.msg-date {
+    color: #686868;
+    font-size: 14px;
+}
+
+.msg-answer {
+    color: #535AF1;
+    font-size: 18px;
+
+}
+
+.reverse{
+    flex-direction: row-reverse !important;
+}
+
+.reverse-backround {
+    background-color: #797EF3 !important;
+    border-radius: 30px 0 30px 30px !important;
+    >p {
+        color: white !important;
+    }
+}
+
+
+
+
+
+
+
