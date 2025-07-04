@@ -15,18 +15,14 @@ body {
 }
 
 @font-face {
-    font-family: Nunito;
-    src: url(assets/fonts/Nunito-Bold.ttf);
-    font-weight: bold;
+  font-family: Nunito;
+  src: url(assets/fonts/Nunito-Bold.ttf);
+  font-weight: bold;
 }
 
 .material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-  font-family: 'Material Symbols Outlined';
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-family: "Material Symbols Outlined";
   font-size: 24px;
   display: inline-block;
   vertical-align: middle;
@@ -42,17 +38,12 @@ body {
 }
 
 .material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-  font-family: 'Material Symbols Outlined';
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-family: "Material Symbols Outlined";
   font-size: 24px;
   display: inline-block;
   vertical-align: middle;
 }
-
 
 .blue {
   color: #444df2;
@@ -61,7 +52,10 @@ body {
 .fs-18 {
   font-size: 18px;
 }
-
+app-login,
+app-signup {
+  width: 100%;
+}
 
 $breakpoint-sm: 576px;
 $breakpoint-md: 768px;
@@ -69,10 +63,16 @@ $breakpoint-lg: 992px;
 
 @mixin respond-to($breakpoint) {
   @if $breakpoint == sm {
-    @media (max-width: $breakpoint-sm) { @content; }
+    @media (max-width: $breakpoint-sm) {
+      @content;
+    }
   } @else if $breakpoint == md {
-    @media (max-width: $breakpoint-md) { @content; }
+    @media (max-width: $breakpoint-md) {
+      @content;
+    }
   } @else if $breakpoint == lg {
-    @media (max-width: $breakpoint-lg) { @content; }
+    @media (max-width: $breakpoint-lg) {
+      @content;
+    }
   }
 }
