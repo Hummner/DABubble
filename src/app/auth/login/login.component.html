@@ -24,7 +24,7 @@
     </div>
   </div>
   <div class="login-dialog">
-    <form class="form" action="">
+    <form [formGroup] ="userForm" class="form">
       <div class="title-section">
         <h1 class="blue">Anmeldung</h1>
         <p>
@@ -37,6 +37,7 @@
           <input
             class="fs-18"
             type="text"
+            formControlName="email"
             placeholder="beispielname@email.com"
           />
           <img class="ph-img" src="assets/icon/mail.png" alt="" />
