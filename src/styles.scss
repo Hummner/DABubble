@@ -7,65 +7,32 @@ body {
 body {
   margin: 0;
 }
-html,
-body {
-  height: 100%;
-}
-body {
-  margin: 0;
-}
 
 * {
   box-sizing: border-box;
   margin: 0;
   font-family: Nunito, "Helvetica Neue", sans-serif;
-  box-sizing: border-box;
-  margin: 0;
-  font-family: Nunito, "Helvetica Neue", sans-serif;
 }
 
 @font-face {
-    font-family: Nunito;
-    src: url(assets/fonts/Nunito-Bold.ttf);
-    font-weight: bold;
+  font-family: Nunito;
+  src: url(assets/fonts/Nunito-Bold.ttf);
+  font-weight: bold;
 }
 
-.material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-  font-family: 'Material Symbols Outlined';
-  font-size: 24px;
-  display: inline-block;
-  vertical-align: middle;
+@font-face {
   font-family: Nunito;
   src: url(assets/fonts/Nunito-Regular.ttf);
   font-weight: normal;
 }
 
-@font-face {
-  font-family: Nunito;
-  src: url(assets/fonts/Nunito-Bold.ttf);
-  font-weight: bold;
-  font-family: Nunito;
-  src: url(assets/fonts/Nunito-Bold.ttf);
-  font-weight: bold;
-}
-
 .material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-  font-family: 'Material Symbols Outlined';
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-family: "Material Symbols Outlined";
   font-size: 24px;
   display: inline-block;
   vertical-align: middle;
 }
-
 
 .blue {
   color: #444df2;
@@ -74,6 +41,7 @@ body {
 .fs-18 {
   font-size: 18px;
 }
-app-login, app-signup{
-  width:100%;
+app-login,
+app-signup {
+  width: 100%;
 }
