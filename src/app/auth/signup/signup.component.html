@@ -4,9 +4,9 @@
       <img src="assets/img/Logo-1.png" alt="" />
     </div>
     <div class="signup-dialog">
-      <form [formGroup] ="userForm" class="form"  (ngSubmit)="onSubmit()">
+      <form [formGroup]="form" class="form" (ngSubmit)="onSubmit()">
         <div class="title-section">
-          <img src="assets/icon/arrow_back.svg" alt="Go Back Arrow" />
+          <a [routerLink]="['/']"><img src="assets/icon/arrow_back.svg" alt="Go Back Arrow" /></a>
           <h1 class="blue">Konto erstellen</h1>
           <p>
             Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues
@@ -14,11 +14,14 @@
           </p>
         </div>
         <div class="input-section">
+          @if(errorMessage){
+          <div>{{ errorMessage }}</div>
+          }
           <div class="input-name">
             <input
               class="fs-18"
               type="text"
-              name="username"
+              name="name"
               formControlName="name"
               required
               placeholder="Name und Nachname"
@@ -67,7 +70,6 @@
             class="checkbox"
             id="checkbox"
             name="acceptPrivacyPolicy"
-            formControlName="acceptPrivacyPolicy"
           />
           <label for="checkbox"
             >Ich stimme der

@@ -5,6 +5,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    cursor: pointer;
   }
 }
 
@@ -109,4 +110,10 @@ h3 {
   > p {
     cursor: pointer;
   }
+}
+
+.chosenImg {
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
 }

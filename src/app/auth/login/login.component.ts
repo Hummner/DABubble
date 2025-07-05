@@ -1,27 +1,48 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  ViewChild,
+} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { Router, RouterLink } from '@angular/router';
+import { getAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent implements AfterViewInit {
-  userForm!: FormGroup;
+  authService = inject(AuthService);
+  router = inject(Router);
+  auth = getAuth();
+  user = this.auth.currentUser;
 
-  constructor() {
-    this.userForm = new FormGroup({
-      name: new FormControl('', Validators.required),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', Validators.required),
-    });
-  }
+  form = new FormGroup({
+    email: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required),
+  });
+
+  errorMessage: string | null = null;
+
+  constructor() {}
 
   onSubmit() {
-    console.log(this.userForm.value);
+    const rawForm = this.form.getRawValue();
+    this.authService.login(rawForm.email!, rawForm.password!).subscribe({
+      next: () => {
+        this.router.navigateByUrl('channel');
+      },
+      error: (err) => {
+        this.errorMessage = err.code;
+      },
+    });
   }
   // @ViewChild('greetingContainer') greetingContainer!: ElementRef;
   @ViewChild('greeting') greeting!: ElementRef;
@@ -33,7 +54,6 @@ export class LoginComponent implements AfterViewInit {
     // const target = this.headerLogo.nativeElement as HTMLElement;
     // const targetRect = target.getBoundingClientRect();
     // const containerRect = greetingContainer.getBoundingClientRect();
-
     // const deltaX =
     //   targetRect.left +
     //   targetRect.width / 2 -
@@ -43,13 +63,11 @@ export class LoginComponent implements AfterViewInit {
     //   targetRect.height / 2 -
     //   (containerRect.top + containerRect.height / 2);
     // const scale = targetRect.width / containerRect.width;
-
     // setTimeout(() => {
     //   greetingContainer.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
     // }, 3000);
-
-    setTimeout(() => {
-      this.greeting.nativeElement.classList.add('hide');
-    }, 3500);
+    // setTimeout(() => {
+    //   this.greeting.nativeElement.classList.add('hide');
+    // }, 3500);
   }
 }

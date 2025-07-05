@@ -21,7 +21,7 @@ import { TicketComponent } from '../shared/messages/ticket/ticket.component';
   standalone: true,
   imports: [MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent],
   templateUrl: './channel.component.html',
-  styleUrl: './channel.component.scss'
+  styleUrl: './channel.component.scss',
 })
 export class ChannelComponent {
   readonly dialog = inject(MatDialog);
