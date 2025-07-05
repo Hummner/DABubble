@@ -1,165 +1,183 @@
 <section>
-    <div class="content">
+  <div class="content">
+    <header>
+      <div class="channel-name"># Entwicklerteam</div>
+      <div class="members">
+        <div class="member-img">
+          <img src="assets/img/elias_neumann.svg" alt="" />
+        </div>
+        <div class="member-img">
+          <img src="assets/img/elias_neumann.svg" alt="" />
+        </div>
+        <div class="member-img">
+          <img src="assets/img/elias_neumann.svg" alt="" />
+        </div>
+        <div class="member-img"><span>3</span></div>
+        <div class="add-member-icon">
+          <img src="assets/icon/person_add.png" alt="" />
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="ticket">
+        <div (click)="logOut()" class="member-img-ticket">
+          <img src="assets/img/elias_neumann.svg" alt="" />
+        </div>
+        <div class="message-content">
+          <div class="name-date">
+            <span class="msg-name">Elias Neumann</span>
+            <span class="msg-date">14:10 Uhr</span>
+          </div>
+          <div class="message">
+            <p>Welche Version ist aktuell von Angular?</p>
+          </div>
+          <div class="answers">
+            <span class="msg-answer">2 Antworten</span>
+            <span class="msg-date">Letze Antwort 14:26</span>
+          </div>
+        </div>
+      </div>
+      <div class="placeholder">
+        <div class="placeholder-date">Heute</div>
+      </div>
+      <div class="ticket reverse">
+        <div class="member-img-ticket">
+          <img src="assets/img/elias_neumann.svg" alt="" />
+        </div>
+        <div class="message-content">
+          <div class="name-date reverse">
+            <span class="msg-name">Elias Neumann</span>
+            <span class="msg-date">14:10 Uhr</span>
+          </div>
+          <div class="message reverse-backround">
+            <p>Welche Version ist aktuell von Angular?</p>
+          </div>
+          <div class="answers reverse">
+            <span class="msg-answer" (click)="drawer.toggle()"
+              >2 Antworten</span
+            >
+            <span class="msg-date">Letze Antwort 14:26</span>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div class="text-area">
+        <textarea
+          name="chat_input"
+          id="chat_input"
+          placeholder="Nachricht an #Entwicklerteam"
+        ></textarea>
+      </div>
+      <div class="input-buttons">
+        <div class="icons">
+          <div class="input-icon">
+            <img src="assets/icon/reaction.png" alt="" />
+          </div>
+          <div class="input-icon">
+            <img src="assets/icon/tag_icon.png" alt="" />
+          </div>
+        </div>
+        <div class="send-icon">
+          <img src="assets/icon/send.png" alt="" />
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <mat-drawer-container class="example-container" autosize>
+    <mat-drawer
+      #drawer
+      class="example-sidenav"
+      mode="side"
+      from="left"
+      position="start"
+    >
+      <div class="content">
         <header>
-            <div class="channel-name"># Entwicklerteam</div>
-            <div class="members">
-                <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
-                <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
-                <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
-                <div class="member-img"><span>3</span></div>
-                <div class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
+          <div class="channel-name"># Entwicklerteam</div>
+          <div class="members">
+            <div class="member-img">
+              <img src="assets/img/elias_neumann.svg" alt="" />
             </div>
+            <div class="member-img">
+              <img src="assets/img/elias_neumann.svg" alt="" />
+            </div>
+            <div class="member-img">
+              <img src="assets/img/elias_neumann.svg" alt="" />
+            </div>
+            <div class="member-img"><span>3</span></div>
+            <div class="add-member-icon">
+              <img src="assets/icon/person_add.png" alt="" />
+            </div>
+          </div>
         </header>
         <main>
-            <div class="ticket">
-                <div class="member-img-ticket">
-                    <img src="assets/img/elias_neumann.svg" alt="">
-                </div>
-                <div class="message-content">
-                    <div class="name-date">
-                        <span class="msg-name">Elias Neumann</span>
-                        <span class="msg-date">14:10 Uhr</span>
-                    </div>
-                    <div class="message">
-                        <p>Welche Version ist aktuell von Angular?</p>
-                    </div>
-                    <div class="answers">
-                        <span class="msg-answer">2 Antworten</span>
-                        <span class="msg-date">Letze Antwort 14:26</span>
-                    </div>
-                </div>
+          <div class="ticket">
+            <div class="member-img-ticket">
+              <img src="assets/img/elias_neumann.svg" alt="" />
             </div>
-            <div class="placeholder">
-                <div class="placeholder-date">Heute</div>
+            <div class="message-content">
+              <div class="name-date">
+                <span class="msg-name">Elias Neumann</span>
+                <span class="msg-date">14:10 Uhr</span>
+              </div>
+              <div class="message">
+                <p>Welche Version ist aktuell von Angular?</p>
+              </div>
+              <div class="answers">
+                <span class="msg-answer">2 Antworten</span>
+                <span class="msg-date">Letze Antwort 14:26</span>
+              </div>
             </div>
-            <div class="ticket reverse">
-                <div class="member-img-ticket">
-                    <img src="assets/img/elias_neumann.svg" alt="">
-                </div>
-                <div class="message-content">
-                    <div class="name-date reverse">
-                        <span class="msg-name">Elias Neumann</span>
-                        <span class="msg-date">14:10 Uhr</span>
-                    </div>
-                    <div class="message reverse-backround">
-                        <p>Welche Version ist aktuell von Angular?</p>
-                    </div>
-                    <div class="answers reverse">
-                        <span class="msg-answer" (click)="drawer.toggle()">2 Antworten</span>
-                        <span class="msg-date">Letze Antwort 14:26</span>
-                    </div>
-                </div>
+          </div>
+          <div class="placeholder">
+            <div class="placeholder-date">Heute</div>
+          </div>
+          <div class="ticket reverse">
+            <div class="member-img-ticket">
+              <img src="assets/img/elias_neumann.svg" alt="" />
             </div>
-
+            <div class="message-content">
+              <div class="name-date reverse">
+                <span class="msg-name">Elias Neumann</span>
+                <span class="msg-date">14:10 Uhr</span>
+              </div>
+              <div class="message reverse-backround">
+                <p>Welche Version ist aktuell von Angular?</p>
+              </div>
+              <div class="answers reverse">
+                <span class="msg-answer" (click)="drawer.toggle()"
+                  >2 Antworten</span
+                >
+                <span class="msg-date">Letze Antwort 14:26</span>
+              </div>
+            </div>
+          </div>
         </main>
         <footer>
-            <div class="text-area">
-                <textarea name="chat_input" id="chat_input" placeholder="Nachricht an #Entwicklerteam"></textarea>
+          <div class="text-area">
+            <textarea
+              name="chat_input"
+              id="chat_input"
+              placeholder="Nachricht an #Entwicklerteam"
+            ></textarea>
+          </div>
+          <div class="input-buttons">
+            <div class="icons">
+              <div class="input-icon">
+                <img src="assets/icon/reaction.png" alt="" />
+              </div>
+              <div class="input-icon">
+                <img src="assets/icon/tag_icon.png" alt="" />
+              </div>
             </div>
-            <div class="input-buttons">
-                <div class="icons">
-                    <div class="input-icon">
-                        <img src="assets/icon/reaction.png" alt="">
-                    </div>
-                    <div class="input-icon">
-                        <img src="assets/icon/tag_icon.png" alt="">
-                    </div>
-
-                </div>
-                <div class="send-icon">
-                    <img src="assets/icon/send.png" alt="">
-                </div>
+            <div class="send-icon">
+              <img src="assets/icon/send.png" alt="" />
             </div>
-
+          </div>
         </footer>
-    </div>
-
-    <mat-drawer-container class="example-container" autosize>
-  <mat-drawer #drawer class="example-sidenav" mode="side" from="left" position="start">
-
-     <div class="content">
-        <header>
-            <div class="channel-name"># Entwicklerteam</div>
-            <div class="members">
-                <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
-                <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
-                <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
-                <div class="member-img"><span>3</span></div>
-                <div class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
-            </div>
-        </header>
-        <main>
-            <div class="ticket">
-                <div class="member-img-ticket">
-                    <img src="assets/img/elias_neumann.svg" alt="">
-                </div>
-                <div class="message-content">
-                    <div class="name-date">
-                        <span class="msg-name">Elias Neumann</span>
-                        <span class="msg-date">14:10 Uhr</span>
-                    </div>
-                    <div class="message">
-                        <p>Welche Version ist aktuell von Angular?</p>
-                    </div>
-                    <div class="answers">
-                        <span class="msg-answer">2 Antworten</span>
-                        <span class="msg-date">Letze Antwort 14:26</span>
-                    </div>
-                </div>
-            </div>
-            <div class="placeholder">
-                <div class="placeholder-date">Heute</div>
-            </div>
-            <div class="ticket reverse">
-                <div class="member-img-ticket">
-                    <img src="assets/img/elias_neumann.svg" alt="">
-                </div>
-                <div class="message-content">
-                    <div class="name-date reverse">
-                        <span class="msg-name">Elias Neumann</span>
-                        <span class="msg-date">14:10 Uhr</span>
-                    </div>
-                    <div class="message reverse-backround">
-                        <p>Welche Version ist aktuell von Angular?</p>
-                    </div>
-                    <div class="answers reverse">
-                        <span class="msg-answer" (click)="drawer.toggle()">2 Antworten</span>
-                        <span class="msg-date">Letze Antwort 14:26</span>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-        <footer>
-            <div class="text-area">
-                <textarea name="chat_input" id="chat_input" placeholder="Nachricht an #Entwicklerteam"></textarea>
-            </div>
-            <div class="input-buttons">
-                <div class="icons">
-                    <div class="input-icon">
-                        <img src="assets/icon/reaction.png" alt="">
-                    </div>
-                    <div class="input-icon">
-                        <img src="assets/icon/tag_icon.png" alt="">
-                    </div>
-
-                </div>
-                <div class="send-icon">
-                    <img src="assets/icon/send.png" alt="">
-                </div>
-            </div>
-
-        </footer>
-    </div>
-
-    
-
-
-
-  </mat-drawer>
-
-
-
-</mat-drawer-container>
-
+      </div>
+    </mat-drawer>
+  </mat-drawer-container>
 </section>

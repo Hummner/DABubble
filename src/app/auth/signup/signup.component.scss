@@ -58,11 +58,13 @@
   > p {
     font-size: 20px;
   }
-  > img {
-    width: 25px;
-    height: 25px;
+  > a {
     position: absolute;
     cursor: pointer;
+    > img {
+      width: 25px;
+      height: 25px;
+    }
   }
 }
 

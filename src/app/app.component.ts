@@ -23,9 +23,9 @@ export class AppComponent {
     if (
       this.router.url !== '/' &&
       this.router.url !== '/signup' &&
-      this.router.url !== '/avatar-selection' &&
-      this.router.url !== '/reset-password' &&
-      this.router.url !== '/reset-password/new-password'
+      this.router.url !== '/avatarSelection' &&
+      this.router.url !== '/resetPassword' &&
+      this.router.url !== '/resetPassword/newPassword'
     ) {
       return true;
     } else {
