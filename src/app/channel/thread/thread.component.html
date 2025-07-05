@@ -6,7 +6,7 @@
             <div class="channel-name">
                 <h2>Thread</h2><span># Entwicklerteam</span>
             </div>
-            <div class="close-dialog"><mat-icon class="icon">close</mat-icon></div>
+            <div class="close-dialog" (click)="close.emit()"><mat-icon class="icon">close</mat-icon></div>
         </header>
         <main>
             <div class="placeholder">
@@ -42,6 +42,26 @@
             </div>
 
         </main>
+         <footer>
+                <div class="text-area">
+                    <textarea name="chat_input" id="chat_input" placeholder="Antworten..."></textarea>
+                </div>
+                <div class="input-buttons">
+                    <div class="icons">
+                        <div class="input-icon">
+                            <img src="assets/icon/reaction.png" alt="">
+                        </div>
+                        <div class="input-icon">
+                            <img src="assets/icon/tag_icon.png" alt="">
+                        </div>
+
+                    </div>
+                    <div class="send-icon">
+                        <img src="assets/icon/send.png" alt="">
+                    </div>
+                </div>
+
+            </footer>
 
     </div>
 

@@ -3,7 +3,7 @@
 
     <mat-drawer-container class="container" autosize>
         <mat-drawer #drawer class="example-sidenav" mode="side" position="end">
-            <app-thread></app-thread>
+            <app-thread (close)="drawer.toggle()"></app-thread>
         </mat-drawer>
 
         <div class="content">
@@ -34,7 +34,7 @@
                             <p>Welche Version ist aktuell von Angular?</p>
                         </div>
                         <div class="answers">
-                            <span class="msg-answer">2 Antworten</span>
+                            <div class="msg-answer-container"><span class="msg-answer" (click)="drawer.toggle()">2 Antworten</span></div>
                             <span class="msg-date">Letze Antwort 14:26</span>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                             <p>Welche Version ist aktuell von Angular?</p>
                         </div>
                         <div class="answers reverse">
-                            <span class="msg-answer" (click)="drawer.toggle()">2 Antworten</span>
+                            <div class="msg-answer-container reverse"><span class="msg-answer" (click)="drawer.toggle()">2 Antworten</span></div>
                             <span class="msg-date">Letze Antwort 14:26</span>
                         </div>
                     </div>
