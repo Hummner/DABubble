@@ -17,6 +17,10 @@ section {
     background-color: #ECEEFE;
 }
 
+.mat-drawer {
+    border: none !important;
+}
+
 .content {
     overflow-x: hidden;
     display: flex;
@@ -32,7 +36,14 @@ section {
 }
 
 .channel-name {
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    >h2 {
+        font-weight: bold;
+        margin: 0;
+    }
 }
 
 
@@ -130,7 +141,6 @@ footer {
 
     &:hover img {
         filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
-        ;
     }
 
     >img {

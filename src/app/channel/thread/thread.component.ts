@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import {MatIconModule} from '@angular/material/icon';
 
 @Component({
   selector: 'app-thread',
   standalone: true,
-  imports: [],
+  imports: [MatIconModule],
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss'
 })
