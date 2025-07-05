@@ -39,12 +39,28 @@ section {
     display: flex;
     align-items: center;
     gap: 12px;
+    cursor: pointer;
+    padding: 6px 10px;
 
     >h2 {
         font-weight: bold;
         margin: 0;
     }
+
+    &:hover {
+        border-radius: 30px;
+        background-color: #ECEEFE;
+
+        h2,
+        mat-icon {
+            color: #535AF1;
+        }
+    }
+
+
 }
+
+
 
 
 
@@ -77,6 +93,23 @@ header {
 
 .members {
     display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.members-container {
+    display: flex;
+    padding: 3px 10px;
+    border-radius: 30px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ECEEFE;
+
+        span {
+            color: #535AF1;
+        }
+    }
 }
 
 .member-img {
@@ -86,13 +119,19 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: -10px;
+    margin-right: -8px;
 
     >img {
         object-fit: cover;
         width: 100%;
         height: 100%;
         border-radius: 100%;
+        border: 1px solid white;
+    }
+
+    >span {
+        font-size: 20px;
+        font-weight: 600;
     }
 }
 
@@ -103,7 +142,6 @@ footer {
     border-radius: 20px;
     padding: 20px;
     margin: 25px 45px;
-    ;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
@@ -168,10 +206,10 @@ footer {
 }
 
 .placeholder {
-    width: 100%;
+    width: calc(100% - 90px);
     height: 1px;
     background-color: #ADB0D9;
-    margin: 12px 0;
+    margin: 24px 45px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -187,17 +225,33 @@ footer {
 }
 
 main {
-    padding: 25px 45px;
+    padding: 25px 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     flex: 1;
 }
 
+//////////////// Ticket
+
+.ticket-container {
+    &:hover {
+        background-color: #ECEEFE;
+        cursor: pointer;
+
+        .ticket {
+            .message {
+                background-color: white;
+            }
+        }
+    }
+}
+
 .ticket {
     display: flex;
     gap: 24px;
-    padding: 20px 0;
+    padding: 20px 45px;
+    position: relative;
 
 }
 
@@ -222,6 +276,7 @@ main {
     flex-direction: column;
     gap: 8px;
 }
+
 
 .message {
     background-color: #ECEEFE;
@@ -259,6 +314,7 @@ main {
     font-size: 18px;
     cursor: pointer;
     font-weight: 400;
+
     &:hover {
         font-weight: 700;
     }
@@ -269,6 +325,56 @@ main {
     width: 150px;
     display: flex;
     align-items: center;
+}
+
+.emoji-menu {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ADB0D9;
+    border-radius: 25px 25px 0 25px;
+    width: 210px;
+    height: 46px;
+    padding: 3px 15px 3px 15px;
+    background-color: white;
+    top: -24px;
+    right: 48px;
+
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(20px);
+    transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.emoji-menu.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.emoji-menu.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(20px);
+}
+
+.emoji-menu-item {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ECEEFE;
+        border-radius: 100%;
+
+        .hover-purple{
+            filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+        }
+    }
 }
 
 
@@ -286,6 +392,31 @@ main {
     }
 }
 
-.small-container {
-    width: 500px !important;
+/////////////////////// ticket end
+
+@media(max-width: 768px) {
+    .container {
+        padding: 0;
+    }
+
+    .content {
+        border-radius: unset;
+    }
+
+    .members-container {
+        display: none;
+    }
+
+    header {
+        padding: 24px 24px;
+    }
+
+    .placeholder {
+        margin: 24px 24px;
+        width: calc(100% - 48px);
+    }
+
+    footer {
+        margin: 24px 24px;
+    }
 }

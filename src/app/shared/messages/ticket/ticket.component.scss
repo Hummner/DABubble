@@ -1,0 +1,175 @@
+.ticket-container {
+    &:hover {
+        background-color: #ECEEFE;
+        cursor: pointer;
+
+        .ticket {
+            .message {
+                background-color: white;
+            }
+        }
+    }
+}
+
+.ticket {
+    display: flex;
+    gap: 24px;
+    padding: 20px 45px;
+    position: relative;
+
+}
+
+.member-img-ticket {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    overflow: hidden;
+
+    >img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+
+.message {
+    background-color: #ECEEFE;
+    border-radius: 0 30px 30px 30px;
+    padding: 15px;
+    font-size: 18px;
+    width: fit-content;
+
+    >p {
+        margin: 0;
+    }
+}
+
+.name-date {
+    display: flex;
+    gap: 24px;
+}
+
+.msg-name {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.answers {
+    display: flex;
+    align-items: center;
+}
+
+.msg-date {
+    color: #686868;
+    font-size: 14px;
+}
+
+.msg-answer {
+    color: #535AF1;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: 400;
+
+    &:hover {
+        font-weight: 700;
+    }
+
+}
+
+.msg-answer-container {
+    width: 150px;
+    display: flex;
+    align-items: center;
+}
+
+.emoji-menu {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #ADB0D9;
+    border-radius: 25px 25px 0 25px;
+    width: 210px;
+    height: 46px;
+    padding: 3px 15px 3px 15px;
+    background-color: white;
+    top: -24px;
+    right: 48px;
+
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(20px);
+    transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.emoji-menu.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.emoji-menu.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(20px);
+}
+
+.emoji-menu-item {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ECEEFE;
+        border-radius: 100%;
+
+        .hover-purple{
+            filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+        }
+    }
+}
+
+
+
+.reverse {
+    flex-direction: row-reverse !important;
+}
+
+.reverse-backround {
+    background-color: #797EF3 !important;
+    border-radius: 30px 0 30px 30px !important;
+
+    >p {
+        color: white !important;
+    }
+}
+
+@media(max-width: 768px) {
+    .ticket {
+        padding: 20px 24px;
+    }
+
+}
+
+@media(max-width: 576px) {
+    .member-img-ticket {
+        width: 50px;
+        height: 50px;
+    }
+
+}
+

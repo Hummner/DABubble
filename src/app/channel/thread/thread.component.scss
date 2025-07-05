@@ -228,3 +228,14 @@ footer {
     }
 }
 
+@media (max-width: 768px) {
+    .content {
+        width: 100vw;
+        border-radius: unset;
+    }
+
+    section {
+        padding: 0;
+    }
+}
+
