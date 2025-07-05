@@ -1,0 +1,112 @@
+.img-list {
+  display: flex;
+  justify-content: space-evenly;
+  > img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+}
+
+.avatar-content-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.avatar-content {
+  height: 100vh;
+  width: 100%;
+  max-width: 1440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+}
+
+.avatar-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px;
+  padding-bottom: 0;
+}
+
+.avatar-dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #fdfdfd;
+  width: 650px;
+  height: 750px;
+  padding: 60px;
+  border-radius: 30px;
+  box-shadow: 0 2px 10px #00000014;
+}
+
+.title-section {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  > a {
+    position: absolute;
+    left: 0px;
+    > img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.current-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.choose-avatar {
+  > p {
+    margin-left: 30px;
+  }
+}
+
+h1 {
+  font-size: 46px;
+}
+
+h1,
+h3 {
+  font-family: "Nunito", sans-serif;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 32px;
+}
+
+.fs-20 {
+  font-size: 20px;
+}
+
+.btn-section {
+  display: flex;
+  justify-content: flex-end;
+  > button {
+    border: none;
+    border-radius: 25px;
+    height: 50px;
+    width: 130px;
+    cursor: pointer;
+    color: #fdfdfd;
+    background-color: #444df2;
+  }
+}
+
+.avatar-footer {
+  display: flex;
+  gap: 30px;
+  > p {
+    cursor: pointer;
+  }
+}
