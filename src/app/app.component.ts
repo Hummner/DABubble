@@ -19,4 +19,16 @@ export class AppComponent {
   constructor() {
     console.log(this.router.url);
   }
+  excludeHeaderAndNavbar() {
+    if (
+      this.router.url !== '/' &&
+      this.router.url !== '/signup' &&
+      this.router.url !== '/avatarSelection' &&
+      this.router.url !== '/resetPassword'
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
