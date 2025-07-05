@@ -65,7 +65,7 @@ section {
 }
 
 .member-img-ticket {
-    width: 70px;
+    width: 97px;
     height: 70px;
     display: flex;
     justify-content: center;
@@ -124,6 +124,7 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    flex: 1;
 }
 
 .ticket {
@@ -154,5 +155,76 @@ main {
     color: #535AF1;
     font-size: 18px;
 
+}
+
+footer {
+    display: flex;
+    height: 145px;
+    border: 1px solid #ADB0D9;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 25px 45px;
+    ;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.input-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.icons {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.input-icon {
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background-color: #ECEEFE;
+        cursor: pointer;
+    }
+
+    &:hover img {
+        filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+    }
+
+    >img {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.send-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.text-area {
+    display: flex;
+    flex: 1;
+
+    >textarea {
+        width: 100%;
+        height: 100%;
+        border: none;
+        resize: none;
+
+        &:focus {
+            outline: none;
+        }
+    }
 }
 
