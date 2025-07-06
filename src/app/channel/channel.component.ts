@@ -28,7 +28,11 @@ export class ChannelComponent {
   showMenu = false;
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(ShowMembersComponent);
+    const dialogRef = this.dialog.open(ShowMembersComponent, {
+
+      panelClass: 'show-members-dialog-container'
+
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');

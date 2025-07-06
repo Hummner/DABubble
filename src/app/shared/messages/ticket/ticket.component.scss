@@ -137,7 +137,7 @@
         background-color: #ECEEFE;
         border-radius: 100%;
 
-        .hover-purple{
+        .hover-purple {
             filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
         }
     }
@@ -158,6 +158,58 @@
     }
 }
 
+.emoji-container {
+    display: flex;
+    align-items: center;
+}
+
+.emoji {
+    width: 64px;
+    height: 34px;
+    border-radius: 30px;
+    border: 1px solid #ADB0D9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    gap: 10px;
+    background-color: white;
+    position: relative;
+}
+
+.emoji-popup {
+    position: absolute;
+    width: 158px;
+    height: 112px;
+    background-color: #444DF2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 30px 30px 30px 0;
+    bottom: 33px;
+    left: 50%;
+    gap: 5px;
+    padding: 15px 10px;
+
+    >span {
+        color: white;
+    }
+
+    >p {
+        color: white;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    >img {
+        margin-bottom: 5px;
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+    }
+}
+
 @media(max-width: 768px) {
     .ticket {
         padding: 20px 24px;
@@ -172,4 +224,3 @@
     }
 
 }
-

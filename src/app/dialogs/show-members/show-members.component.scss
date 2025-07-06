@@ -1,0 +1,32 @@
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 300px;
+    padding: 20px 16px;
+    
+
+}
+
+.close-dialog {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ECEEFE;
+
+        .icon {
+            filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+            transform: scale(1.1);
+        }
+    }
+}
+
+::ng-deep .show-members-dialog-container .mat-dialog-container {
+  border-radius: 30px !important;
+}
