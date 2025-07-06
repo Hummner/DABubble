@@ -12,7 +12,11 @@
       </div>
       <div class="current-profile">
         @if(profileImageChosen){
-        <img class="chosenImg" [src]="currentProfilImageUrl" alt="Profile Picture" />
+        <img
+          class="chosenImg"
+          [src]="currentProfilImageUrl"
+          alt="Profile Picture"
+        />
         } @if(!profileImageChosen){
         <img src="assets/img/profile.png" alt="Profile Picture" />
         }
@@ -28,7 +32,7 @@
         </div>
       </div>
       <div class="btn-section">
-        <button class="fs-18">Weiter</button>
+        <button (click)="completeRegistration()" class="fs-18">Weiter</button>
       </div>
     </div>
     <div class="avatar-footer">

@@ -31,7 +31,6 @@ export class SignupComponent {
   constructor() {}
 
   onSubmit() {
-    console.log(this.form.value);
     const rawForm = this.form.getRawValue();
     this.authService
       .register(rawForm.name!, rawForm.email!, rawForm.password!)

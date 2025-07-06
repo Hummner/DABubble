@@ -2,6 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { AuthService } from '../services/auth.service';
+import { FirestoreService } from '../services/firestore.service';
+
 
 @Component({
   selector: 'app-channel',
@@ -10,9 +12,13 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
 })
-export class ChannelComponent implements OnInit {
+export class ChannelComponent {
   showFiller = false;
   authService = inject(AuthService);
+  user = this.authService.firebaseAuth.currentUser;
+  firestoreService = inject(FirestoreService)
+
+
 
   ngOnInit(): void {
     this.authService.user$.subscribe((user) => {
@@ -20,13 +26,19 @@ export class ChannelComponent implements OnInit {
         this.authService.currentUserSign.set({
           email: user.email!,
           name: user.displayName!,
+          imgUrl: user.photoURL!,
         });
+        this.firestoreService.queryUser();
       } else {
         this.authService.currentUserSign.set(null);
       }
       console.log(this.authService.currentUserSign());
-      console.log(user?.uid)
+      console.log(user?.uid);
+      console.log(user);
     });
+  }
+  constructor() {
+    console.log(this.user);
   }
 
   logOut() {
