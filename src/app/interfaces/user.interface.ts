@@ -1,6 +1,0 @@
-export interface UserInterface {
-  name: string;
-  email: string;
-  imgUrl:string;
-
-}

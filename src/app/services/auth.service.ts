@@ -7,7 +7,7 @@ import {
   user,
 } from '@angular/fire/auth';
 import { from, Observable } from 'rxjs';
-import { UserInterface } from '../interfaces/user.interface';
+import { UserSignupInterface } from '../interfaces/user-signup.interface';
 import { signOut } from 'firebase/auth';
 
 @Injectable({
@@ -16,7 +16,7 @@ import { signOut } from 'firebase/auth';
 export class AuthService {
   firebaseAuth = inject(Auth);
   user$ = user(this.firebaseAuth);
-  currentUserSign = signal<UserInterface | null | undefined>(undefined);
+  // currentUserSign = signal<UserSignupInterface | null | undefined>(undefined);
 
   register(name: string, email: string, password: string): Observable<void> {
     const promise = createUserWithEmailAndPassword(

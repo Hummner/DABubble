@@ -40,14 +40,14 @@
       <div class="placeholder">
         <div class="placeholder-date">Heute</div>
       </div>
-      <div class="ticket reverse">
+      <div *ngIf="userProfile() as user" class="ticket reverse">
         <div class="member-img-ticket">
-          <img src="assets/img/elias_neumann.svg" alt="" />
+          <img [src]="user.imgUrl" alt="" />
         </div>
         <div class="message-content">
           <div class="name-date reverse">
-            <span class="msg-name">Elias Neumann</span>
-            <span class="msg-date">14:10 Uhr</span>
+            <span class="msg-name">{{ user.name }}</span>
+            <span class="msg-date">{{ user.createdAt }}</span>
           </div>
           <div class="message reverse-backround">
             <p>Welche Version ist aktuell von Angular?</p>
