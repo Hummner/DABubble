@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { updateProfile } from '@angular/fire/auth';
+import { FirestoreService } from '../../services/firestore.service';
 
 import { Firestore, setDoc, doc } from '@angular/fire/firestore';
 
@@ -12,12 +13,13 @@ import { Firestore, setDoc, doc } from '@angular/fire/firestore';
   templateUrl: './avatar-selection.component.html',
   styleUrl: './avatar-selection.component.scss',
 })
-export class AvatarSelectionComponent implements OnInit {
+export class AvatarSelectionComponent {
   currentProfilImageUrl = '';
   profileImageChosen = false;
   authService = inject(AuthService);
   router = inject(Router);
   firestore = inject(Firestore);
+  userName = '';
 
   profileImageUrls = [
     'assets/img/elias_neumann.svg',
@@ -28,19 +30,13 @@ export class AvatarSelectionComponent implements OnInit {
     'assets/img/steffen_hoffmann.svg',
   ];
 
+  constructor(private firestoreService: FirestoreService) {}
+
   ngOnInit(): void {
     this.authService.user$.subscribe((user) => {
       if (user) {
-        this.authService.currentUserSign.set({
-          email: user.email!,
-          name: user.displayName!,
-          imgUrl: user.photoURL!,
-        });
-      } else {
-        this.authService.currentUserSign.set(null);
+        this.userName = user.displayName!;
       }
-      console.log(this.authService.currentUserSign());
-      console.log(user?.uid);
     });
   }
 
@@ -57,14 +53,17 @@ export class AvatarSelectionComponent implements OnInit {
         () => {
           console.log(user);
           user.reload();
-          this.addUserToDatabase(JSON.parse(JSON.stringify(user)), user.uid);
+          this.firestoreService.addUserToDatabase(
+            JSON.parse(
+              JSON.stringify(
+                this.firestoreService.setUserProfileObject(user, user.uid)
+              )
+            ),
+            user.uid
+          );
           this.router.navigateByUrl('/channel');
         }
       );
     }
-  }
-
-  async addUserToDatabase(userData: any, id: string) {
-    await setDoc(doc(this.firestore, 'users', id), userData);
   }
 }
