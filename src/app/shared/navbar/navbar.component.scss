@@ -1,10 +1,7 @@
 .navbar-container {
-    position: relative;
-    max-height: 935px;
-    height: 100%;
-    border-radius: 20px;
-    margin-right: 32px;
-    margin-left: 32px;
+    position: relative;;
+    height: 100vh;
+    border-radius: 30px;
 }
 
 .navbar-header {
@@ -12,6 +9,151 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 32px;
+
+    .edit-icon {
+        padding: 8px;
+        font-size: 24px;
+        cursor: pointer;
+
+        &:hover {
+            color: #535af1;
+            background-color: #eceefe;
+            border-radius: 50%;
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+    }
+}
+
+
+.navbar-channels,
+.navbar-direct-messages {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    
+    .navbar-channels-content,
+    .navbar-direct-messages-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        >p {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        >button {
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+        }
+
+        &:hover {
+            cursor: pointer;
+            color: #535af1;
+        }
+
+        &:hover {
+            >svg {
+                fill: #535af1;
+            }
+
+            >button {
+                color: #535af1;
+            }
+        }
+    }
+
+    .edit-icon {
+        padding: 8px;
+        font-size: 24px;
+        cursor: pointer;
+
+        &:hover {
+            color: #535af1;
+            background-color: #eceefe;
+            border-radius: 50%;
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+    }
+}
+
+.direct-messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 32px;
+
+  .direct-messages-item {
+    display: flex;
+    align-items: center;
+    margin-left: 25px;
+    border-radius: 50px;
+    padding-left: 16px;
+    padding-top: 8px;
+
+    .avatar {
+      flex-shrink: 0;
+      margin-right: 16px;
+
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+      }
+    }
+
+    >p {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background-color: #eceefe;
+    }
+  }
+}
+
+
+.channel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 32px;
+
+  .channel-item {
+    display: flex;
+    align-items: center;
+    margin-left: 36px;
+    border-radius: 50px;
+    padding-left: 16px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    max-width: 250px;
+    gap: 16px;
+
+    &:hover {
+        color: #535af1;
+    }
+
+    >p {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background-color: #eceefe;
+    }
+  }
 }
 
 .toggle-navbar {
@@ -25,13 +167,26 @@
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
 
+    &:hover {
+        transform: scale(1.05) rotate(-90deg);
+        transition: transform 0.3s ease-in-out;
+    }
+
     .toggle-menu {
         display: flex;
         align-items: center;
         justify-content: space-between;
 
+        &:hover {
+            color: #535af1;
+        }
+
         >p {
             margin: 0;
+
+            &:hover {
+                color: #535af1;
+            }
         }
     }
 
@@ -51,7 +206,7 @@
 }
 
 .sidenav-container {
-    padding: 32px;
+    padding: 16px;
     width: 400px;
     height: 100%;
 }

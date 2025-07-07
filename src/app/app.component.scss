@@ -1,6 +1,7 @@
 section {
     display: flex;
+    padding: 16px;
+    gap: 8px;
     background-color: #ECEEFE;
-    width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 100px);
 }
