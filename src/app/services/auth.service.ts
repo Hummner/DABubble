@@ -9,6 +9,7 @@ import {
 import { from, Observable } from 'rxjs';
 import { UserSignupInterface } from '../interfaces/user-signup.interface';
 import { signOut } from 'firebase/auth';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ import { signOut } from 'firebase/auth';
 export class AuthService {
   firebaseAuth = inject(Auth);
   user$ = user(this.firebaseAuth);
+
   // currentUserSign = signal<UserSignupInterface | null | undefined>(undefined);
 
   register(name: string, email: string, password: string): Observable<void> {
@@ -33,12 +35,30 @@ export class AuthService {
       email,
       password
     ).then(() => {});
-    ;
     return from(promise);
   }
 
   logout(): Observable<void> {
     const promise = signOut(this.firebaseAuth);
+    return from(promise);
+  }
+
+  sendPasswordResetEmail(
+    auth: Auth,
+    email: string,
+    redirectUrl: string
+  ): Observable<void> {
+    const actionCodeSettings = {
+      url: redirectUrl,
+      handleCodeInApp: true,
+    };
+    const promise = sendPasswordResetEmail(
+      auth,
+      email,
+      actionCodeSettings
+    ).then(() => {
+      console.log('Password reset sent');
+    });
     return from(promise);
   }
 }
