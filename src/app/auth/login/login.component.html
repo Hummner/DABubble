@@ -20,40 +20,60 @@
 
       <div>
         <p class="fs-18">Neu bei DABubble?</p>
-        <a [routerLink] = "['signup']"><p class="fs-18 blue create-acc">Konto erstellen</p></a>
+        <a [routerLink]="['signup']"
+          ><p class="fs-18 blue create-acc">Konto erstellen</p></a
+        >
       </div>
     </div>
     <div class="login-dialog">
-      <form [formGroup]="form" class="form" (ngSubmit)="onSubmit()">
+      <form [formGroup]="loginForm" class="form" (ngSubmit)="onSubmit()">
         <div class="title-section">
           <h1 class="blue">Anmeldung</h1>
           <p>
             Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der
             Arbeit verwendest.
           </p>
+          @if((loginFormControl.password.touched || submitted)&&
+          loginFormControl.password.errors?.['invalid']){
+          <div class="error">Email or password is incorrect</div>
+          }
         </div>
         <div class="input-section">
-          @if(errorMessage){
-          <div>{{ errorMessage }}</div>
-          }
           <div class="input-email">
             <input
               class="fs-18"
               type="text"
               formControlName="email"
+              required
               placeholder="beispielname@email.com"
             />
             <img class="ph-img" src="assets/icon/mail.png" alt="" />
+            @if((loginFormControl.email.touched || submitted )&&
+            loginFormControl.email.errors?.['required']){
+            <span class="error">Email is required</span>
+            } @if((loginFormControl.email.touched ||submitted) &&
+            loginFormControl.email.errors?.['invalidEmail']){
+            <span class="error">Invalid Email</span>
+            }
           </div>
           <div class="input-password">
             <input
               class="fs-18"
               type="password"
               formControlName="password"
+              required
               placeholder="Passwort"
             />
             <img class="ph-img" src="assets/icon/lock.png" alt="" />
+            @if((loginFormControl.password.touched || submitted)&&
+            loginFormControl.password.errors?.['required']){
+            <span class="error">Password is required</span>}
+            @if((loginFormControl.password.touched || submitted)&&
+            loginFormControl.password.errors?.['incorrect']){
+            <span class="error">Incorrect Password</span>
+            }
           </div>
+
           <p class="fs-18 blue">Passwort vergessen?</p>
         </div>
         <div class="separator-section">

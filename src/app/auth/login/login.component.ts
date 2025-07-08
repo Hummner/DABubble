@@ -5,7 +5,12 @@ import {
   inject,
   ViewChild,
 } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  FormBuilder,
+} from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -23,24 +28,40 @@ export class LoginComponent implements AfterViewInit {
   router = inject(Router);
   auth = getAuth();
   user = this.auth.currentUser;
+  submitted = false;
 
-  form = new FormGroup({
-    email: new FormControl('', Validators.required),
+  loginForm = new FormGroup({
+    email: this.fb.nonNullable.control('', [
+      Validators.required,
+      Validators.email,
+    ]),
     password: new FormControl('', Validators.required),
   });
 
   errorMessage: string | null = null;
 
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
 
+  get loginFormControl() {
+    return this.loginForm.controls;
+  }
   onSubmit() {
-    const rawForm = this.form.getRawValue();
+    this.submitted = true;
+    const rawForm = this.loginForm.getRawValue();
     this.authService.login(rawForm.email!, rawForm.password!).subscribe({
       next: () => {
         this.router.navigateByUrl('channel');
       },
       error: (err) => {
-        this.errorMessage = err.code;
+        if (err.code === 'auth/invalid-email') {
+          this.loginForm.get('email')?.setErrors({ invalidEmail: true });
+        } else if (err.code === 'auth/wrong-password') {
+          this.loginForm.get('password')?.setErrors({ incorrect: true });
+        } else if (err.code === 'auth/invalid-credential') {
+          this.loginForm.get('password')?.setErrors({ invalid: true });
+        } else {
+          this.errorMessage = 'An unknown error occurred.';
+        }
       },
     });
   }
