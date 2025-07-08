@@ -1,19 +1,18 @@
 <section>
-
-
     <mat-drawer-container class="container" autosize>
         <mat-drawer #drawer class="example-sidenav" mode="side" position="end">
             <app-thread (close)="drawer.toggle()"></app-thread>
         </mat-drawer>
-
         <div class="content">
+            <div class="backdrop" *ngIf="menuOpen" (click)="menuOpen = false"></div>
             <header>
                 <div class="channel-name">
                     <h2># Entwicklerteam</h2>
                     <mat-icon>keyboard_arrow_down</mat-icon>
                 </div>
                 <div class="members">
-                    <div class="members-container" (click)="openDialog()">
+                    <div class="members-container" [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger"
+                        (click)="openMenu(menuTrigger)">
                         <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
                         <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
                         <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
@@ -22,11 +21,32 @@
 
                     <div class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
                 </div>
+                <mat-menu class="members-menu" (closed)="menuOpen = false"
+                    xPosition="before" #menu="matMenu">
+                    <div class="members-menu-header">
+                        <h2 class="no-margin">Mitglieder</h2>
+                        <div>x</div>
+                    </div>
+                    <div class="members-menu-list">
+                        <div class="members-menu-listelement">
+                            <div class="member-img margin-16">
+                                <img src="assets/img/elias_neumann.svg" alt="">
+                            </div>
+                            <div>Name</div>
+                        </div>
+                        <div class="members-menu-listelement">
+                            <div class="member-img margin-16">
+                                <img src="assets/img/elias_neumann.svg" alt="">
+                            </div>
+                            <div>Name</div>
+                        </div>
+                    </div>
+
+                </mat-menu>
             </header>
             <main>
                 @for (ticket of [1,2,3]; track $index) {
                 <app-ticket [index]="$index" (openThread)="drawer.toggle()"></app-ticket>
-
                 }
                 <div class="placeholder">
                     <div class="placeholder-date">Heute</div>
@@ -51,11 +71,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
-
-
             </main>
             <footer>
                 <div class="text-area">
@@ -69,15 +85,12 @@
                         <div class="input-icon">
                             <img src="assets/icon/tag_icon.png" alt="">
                         </div>
-
                     </div>
                     <div class="send-icon">
                         <img src="assets/icon/send.png" alt="">
                     </div>
                 </div>
-
             </footer>
         </div>
-
     </mat-drawer-container>
 </section>

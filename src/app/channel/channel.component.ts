@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import {
   MAT_DIALOG_DATA,
@@ -26,6 +26,12 @@ import { TicketComponent } from '../shared/messages/ticket/ticket.component';
 export class ChannelComponent {
   readonly dialog = inject(MatDialog);
   showMenu = false;
+  menuOpen = false;
+
+  openMenu(trigger: MatMenuTrigger) {
+    trigger.openMenu();
+    this.menuOpen = true;
+  }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(ShowMembersComponent, {
