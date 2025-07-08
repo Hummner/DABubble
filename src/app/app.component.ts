@@ -20,16 +20,14 @@ export class AppComponent {
     console.log(this.router.url);
   }
   excludeHeaderAndNavbar() {
-    if (
-      this.router.url !== '/' &&
-      this.router.url !== '/signup' &&
-      this.router.url !== '/avatarSelection' &&
-      this.router.url !== '/resetPassword' &&
-      this.router.url !== '/resetPassword/newPassword'
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    const currentPath = this.router.url.split('?')[0];
+
+    return ![
+      '/',
+      '/signup',
+      '/avatarSelection',
+      '/resetPassword',
+      '/resetPassword/newPassword',
+    ].includes(currentPath);
   }
 }
