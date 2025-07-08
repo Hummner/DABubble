@@ -1,17 +1,16 @@
 import { Component, inject } from '@angular/core';
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { getAuth } from '@angular/fire/auth';
+import { StrongPasswordRegx } from './strong-password.pattern';
+import { NgClass, NgIf } from '@angular/common';
+
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, NgClass, NgIf],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
@@ -25,7 +24,10 @@ export class SignupComponent {
   signupForm = new FormGroup({
     name: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', Validators.required),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.pattern(StrongPasswordRegx),
+    ]),
     privacyPolicy: new FormControl('', Validators.requiredTrue),
   });
 
@@ -33,13 +35,19 @@ export class SignupComponent {
 
   constructor() {}
 
+  get passwordFormField() {
+    return this.signupForm.get('password');
+  }
+
   get signupFormControl() {
     return this.signupForm.controls;
   }
 
   get isFormEmpty() {
     const { name, email, password, privacyPolicy } = this.signupForm.value;
-    return !name?.trim() || !email?.trim() || !password?.trim() || !privacyPolicy;
+    return (
+      !name?.trim() || !email?.trim() || !password?.trim() || !privacyPolicy
+    );
   }
 
   onSubmit() {

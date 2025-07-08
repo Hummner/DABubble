@@ -74,6 +74,33 @@
             @if((signupFormControl.password.touched || submitted)&&
             signupFormControl.password.errors?.['required']){
             <span class="error">Password is required</span>}
+            <div class="text-red-400 text-sm" *ngIf="passwordFormField?.dirty">
+              <span
+                *ngIf="!passwordFormField?.value?.match('^(?=.*[A-Z])')"
+                class="block error"
+                >At least one uppercase letter.</span
+              >
+              <span
+                *ngIf="!passwordFormField?.value?.match('(?=.*[a-z])')"
+                class="block error"
+                >At least one lowercase letter.</span
+              >
+              <span
+                *ngIf="!passwordFormField?.value?.match('(.*[0-9].*)')"
+                class="block error"
+                >At least one digit.</span
+              >
+              <span
+                *ngIf="!passwordFormField?.value?.match('(?=.*[!@#$%^&*])')"
+                class="block error"
+                >At least one special character.</span
+              >
+              <span
+                *ngIf="!passwordFormField?.value?.match('.{8,}')"
+                class="block error"
+                >At least 8 characters long.</span
+              >
+            </div>
           </div>
         </div>
         <div class="input-checkbox">
@@ -90,7 +117,12 @@
           >
         </div>
         <div class="btn-section">
-          <button [disabled]="isFormEmpty" [class.disabled] ="isFormEmpty" type="submit" class="fs-18">
+          <button
+            [disabled]="isFormEmpty"
+            [class.disabled]="isFormEmpty"
+            type="submit"
+            class="fs-18"
+          >
             Weiter
           </button>
         </div>
