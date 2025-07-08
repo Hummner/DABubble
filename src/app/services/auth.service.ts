@@ -33,6 +33,7 @@ export class AuthService {
       email,
       password
     ).then(() => {});
+    ;
     return from(promise);
   }
 
