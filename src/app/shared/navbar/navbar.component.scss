@@ -45,9 +45,9 @@
             font-weight: bold;
         }
         >button {
-                background-color: transparent;
-                border: none;
-                cursor: pointer;
+            background-color: transparent;
+            border: none !important;
+            cursor: pointer;
         }
 
         &:hover {
