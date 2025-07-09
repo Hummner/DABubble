@@ -4,17 +4,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
-import { ShowMembersComponent } from '../dialogs/show-members/show-members.component';
 import { TicketComponent } from '../shared/messages/ticket/ticket.component';
+import { ChannelsService } from '../services/channels.service';
+import { collection } from 'firebase/firestore';
 
 @Component({
   selector: 'app-channel',
@@ -24,7 +16,7 @@ import { TicketComponent } from '../shared/messages/ticket/ticket.component';
   styleUrl: './channel.component.scss',
 })
 export class ChannelComponent {
-  readonly dialog = inject(MatDialog);
+  channelsService = inject(ChannelsService)
   showMenu = false;
   menuOpen = false;
 
@@ -37,15 +29,5 @@ export class ChannelComponent {
     trigger.closeMenu();
   }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(ShowMembersComponent, {
 
-      panelClass: 'show-members-dialog-container'
-
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
-  }
 }
