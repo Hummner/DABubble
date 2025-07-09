@@ -6,7 +6,6 @@ import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -21,9 +20,11 @@ export class AppComponent {
     console.log(this.router.url);
   }
   excludeHeaderMainandNavbar() {
-    const currentPath = this.router.url.split('?')[0];
+    let currentPath = this.router.url.split('?')[0];
+    currentPath = currentPath.replace(/\/+$/, ''); // remove trailing slashes
 
     return ![
+      '',
       '/',
       '/signup',
       '/avatarSelection',
