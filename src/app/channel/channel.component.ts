@@ -33,6 +33,10 @@ export class ChannelComponent {
     this.menuOpen = true;
   }
 
+    closeMenu(trigger: MatMenuTrigger) {
+    trigger.closeMenu();
+  }
+
   openDialog(): void {
     const dialogRef = this.dialog.open(ShowMembersComponent, {
 

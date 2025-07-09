@@ -13,35 +13,38 @@
                 <div class="members">
                     <div class="members-container" [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger"
                         (click)="openMenu(menuTrigger)">
-                        <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
-                        <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
-                        <div class="member-img"><img src="assets/img/elias_neumann.svg" alt=""></div>
+                        <div class="member-img"><img src="assets/img/elias_neumann.svg"></div>
+                        <div class="member-img"><img src="assets/img/elias_neumann.svg"></div>
+                        <div class="member-img"><img src="assets/img/elias_neumann.svg"></div>
                         <div class="member-img"><span>3</span></div>
                     </div>
 
                     <div class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
                 </div>
-                <mat-menu class="members-menu" (closed)="menuOpen = false"
-                    xPosition="before" #menu="matMenu">
-                    <div class="members-menu-header">
-                        <h2 class="no-margin">Mitglieder</h2>
-                        <div>x</div>
-                    </div>
-                    <div class="members-menu-list">
-                        <div class="members-menu-listelement">
-                            <div class="member-img margin-16">
-                                <img src="assets/img/elias_neumann.svg" alt="">
-                            </div>
-                            <div>Name</div>
+                <mat-menu class="members-menu" (closed)="menuOpen = false" xPosition="before" #menu="matMenu">
+                    <div class="menu-container" (click)="$event.stopPropagation()">
+                        <div class="members-menu-header">
+                            <h2 class="no-margin">Mitglieder</h2>
+                            <div class="close-dialog" (click)="closeMenu(menuTrigger)"><mat-icon
+                                    class="icon">close</mat-icon></div>
                         </div>
-                        <div class="members-menu-listelement">
-                            <div class="member-img margin-16">
-                                <img src="assets/img/elias_neumann.svg" alt="">
+                        <div class="members-menu-list">
+                            @for (member of [1,2,3]; track $index) {
+                            <div class="members-menu-listelement">
+                                <div class="member-img margin-16">
+                                    <img src="assets/img/elias_neumann.svg" alt="">
+                                </div>
+                                <div class="member-menu-name">Elias Neumann</div>
                             </div>
-                            <div>Name</div>
+                            }
+                            <div class="members-menu-add margin-16">
+                                <div class="add-member-icon">
+                                    <img src="assets/icon/person_add.png">
+                                </div>
+                                <span>Mitglieder hinzufügen</span>
+                            </div>
                         </div>
                     </div>
-
                 </mat-menu>
             </header>
             <main>
