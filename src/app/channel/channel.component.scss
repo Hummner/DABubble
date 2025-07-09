@@ -399,8 +399,8 @@ main {
 
 ::ng-deep .mat-mdc-menu-panel {
     border-radius: 30px 0 30px 30px !important;
-    padding: 20px 40px;
-    width: 415px;
+
+    max-width: 600px !important;
 }
 
 ::ng-deep .cdk-overlay-pane {
@@ -408,12 +408,38 @@ main {
     top: 10px;
 }
 
+::ng-deep .mat-mdc-menu-content {
+    padding: 0 !important;
+}
+
+::ng-deep .mat-typography {
+    font: unset !important;
+}
+
 .backdrop {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
     z-index: 1000;
-    /* höher als das meiste andere */
+}
+
+.close-dialog {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ECEEFE;
+
+        .icon {
+            filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+            transform: scale(1.1);
+        }
+    }
 }
 
 .no-margin {
@@ -421,7 +447,13 @@ main {
 }
 
 .margin-16 {
-    margin: 0 16px !important;
+    margin-left: 0 !important;
+    margin-right: 16px !important;
+}
+
+.menu-container {
+    padding: 20px 40px;
+    border-radius: 30px 0 30px 30px !important;
 }
 
 .members-menu-listelement {
@@ -429,6 +461,25 @@ main {
     justify-content: flex-start;
     align-items: center;
     width: 100%;
+    padding: 4px 20px;
+    border-radius: 30px;
+
+    &:hover {
+        background-color: #ECEEFE;
+        cursor: pointer;
+    }
+
+    &:active {
+        .member-menu-name {
+            color: #535AF1;
+        }
+    }
+}
+
+.member-menu-name {
+    font-size: 18px;
+    flex: 1;
+    text-wrap: unset;
 }
 
 .members-menu-list {
@@ -443,6 +494,33 @@ main {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
+}
+
+.members-menu-add {
+    display: flex;
+    align-items: center;
+    padding: 4px 20px;
+    border-radius: 30px;
+
+    .add-member-icon{
+        margin-right: 16px;
+    }
+
+    &:hover {
+        background-color: #ECEEFE;
+        cursor: pointer;
+
+        >span {
+            filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+
+        }
+
+        .add-member-icon img {
+            filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+            transform: scale(1.1);
+        }
+
+    }
 }
 
 
