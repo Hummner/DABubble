@@ -48,29 +48,31 @@
                 </mat-menu>
             </header>
             <main>
-                @for (ticket of [1,2,3]; track $index) {
-                <app-ticket [index]="$index" (openThread)="drawer.toggle()"></app-ticket>
-                }
-                <div class="placeholder">
-                    <div class="placeholder-date">Heute</div>
-                </div>
-                <div class="ticket-container">
-                    <div class="ticket reverse reverse-hover">
-                        <div class="member-img-ticket">
-                            <img src="assets/img/elias_neumann.svg" alt="">
-                        </div>
-                        <div class="message-content">
-                            <div class="name-date reverse">
-                                <span class="msg-name">Elias Neumann</span>
-                                <span class="msg-date">14:10 Uhr</span>
+                <div class="scroll-wrapper">
+                    @for (ticket of [1,2,3]; track $index) {
+                    <app-ticket [index]="$index" (openThread)="drawer.toggle()"></app-ticket>
+                    }
+                    <div class="placeholder">
+                        <div class="placeholder-date">Heute</div>
+                    </div>
+                    <div class="ticket-container">
+                        <div class="ticket reverse reverse-hover">
+                            <div class="member-img-ticket">
+                                <img src="assets/img/elias_neumann.svg" alt="">
                             </div>
-                            <div class="message reverse-backround">
-                                <p>Welche Version ist aktuell von Angular?</p>
-                            </div>
-                            <div class="answers reverse">
-                                <div class="msg-answer-container reverse"><span class="msg-answer"
-                                        (click)="drawer.toggle()">2 Antworten</span></div>
-                                <span class="msg-date">Letze Antwort 14:26</span>
+                            <div class="message-content">
+                                <div class="name-date reverse">
+                                    <span class="msg-name">Elias Neumann</span>
+                                    <span class="msg-date">14:10 Uhr</span>
+                                </div>
+                                <div class="message reverse-backround">
+                                    <p>Welche Version ist aktuell von Angular?</p>
+                                </div>
+                                <div class="answers reverse">
+                                    <div class="msg-answer-container reverse"><span class="msg-answer"
+                                            (click)="drawer.toggle()">2 Antworten</span></div>
+                                    <span class="msg-date">Letze Antwort 14:26</span>
+                                </div>
                             </div>
                         </div>
                     </div>
