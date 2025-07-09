@@ -16,7 +16,8 @@ export class NavbarComponent {
 
   constructor(public dialog: MatDialog) {}
 
-  showFiller = true;
+  showChannel = true;
+  showMessage = true;
   isOpen = true;
 
   toggleDrawer() {
