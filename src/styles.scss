@@ -23,6 +23,12 @@ a {
   font-weight: bold;
 }
 
+@font-face {
+  font-family: Nunito;
+  src: url(assets/fonts/Nunito-Regular.ttf);
+  font-weight: normal;
+}
+
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
   font-family: "Material Symbols Outlined";
