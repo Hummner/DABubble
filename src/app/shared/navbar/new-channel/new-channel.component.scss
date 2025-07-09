@@ -1,17 +1,23 @@
-.dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+.newchannel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    .hidden {
+        position: fixed;
+        display: none !important;
+        z-index: -10000;
+    }
 }
 
-.dialog-container {
+.newchannel-container {
     position: relative;
     background: white;
     border-radius: 30px;
@@ -23,9 +29,17 @@
     max-height: 600px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s ease-in-out;
+
+    &:active {
+        display: none;
+    }
+
+    &:disabled {
+        display: flex;
+    }
 }
 
-.dialog-header {
+.newchannel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -55,7 +69,7 @@
     }
 }
 
-.dialog-content {
+.newchannel-content {
     display: flex;
     margin-top: 32px;
     flex-direction: column;
@@ -82,8 +96,8 @@
     }
 }
 
-.dialog-content input,
-.dialog-content textarea {
+.newchannel-content input,
+.newchannel-content textarea {
     width: 100%;
     margin-top: 12px;
     margin-bottom: 12px;
@@ -127,6 +141,6 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
