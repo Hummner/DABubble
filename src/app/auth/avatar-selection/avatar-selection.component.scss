@@ -8,29 +8,10 @@
     cursor: pointer;
   }
 }
-
-.avatar-content-wrap {
+.content {
   width: 100%;
   display: flex;
   justify-content: center;
-}
-.avatar-content {
-  height: 100vh;
-  width: 100%;
-  max-width: 1440px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 50px;
-}
-
-.avatar-header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 40px;
-  padding-bottom: 0;
 }
 
 .avatar-dialog {

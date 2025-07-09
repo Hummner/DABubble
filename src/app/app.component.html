@@ -1,9 +1,9 @@
-@if(excludeHeaderAndNavbar()){
+@if(excludeHeaderMainandNavbar()){
 <app-header></app-header>
 }
 
 <section>
-  @if(excludeHeaderAndNavbar()){
+  @if(excludeHeaderMainandNavbar()){
   <app-navbar></app-navbar>
   }
   <router-outlet></router-outlet>

@@ -8,11 +8,14 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { ActionCodeURL, getAuth } from '@angular/fire/auth';
+import { FooterComponent } from '../../shared/footer/footer.component';
+import { Header2Component } from '../../shared/header-2/header-2.component';
+
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, FooterComponent, Header2Component],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
 })

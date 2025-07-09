@@ -1,0 +1,12 @@
+.footer {
+  width: 100%;
+  background-color: #eceefe;
+  position: absolute;
+  bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  > p {
+    cursor: pointer;
+  }
+}
