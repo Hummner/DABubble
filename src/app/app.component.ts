@@ -6,6 +6,7 @@ import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -19,7 +20,7 @@ export class AppComponent {
   constructor() {
     console.log(this.router.url);
   }
-  excludeHeaderAndNavbar() {
+  excludeHeaderMainandNavbar() {
     const currentPath = this.router.url.split('?')[0];
 
     return ![

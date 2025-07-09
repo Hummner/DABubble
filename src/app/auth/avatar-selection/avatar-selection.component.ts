@@ -3,13 +3,14 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { updateProfile } from '@angular/fire/auth';
 import { FirestoreService } from '../../services/firestore.service';
-
 import { Firestore, setDoc, doc } from '@angular/fire/firestore';
+import { Header2Component } from '../../shared/header-2/header-2.component';
+import { FooterComponent } from '../../shared/footer/footer.component';
 
 @Component({
   selector: 'app-avatar-selection',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, Header2Component, FooterComponent],
   templateUrl: './avatar-selection.component.html',
   styleUrl: './avatar-selection.component.scss',
 })

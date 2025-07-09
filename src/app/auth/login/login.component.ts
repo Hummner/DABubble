@@ -16,10 +16,13 @@ import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { getAuth } from '@angular/fire/auth';
 
+import { Header2Component } from '../../shared/header-2/header-2.component';
+import { FooterComponent } from '../../shared/footer/footer.component';
+
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Header2Component, FooterComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })

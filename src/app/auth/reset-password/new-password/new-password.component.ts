@@ -7,25 +7,22 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import {
-  ActivatedRoute,
-  Router,
-  RouterLink,
-} from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   getAuth,
   verifyPasswordResetCode,
   confirmPasswordReset,
 } from '@angular/fire/auth';
+import { FooterComponent } from '../../../shared/footer/footer.component';
+import { Header2Component } from '../../../shared/header-2/header-2.component';
 
 @Component({
   selector: 'app-new-password',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, FooterComponent, Header2Component],
   templateUrl: './new-password.component.html',
   styleUrl: './new-password.component.scss',
 })
-
 export class NewPasswordComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
@@ -63,24 +60,24 @@ export class NewPasswordComponent implements OnInit {
         this.email = email;
       })
       .catch(() => {
-        this.errorMessage =
-          'This password reset link is invalid or expired.';
+        this.errorMessage = 'This password reset link is invalid or expired.';
       });
   }
 
-onSubmit() {
-  this.submitted = true;
+  onSubmit() {
+    this.submitted = true;
 
-  if (this.newPasswordForm.invalid || !this.oobCode) {
-    return;
+    if (this.newPasswordForm.invalid || !this.oobCode) {
+      return;
+    }
+
+    const newPassword = this.newPasswordForm.value.password_1!;
+    confirmPasswordReset(this.auth, this.oobCode, newPassword)
+      .then(() => this.router.navigate(['/']))
+      .catch((err) => {
+        if (err.code === 'auth/weak-password') {
+          this.newPasswordForm.get('password_1')?.setErrors({ weak: true });
+        }
+      });
   }
-
-  const newPassword = this.newPasswordForm.value.password_1!;
-  confirmPasswordReset(this.auth, this.oobCode, newPassword)
-    .then(() => this.router.navigate(['/']))
-    .catch((err) => {
-      this.errorMessage = 'Could not reset the password. Try again.';
-      console.error(err);
-    });
-}
 }

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { FirestoreService } from '../../services/firestore.service';
 import { NgIf } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -12,5 +13,6 @@ import { NgIf } from '@angular/common';
 })
 export class HeaderComponent {
   userProfile = this.firestoreService.userProfile;
-    constructor(private firestoreService: FirestoreService) {}
+  router = inject(Router);
+  constructor(private firestoreService: FirestoreService) {}
 }

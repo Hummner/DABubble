@@ -1,136 +1,136 @@
-<div class="signup-content-wrap">
-  <div class="signup-content">
-    <div class="signup-header">
-      <img src="assets/img/Logo-1.png" alt="" />
-    </div>
-    <div class="signup-dialog">
-      <form [formGroup]="signupForm" class="form" (ngSubmit)="onSubmit()">
-        <div class="title-section">
-          <a [routerLink]="['/']"
-            ><img src="assets/icon/arrow_back.svg" alt="Go Back Arrow"
-          /></a>
-          <h1 class="blue">Konto erstellen</h1>
-          <p>
-            Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues
-            DABubble-Konto.
-          </p>
+<app-header-2></app-header-2>
+<div class="content">
+  <div class="signup-dialog">
+    <form [formGroup]="signupForm" class="form" (ngSubmit)="onSubmit()">
+      <div class="title-section">
+        <a [routerLink]="['/']"
+          ><img src="assets/icon/arrow_back.svg" alt="Go Back Arrow"
+        /></a>
+        <h1 class="blue">Konto erstellen</h1>
+        <p>
+          Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues
+          DABubble-Konto.
+        </p>
+      </div>
+      <div class="input-section">
+        <div class="input-name">
+          <input
+            class="fs-18"
+            type="text"
+            formControlName="name"
+            required
+            placeholder="Name und Nachname"
+          />
+          <img
+            class="ph-img"
+            src="assets/icon/person_filled.png"
+            alt="Name Placeholder Image"
+          />
+          @if((signupFormControl.name.touched || submitted )&&
+          signupFormControl.name.errors?.['required']){
+          <span class="error">Name is required</span>
+          }
         </div>
-        <div class="input-section">
-          <div class="input-name">
-            <input
-              class="fs-18"
-              type="text"
-              formControlName="name"
-              required
-              placeholder="Name und Nachname"
-            />
-            <img
-              class="ph-img"
-              src="assets/icon/person_filled.png"
-              alt="Name Placeholder Image"
-            />
-            @if((signupFormControl.name.touched || submitted )&&
-            signupFormControl.name.errors?.['required']){
-            <span class="error">Name is required</span>
-            }
-          </div>
-          <div class="input-email">
-            <input
-              class="fs-18"
-              type="text"
-              formControlName="email"
-              required
-              placeholder="beispielname@email.com"
-            />
-            <img
-              class="ph-img"
-              src="assets/icon/mail.png"
-              alt="Email Placeholder Image"
-            />
-            @if((signupFormControl.email.touched || submitted )&&
-            signupFormControl.email.errors?.['required']){
-            <span class="error">Email is required</span>
-            } @if((signupFormControl.email.touched ||submitted) &&
-            signupFormControl.email.errors?.['invalidEmail']){
-            <span class="error">Invalid Email</span>
-            } @if(errorMessage){
-            <div>{{ errorMessage }}</div>
-            }
-          </div>
+        <div class="input-email">
+          <input
+            class="fs-18"
+            type="text"
+            formControlName="email"
+            required
+            placeholder="beispielname@email.com"
+          />
+          <img
+            class="ph-img"
+            src="assets/icon/mail.png"
+            alt="Email Placeholder Image"
+          />
+          @if((signupFormControl.email.touched || submitted )&&
+          signupFormControl.email.errors?.['required']){
+          <span class="error">Email is required</span>
+          } @if((signupFormControl.email.touched ||submitted) &&
+          signupFormControl.email.errors?.['invalidEmail']){
+          <span class="error">Invalid Email</span>
+          } @if(errorMessage){
+          <div>{{ errorMessage }}</div>
+          }
+        </div>
 
-          <div class="input-password">
-            <input
-              class="fs-18"
-              type="password"
-              formControlName="password"
-              required
-              placeholder="Passwort"
-            />
-            <img
-              class="ph-img"
-              src="assets/icon/lock.png"
-              alt="Password Placeholder Image"
-            />
-            @if((signupFormControl.password.touched || submitted)&&
-            signupFormControl.password.errors?.['required']){
-            <span class="error">Password is required</span>}
-            <div class="text-red-400 text-sm" *ngIf="passwordFormField?.dirty">
-              <span
+        <div class="input-password">
+          <input
+            class="fs-18"
+            type="password"
+            formControlName="password"
+            required
+            placeholder="Passwort"
+          />
+          <img
+            class="ph-img"
+            src="assets/icon/lock.png"
+            alt="Password Placeholder Image"
+          />
+          @if((signupFormControl.password.touched || submitted)&&
+          signupFormControl.password.errors?.['required']){
+          <span class="error">Password is required</span>}
+          <div class="text-red-400 text-sm" *ngIf="passwordFormField?.dirty">
+            <ul class="error-pw-list">
+              <li
                 *ngIf="!passwordFormField?.value?.match('^(?=.*[A-Z])')"
                 class="block error"
-                >At least one uppercase letter.</span
               >
-              <span
+                Should contain at least one uppercase letter.
+              </li>
+              <li
                 *ngIf="!passwordFormField?.value?.match('(?=.*[a-z])')"
                 class="block error"
-                >At least one lowercase letter.</span
               >
-              <span
+                Should contain at least one lowercase letter.
+              </li>
+              <li
                 *ngIf="!passwordFormField?.value?.match('(.*[0-9].*)')"
                 class="block error"
-                >At least one digit.</span
               >
-              <span
+                Should contain at least one digit.
+              </li>
+              <li
                 *ngIf="!passwordFormField?.value?.match('(?=.*[!@#$%^&*])')"
                 class="block error"
-                >At least one special character.</span
               >
-              <span
+                Should contain at least one special character.
+              </li>
+              <li
                 *ngIf="!passwordFormField?.value?.match('.{8,}')"
                 class="block error"
-                >At least 8 characters long.</span
               >
-            </div>
+                Should contain at least 8 characters long.
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="input-checkbox">
-          <input
-            type="checkbox"
-            class="checkbox"
-            id="checkbox"
-            required
-            formControlName="privacyPolicy"
-          />
-          <label for="checkbox"
-            >Ich stimme der
-            <span class="blue span">Datenschutzerklärung</span>zu</label
-          >
-        </div>
-        <div class="btn-section">
-          <button
-            [disabled]="isFormEmpty"
-            [class.disabled]="isFormEmpty"
-            type="submit"
-            class="fs-18"
-          >
-            Weiter
-          </button>
-        </div>
-      </form>
-    </div>
-    <div class="signup-footer">
-      <p class="blue fs-18">Impressum</p>
-      <p class="blue fs-18">Datenschutz</p>
-    </div>
+      </div>
+      <div class="input-checkbox">
+        <input
+          type="checkbox"
+          class="checkbox"
+          id="checkbox"
+          required
+          formControlName="privacyPolicy"
+        />
+        <label for="checkbox"
+          >Ich stimme der
+          <span class="blue span">Datenschutzerklärung</span>zu</label
+        >
+      </div>
+      <div class="btn-section">
+        <button
+          [disabled]="isFormEmpty"
+          [class.disabled]="isFormEmpty"
+          type="submit"
+          class="fs-18"
+        >
+          Weiter
+        </button>
+      </div>
+    </form>
   </div>
 </div>
+<app-footer></app-footer>

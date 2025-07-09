@@ -7,10 +7,13 @@ import { getAuth } from '@angular/fire/auth';
 import { StrongPasswordRegx } from './strong-password.pattern';
 import { NgClass, NgIf } from '@angular/common';
 
+import { Header2Component } from '../../shared/header-2/header-2.component';
+import { FooterComponent } from '../../shared/footer/footer.component';
+
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, NgClass, NgIf],
+  imports: [ReactiveFormsModule, RouterLink, NgIf, Header2Component, FooterComponent],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
