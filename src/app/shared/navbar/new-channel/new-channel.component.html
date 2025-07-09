@@ -1,23 +1,35 @@
-@if (showDialog) {
-    <div class="newchannel-overlay" [ngClass]="{ 'hidden': !showDialog }" (click)="closeDialog($event)">
-        <div class="newchannel-container" (click)="$event.stopPropagation()">
-            <div class="newchannel-header">
-                <span class="material-symbols-outlined close-icon" (click)="closeDialog($event)">close</span>
-                <h1>Channel erstellen</h1>
-            </div>
-            <div class="newchannel-content">
-                <p>Channels dienen deinem Team zur Kommunikation. Am besten sollten sie themenbezogen sein <br>  #marketing zum Beispiel.</p>
-
-                <h2>Channel-Name</h2>
-                <input  type="text"placeholder="# z.B. Kooperationsprojekte" required/>
-
-                <h2>Beschreibung <span>(optional)</span></h2>
-                <textarea placeholder="Dein Text hier"></textarea>
-            </div>
-
-            <div class="actions">
-            <button type="submit" [disabled]="!channelName" (click)="createChannel()">Erstellen</button>
-            </div>
+<form #channelForm="ngForm" (ngSubmit)="createChannel()">
+    <mat-dialog-content class="newchannel-content">
+        <div class="newchannel-header">
+            <button mat-icon-button (click)="closeDialog()">
+            <mat-icon>close</mat-icon>
+            </button>
+            <h1>Channel erstellen</h1>
         </div>
-    </div>
-}
+
+        <p>
+            Channels dienen deinem Team zur Kommunikation. Am besten sollten sie themenbezogen sein.<br />
+            <strong>#marketing zum Beispiel.</strong>
+        </p>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <p>Channel-Name</p>
+            <input matInput placeholder="# z.B. Kooperationsprojekte" name="channelName" required [(ngModel)]="channelName"  />
+        </mat-form-field>
+
+        <mat-form-field class="full-width" appearance="outline">
+            <p>Beschreibung <span class="optional-text">(optional)</span></p>
+            <textarea matInput placeholder="Dein Text hier"></textarea>
+        </mat-form-field>
+        </mat-dialog-content>
+
+        <mat-dialog-actions class="actions" align="end">
+        <button 
+            type="submit"
+            [disabled]="!channelForm.valid"
+            [ngClass]="!channelForm.valid ? 'btn-disabled' : 'btn-active'">
+            Erstellen
+        </button>
+    </mat-dialog-actions>
+
+</form>

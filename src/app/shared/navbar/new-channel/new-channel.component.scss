@@ -1,120 +1,93 @@
-.newchannel-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-
-    .hidden {
-        position: fixed;
-        display: none !important;
-        z-index: -10000;
-    }
+::ng-deep .mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
+    max-width: 1000px;
+    width: 100%;
+    height: 550px;
 }
 
-.newchannel-container {
-    position: relative;
-    background: white;
-    border-radius: 30px;
-    padding: 32px;
-    margin: 32px;
-    width: 100%;
+::ng-deep .mat-mdc-form-field-subscript-wrapper, .mat-mdc-form-field-bottom-align::before {
+    display: none !important;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
     height: 100%;
-    max-width: 900px;
-    max-height: 600px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease-in-out;
-
-    &:active {
-        display: none;
-    }
-
-    &:disabled {
-        display: flex;
-    }
-}
-
-.newchannel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-flow: row-reverse;
-    margin-bottom: 16px;
-
-    >h1 {
-        font-size: 24px;
-        font-weight: bold;
-        font-family: 'Nunito', sans-serif;
-        margin: 0;
-    }
-
-    >span {
-        background-color: transparent;
-        border: none;
-        cursor: pointer;
-        font-size: 24px;
-        padding: 8px;
-        border-radius: 50%;
-
-        &:hover {
-            color: #535af1;
-            background-color: #eceefe;
-            transition: color 0.3s ease-in-out;
-        }
-    }
-}
-
-.newchannel-content {
-    display: flex;
-    margin-top: 32px;
-    flex-direction: column;
-    max-height: 100%;
-    overflow-y: auto;
-
-    >h2 {
-        margin-top: 16px;
-        margin-bottom: 0;
-        font-size: 18px;
-        font-weight: bold;
-        font-family: 'Nunito', sans-serif;
-
-        >span {
-            color: #ccc;
-            font-weight: normal;
-            font-size: 14px;
-        }
-    }
-
-    >p {
-        font-size: 14px;
-        font-family: 'Nunito', sans-serif;
-    }
-}
-
-.newchannel-content input,
-.newchannel-content textarea {
     width: 100%;
+    border-radius: 30px !important;
+}
+
+::ng-deep .mat-mdc-icon-button {
+    &:hover {
+        background-color: #eceefe !important;
+    }
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+    padding: 0 !important;
+}
+
+::ng-deep .cdk-overlay-pane {
+    position: static !important;
+}
+
+::ng-deep mat-form-field {
+    width: 100%;
+
+    .mdc-notched-outline {
+        display: none !important;
+    }
+}
+
+::ng-deep .mdc-text-field--no-label:not(.mdc-text-field--textarea) 
+            .mat-mdc-form-field-input-control.mdc-text-field__input, 
+            .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
+
+    width: 100%;
+    padding: 16px;
     margin-top: 12px;
     margin-bottom: 12px;
-    padding: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #ccc !important;
     border-radius: 30px;
-    height: 55px;
+    font-size: 16px;
+    font-family: 'Nunito', sans-serif;
+    box-sizing: border-box;
 
     &:focus {
-        border-color: #535af1;
-        outline: none;
+        border-color: #535af1 !important;
+        outline: none !important;
     }
 
     &::placeholder {
-        display: flex;
-        align-items: center;
+        color: #aaa;
     }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.optional-text {
+  color: #000000;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.newchannel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row-reverse;
+  margin-bottom: 16px;
+
+  h1 {
+    font-size: 24px;
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    color: #000000;
+  }
+}
+
+p {
+    color: #000000;
+    margin-bottom: 0;
 }
 
 .actions {
@@ -123,7 +96,6 @@
     right: 32px;
 
     >button {
-        background-color: #535af1;
         color: white;
         border: none;
         padding: 12px 24px;
@@ -131,16 +103,22 @@
         font-size: 16px;
         font-weight: bold;
         cursor: pointer;
+    }
+}
+
+.btn-active {
+    background-color: #535af1;
+    color: white;
 
         &:hover {
             background-color: #9498f5;
             transition: background-color 0.3s ease-in-out;
         }
-    }
-
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+.btn-disabled {
+    background-color: #ccc;
+    color: white;
+    cursor: not-allowed;
 }
+

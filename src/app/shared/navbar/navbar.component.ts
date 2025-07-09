@@ -31,6 +31,4 @@ export class NavbarComponent {
       console.log(`Dialog result: ${result}`);
     });
   }
-
-
 }
