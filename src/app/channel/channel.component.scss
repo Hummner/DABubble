@@ -44,6 +44,7 @@ section {
     >h2 {
         font-weight: bold;
         margin: 0;
+        font-size: 24px;
     }
 
     &:hover {
@@ -65,22 +66,47 @@ section {
     justify-content: center;
     align-items: center;
     gap: 24px;
-    padding: 20px;
+    padding: 32px;
+
+
+
+}
+
+.edit-channel-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0 12px;
 
     >h2 {
         font-weight: bold;
         margin: 0;
         width: 100%;
         text-align: left;
+        font-size: 24px;
+
     }
-    
+
 }
 
 .channel-name-menu-container {
     width: 100%;
     border-radius: 30px;
-    padding: 20px;
-    border: 1px solid #ADB0D9
+    border: 1px solid #ADB0D9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    >h3 {
+        font-weight: 700;
+        margin: 0;
+        font-size: 18px;
+        margin-bottom: 16px;
+        width: 100%;
+        padding-left: 24px;
+    }
 }
 
 .channel-name-menu-header {
@@ -88,6 +114,8 @@ section {
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    padding: 16px 20px 10px 20px;
+
     >h3 {
         font-weight: 700;
         margin: 0;
@@ -99,36 +127,78 @@ section {
         transform: scale(1.0);
         transition: transform 100ms ease-in-out;
         cursor: pointer;
+
         &:hover {
             transform: scale(1.1);
         }
     }
-    
+
+}
+
+.placeholder-edit {
+    width: calc(100% - 48px);
+    height: 1px;
+    background-color: #ADB0D9;
+    margin: 16px 0;
+}
+
+.created-by-name {
+    color: #535AF1;
+    font-size: 24px;
+    font-weight: 400;
+    width: 100%;
+    padding-left: 24px;
+    margin-bottom: 24px;
 }
 
 .no-border {
     border: none;
     padding: 18px 20px;
     border: 1px solid transparent;
+
     &:focus {
         outline: none;
-        border-radius: 30px;
-        border: 1px solid #535AF1;
     }
+}
+
+.border-on-focus {
+    border-radius: 30px;
+    border: 1px solid #535AF1;
+}
+
+.no-border-edit {
+    border: 1px solid transparent;
 }
 
 .channel-name-textarea {
     width: 100%;
     resize: none;
+    font-size: 18px;
 }
 
 .channel-name-input {
     width: 100%;
+    font-size: 18px;
+    padding-left: 40px;
+    margin-bottom: 10px;
+    border-radius: 30px;
 }
 
+.name-input-wrapper {
+    position: relative;
+    width: 100%;
+}
 
-
-
+.name-input-wrapper::after {
+    content: '#';
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    top: 21px;
+    left: 24px;
+    font-size: 20px;
+    font-weight: bold;
+}
 
 
 .add-member-icon {
@@ -140,6 +210,12 @@ section {
     display: flex;
     align-items: center;
     cursor: pointer;
+}
+
+.edit-channel-footer {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
 }
 
 .add-member-icon:hover img {
@@ -290,7 +366,7 @@ footer {
 }
 
 main {
-    
+
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -490,7 +566,10 @@ main {
 
 ::ng-deep .mat-typography {
     font: unset;
-    >h1, h2, h3 {
+
+    >h1,
+    h2,
+    h3 {
         font: 18px Nunito;
     }
 }

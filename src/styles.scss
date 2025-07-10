@@ -4,6 +4,7 @@ html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
 }
@@ -13,8 +14,30 @@ body {
   margin: 0;
   font-family: Nunito, "Helvetica Neue", sans-serif;
 }
+
 a {
   text-decoration: none;
+}
+
+.primary-button {
+  padding: 12px 25px;
+  background-color: #444DF2;
+  border-radius: 25px;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #797EF3;
+  }
+
+  &:active {
+    background-color: #444DF2;
+  }
+
+  &:disabled {
+    background-color: #686868;
+    cursor: none;
+  }
 }
 
 
@@ -46,6 +69,7 @@ a {
 .fs-18 {
   font-size: 18px;
 }
+
 app-login,
 app-signup,
 app-avatar-selection,
@@ -59,15 +83,19 @@ $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
 
 @mixin respond-to($breakpoint) {
-  @if $breakpoint == sm {
+  @if $breakpoint ==sm {
     @media (max-width: $breakpoint-sm) {
       @content;
     }
-  } @else if $breakpoint == md {
+  }
+
+  @else if $breakpoint ==md {
     @media (max-width: $breakpoint-md) {
       @content;
     }
-  } @else if $breakpoint == lg {
+  }
+
+  @else if $breakpoint ==lg {
     @media (max-width: $breakpoint-lg) {
       @content;
     }

@@ -18,34 +18,57 @@ import { collection } from 'firebase/firestore';
 export class ChannelComponent {
 
   @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('discInput') discInput!: ElementRef<HTMLInputElement>;
   channelsService = inject(ChannelsService)
   showMenu = false;
   menuOpen = false;
   editName = false;
-  editDescription = false
+  editDisc = false;
 
   openMenu(trigger: MatMenuTrigger) {
     trigger.openMenu();
     this.menuOpen = true;
   }
 
-    closeMenu(trigger: MatMenuTrigger) {
+  closeMenu(trigger: MatMenuTrigger) {
     trigger.closeMenu();
   }
 
-  editChannelName() {
-    this.editName = true;
-    this.nameInput.nativeElement.focus();
-    this.focusAfterText()
+  editChannel(editField: string) {
+    if (editField === "editName") {
+      this.editName = true;
+      this.nameInput.nativeElement.focus();
+      this.focusAfterText(this.nameInput);
+    }
+    if (editField === "editDisc") {
+      this.editDisc = true;
+      setTimeout(() => {
+        this.discInput.nativeElement.focus();
+        this.focusAfterText(this.discInput);
+
+      }, 1);
+
+    }
+
+
 
   }
 
-  focusAfterText() {
-    let input = this.nameInput.nativeElement;
+  focusAfterText(inputRef: ElementRef<HTMLInputElement>) {
+    let input = inputRef.nativeElement;
     let length = input.value.length;
     input.setSelectionRange(length, length);
 
   }
 
-
+  editChannelClose(editField: string) {
+    if (editField === "editName") {
+      this.editName = false;
+      this.nameInput.nativeElement.blur();
+    }
+    if (editField === "editDisc") {
+      this.editDisc = false;
+      this.discInput.nativeElement.blur();
+    }
+  }
 }
