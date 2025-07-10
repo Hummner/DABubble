@@ -14,28 +14,42 @@
                     <mat-icon>keyboard_arrow_down</mat-icon>
                     <mat-menu #editChannelMenu="matMenu" (closed)="menuOpen = false">
                         <div class="edit-channel-menu" (click)="$event.stopPropagation()">
-                            <h2># Entwicklerteam</h2>
-                            <div class="channel-name-menu-container">
+                            <div class="edit-channel-header">
+                                <h2># Entwicklerteam</h2>
+                                <div class="close-dialog" (click)="closeMenu(editChannelTrigger)"><mat-icon
+                                        class="icon">close</mat-icon>
+                                </div>
+                            </div>
+                            <div class="channel-name-menu-container" [ngClass]="{'no-border-edit' : editName}">
                                 <div class="channel-name-menu-header">
                                     <h3>Channel-Name</h3>
-                                    <span *ngIf="!editName" (click)="editChannelName()">Bearbeiten</span>
-                                    <span *ngIf="editName" (click)="editChannelName()">Speichern</span>
+                                    <span *ngIf="!editName" (click)="editChannel('editName')">Bearbeiten</span>
+                                    <span *ngIf="editName" (click)="editChannelClose('editName')">Speichern</span>
                                 </div>
-                                <input #nameInput [readonly]="!editName" type="text" class="channel-name-input no-border" value="Entwicklerteam">
+                                <div class="name-input-wrapper">
+                                    <input #nameInput [readonly]="!editName" [ngClass]="{'border-on-focus': editName}"
+                                        type="text" class="channel-name-input no-border" value="Entwicklerteam">
+                                </div>
+
                             </div>
 
-                            <div class="channel-name-menu-container">
+                            <div class="channel-name-menu-container" [ngClass]="{'no-border-edit' : editDisc}">
                                 <div class="channel-name-menu-header">
                                     <h3>Beschreibung</h3>
-                                    <span>Bearbeiten</span>
+                                    <span *ngIf="!editDisc" (click)="editChannel('editDisc')">Bearbeiten</span>
+                                    <span *ngIf="editDisc" (click)="editChannelClose('editDisc')">Speichern</span>
                                 </div>
-                                <textarea  [readonly]="!editDescription" class="channel-name-textarea no-border" name="channel_name"
+                                <textarea #discInput [ngClass]="{'border-on-focus': editDisc}" [readonly]="!editDisc"
+                                    class="channel-name-textarea no-border" name="channel_name"
                                     id="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni alias enim aspernatur eius dolorum deleniti nam recusandae corrupti hic, nisi ipsam quasi tempora, magnam quas eligendi dolorem similique sunt! Cum.</textarea>
-                                <hr>
+                                <div class="placeholder-edit"></div>
                                 <h3>Erstellt von</h3>
-                                <span>Name</span>
+                                <span class="created-by-name">Elias Neumann</span>
                             </div>
-                            <span>Channel verlassen</span>
+                            <div class="edit-channel-footer">
+                                <span class="primary-button">Channel verlassen</span>
+                            </div>
+
 
                         </div>
 
@@ -57,7 +71,8 @@
                         <div class="members-menu-header">
                             <h2 class="no-margin">Mitglieder</h2>
                             <div class="close-dialog" (click)="closeMenu(menuTrigger)"><mat-icon
-                                    class="icon">close</mat-icon></div>
+                                    class="icon">close</mat-icon>
+                            </div>
                         </div>
                         <div class="members-menu-list">
                             @for (member of [1,2,3]; track $index) {
