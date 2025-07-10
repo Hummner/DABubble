@@ -1,14 +1,45 @@
 <section>
+    <div class="backdrop" *ngIf="menuOpen" (click)="menuOpen = false"></div>
     <mat-drawer-container class="container" autosize>
+
         <mat-drawer #drawer class="example-sidenav" mode="side" position="end">
             <app-thread (close)="drawer.toggle()"></app-thread>
         </mat-drawer>
         <div class="content">
-            <div class="backdrop" *ngIf="menuOpen" (click)="menuOpen = false"></div>
+
             <header>
-                <div class="channel-name">
+                <div class="channel-name" [matMenuTriggerFor]="editChannelMenu" (click)="openMenu(editChannelTrigger)"
+                    #editChannelTrigger="matMenuTrigger">
                     <h2># Entwicklerteam</h2>
                     <mat-icon>keyboard_arrow_down</mat-icon>
+                    <mat-menu #editChannelMenu="matMenu" (closed)="menuOpen = false">
+                        <div class="edit-channel-menu" (click)="$event.stopPropagation()">
+                            <h2># Entwicklerteam</h2>
+                            <div class="channel-name-menu-container">
+                                <div class="channel-name-menu-header">
+                                    <h3>Channel-Name</h3>
+                                    <span *ngIf="!editName" (click)="editChannelName()">Bearbeiten</span>
+                                    <span *ngIf="editName" (click)="editChannelName()">Speichern</span>
+                                </div>
+                                <input #nameInput [readonly]="!editName" type="text" class="channel-name-input no-border" value="Entwicklerteam">
+                            </div>
+
+                            <div class="channel-name-menu-container">
+                                <div class="channel-name-menu-header">
+                                    <h3>Beschreibung</h3>
+                                    <span>Bearbeiten</span>
+                                </div>
+                                <textarea  [readonly]="!editDescription" class="channel-name-textarea no-border" name="channel_name"
+                                    id="">Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni alias enim aspernatur eius dolorum deleniti nam recusandae corrupti hic, nisi ipsam quasi tempora, magnam quas eligendi dolorem similique sunt! Cum.</textarea>
+                                <hr>
+                                <h3>Erstellt von</h3>
+                                <span>Name</span>
+                            </div>
+                            <span>Channel verlassen</span>
+
+                        </div>
+
+                    </mat-menu>
                 </div>
                 <div class="members">
                     <div class="members-container" [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger"
@@ -21,7 +52,7 @@
 
                     <div class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
                 </div>
-                <mat-menu class="members-menu" (closed)="menuOpen = false" xPosition="before" #menu="matMenu">
+                <mat-menu (closed)="menuOpen = false" xPosition="before" #menu="matMenu">
                     <div class="menu-container" (click)="$event.stopPropagation()">
                         <div class="members-menu-header">
                             <h2 class="no-margin">Mitglieder</h2>

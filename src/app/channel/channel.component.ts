@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
@@ -16,9 +16,13 @@ import { collection } from 'firebase/firestore';
   styleUrl: './channel.component.scss',
 })
 export class ChannelComponent {
+
+  @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>;
   channelsService = inject(ChannelsService)
   showMenu = false;
   menuOpen = false;
+  editName = false;
+  editDescription = false
 
   openMenu(trigger: MatMenuTrigger) {
     trigger.openMenu();
@@ -27,6 +31,20 @@ export class ChannelComponent {
 
     closeMenu(trigger: MatMenuTrigger) {
     trigger.closeMenu();
+  }
+
+  editChannelName() {
+    this.editName = true;
+    this.nameInput.nativeElement.focus();
+    this.focusAfterText()
+
+  }
+
+  focusAfterText() {
+    let input = this.nameInput.nativeElement;
+    let length = input.value.length;
+    input.setSelectionRange(length, length);
+
   }
 
 
