@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit {
     this.profileCardOpen = false;
     this.backdropVisible = false;
   }
-  
+
   closeAll() {
     this.profileCardOpen = false;
     if (this.menuTrigger?.menuOpen) {

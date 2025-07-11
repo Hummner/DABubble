@@ -22,18 +22,19 @@
     </div>
     <mat-icon>expand_more</mat-icon>
     <mat-menu
-      class="mat-menu-profile"
       #baseMenu="matMenu"
       [hasBackdrop]="false"
       (menuOpened)="backdropVisible = true"
       (menuClosed)="onMenuClosed()"
     >
-      <button class="mat-menu-item" mat-menu-item (click)="openProfile()">
-        Profil
-      </button>
-      <button class="mat-menu-item" mat-menu-item (click)="logOut()">
-        Log Out
-      </button>
+      <div class="profile-menu-wrap">
+        <button class="mat-menu-item-btn" mat-menu-item (click)="openProfile()">
+          Profil
+        </button>
+        <button class="mat-menu-item-btn" mat-menu-item (click)="logOut()">
+          Log Out
+        </button>
+      </div>
     </mat-menu>
   </div>
 </header>

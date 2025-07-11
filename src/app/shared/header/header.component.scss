@@ -78,29 +78,27 @@ header {
   cursor: pointer;
   border: none;
 }
-::ng-deep .mat-menu-profile {
-  width: 280px !important;
-  height: 180px;
-  display: flex;
-  top: 20px;
-}
+// ::ng-deep .mat-menu-profile {
+//   width: 280px !important;
+//   height: 180px;
+//   display: flex;
+//   top: 20px;
+// }
 
-::ng-deep .mat-mdc-menu-content {
+::ng-deep .menu-wrap{
   justify-content: center !important;
   display: flex;
-  justify-content: center;
   flex-direction: column;
+  align-items: center;
   gap: 20px;
   width: 280px !important;
   height: 180px;
+  border-radius: 30px !important;
 }
 
-// ::ng-deep .cdk-overlay-container {
-//   // position: static !important;
-//   background-color: rgba(0, 0, 0, 0.53) !important;
-// }
-::ng-deep .mat-menu-item {
+::ng-deep .mat-menu-item-btn {
   height: 60px;
+  width: 250px;
   > span {
     font-size: 30px !important;
     text-align: center;
@@ -131,7 +129,7 @@ header {
 }
 
 app-user-profile {
-  z-index: 1001; 
+  z-index: 1001;
   position: absolute;
   top: 90px;
   right: 50px;
