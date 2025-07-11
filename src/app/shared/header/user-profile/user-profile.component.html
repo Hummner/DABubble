@@ -1,0 +1,75 @@
+<div class="container" *ngIf="userProfile() as user">
+  <mat-card *ngIf="!edit" class="user-card">
+    <mat-card-content class="card-header">
+      <p>Profil</p>
+      <img
+        (click)="closeProfileCard($event)"
+        src="assets/icon/close.png"
+        alt="Close Icon"
+      />
+    </mat-card-content>
+    <div class="img-section">
+      <img
+        class="profile-img"
+        mat-card-image
+        [src]="user.imgUrl"
+        alt="Profile Image"
+      />
+    </div>
+    <mat-card-content class="card-content">
+      <div class="profile-name">
+        <h1>{{ user.name }}</h1>
+        <p (click)="openEditProfile()">Bearbeiten</p>
+      </div>
+      <div class="status">
+        <img src="assets/icon/Online.png" alt="Status Icon" />
+        <p>Online</p>
+      </div>
+      <div class="email-section">
+        <img src="assets/icon/mail_black.png" alt="Email Icon" />
+        <div class="email">
+          <p class="label">Email Adresse</p>
+          <p>{{ user.email }}</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="edit" class="user-card edit">
+    <mat-card-content class="card-header">
+      <p>Dein Profil bearbeiten</p>
+      <img
+        (click)="closeProfileCard($event)"
+        src="assets/icon/close.png"
+        alt="Close Icon"
+      />
+    </mat-card-content>
+    <div class="img-section">
+      <img
+        class="profile-img"
+        mat-card-image
+        [src]="user.imgUrl"
+        alt="Profile Image"
+      />
+    </div>
+    <mat-card-content class="card-content edit-content">
+      <form>
+        <div class="input-label">
+          <img src="assets/icon/account_circle.png" alt="Account Image" />
+          <p class="label">Vollständiger Name</p>
+        </div>
+        <input
+          [(ngModel)]="editableUser.name"
+          class="input-name"
+          type="text"
+          placeholder="{{ user.name }}"
+          name="name"
+        />
+        <div class="btn-section">
+          <button (click)="cancelEdit()">Abbrechen</button>
+          <button type="button" (click)="closeEdit()">Speichern</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
