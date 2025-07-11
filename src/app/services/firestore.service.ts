@@ -6,6 +6,7 @@ import {
   setDoc,
   doc,
   onSnapshot,
+  updateDoc,
 } from '@angular/fire/firestore';
 import { user } from '@angular/fire/auth';
 import { AuthService } from './auth.service';
@@ -19,6 +20,7 @@ export class FirestoreService {
   auth = inject(AuthService);
   user$ = user(this.auth.firebaseAuth);
   userId?: string;
+  user?: UserProfileInterface;
 
   userProfile: WritableSignal<UserProfileInterface | null> = signal(null);
   unsubUserProfile?: () => void;
@@ -92,5 +94,25 @@ export class FirestoreService {
 
   getSingleDoc(colId: string, docId: string) {
     return doc(collection(this.firestore, colId), docId);
+  }
+
+  async updateUser(user: UserProfileInterface) {
+    if (user.uid) {
+      let docRef = this.getSingleDoc('users', user.uid);
+      await updateDoc(docRef, this.getCleanJson(user)).catch((err) => {
+        console.log(err);
+      });
+    }
+  }
+
+  getCleanJson(user: UserProfileInterface): {} {
+    return {
+      uid: user.uid,
+      name: user.name,
+      email: user.email,
+      imgUrl: user.imgUrl,
+      createdAt: user.createdAt,
+      isAnonymous: user.isAnonymous,
+    };
   }
 }

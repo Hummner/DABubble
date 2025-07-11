@@ -7,10 +7,43 @@
       <mat-icon>search</mat-icon>
     </button>
   </div>
-
-  <div *ngIf="userProfile() as user" class="logged-user">
+  <div
+    *ngIf="userProfile() as user"
+    class="mat-button-profile logged-user"
+    mat-button
+    [matMenuTriggerFor]="baseMenu"
+    (click)="showOverlay()"
+    #menuTrigger="matMenuTrigger"
+  >
     <div class="user-name">{{ user.name }}</div>
-    <img [src]="user.imgUrl" alt="user" />
+    <div class="profile-img-section">
+      <img class="profile-img" [src]="user.imgUrl" alt="user" />
+      <img class="status-img" src="assets/icon/Online.png" alt="online icon" />
+    </div>
     <mat-icon>expand_more</mat-icon>
+    <mat-menu
+      class="mat-menu-profile"
+      #baseMenu="matMenu"
+      [hasBackdrop]="false"
+      (menuOpened)="backdropVisible = true"
+      (menuClosed)="onMenuClosed()"
+    >
+      <button class="mat-menu-item" mat-menu-item (click)="openProfile()">
+        Profil
+      </button>
+      <button class="mat-menu-item" mat-menu-item (click)="logOut()">
+        Log Out
+      </button>
+    </mat-menu>
   </div>
 </header>
+<div
+  class="custom-backdrop"
+  [class.visible]="backdropVisible"
+  (click)="closeAll()"
+></div>
+
+<app-user-profile
+  *ngIf="profileCardOpen"
+  (close)="closeProfile()"
+></app-user-profile>
