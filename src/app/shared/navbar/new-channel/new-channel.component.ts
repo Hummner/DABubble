@@ -5,9 +5,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialogActions } from '@angular/material/dialog';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogActions, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { NgClass } from '@angular/common';
+import { AddChannelMemberComponent } from '../add-channel-member/add-channel-member.component';
 
 @Component({
   selector: 'app-new-channel',
@@ -26,16 +26,23 @@ import { NgClass } from '@angular/common';
   ],
 })
 export class NewChannelComponent {
+
+  constructor(public radioDialog: MatDialog) {}
+
   channelName = '';
   dialogRef = inject(MatDialogRef<NewChannelComponent>);
+  radioGroup = inject(MatDialogRef<AddChannelMemberComponent>);
 
   closeDialog() {
     this.dialogRef.close();
   }
 
   createChannel() {
-    if (this.channelName.trim()) {
-      this.dialogRef.close(this.channelName);
-    }
+    this.closeDialog();
+    const radioRef = this.radioDialog.open(AddChannelMemberComponent);
+
+    radioRef.afterClosed().subscribe(result => {
+      console.log(`Radiodialog result: ${result}`);
+    });
   }
 }
