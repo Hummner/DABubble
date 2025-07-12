@@ -1,0 +1,36 @@
+
+
+
+
+.actions {
+    position: absolute;
+    bottom: 32px;
+    right: 32px;
+    z-index: 1000;
+
+    >button {
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+}
+
+.btn-active {
+    background-color: #535af1;
+    color: white;
+
+        &:hover {
+            background-color: #9498f5;
+            transition: background-color 0.3s ease-in-out;
+        }
+}
+
+.btn-disabled {
+    background-color: #ccc;
+    color: white;
+    cursor: not-allowed;
+}

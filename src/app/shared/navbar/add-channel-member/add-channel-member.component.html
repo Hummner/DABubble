@@ -1,0 +1,14 @@
+<form #memberForm="ngForm" (ngSubmit)="addMember()">
+  <label id="add-members">Leute hinzufügen</label>
+  <mat-radio-group aria-label="Select an option">
+    <mat-radio-button value="1">Option 1</mat-radio-button>
+    <mat-radio-button value="2">Option 2</mat-radio-button>
+      <mat-dialog-actions class="actions" align="end">
+        <button 
+          type="submit"
+          [disabled]="!memberForm.valid"
+          [ngClass]="!memberForm.valid ? 'btn-disabled' : 'btn-active'">
+            Erstellen
+          </button>
+      </mat-dialog-actions>
+  </mat-radio-group>
