@@ -4,6 +4,11 @@
     padding-bottom: 16px;
 }
 
+::ng-deep .mat-drawer-inner-container {
+    display: flex;
+    flex-direction: column;
+}
+
 .navbar-container {
     position: relative;;
     height: 100%;
@@ -31,6 +36,10 @@
     }
 }
 
+.navbar-menu {
+    flex: 1;
+    overflow: auto;
+}
 
 .navbar-channels,
 .navbar-direct-messages {
