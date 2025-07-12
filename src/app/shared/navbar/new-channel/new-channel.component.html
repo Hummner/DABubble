@@ -21,15 +21,14 @@
             <p>Beschreibung <span class="optional-text">(optional)</span></p>
             <textarea matInput placeholder="Dein Text hier"></textarea>
         </mat-form-field>
-        </mat-dialog-content>
 
         <mat-dialog-actions class="actions" align="end">
-        <button 
-            type="submit"
-            [disabled]="!channelForm.valid"
-            [ngClass]="!channelForm.valid ? 'btn-disabled' : 'btn-active'">
-            Erstellen
-        </button>
-    </mat-dialog-actions>
-
+            <button 
+                type="submit"
+                [disabled]="!channelForm.valid"
+                [ngClass]="!channelForm.valid ? 'btn-disabled' : 'btn-active'">
+                Erstellen
+            </button>
+        </mat-dialog-actions>
+    </mat-dialog-content>
 </form>

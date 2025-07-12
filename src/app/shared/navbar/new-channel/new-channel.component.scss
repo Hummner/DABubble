@@ -1,7 +1,9 @@
 ::ng-deep .mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
     max-width: 1000px;
     width: 100%;
-    height: 550px;
+    height: 600px;
+    background-color: white;
+    border-radius: 30px; 
 }
 
 ::ng-deep .mat-mdc-form-field-subscript-wrapper, .mat-mdc-form-field-bottom-align::before {
@@ -25,7 +27,10 @@
 }
 
 ::ng-deep .cdk-overlay-pane {
-    position: static !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;   
 }
 
 ::ng-deep mat-form-field {
@@ -71,11 +76,11 @@
 }
 
 .newchannel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row-reverse;
-  margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row-reverse;
+    margin-bottom: 32px;
 
   h1 {
     font-size: 24px;
@@ -94,6 +99,7 @@ p {
     position: absolute;
     bottom: 32px;
     right: 32px;
+    z-index: 1000;
 
     >button {
         color: white;
