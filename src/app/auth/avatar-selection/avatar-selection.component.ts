@@ -42,7 +42,6 @@ export class AvatarSelectionComponent {
   }
 
   chooseProfilImg(src: string) {
-    console.log('chosen img', src);
     this.currentProfilImageUrl = src;
     this.profileImageChosen = true;
   }
