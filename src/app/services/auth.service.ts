@@ -5,9 +5,9 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
   user,
+  signInAnonymously,
 } from '@angular/fire/auth';
 import { from, Observable } from 'rxjs';
-import { UserSignupInterface } from '../interfaces/user-signup.interface';
 import { signOut } from 'firebase/auth';
 import { sendPasswordResetEmail } from 'firebase/auth';
 
@@ -17,8 +17,6 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 export class AuthService {
   firebaseAuth = inject(Auth);
   user$ = user(this.firebaseAuth);
-
-  // currentUserSign = signal<UserSignupInterface | null | undefined>(undefined);
 
   register(name: string, email: string, password: string): Observable<void> {
     const promise = createUserWithEmailAndPassword(
@@ -34,7 +32,21 @@ export class AuthService {
       this.firebaseAuth,
       email,
       password
-    ).then(() => {});
+    ).then(() => {
+      console.log(this.firebaseAuth.currentUser);
+    });
+    return from(promise);
+  }
+
+  signInAnonymously(): Observable<void> {
+    const promise = signInAnonymously(this.firebaseAuth)
+      .then(() => {})
+      .catch((err) => {
+        const errorCode = err.code;
+        const errorMessage = err.message;
+        console.error(`Error ${errorCode}: ${errorMessage}`);
+        throw err;
+      });
     return from(promise);
   }
 

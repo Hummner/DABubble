@@ -3,7 +3,6 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { updateProfile } from '@angular/fire/auth';
 import { FirestoreService } from '../../services/firestore.service';
-import { Firestore, setDoc, doc } from '@angular/fire/firestore';
 import { Header2Component } from '../../shared/header-2/header-2.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
 
@@ -14,13 +13,13 @@ import { FooterComponent } from '../../shared/footer/footer.component';
   templateUrl: './avatar-selection.component.html',
   styleUrl: './avatar-selection.component.scss',
 })
-export class AvatarSelectionComponent {
+export class AvatarSelectionComponent implements OnInit {
   currentProfilImageUrl = '';
   profileImageChosen = false;
+  userName = '';
+
   authService = inject(AuthService);
   router = inject(Router);
-  firestore = inject(Firestore);
-  userName = '';
 
   profileImageUrls = [
     'assets/img/elias_neumann.svg',
@@ -35,8 +34,8 @@ export class AvatarSelectionComponent {
 
   ngOnInit(): void {
     this.authService.user$.subscribe((user) => {
-      if (user) {
-        this.userName = user.displayName!;
+      if (user?.displayName) {
+        this.userName = user.displayName;
       }
     });
   }
@@ -48,22 +47,14 @@ export class AvatarSelectionComponent {
 
   async completeRegistration() {
     const user = this.authService.firebaseAuth.currentUser;
-    if (user) {
-      await updateProfile(user, { photoURL: this.currentProfilImageUrl }).then(
-        () => {
-          console.log(user);
-          user.reload();
-          this.firestoreService.addUserToDatabase(
-            JSON.parse(
-              JSON.stringify(
-                this.firestoreService.setUserProfileObject(user, user.uid)
-              )
-            ),
-            user.uid
-          );
-          this.router.navigateByUrl('/channel');
-        }
-      );
+    if (!user) return;
+    try {
+      await updateProfile(user, { photoURL: this.currentProfilImageUrl });
+      const userProfile = this.firestoreService.toUserProfile(user, user.uid);
+      await this.firestoreService.addUserToDatabase(userProfile, user.uid);
+      this.router.navigateByUrl('/channel');
+    } catch (error) {
+      console.error('Error completing registration:', error);
     }
   }
 }

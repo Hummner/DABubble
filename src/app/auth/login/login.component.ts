@@ -15,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { getAuth } from '@angular/fire/auth';
+import { FirestoreService } from '../../services/firestore.service';
 
 import { Header2Component } from '../../shared/header-2/header-2.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
@@ -32,6 +33,7 @@ export class LoginComponent implements AfterViewInit {
   auth = getAuth();
   user = this.auth.currentUser;
   submitted = false;
+  fireStore = inject(FirestoreService);
 
   loginForm = new FormGroup({
     email: this.fb.nonNullable.control('', [
@@ -93,5 +95,19 @@ export class LoginComponent implements AfterViewInit {
     // setTimeout(() => {
     //   this.greeting.nativeElement.classList.add('hide');
     // }, 3500);
+  }
+
+  guestLogin() {
+    this.authService.signInAnonymously().subscribe({
+      next: () => {
+        console.log('Anonymous login successful');
+        this.router.navigateByUrl('channel');
+        const uid = this.auth.currentUser?.uid;
+        if (uid) {
+          this.fireStore.getGuestLoginData(uid);
+        }
+      },
+      error: (err) => console.error('Anonymous login error:', err),
+    });
   }
 }
