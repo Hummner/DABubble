@@ -31,7 +31,7 @@ export class NewChannelComponent {
 
   channelName = '';
   dialogRef = inject(MatDialogRef<NewChannelComponent>);
-  radioGroup = inject(MatDialogRef<AddChannelMemberComponent>);
+  radioRef = inject(MatDialogRef<AddChannelMemberComponent>);
 
   closeDialog() {
     this.dialogRef.close();

@@ -1,14 +1,30 @@
 <form #memberForm="ngForm" (ngSubmit)="addMember()">
-  <label id="add-members">Leute hinzufügen</label>
-  <mat-radio-group aria-label="Select an option">
-    <mat-radio-button value="1">Option 1</mat-radio-button>
-    <mat-radio-button value="2">Option 2</mat-radio-button>
+  <div class="add-members-header">
+    <h2>Leute hinzufügen</h2>
+    <span mat-icon-button (click)="closeDialog()">
+      <mat-icon>close</mat-icon>
+    </span>
+  </div>
+      <mat-radio-group [(ngModel)]="inviteMode" name="inviteMode">
+        <mat-radio-button [value]="1">Alle Mitglieder von … hinzufügen</mat-radio-button>
+        <mat-radio-button [value]="2">Bestimmte Leute hinzufügen</mat-radio-button>
+        <ng-container *ngIf="inviteMode === 2">
+          <mat-form-field class="full-width" appearance="outline">
+            <input 
+              matInput 
+              placeholder="Name eingeben" 
+              [(ngModel)]="searchText" 
+              name="search"
+              [attr.required]="inviteMode === 2 ? '' : null" />
+          </mat-form-field>
+        </ng-container>
+      </mat-radio-group>
       <mat-dialog-actions class="actions" align="end">
         <button 
           type="submit"
-          [disabled]="!memberForm.valid"
-          [ngClass]="!memberForm.valid ? 'btn-disabled' : 'btn-active'">
+          [disabled]="isDisabled()"
+          [ngClass]="isDisabled() ? 'btn-disabled' : 'btn-active'">
             Erstellen
           </button>
       </mat-dialog-actions>
-  </mat-radio-group>
+</form>
