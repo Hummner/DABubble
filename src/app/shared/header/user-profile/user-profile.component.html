@@ -1,5 +1,5 @@
 <div class="container" *ngIf="userProfile() as user">
-  <mat-card *ngIf="!edit" class="user-card">
+  <mat-card *ngIf="!edit && !editImg" class="user-card">
     <mat-card-content class="card-header">
       <p>Profil</p>
       <img
@@ -44,14 +44,13 @@
         alt="Close Icon"
       />
     </mat-card-content>
-    <div class="img-section">
-      <img
-        class="profile-img"
-        mat-card-image
-        [src]="user.imgUrl"
-        alt="Profile Image"
-      />
+    <div class="img-section" tabindex="0" (click)="openEditProfileImg()">
+      <img class="profile-img-edit" [src]="user.imgUrl" alt="Profile Image" (mouseenter)="showTooltip = true" (mouseleave)="showTooltip = false" />
+      <div class="custom-tooltip" *ngIf="showTooltip">
+        Click to change avatar
+      </div>
     </div>
+
     <mat-card-content class="card-content edit-content">
       <form>
         <div class="input-label">
@@ -70,6 +69,44 @@
           <button type="button" (click)="closeEdit()">Speichern</button>
         </div>
       </form>
+    </mat-card-content>
+  </mat-card>
+  <mat-card *ngIf="editImg && !edit" class="user-card edit">
+    <mat-card-content class="card-header">
+      <p>Neue Avatar auswählen</p>
+      <img
+        (click)="closeProfileCard($event)"
+        src="assets/icon/close.png"
+        alt="Close Icon"
+      />
+    </mat-card-content>
+    <div class="img-section">
+      @if(profileImageChosen){
+      <img
+        class="chosenImg"
+        [src]="currentProfilImageUrl"
+        alt="Profile Picture"
+      />
+      } @if(!profileImageChosen){
+      <img
+        (click)="openEditProfileImg()"
+        class="profile-img"
+        mat-card-image
+        [src]="user.imgUrl"
+        alt="Profile Image"
+      />
+      }
+    </div>
+    <mat-card-content class="card-content edit-content">
+      <div class="img-list">
+        @for(imgUrl of profileImageUrls; track imgUrl; let index = $index){
+        <img [src]="imgUrl" (click)="changeProfilImg(imgUrl)" alt="" />
+        }
+      </div>
+      <div class="btn-section">
+        <button (click)="editImg = false">Abbrechen</button>
+        <button type="button" (click)="closeEditImg()">Speichern</button>
+      </div>
     </mat-card-content>
   </mat-card>
 </div>
