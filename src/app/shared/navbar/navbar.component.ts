@@ -1,20 +1,47 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NewChannelComponent } from './new-channel/new-channel.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FirestoreService } from '../../services/firestore.service';
+import { UserProfileInterface } from '../../interfaces/user-profile.interface';
+import { NgIf } from '@angular/common';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [ MatSidenavModule, MatIconModule, MatToolbarModule, MatDialogModule ],
+  imports: [
+    MatSidenavModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatDialogModule,
+    NgIf,
+  ],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss'
+  styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
+  userProfile = this.firestoreService.userProfile;
+  user: UserProfileInterface | null = null;
 
-  constructor(public dialog: MatDialog) {}
+  ngOnInit(): void {
+    const user = this.userProfile();
+    if (user) {
+      this.user = { ...user };
+    }
+  }
+  constructor(
+    public dialog: MatDialog,
+    private firestoreService: FirestoreService
+  ) {}
+
+  getOtherUserList(): UserProfileInterface[] {
+    return this.firestoreService.userList.filter(
+      (user) => user.uid !== this.userProfile()?.uid
+    );
+  }
 
   showChannel = true;
   showMessage = true;
@@ -27,7 +54,7 @@ export class NavbarComponent {
   openDialog() {
     const dialogRef = this.dialog.open(NewChannelComponent);
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
     });
   }

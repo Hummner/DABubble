@@ -19,6 +19,8 @@ export class FirestoreService implements OnDestroy {
   private firestore = inject(Firestore);
   private auth = inject(AuthService);
   private user$ = user(this.auth.firebaseAuth);
+  userList:UserProfileInterface[] = [];
+  unsubUsers;
 
   userProfile: WritableSignal<UserProfileInterface | null> = signal(null);
   private unsubUserProfile?: () => void;
@@ -34,10 +36,23 @@ export class FirestoreService implements OnDestroy {
       this.unsubUserProfile?.();
       this.unsubUserProfile = this.subscribeToCurrentUser(user.uid);
     });
+    this.unsubUsers = this.subUserList();
+  }
+
+  subUserList(){
+    let ref = this.getUsersRef();
+    return onSnapshot(ref, (list)=> {
+      this.userList = [];
+      list.forEach((element) => {
+        this.userList.push(this.toUserProfile(element.data(), element.id))
+        console.log(this.userList)
+      })
+    })
   }
 
   ngOnDestroy() {
     this.unsubUserProfile?.();
+    this.unsubUsers();
   }
 
   private subscribeToCurrentUser(uid: string) {
