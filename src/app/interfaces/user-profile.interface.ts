@@ -5,5 +5,4 @@ export interface UserProfileInterface {
     imgUrl:string;
     createdAt:string;
     isAnonymous:boolean;
-    
 }

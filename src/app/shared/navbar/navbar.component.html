@@ -129,12 +129,14 @@
         <p>{{ user.name }} (Du)</p>
       </li>
       @for(user of getOtherUserList(); track user){
-      <li class="direct-messages-item">
-        <div class="avatar">
-          <img [src]="user.imgUrl" alt="Elise Roth" />
-        </div>
-        <p>{{ user.name }}</p>
-      </li>
+      <a [routerLink]="['/directMessages']"
+        ><li class="direct-messages-item">
+          <div class="avatar">
+            <img [src]="user.imgUrl" alt="Elise Roth" />
+          </div>
+          <p>{{ user.name }}</p>
+        </li>
+      </a>
       }
     </ul>
     }
