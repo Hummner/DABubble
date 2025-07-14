@@ -6,7 +6,10 @@
     </span>
   </div>
       <mat-radio-group [(ngModel)]="inviteMode" name="inviteMode">
-        <mat-radio-button [value]="1">Alle Mitglieder von … hinzufügen</mat-radio-button>
+        <mat-radio-button [value]="1">Alle Mitglieder von 
+          <span class="channel-name">{{ channelName }} </span>
+          hinzufügen
+        </mat-radio-button>
         <mat-radio-button [value]="2">Bestimmte Leute hinzufügen</mat-radio-button>
         <ng-container *ngIf="inviteMode === 2">
           <mat-form-field class="full-width" appearance="outline">

@@ -76,38 +76,58 @@
 }
 
 form {
-    width: 600px;
-    height: 400px;
-    padding: 32px;
+  width: 100%;
+  height: 350px;
+  max-width: 600px;
+  padding: 32px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+
+.channel-name {
+    font-weight: bold;
+    color: #535af1;
 }
 
 .add-members-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+
+  h2 {
+    font-size: 24px;
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    color: #000000;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
+    justify-content: center;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 8px;
+    font-size: 24px;
 
-    h2 {
-        font-size: 24px;
-        font-family: 'Nunito', sans-serif;
-        margin: 0;
-        color: #000000;
+    &:hover {
+      color: #535af1;
+      background-color: #eceefe;
+      border-radius: 50%;
     }
-
-    span {
-        border: none;
-        background-color: transparent;
-        cursor: pointer;
-        padding: 8px;
-        font-size: 24px;
-
-        &:hover {
-            color: #535af1;
-            background-color: #eceefe;
-            border-radius: 50%;
-        }
-    }
+  }
 }
+
 
 .actions {
     position: absolute;
