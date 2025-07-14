@@ -88,8 +88,8 @@
             </header>
             <main>
                 <div class="scroll-wrapper">
-                    @for (ticket of [1,2,3]; track $index) {
-                    <app-ticket [index]="$index" (openThread)="drawer.toggle()"></app-ticket>
+                    @for (ticket of channel?.messages; track $index) {
+                    <app-ticket [index]="$index" [ticket]="ticket" [members]="channel?.members" (openThread)="drawer.toggle()"></app-ticket>
                     }
                     <div class="placeholder">
                         <div class="placeholder-date">Heute</div>
