@@ -137,19 +137,17 @@
 
 
 .channel-list {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  list-style: none;
-  padding: 0;
-  margin-bottom: 32px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  list-style: none !important;
+  margin-bottom: 32px !important;
 
   .channel-item {
     display: flex;
     align-items: center;
-    margin-left: 36px;
     border-radius: 50px;
-    padding-left: 16px;
+    padding-left: 10px;
     padding-bottom: 8px;
     padding-top: 8px;
     max-width: 250px;

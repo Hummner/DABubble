@@ -45,18 +45,16 @@
           <span class="material-symbols-outlined edit-icon" (click)="openDialog()">add</span>
         </div>
 
-        @if (showChannel) {
-          <ul class="channel-list">
-            <li class="channel-item">
-              <span class="material-symbols-outlined">tag</span>
-              <p>Entwicklerteam</p>
-            </li>
-            <li class="channel-item" (click)="openDialog()">
-              <span class="material-symbols-outlined edit-icon" >add_circle</span>
-              <p>Channel hinzufügen</p>
-            </li>
-          </ul>
-        }
+        <ul *ngIf="showChannel" class="channel-list">
+          <li *ngFor="let ch of channels$ | async; let i = index" class="channel-item">
+            <span class="material-symbols-outlined edit-icon">tag</span>
+            <p>{{ ch.name }}</p>
+          </li>
+          <li class="channel-item" (click)="openDialog()">
+            <span class="material-symbols-outlined edit-icon">add_circle</span>
+            <p>Channel hinzufügen</p>
+          </li>
+        </ul>
 
         <div class="navbar-direct-messages">
           <div class="navbar-direct-messages-content">
