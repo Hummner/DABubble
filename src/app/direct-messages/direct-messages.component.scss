@@ -1,0 +1,385 @@
+section {
+  gap: 64px;
+  display: flex;
+  height: 100%;
+  padding-bottom: 16px;
+}
+
+:host {
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+  padding: 0 24px;
+  background-color: #eceefe;
+}
+
+.mat-drawer {
+  border: none !important;
+}
+
+.content {
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: white;
+  border-radius: 30px;
+  height: 100%;
+}
+
+.dm-name {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  > .dm-img {
+    position: relative;
+    > .message-to-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+    > .status-img {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
+    }
+  }
+  > p {
+    font-size: 18px;
+    margin: 0;
+  }
+}
+
+header {
+  height: 96px;
+  box-shadow: 0px 2px 10px 0px #00000014;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 45px;
+}
+
+footer {
+  display: flex;
+  height: 145px;
+  border: 1px solid #adb0d9;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 25px 45px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.input-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.input-icon {
+  border-radius: 100%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background-color: #eceefe;
+    cursor: pointer;
+  }
+
+  &:hover img {
+    filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%)
+      hue-rotate(228deg) brightness(96%) contrast(97%);
+  }
+
+  > img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.send-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.text-area {
+  display: flex;
+  flex: 1;
+
+  > textarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    resize: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.placeholder {
+  width: calc(100% - 90px);
+  height: 1px;
+  background-color: #adb0d9;
+  margin: 24px 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.placeholder-date {
+  border: 1px solid #adb0d9;
+  border-radius: 20px;
+  padding: 4px 8px;
+  width: fit-content;
+  background-color: white;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1;
+  overflow: hidden;
+}
+
+.scroll-wrapper {
+  overflow-y: auto;
+  width: 100%;
+  padding: 0 45px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dm-msg-name {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  > img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+  }
+  > p {
+    font-size: 18px;
+    font-weight: 700;
+  }
+}
+
+.dm-msg-info {
+  > p {
+    font-size: 18px;
+  }
+}
+
+.purple {
+  color: #535af1;
+  &:hover {
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+
+//////////////// Ticket
+
+.ticket-container {
+  &:hover {
+    background-color: #eceefe;
+    cursor: pointer;
+
+    .ticket {
+      .message {
+        background-color: white;
+      }
+    }
+  }
+}
+
+.ticket {
+  display: flex;
+  gap: 24px;
+  padding: 20px 45px;
+  position: relative;
+}
+
+.member-img-ticket {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  overflow: hidden;
+
+  > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  background-color: #eceefe;
+  border-radius: 0 30px 30px 30px;
+  padding: 15px;
+  font-size: 18px;
+
+  > p {
+    margin: 0;
+  }
+}
+
+.name-date {
+  display: flex;
+  gap: 24px;
+}
+
+.msg-name {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.answers {
+  display: flex;
+  align-items: center;
+}
+
+.msg-date {
+  color: #686868;
+  font-size: 14px;
+}
+
+.msg-answer {
+  color: #535af1;
+  font-size: 18px;
+  cursor: pointer;
+  font-weight: 400;
+
+  &:hover {
+    font-weight: 700;
+  }
+}
+
+.msg-answer-container {
+  width: 150px;
+  display: flex;
+  align-items: center;
+}
+
+.emoji-menu {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #adb0d9;
+  border-radius: 25px 25px 0 25px;
+  width: 210px;
+  height: 46px;
+  padding: 3px 15px 3px 15px;
+  background-color: white;
+  top: -24px;
+  right: 48px;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(20px);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.emoji-menu.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.emoji-menu.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(20px);
+}
+
+.emoji-menu-item {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #eceefe;
+    border-radius: 100%;
+
+    .hover-purple {
+      filter: brightness(0) saturate(100%) invert(43%) sepia(61%)
+        saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+    }
+  }
+}
+
+.reverse {
+  flex-direction: row-reverse !important;
+}
+
+.reverse-backround {
+  background-color: #797ef3 !important;
+  border-radius: 30px 0 30px 30px !important;
+
+  > p {
+    color: white !important;
+  }
+}
+
+/////////////////////// ticket end
+///
+///
+
+// ::ng-deep .mat-mdc-menu-panel {
+//   border-radius: 30px 0 30px 30px !important;
+
+//   max-width: 600px !important;
+// }
+
+// ::ng-deep .cdk-overlay-pane {
+//   position: absolute !important;
+//   top: 10px;
+// }
+
+// ::ng-deep .mat-mdc-menu-content {
+//   padding: 0 !important;
+// }
+
+// ::ng-deep .mat-typography {
+//   font: unset !important;
+// }
+
+.no-margin {
+  margin: 0px !important;
+}
+
+.margin-16 {
+  margin-left: 0 !important;
+  margin-right: 16px !important;
+}
