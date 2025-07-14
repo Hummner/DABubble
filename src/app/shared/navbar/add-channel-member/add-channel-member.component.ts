@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Inject, Output } from '@angular/core';
 import { MatRadioModule} from '@angular/material/radio';
 import { FormsModule } from '@angular/forms';
-import { MatDialogActions, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogActions, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgClass, NgIf } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField } from "@angular/material/form-field";
@@ -25,8 +25,13 @@ import { MatInputModule } from '@angular/material/input';
 })
 export class AddChannelMemberComponent {
 
-    constructor(public dialog: MatDialog ) { }
-
+    constructor(
+      public dialog: MatDialog, 
+      @Inject(MAT_DIALOG_DATA) public data: any) {
+        this.channelName = data.channelName || '';
+      }
+    
+    channelName: string = '';
     inviteMode: number = 1;
     searchText: string = '';
 
@@ -39,9 +44,14 @@ export class AddChannelMemberComponent {
       return this.inviteMode === 2 && !this.searchText?.trim();
     }
 
-
     addMember() {
-        console.log('addMember');
-        this.closeDialog();
+      this.radioRef.close({
+        added: true,
+        name: this.channelName
+      });
+    }
+
+    ngOnInit() {
+      console.log('Channelname aus vorherigem Dialog:', this.data.channelName);
     }
 }

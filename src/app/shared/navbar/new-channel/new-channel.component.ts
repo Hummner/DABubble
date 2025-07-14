@@ -29,7 +29,7 @@ export class NewChannelComponent {
 
   constructor(public radioDialog: MatDialog) {}
 
-  channelName = '';
+  channelName: string = '';
   dialogRef = inject(MatDialogRef<NewChannelComponent>);
   radioRef = inject(MatDialogRef<AddChannelMemberComponent>);
 
@@ -38,11 +38,17 @@ export class NewChannelComponent {
   }
 
   createChannel() {
-    this.closeDialog();
-    const radioRef = this.radioDialog.open(AddChannelMemberComponent);
-
-    radioRef.afterClosed().subscribe(result => {
-      console.log(`Radiodialog result: ${result}`);
+    const dialogRef = this.radioDialog.open(AddChannelMemberComponent, {
+      data: {
+        channelName: this.channelName
+      }
     });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+
+    this.closeDialog();
   }
+
 }
