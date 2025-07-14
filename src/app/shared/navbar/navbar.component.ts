@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -7,6 +7,11 @@ import { NewChannelComponent } from './new-channel/new-channel.component';
 import { AddChannelMemberComponent } from './add-channel-member/add-channel-member.component';
 import { NavbarService } from '../../services/navbar.service';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FirestoreService } from '../../services/firestore.service';
+import { UserProfileInterface } from '../../interfaces/user-profile.interface';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-navbar',
@@ -18,15 +23,34 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
     MatDialogModule,
     NgFor,
     NgIf,
-    AsyncPipe
+    AsyncPipe,
+    RouterModule
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent {
-  private dialog = inject(MatDialog);
-  channels$ = inject(NavbarService).channelsObs$;   // <<—  Daten‑Stream
 
+export class NavbarComponent implements OnInit {
+  userProfile = this.firestoreService.userProfile;
+  user: UserProfileInterface | null = null;
+  channels$ = inject(NavbarService).channelsObs$;
+
+  ngOnInit(): void {
+    const user = this.userProfile();
+    if (user) {
+      this.user = { ...user };
+    }
+  }
+  constructor(
+    public dialog: MatDialog,
+    private firestoreService: FirestoreService
+  ) {}
+
+  getOtherUserList(): UserProfileInterface[] {
+    return this.firestoreService.userList.filter(
+      (user) => user.uid !== this.userProfile()?.uid
+    );
+  }
   isOpen = true;
   showChannel = true;
   showMessage = true;
