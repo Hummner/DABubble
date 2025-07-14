@@ -78,14 +78,24 @@ header {
   cursor: pointer;
   border: none;
 }
-// ::ng-deep .mat-menu-profile {
-//   width: 280px !important;
-//   height: 180px;
-//   display: flex;
-//   top: 20px;
-// }
+::ng-deep .mat-menu-profile {
+  width: 280px !important;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 30px;
+  border-top-right-radius: 0;
+}
 
-::ng-deep .menu-wrap{
+::ng-deep .profile-menu-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+::ng-deep .menu-wrap {
   justify-content: center !important;
   display: flex;
   flex-direction: column;
