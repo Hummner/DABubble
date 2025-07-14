@@ -27,25 +27,19 @@ export class ChannelComponent implements OnInit {
   editDisc = false;
   channel: ChannelInterface | null = null;
 
+
   constructor() {
 
   }
 
-
   ngOnInit(): void {
     this.channelsService.channel$.subscribe(channel => {
-      if(channel) {
+      if (channel) {
         this.channel = channel;
         console.log('Channel empfangen:', this.channel);
       }
     })
-
-
-
     this.getChannelInfo();
-    
-    
-    
   }
 
   openMenu(trigger: MatMenuTrigger) {
@@ -68,13 +62,8 @@ export class ChannelComponent implements OnInit {
       setTimeout(() => {
         this.discInput.nativeElement.focus();
         this.focusAfterText(this.discInput);
-
       }, 1);
-
     }
-
-
-
   }
 
   focusAfterText(inputRef: ElementRef<HTMLInputElement>) {
@@ -95,8 +84,8 @@ export class ChannelComponent implements OnInit {
     }
   }
 
-
-   getChannelInfo() {
-    return  this.channelsService.getChannel("KRIw2GN8Ym9EQmijM84l");
+  getChannelInfo() {
+    return this.channelsService.getChannel("KRIw2GN8Ym9EQmijM84l");
   }
+
 }
