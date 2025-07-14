@@ -8,6 +8,8 @@ import { FirestoreService } from '../../services/firestore.service';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { NgIf } from '@angular/common';
 import { User } from 'firebase/auth';
+import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -18,6 +20,7 @@ import { User } from 'firebase/auth';
     MatToolbarModule,
     MatDialogModule,
     NgIf,
+    RouterModule
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
