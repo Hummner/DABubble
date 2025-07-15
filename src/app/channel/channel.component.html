@@ -94,32 +94,32 @@
                     <div class="placeholder">
                         <div class="placeholder-date">Heute</div>
                     </div>
-                    <div class="ticket-container">
-                        <div class="ticket reverse reverse-hover">
+                    <!-- <div class="ticket-container">
+                        <div class="ticket" [ngClass]="{'reverse reverse-hover' : isCurrentUser()}">
                             <div class="member-img-ticket">
                                 <img src="assets/img/elias_neumann.svg" alt="">
                             </div>
                             <div class="message-content">
-                                <div class="name-date reverse">
+                                <div class="name-date" [ngClass]="{'reverse' : isCurrentUser()}">
                                     <span class="msg-name">Elias Neumann</span>
                                     <span class="msg-date">14:10 Uhr</span>
                                 </div>
-                                <div class="message reverse-backround">
+                                <div class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}"> 
                                     <p>Welche Version ist aktuell von Angular?</p>
                                 </div>
-                                <div class="answers reverse">
-                                    <div class="msg-answer-container reverse"><span class="msg-answer"
+                                <div class="answers" [ngClass]="{'reverse' : isCurrentUser()}">
+                                    <div class="msg-answer-container" [ngClass]="{'reverse' : isCurrentUser()}"><span class="msg-answer"
                                             (click)="drawer.toggle()">2 Antworten</span></div>
                                     <span class="msg-date">Letze Antwort 14:26</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </main>
             <footer>
                 <div class="text-area">
-                    <textarea name="chat_input" id="chat_input" placeholder="Nachricht an #Entwicklerteam"></textarea>
+                    <textarea [(ngModel)]="textInput" name="chat_input" id="chat_input" placeholder="Nachricht an #Entwicklerteam"></textarea>
                 </div>
                 <div class="input-buttons">
                     <div class="icons">
@@ -130,7 +130,7 @@
                             <img src="assets/icon/tag_icon.png" alt="">
                         </div>
                     </div>
-                    <div class="send-icon">
+                    <div class="send-icon" (click)="addTicket()">
                         <img src="assets/icon/send.png" alt="">
                     </div>
                 </div>

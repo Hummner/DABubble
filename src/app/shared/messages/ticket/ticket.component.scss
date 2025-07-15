@@ -58,6 +58,7 @@
 .name-date {
     display: flex;
     gap: 24px;
+    align-items: center;
 }
 
 .msg-name {
@@ -113,6 +114,11 @@
     transition: opacity 200ms ease, transform 200ms ease;
 }
 
+.emoji-menu-reverse {
+    right: unset !important;
+    left: 48px !important;
+}
+
 .emoji-menu.visible {
     opacity: 1;
     pointer-events: auto;
@@ -156,6 +162,10 @@
     >p {
         color: white !important;
     }
+}
+
+.message-wrapper {
+    display: flex;
 }
 
 .emoji-container {

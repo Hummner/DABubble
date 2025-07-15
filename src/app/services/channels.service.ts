@@ -1,23 +1,26 @@
-import { inject, Injectable } from '@angular/core';
-import { CollectionReference, doc, Firestore, getDoc, getDocs } from '@angular/fire/firestore';
+import { inject, Injectable, OnDestroy } from '@angular/core';
+import { CollectionReference, doc, Firestore, getDoc, getDocs, serverTimestamp, Timestamp } from '@angular/fire/firestore';
 import { collection, onSnapshot } from '@angular/fire/firestore';
 import { ChannelInterface } from '../interfaces/channel.interface';
 import { TicketInterface } from '../interfaces/ticket.interface';
-import { DocumentData } from 'firebase/firestore';
+import { addDoc, DocumentData, query, orderBy } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ChannelsService {
+export class ChannelsService implements OnDestroy {
   private channelSubject = new BehaviorSubject<ChannelInterface | null>(null);
-  private MessagesSubject = new BehaviorSubject<TicketInterface | null>(null);
+  private messagesSubject = new BehaviorSubject<TicketInterface[]>([]);
+  messages$ = this.messagesSubject.asObservable();
+  channel$ = this.channelSubject.asObservable();
   firestore = inject(Firestore);
   channelURL!: string;
   unsubChannel?: () => void;
+  unsubMessages?: () => void;
   // channelId = "KRIw2GN8Ym9EQmijM84l";
-  channel$ = this.channelSubject.asObservable()
- 
+
+
 
   constructor() {
 
@@ -29,9 +32,7 @@ export class ChannelsService {
   }
 
 
-  getChannelRef(channelId: string) {
-    return doc(collection(this.firestore, "channels"), channelId)
-  }
+
 
   async getChannelInfos(channelData?: DocumentData, channelId?: string) {
     if (channelData && channelId) {
@@ -40,10 +41,11 @@ export class ChannelsService {
         description: channelData['description'],
         members: await this.putMembersToArray(channelData),
         name: channelData['name'],
-        messages: this.putMessagesInArray(channelId)
+        messages: []
       };
 
       this.channelSubject.next(channel);
+      this.putMessagesInArray(channelId)
     }
   }
 
@@ -90,28 +92,58 @@ export class ChannelsService {
 
 
   putMessagesInArray(channelId: string) {
-    let messagesArray: TicketInterface[] = [];
-    let messages = onSnapshot(this.getMessagesSubCollRef(channelId), (msgList) => {
+    const q = query(this.getMessagesSubCollRef(channelId), orderBy('createdAt'))
+    this.unsubMessages = onSnapshot(q, (msgList) => {
+      const messagesArray: TicketInterface[] = [];
       msgList.docs.forEach(msg => {
         let ticketToJson = this.getTickets(msg.id, msg.data(), channelId)
         if (ticketToJson) {
           messagesArray.push(ticketToJson)
         }
-      })
-    })
-    return messagesArray
+      });
+      this.messagesSubject.next(messagesArray);
+    });
   }
+
+
+  addTicketToChannel(channelId: string, senderId: string, text: string) {
+    const newTicket: TicketInterface = {
+      createdAt: serverTimestamp(),
+      reactions: [],
+      senderId: senderId,
+      text: text,
+      threadsCount: 0,
+    };
+
+    addDoc(this.getNewMessageRef(channelId), newTicket)
+  }
+
+
+  getNewMessageRef(channelId: string) {
+    return collection(this.firestore, `channels/${channelId}/messages`)
+  }
+
 
   getMessagesSubCollRef(channelId: string) {
     return collection(this.getChannelRef(channelId), "messages")
   }
 
+
   getThreadRef(channelId: string, ticketId: string) {
-    return collection(doc(this.firestore, "channel", channelId, "messages", ticketId), "threads")
+    return collection(doc(this.firestore, "channels", channelId, "messages", ticketId), "threads")
 
   }
 
 
+  getChannelRef(channelId: string) {
+    return doc(collection(this.firestore, "channels"), channelId)
+  }
 
+  ngOnDestroy(): void {
+    this.unsubChannel?.();
+    this.unsubMessages?.();
+    console.log("Destroyed");
+
+  }
 
 }

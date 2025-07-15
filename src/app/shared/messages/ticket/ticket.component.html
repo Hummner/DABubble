@@ -1,47 +1,47 @@
 <div class="ticket-container" (mouseenter)="showMenu = true" (mouseleave)="showMenu = false">
-    <div class="ticket">
+    <div class="ticket" [ngClass]="{'reverse reverse-hover' : isCurrentUser()}">
         <div class="member-img-ticket">
             <img src="assets/img/elias_neumann.svg" alt="">
         </div>
         <div class="message-content">
 
-            <div class="name-date">
-                <span class="msg-name"> {{  userName }}</span>
-                <span class="msg-date">{{ ticket.createdAt.toDate() | date: 'HH:mm' }}</span>
+            <div class="name-date" [ngClass]="{'reverse' : isCurrentUser()}">
+                <span class="msg-name"> {{ userName }}</span>
+                <span class="msg-date"> Uhr</span>
+            </div>
+            <div class="message-wrapper" [ngClass]="{'reverse' : isCurrentUser()}">
+                <div class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}">
+                    <p>{{ ticket.text}}</p>
+                </div>
             </div>
 
-
-
-            <div class="message">
-                <p>{{ ticket.text}}</p>
-            </div>
-            <div class="answers">
-                <div class="msg-answer-container"><span class="msg-answer" (click)="openThread.emit()">{{
+            <div class="answers" [ngClass]="{'reverse' : isCurrentUser()}">
+                <div class="msg-answer-container" [ngClass]="{'reverse' : isCurrentUser()}">
+                    <span class="msg-answer" (click)="openThread.emit()">span{{
                         ticket.threadsCount}}
                         <span class="answer-span" *ngIf="ticket.threadsCount == 0">Kein Antwort</span>
                         <span class="answer-span" *ngIf="ticket.threadsCount == 1">Antwort</span>
                         <span class="answer-span" *ngIf="ticket.threadsCount > 1">Antworten</span>
-                    </span></div>
-                <span class="msg-date">Letze Antwort {{ ticket.createdAt.toDate() | date: 'HH:mm' }}</span>
+                    </span>
+                </div>
+                <span class="msg-date">Letze Antwort </span>
             </div>
-            <div class="emoji-container">
+            <div class="emoji-container" [ngClass]="{'reverse' : isCurrentUser()}" *ngIf="isReaction()">
                 @for (emoji of ticket.reactions; track $index) {
                 <div class="emoji" (mouseenter)="showPopup = true" (mouseleave)="showPopup = false">
                     <div class="emoji-popup" *ngIf="showPopup">
-                        <img src="assets/emojis/{{ ticket.reactions[index]['emoji']}}.svg">
+                        <img src="assets/emojis/thumb.svg">
                         <p>Sofie Müller</p>
                         <span>hat reagiert</span>
                     </div>
-                    <img src="assets/emojis/{{ ticket.reactions[index]['emoji']}}.svg">
+                    <img src="assets/emojis/thumb.svg">
                     <span>{{ ticket.reactions.length }}</span>
                 </div>
                 }
-
-
             </div>
         </div>
-
-        <div class="emoji-menu" [ngClass]="{ 'visible': showMenu, 'hidden': !showMenu }">
+        <div class="emoji-menu"
+            [ngClass]="{ 'visible': showMenu, 'hidden': !showMenu, 'emoji-menu-reverse' : isCurrentUser()}">
             <div class="emoji-menu-item"><img src="assets/emojis/checked.svg"></div>
             <div class="emoji-menu-item"><img src="assets/emojis/thumb.svg"></div>
             <div class="emoji-menu-item "><img class="hover-purple" src="assets/icon/add_reaction.svg"></div>

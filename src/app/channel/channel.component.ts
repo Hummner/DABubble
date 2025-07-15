@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
@@ -7,25 +7,38 @@ import { CommonModule } from '@angular/common';
 import { TicketComponent } from '../shared/messages/ticket/ticket.component';
 import { ChannelsService } from '../services/channels.service';
 import { ChannelInterface } from '../interfaces/channel.interface';
+import { FormsModule } from '@angular/forms';
+import { user } from '@angular/fire/auth';
+import { AuthService } from '../services/auth.service';
+import { FirestoreService } from '../services/firestore.service';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { TicketInterface } from '../interfaces/ticket.interface';
 
 
 @Component({
   selector: 'app-channel',
   standalone: true,
-  imports: [MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent],
+  imports: [MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent, FormsModule],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
 })
-export class ChannelComponent implements OnInit {
+export class ChannelComponent implements OnInit, OnDestroy {
 
   @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>;
   @ViewChild('discInput') discInput!: ElementRef<HTMLInputElement>;
-  channelsService = inject(ChannelsService)
+
+  channelsService = inject(ChannelsService);
+  firestoreService = inject(FirestoreService)
+  private auth = inject(AuthService);
   showMenu = false;
   menuOpen = false;
   editName = false;
   editDisc = false;
   channel: ChannelInterface | null = null;
+  textInput: string = "";
+  private channelSubscription?: Subscription;
+  private messagesSubscription?: Subscription;
+  messages: TicketInterface[] = [];
 
 
   constructor() {
@@ -33,13 +46,25 @@ export class ChannelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.channelsService.channel$.subscribe(channel => {
+    this.channelSubscription = this.channelsService.channel$.subscribe(channel => {
       if (channel) {
         this.channel = channel;
         console.log('Channel empfangen:', this.channel);
       }
-    })
+    });
+
     this.getChannelInfo();
+    this.messagesSubscription = this.channelsService.messages$.subscribe(msgs => {
+      if (this.channel) {
+        this.channel.messages = msgs;
+      }
+
+    });
+
+  }
+
+  getCurrentUserId(): string | null {
+    return this.auth.firebaseAuth.currentUser?.uid ?? null;
   }
 
   openMenu(trigger: MatMenuTrigger) {
@@ -87,5 +112,26 @@ export class ChannelComponent implements OnInit {
   getChannelInfo() {
     return this.channelsService.getChannel("KRIw2GN8Ym9EQmijM84l");
   }
+
+  addTicket() {
+    const currentUser = this.getCurrentUserId();
+    const textMessage = this.textInput;
+    console.log(currentUser, ": ", textMessage);
+
+    if (currentUser && textMessage) {
+      this.channelsService.addTicketToChannel("KRIw2GN8Ym9EQmijM84l", currentUser, textMessage)
+    } else {
+      console.error("No User or Text");
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.channelSubscription?.unsubscribe();
+    this.messagesSubscription?.unsubscribe();
+    console.log("Unsubscribed on Channel");
+
+  }
+
+
 
 }

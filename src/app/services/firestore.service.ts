@@ -45,7 +45,6 @@ export class FirestoreService implements OnDestroy {
       this.userList = [];
       list.forEach((element) => {
         this.userList.push(this.toUserProfile(element.data(), element.id))
-        console.log(this.userList)
       })
     })
   }
