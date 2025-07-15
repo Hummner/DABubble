@@ -1,13 +1,8 @@
 import { Component, inject } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDialogActions, MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { NgClass } from '@angular/common';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddChannelMemberComponent } from '../add-channel-member/add-channel-member.component';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-new-channel',
@@ -15,40 +10,35 @@ import { AddChannelMemberComponent } from '../add-channel-member/add-channel-mem
   templateUrl: './new-channel.component.html',
   styleUrl: './new-channel.component.scss',
   imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogActions,
-    MatDialogModule,
-    NgClass,
-  ],
+    ReactiveFormsModule, 
+    NgClass
+  ]
 })
 export class NewChannelComponent {
 
-  constructor(public radioDialog: MatDialog) {}
+  form = new FormGroup({
+    channelName: new FormControl('', Validators.required),
+    channelDescription: new FormControl('')
+  });
 
-  channelName: string = '';
-  dialogRef = inject(MatDialogRef<NewChannelComponent>);
-  radioRef = inject(MatDialogRef<AddChannelMemberComponent>);
+  private dialogRef = inject(MatDialogRef<NewChannelComponent>);
+  constructor(private dialog: MatDialog) {}
 
   closeDialog() {
     this.dialogRef.close();
   }
 
   createChannel() {
-    const dialogRef = this.radioDialog.open(AddChannelMemberComponent, {
-      data: {
-        channelName: this.channelName
-      }
-    });
+    console.log(this.form.value);
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+    const channelName = this.form.get('channelName')?.value as string;
+
+    this.dialog.open(AddChannelMemberComponent, {
+      data: { channelName }
+    }).afterClosed().subscribe(result => {
+      console.log('AddMember‑Result', result);
     });
 
     this.closeDialog();
   }
-
 }

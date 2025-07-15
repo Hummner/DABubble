@@ -1,145 +1,111 @@
-::ng-deep .mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
-    max-width: 1000px;
-    width: 100%;
-    height: 600px;
-    background-color: white;
-    border-radius: 30px; 
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-::ng-deep .mat-mdc-form-field-subscript-wrapper, .mat-mdc-form-field-bottom-align::before {
-    display: none !important;
-}
-
-::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
-    height: 100%;
-    width: 100%;
-    border-radius: 30px !important;
-}
-
-::ng-deep .mat-mdc-icon-button {
-    &:hover {
-        background-color: #eceefe !important;
-    }
-}
-
-::ng-deep .mat-mdc-text-field-wrapper {
-    padding: 0 !important;
-}
-
-::ng-deep .cdk-overlay-pane {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;   
-}
-
-::ng-deep mat-form-field {
-    width: 100%;
-
-    .mdc-notched-outline {
-        display: none !important;
-    }
-}
-
-::ng-deep .mdc-text-field--no-label:not(.mdc-text-field--textarea) 
-            .mat-mdc-form-field-input-control.mdc-text-field__input, 
-            .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
-
-    width: 100%;
-    padding: 16px;
-    margin-top: 12px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc !important;
-    border-radius: 30px;
-    font-size: 16px;
-    font-family: 'Nunito', sans-serif;
-    box-sizing: border-box;
-
-    &:focus {
-        border-color: #535af1 !important;
-        outline: none !important;
-    }
-
-    &::placeholder {
-        color: #aaa;
-    }
-}
-
-.full-width {
+.dialog-box {
+  background: #fff;
   width: 100%;
-}
-
-.optional-text {
-  color: #000000;
-  font-weight: normal;
-  font-size: 14px;
+  max-width: 600px;
+  max-height: 90vh;
+  padding: 32px;
+  border-radius: 30px;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .newchannel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: row-reverse;
-    margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-bottom: 32px;
 
   h1 {
-    font-size: 24px;
-    font-family: 'Nunito', sans-serif;
+    font: 24px/1 'Nunito', sans-serif;
     margin: 0;
-    color: #000000;
+    color: #000;
   }
 
-    span {
-        border: none;
-        background-color: transparent;
-        cursor: pointer;
-        padding: 8px;
-        font-size: 24px;
-        color: #000000;
+  .close-icon {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
 
-        &:hover {
-            color: #535af1;
-            background-color: #eceefe;
-            border-radius: 50%;
-        }
+    &:hover {
+      background: #eceefe;
+      color: #535af1;
     }
+  }
 }
 
-p {
-    color: #000000;
-    margin-bottom: 0;
+p, .field-label {
+  color: #000;
+  margin-bottom: 8px;
+}
+
+.optional-text {
+  color: #888;
+  font-size: 14px;
+}
+
+.full-input {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 24px;
+  font: 16px 'Nunito', sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #535af1;
+    outline: none;
+  }
+
+  &::placeholder {
+    color: #aaa;
+  }
+}
+
+.textarea {
+  min-height: 110px;
+  resize: vertical;
 }
 
 .actions {
-    position: absolute;
-    bottom: 32px;
-    right: 32px;
-    z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
 
-    >button {
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 30px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
+  button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    font: 16px 'Nunito', sans-serif;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .btn-active {
+    background: #535af1;
+    color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background: #9498f5;
     }
-}
+  }
 
-.btn-active {
-    background-color: #535af1;
-    color: white;
-
-        &:hover {
-            background-color: #9498f5;
-            transition: background-color 0.3s ease-in-out;
-        }
-}
-
-.btn-disabled {
-    background-color: #ccc;
-    color: white;
+  .btn-disabled {
+    background: #ccc;
+    color: #fff;
     cursor: not-allowed;
+    pointer-events: none;
+  }
 }
-

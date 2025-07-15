@@ -1,29 +1,38 @@
-<form #channelForm="ngForm" (ngSubmit)="createChannel()">
-    <mat-dialog-content class="newchannel-content">
-        <div class="newchannel-header">
-            <span mat-icon-button (click)="closeDialog()">
-                <mat-icon>close</mat-icon>
-            </span>
-            <h1>Channel erstellen</h1>
-        </div>
-        <p>Channels dienen deinem Team zur Kommunikation. Am besten sollten sie themenbezogen sein.<br />#marketing zum Beispiel.</p>
-        <mat-form-field class="full-width" appearance="outline">
-            <p>Channel-Name</p>
-            <input matInput placeholder="# z.B. Kooperationsprojekte" name="channelName" required [(ngModel)]="channelName"  />
-        </mat-form-field>
+<div class="dialog-overlay" (click)="closeDialog()">
+  <div class="dialog-box" (click)="$event.stopPropagation()">
+    <form [formGroup]="form" (ngSubmit)="createChannel()">
+      <div class="newchannel-header">
+        <span class="close-icon material-symbols-outlined" (click)="closeDialog()">close</span>
+        <h1>Channel erstellen</h1>
+      </div>
 
-        <mat-form-field class="full-width" appearance="outline">
-            <p>Beschreibung <span class="optional-text">(optional)</span></p>
-            <textarea matInput placeholder="Dein Text hier"></textarea>
-        </mat-form-field>
+      <p>
+        Channels dienen deinem Team zur Kommunikation. Am besten sollten sie themenbezogen sein.
+        <br /><strong>#marketing zum Beispiel.</strong>
+      </p>
 
-        <mat-dialog-actions class="actions" align="end">
-            <button 
-                type="submit"
-                [disabled]="!channelForm.valid"
-                [ngClass]="!channelForm.valid ? 'btn-disabled' : 'btn-active'">
-                Erstellen
-            </button>
-        </mat-dialog-actions>
-    </mat-dialog-content>
-</form>
+      <label class="field-label" for="channelName">Channel‑Name</label>
+      <input id="channelName"
+             formControlName="channelName"
+             placeholder="# z.B. Kooperationsprojekte"
+             class="full-input"/>
+
+      <label class="field-label" for="desc">
+        Beschreibung <span class="optional-text">(optional)</span>
+      </label>
+      <textarea id="desc"
+                formControlName="channelDescription"
+                placeholder="Dein Text hier"
+                class="full-input textarea"></textarea>
+
+      <div class="actions">
+        <button 
+          type="submit" 
+          [disabled]="!form.valid"
+          [ngClass]="!form.valid ? 'btn-disabled' : 'btn-active'">
+          Erstellen
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

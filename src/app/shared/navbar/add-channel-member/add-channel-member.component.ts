@@ -1,57 +1,45 @@
-import { Component, inject, Inject, Output } from '@angular/core';
-import { MatRadioModule} from '@angular/material/radio';
+import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatDialogActions, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { NgClass, NgIf } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField } from "@angular/material/form-field";
-import { MatInputModule } from '@angular/material/input';
+import { CommonModule, NgClass, NgIf } from '@angular/common';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-channel-member',
   standalone: true,
-  imports: [
-    MatRadioModule, 
-    FormsModule, 
-    MatDialogActions, 
-    NgClass, 
-    MatIcon, 
-    MatFormField, 
-    NgIf, 
-    MatInputModule
-  ],
   templateUrl: './add-channel-member.component.html',
-  styleUrl: './add-channel-member.component.scss'
+  styleUrl: './add-channel-member.component.scss',
+  imports: [
+    FormsModule, 
+    NgIf, 
+    NgClass, 
+    CommonModule
+  ]
 })
 export class AddChannelMemberComponent {
+  channelName = '';
+  inviteMode  = 1;
+  searchText  = '';
 
-    constructor(
-      public dialog: MatDialog, 
-      @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.channelName = data.channelName || '';
-      }
-    
-    channelName: string = '';
-    inviteMode: number = 1;
-    searchText: string = '';
+  constructor(
+    private dialogRef: MatDialogRef<AddChannelMemberComponent>,
+    @Inject(MAT_DIALOG_DATA) data: { channelName: string }
+  ) {
+    this.channelName = data?.channelName ?? '';
+  }
 
-    radioRef = inject(MatDialogRef<AddChannelMemberComponent>);
-    closeDialog() {
-        this.radioRef.close();
-    }
+  closeDialog() {
+    this.dialogRef.close();
+  }
 
-    isDisabled(): boolean {
-      return this.inviteMode === 2 && !this.searchText?.trim();
-    }
+  addMember() {
+    this.dialogRef.close({
+      added: true,
+      mode : this.inviteMode,
+      name : this.searchText.trim()
+    });
+  }
 
-    addMember() {
-      this.radioRef.close({
-        added: true,
-        name: this.channelName
-      });
-    }
-
-    ngOnInit() {
-      console.log('Channelname aus vorherigem Dialog:', this.data.channelName);
-    }
+  isDisabled(): boolean {
+    return this.inviteMode === 2 && !this.searchText.trim();
+  }
 }

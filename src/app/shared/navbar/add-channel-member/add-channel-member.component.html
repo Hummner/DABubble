@@ -1,33 +1,50 @@
-<form #memberForm="ngForm" (ngSubmit)="addMember()">
-  <div class="add-members-header">
-    <h2>Leute hinzufügen</h2>
-    <span mat-icon-button (click)="closeDialog()">
-      <mat-icon>close</mat-icon>
-    </span>
-  </div>
-      <mat-radio-group [(ngModel)]="inviteMode" name="inviteMode">
-        <mat-radio-button [value]="1">Alle Mitglieder von 
-          <span class="channel-name">{{ channelName }} </span>
-          hinzufügen
-        </mat-radio-button>
-        <mat-radio-button [value]="2">Bestimmte Leute hinzufügen</mat-radio-button>
-        <ng-container *ngIf="inviteMode === 2">
-          <mat-form-field class="full-width" appearance="outline">
-            <input 
-              matInput 
-              placeholder="Name eingeben" 
-              [(ngModel)]="searchText" 
-              name="search"
-              [attr.required]="inviteMode === 2 ? '' : null" />
-          </mat-form-field>
-        </ng-container>
-      </mat-radio-group>
-      <mat-dialog-actions class="actions" align="end">
-        <button 
+<div class="dialog-overlay" (click)="closeDialog()">
+  <div class="dialog-box" (click)="$event.stopPropagation()">
+    <form #memberForm="ngForm" (ngSubmit)="addMember()">
+
+      <div class="add-members-header">
+        <h2>Leute hinzufügen</h2>
+        <span class="close-icon material-symbols-outlined" (click)="closeDialog()">close</span>
+      </div>
+
+      <fieldset class="radio-group">
+        <label class="radio-option">
+          <input
+            type="radio"
+            name="inviteMode"
+            [(ngModel)]="inviteMode"
+            [value]="1" />
+          <span>Alle Mitglieder von <span class="channel-name">{{ channelName }}</span> hinzufügen</span>
+        </label>
+
+        <label class="radio-option">
+          <input
+            type="radio"
+            name="inviteMode"
+            [(ngModel)]="inviteMode"
+            [value]="2" />
+          <span>Bestimmte Leute hinzufügen</span>
+        </label>
+      </fieldset>
+
+      <div *ngIf="inviteMode === 2" class="search-wrapper">
+        <input
+          type="text"
+          name="search"
+          [(ngModel)]="searchText"
+          placeholder="Name eingeben"
+          [required]="inviteMode === 2"
+          class="full-input" />
+      </div>
+
+      <div class="actions">
+        <button
           type="submit"
           [disabled]="isDisabled()"
           [ngClass]="isDisabled() ? 'btn-disabled' : 'btn-active'">
-            Erstellen
-          </button>
-      </mat-dialog-actions>
-</form>
+          Erstellen
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
