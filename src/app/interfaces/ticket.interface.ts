@@ -1,10 +1,10 @@
-import { CollectionReference, DocumentData, Timestamp } from "@angular/fire/firestore";
+import { CollectionReference, DocumentData, FieldValue, Timestamp } from "@angular/fire/firestore";
 
 export interface TicketInterface {
-    createdAt: Timestamp,
+    createdAt: Timestamp | FieldValue,
     reactions: [],
     senderId: string,
     text: string,
     threadsCount: number,
-    threads: CollectionReference<DocumentData>
+    threads?: CollectionReference<DocumentData>
 }
