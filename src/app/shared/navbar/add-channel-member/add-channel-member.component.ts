@@ -27,6 +27,7 @@ export class AddChannelMemberComponent {
   channelName = '';
   inviteMode  = 1;
   searchText  = '';
+  allUsers: UserProfileInterface[] = [];
 
   constructor(
     private firestoreService: FirestoreService,
@@ -43,10 +44,13 @@ export class AddChannelMemberComponent {
     }
   }
 
-  getOtherUserList(): UserProfileInterface[] {
-    return this.firestoreService.userList.filter(
+  getOtherUserList() {
+    this.allUsers = this.firestoreService.userList.filter(
       (user) => user.uid !== this.userProfile()?.uid
     );
+    this.searchUser();
+    console.log("this.allUsers", this.allUsers);
+    return this.allUsers;
   }
 
   closeDialog() {
@@ -63,5 +67,15 @@ export class AddChannelMemberComponent {
 
   isDisabled(): boolean {
     return this.inviteMode === 2 && !this.searchText.trim();
+  }
+
+  searchUser() {
+    this.searchText = this.searchText.trim();
+    if (this.searchText !== '') {
+      this.allUsers = this.firestoreService.userList.filter(
+        (user) =>
+          user.name.toLowerCase().includes(this.searchText.toLowerCase()) 
+      );
+    }
   }
 }
