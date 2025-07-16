@@ -36,7 +36,7 @@ export class NewChannelComponent {
     this.dialog.open(AddChannelMemberComponent, {
       data: { channelName }
     }).afterClosed().subscribe(result => {
-      console.log('AddMember‑Result', result);
+      console.log('AddMember‑Result', this.form.value);
     });
 
     this.closeDialog();
