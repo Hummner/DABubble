@@ -17,6 +17,7 @@
   border-radius: 30px;
   overflow-y: auto;
   box-sizing: border-box;
+  margin: 16px;
 }
 
 .newchannel-header {
@@ -26,8 +27,9 @@
   align-items: center;
   margin-bottom: 32px;
 
-  h1 {
+  h2 {
     font: 24px/1 'Nunito', sans-serif;
+    font-weight: bold;
     margin: 0;
     color: #000;
   }
@@ -45,9 +47,14 @@
   }
 }
 
-p, .field-label {
+p {
   color: #000;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.field-label {
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .optional-text {
@@ -56,6 +63,7 @@ p, .field-label {
 }
 
 .full-input {
+  position: relative;
   width: 100%;
   padding: 16px;
   margin-bottom: 24px;
@@ -109,3 +117,5 @@ p, .field-label {
     pointer-events: none;
   }
 }
+
+

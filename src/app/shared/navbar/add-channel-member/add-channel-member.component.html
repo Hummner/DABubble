@@ -34,28 +34,30 @@
             placeholder="Name eingeben"
             [required]="inviteMode === 2"
             class="full-input" />
-        </div>
 
-        @if (inviteMode == 2) {
-          <ul class="direct-messages-list">
-            <li *ngIf="userProfile() as user" class="direct-messages-item">
-              <div class="avatar">
-                <img [src]="user.imgUrl" alt="Elias Neumann" />
+            @if (inviteMode == 2 && searchText != '') {
+              <div class="member-box">
+                <ul class="direct-messages-list">
+                  <li *ngIf="userProfile() as user" class="direct-messages-item">
+                    <div class="avatar">
+                      <img [src]="user.imgUrl" alt="Elias Neumann" />
+                    </div>
+                    <p>{{ user.name }} (Du)</p>
+                  </li>
+                  @for(user of getOtherUserList(); track user){
+                  <a [routerLink]="['/directMessages']"
+                    ><li class="direct-messages-item">
+                      <div class="avatar">
+                        <img [src]="user.imgUrl" alt="Elise Roth" />
+                      </div>
+                      <p>{{ user.name }}</p>
+                    </li>
+                  </a>
+                  }
+                </ul>
               </div>
-              <p>{{ user.name }} (Du)</p>
-            </li>
-            @for(user of getOtherUserList(); track user){
-            <a [routerLink]="['/directMessages']"
-              ><li class="direct-messages-item">
-                <div class="avatar">
-                  <img [src]="user.imgUrl" alt="Elise Roth" />
-                </div>
-                <p>{{ user.name }}</p>
-              </li>
-            </a>
             }
-          </ul>
-        }
+        </div>
       </fieldset>
 
       <div class="actions">

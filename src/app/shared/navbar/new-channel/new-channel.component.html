@@ -3,7 +3,7 @@
     <form [formGroup]="form" (ngSubmit)="createChannel()">
       <div class="newchannel-header">
         <span class="close-icon material-symbols-outlined" (click)="closeDialog()">close</span>
-        <h1>Channel erstellen</h1>
+        <h2>Channel erstellen</h2>
       </div>
 
       <p>
@@ -11,15 +11,15 @@
         <br /><strong>#marketing zum Beispiel.</strong>
       </p>
 
-      <label class="field-label" for="channelName">Channel‑Name</label>
+      <p class="field-label" for="channelName">Channel‑Name</p>
       <input id="channelName"
              formControlName="channelName"
              placeholder="# z.B. Kooperationsprojekte"
              class="full-input"/>
 
-      <label class="field-label" for="desc">
+      <p class="field-label" for="desc">
         Beschreibung <span class="optional-text">(optional)</span>
-      </label>
+      </p>
       <textarea id="desc"
                 formControlName="channelDescription"
                 placeholder="Dein Text hier"
