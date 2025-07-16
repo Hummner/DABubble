@@ -1,4 +1,6 @@
 export interface NavbarInterface {
-    id: string,
-    name:string,
+    createdBy: string,
+    description: string,
+    members: { uid: string; role: string }[];
+    name: string,
 }

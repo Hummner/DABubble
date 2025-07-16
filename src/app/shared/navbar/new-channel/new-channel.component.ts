@@ -28,13 +28,14 @@ export class NewChannelComponent {
     this.dialogRef.close();
   }
 
-  createChannel() {
+  setChannelDetails() {
     console.log(this.form.value);
 
     const channelName = this.form.get('channelName')?.value as string;
+    const channelDescription = this.form.get('channelDescription')?.value as string;
 
     this.dialog.open(AddChannelMemberComponent, {
-      data: { channelName }
+      data: { channelName, channelDescription }
     }).afterClosed().subscribe(result => {
       console.log('AddMember‑Result', this.form.value);
     });

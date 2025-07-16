@@ -1,6 +1,6 @@
 <div class="dialog-overlay" (click)="closeDialog()">
   <div class="dialog-box" (click)="$event.stopPropagation()">
-    <form #memberForm="ngForm" (ngSubmit)="addMember()">
+    <form #memberForm="ngForm" (ngSubmit)="createChannel()">
 
       <div class="add-members-header">
         <h2>Leute hinzufügen</h2>
@@ -37,10 +37,10 @@
 
             @if (inviteMode == 2 && searchText != '') {
               <div class="member-box">
-                <ul class="direct-messages-list">
+                <ul class="direct-messages-list" >
                   @for(user of getOtherUserList(); track user){
                   <a [routerLink]="['/directMessages']"
-                    ><li class="direct-messages-item">
+                    ><li class="direct-messages-item" (click)="addMember(user.uid)">
                       <div class="avatar">
                         <img [src]="user.imgUrl" alt="Elise Roth" />
                       </div>

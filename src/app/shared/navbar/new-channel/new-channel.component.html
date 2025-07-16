@@ -1,6 +1,6 @@
 <div class="dialog-overlay" (click)="closeDialog()">
   <div class="dialog-box" (click)="$event.stopPropagation()">
-    <form [formGroup]="form" (ngSubmit)="createChannel()">
+    <form [formGroup]="form" (ngSubmit)="setChannelDetails()">
       <div class="newchannel-header">
         <span class="close-icon material-symbols-outlined" (click)="closeDialog()">close</span>
         <h2>Channel erstellen</h2>

@@ -5,7 +5,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
 import { FirestoreService } from '../../../services/firestore.service';
+import { NavbarInterface } from '../../../interfaces/navbar.interface';
 import { User } from 'firebase/auth';
+import { addDoc, Firestore, collection, } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-add-channel-member',
@@ -24,17 +26,21 @@ export class AddChannelMemberComponent {
 
   userProfile = this.firestoreService.userProfile;
   user: UserProfileInterface | null = null;
+  navbar: Partial<NavbarInterface> = {}
   channelName = '';
+  channelDescription = '';
   inviteMode  = 1;
   searchText  = '';
   allUsers: UserProfileInterface[] = [];
 
   constructor(
+    private firestore: Firestore,
     private firestoreService: FirestoreService,
     private dialogRef: MatDialogRef<AddChannelMemberComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { channelName: string }
+    @Inject(MAT_DIALOG_DATA) data: { channelName: string, channelDescription: string },
   ) {
     this.channelName = data?.channelName ?? '';
+    this.channelDescription = data?.channelDescription ?? '';
   }
 
   ngOnInit(): void {
@@ -49,7 +55,6 @@ export class AddChannelMemberComponent {
       (user) => user.uid !== this.userProfile()?.uid
     );
     this.searchUser();
-    console.log("this.allUsers", this.allUsers);
     return this.allUsers;
   }
 
@@ -57,12 +62,12 @@ export class AddChannelMemberComponent {
     this.dialogRef.close();
   }
 
-  addMember() {
-    this.dialogRef.close({
-      added: true,
-      mode : this.inviteMode,
-      name : this.searchText.trim()
-    });
+  addMember(userId: string) {
+    for (let i = 0; i < this.allUsers.length; i++) {
+      if (this.allUsers[i].uid === userId) {
+        this.fillInterfaceWithData(this.allUsers[i]);
+      }
+    }
   }
 
   isDisabled(): boolean {
@@ -77,5 +82,29 @@ export class AddChannelMemberComponent {
           user.name.toLowerCase().includes(this.searchText.toLowerCase()) 
       );
     }
+  }
+
+  fillInterfaceWithData(data: any) {
+    this.navbar.createdBy = data.name;
+    this.navbar.name = this.channelName;
+    this.navbar.description = this.channelDescription;
+    if (data.uid === this.userProfile()?.uid) {
+      this.navbar.members = [{ uid: data.uid, role: 'admin' }];
+    }
+    else {
+      this.navbar.members = [{ uid: data.uid, role: 'member' }];
+    }
+    return this.navbar;
+  }
+
+  createChannel() {
+    addDoc(collection(this.firestore, 'channels'), this.navbar)
+    .then((docRef) => {
+      console.log('Channel was successfully created!', docRef.id);
+    })
+    .catch((error) => {
+      console.error('Issue during channel creation', error);
+    });
+    this.closeDialog();
   }
 }
