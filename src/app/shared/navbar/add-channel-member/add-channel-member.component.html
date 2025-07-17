@@ -25,6 +25,19 @@
             [value]="2" />
           <span>Bestimmte Leute hinzufügen</span>
         </label>
+        <ul class="direct-messages-list" >
+            @for(member of this.members; track member){
+              <a [routerLink]="['/directMessages']" class="direct-messages-content"
+                ><li class="direct-messages-item">
+                  <div class="avatar">
+                    <!-- <img [src]="member.imgUrl" alt="Elise Roth" /> -->
+                  </div>
+                  <p>{{ member.name }}</p>
+                  <span (click)="deleteMember(member.uid)" class="material-symbols-outlined">close</span>
+                </li>
+              </a>
+              }
+            </ul>
 
         <div *ngIf="inviteMode === 2" class="search-wrapper">
           <input
@@ -33,19 +46,25 @@
             [(ngModel)]="searchText"
             placeholder="Name eingeben"
             [required]="inviteMode === 2"
-            class="full-input" />
+            class="full-input" 
+            />
 
             @if (inviteMode == 2 && searchText != '') {
               <div class="member-box">
                 <ul class="direct-messages-list" >
                   @for(user of getOtherUserList(); track user){
-                  <a [routerLink]="['/directMessages']"
+                  <a [routerLink]="['/directMessages']" class="direct-messages-content"
                     ><li class="direct-messages-item" (click)="addMember(user.uid)">
                       <div class="avatar">
                         <img [src]="user.imgUrl" alt="Elise Roth" />
                       </div>
                       <p>{{ user.name }}</p>
                     </li>
+                    <!-- <div class="check">
+                      @for(member of navbar.members; track $index){
+                        <span *ngIf="member.uid == user.uid" class="material-symbols-outlined">check</span>
+                      }
+                    </div> -->
                   </a>
                   }
                 </ul>

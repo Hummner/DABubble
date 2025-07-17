@@ -32,6 +32,7 @@ export class AddChannelMemberComponent {
   channelId = '';
   inviteMode  = 1;
   searchText  = '';
+  members: { uid: string; role: string; name: string }[] = [];
   allUsers: UserProfileInterface[] = [];
 
   constructor(
@@ -72,6 +73,14 @@ export class AddChannelMemberComponent {
     }
   }
 
+  deleteMember(userId: string) {
+    for (let i = 0; i < this.members.length; i++) {
+      if (this.members[i].uid === userId) {
+        this.members.splice(i, 1);
+      }
+    }
+  }
+
   isDisabled(): boolean {
     return this.inviteMode === 2 && !this.searchText.trim();
   }
@@ -88,12 +97,20 @@ export class AddChannelMemberComponent {
 
   fillInterfaceWithMember(data: any) {
     this.navbar.createdBy = this.userProfile()?.name || '';
-    if (data.uid === this.userProfile()?.uid) {
-      this.navbar.members = [{ uid: data.uid, role: 'admin', name: data.name }];
+
+    const newMember = {
+      uid: data.uid,
+      role: data.uid === this.userProfile()?.uid ? 'admin' : 'member',
+      name: data.name
+    };
+
+    if (!this.members.find(m => m.uid === newMember.uid)) {
+      this.members.push(newMember);
     }
-    else {
-      this.navbar.members = [{ uid: data.uid, role: 'member', name: data.name }];
-    }
+
+    this.navbar.members = this.members;
+
+    console.log('Aktuelle Members:', this.members);
     return this.navbar;
   }
 
