@@ -19,9 +19,8 @@ export class FirestoreService implements OnDestroy {
   private firestore = inject(Firestore);
   private auth = inject(AuthService);
   private user$ = user(this.auth.firebaseAuth);
-  userList:UserProfileInterface[] = [];
+  userList: UserProfileInterface[] = [];
   unsubUsers;
-
   userProfile: WritableSignal<UserProfileInterface | null> = signal(null);
   private unsubUserProfile?: () => void;
 
@@ -32,36 +31,37 @@ export class FirestoreService implements OnDestroy {
         this.unsubUserProfile?.();
         return;
       }
-
       this.unsubUserProfile?.();
       this.unsubUserProfile = this.subscribeToCurrentUser(user.uid);
     });
     this.unsubUsers = this.subUserList();
   }
 
-  subUserList(){
-    let ref = this.getUsersRef();
-    return onSnapshot(ref, (list)=> {
-      this.userList = [];
-      list.forEach((element) => {
-        this.userList.push(this.toUserProfile(element.data(), element.id))
-        console.log(this.userList)
-      })
-    })
-  }
+subUserList(callback?: (users: UserProfileInterface[]) => void) {
+  const ref = this.getUsersRef();
+  const unsub = onSnapshot(ref, (list) => {
+    const userList: UserProfileInterface[] = [];
+    list.forEach((element) => {
+      userList.push(this.toUserProfile(element.data(), element.id));
+    });
+    this.userList = userList;
+    callback?.(userList);
+  });
+  return unsub;
+}
 
   ngOnDestroy() {
     this.unsubUserProfile?.();
     this.unsubUsers();
   }
 
-  private subscribeToCurrentUser(uid: string) {
+  subscribeToCurrentUser(uid: string) {
     const ref = doc(this.firestore, 'users', uid);
     return onSnapshot(ref, (docSnap) => {
       if (docSnap.exists()) {
         const profile = this.toUserProfile(docSnap.data(), uid);
         this.userProfile.set(profile);
-        console.log('Updated userProfile:', profile);
+        // console.log('Updated userProfile:', profile);
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject} from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../../services/firestore.service';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
-import { User } from 'firebase/auth';
+import { DirectMessageService } from '../../services/direct-message.service';
 
 @Component({
   selector: 'app-navbar',
@@ -24,33 +24,22 @@ import { User } from 'firebase/auth';
     NgFor,
     NgIf,
     AsyncPipe,
-    RouterModule
+    RouterModule,
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
   userProfile = this.firestoreService.userProfile;
-  user: UserProfileInterface | null = null;
   channels$ = inject(NavbarService).channelsObs$;
 
-  ngOnInit(): void {
-    const user = this.userProfile();
-    if (user) {
-      this.user = { ...user };
-    }
-  }
   constructor(
     public dialog: MatDialog,
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    private directMessageService: DirectMessageService,
+    private router: Router
   ) {}
 
-  getOtherUserList(): UserProfileInterface[] {
-    return this.firestoreService.userList.filter(
-      (user) => user.uid !== this.userProfile()?.uid
-    );
-  }
   isOpen = true;
   showChannel = true;
   showMessage = true;
@@ -60,13 +49,28 @@ export class NavbarComponent implements OnInit {
   }
 
   openDialog() {
-    this.dialog.open(NewChannelComponent)
+    this.dialog
+      .open(NewChannelComponent)
       .afterClosed()
-      .subscribe(channelName => {
+      .subscribe((channelName) => {
         if (!channelName) return;
         this.dialog.open(AddChannelMemberComponent, {
-          data: { channelName }
+          data: { channelName },
         });
       });
+  }
+
+  getOtherUserList(): UserProfileInterface[] {
+    return this.firestoreService.userList.filter(
+      (user) => user.uid !== this.userProfile()?.uid
+    );
+  }
+
+  async findOrCreateDMchannel(currentUserId: string, clickedUserId: string) {
+    const channelId = await this.directMessageService.getDMChannel(
+      currentUserId,
+      clickedUserId
+    );
+    this.router.navigateByUrl(`directMessages/${channelId}`);
   }
 }

@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="ticket-img">
+    <img src="assets/img/noah_braun.svg" alt="" />
+  </div>
+  <div class="ticket-content">
+    <div class="sender-name">
+      <h3>{{user?.name}}</h3>
+    </div>
+    <div class="msg">
+      <p class="text">{{ message.content }}</p>
+<p class="time" *ngIf="isTimestamp(message.createdAt)">
+  {{ message.createdAt.toDate() | date: 'HH:mm' }}
+</p>
+    </div>
+  </div>
+</div>
