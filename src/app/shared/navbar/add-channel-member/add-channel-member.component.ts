@@ -7,7 +7,7 @@ import { UserProfileInterface } from '../../../interfaces/user-profile.interface
 import { FirestoreService } from '../../../services/firestore.service';
 import { NavbarInterface } from '../../../interfaces/navbar.interface';
 import { User } from 'firebase/auth';
-import { addDoc, Firestore, collection, } from '@angular/fire/firestore';
+import { updateDoc, arrayUnion, Firestore, doc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-add-channel-member',
@@ -29,6 +29,7 @@ export class AddChannelMemberComponent {
   navbar: Partial<NavbarInterface> = {}
   channelName = '';
   channelDescription = '';
+  channelId = '';
   inviteMode  = 1;
   searchText  = '';
   allUsers: UserProfileInterface[] = [];
@@ -37,10 +38,11 @@ export class AddChannelMemberComponent {
     private firestore: Firestore,
     private firestoreService: FirestoreService,
     private dialogRef: MatDialogRef<AddChannelMemberComponent>,
-    @Inject(MAT_DIALOG_DATA) data: { channelName: string, channelDescription: string },
+    @Inject(MAT_DIALOG_DATA) data: { channelName: string, channelDescription: string, channelId: string },
   ) {
     this.channelName = data?.channelName ?? '';
     this.channelDescription = data?.channelDescription ?? '';
+    this.channelId = data?.channelId ?? '';
   }
 
   ngOnInit(): void {
@@ -65,7 +67,7 @@ export class AddChannelMemberComponent {
   addMember(userId: string) {
     for (let i = 0; i < this.allUsers.length; i++) {
       if (this.allUsers[i].uid === userId) {
-        this.fillInterfaceWithData(this.allUsers[i]);
+        this.fillInterfaceWithMember(this.allUsers[i]);
       }
     }
   }
@@ -84,26 +86,29 @@ export class AddChannelMemberComponent {
     }
   }
 
-  fillInterfaceWithData(data: any) {
-    this.navbar.createdBy = data.name;
-    this.navbar.name = this.channelName;
-    this.navbar.description = this.channelDescription;
+  fillInterfaceWithMember(data: any) {
+    this.navbar.createdBy = this.userProfile()?.name || '';
     if (data.uid === this.userProfile()?.uid) {
-      this.navbar.members = [{ uid: data.uid, role: 'admin' }];
+      this.navbar.members = [{ uid: data.uid, role: 'admin', name: data.name }];
     }
     else {
-      this.navbar.members = [{ uid: data.uid, role: 'member' }];
+      this.navbar.members = [{ uid: data.uid, role: 'member', name: data.name }];
     }
     return this.navbar;
   }
 
-  createChannel() {
-    addDoc(collection(this.firestore, 'channels'), this.navbar)
-    .then((docRef) => {
-      console.log('Channel was successfully created!', docRef.id);
-    })
-    .catch((error) => {
-      console.error('Issue during channel creation', error);
+  addMemberToChannel() {
+
+    const channelRef = doc(this.firestore, 'channels', this.channelId); 
+    console.log('Member(s) to add:', this.navbar.members);
+    
+    updateDoc(channelRef, {
+      members: arrayUnion(...(this.navbar.members || [])),
+      createdBy: this.navbar.createdBy
+    }).then(() => {
+      console.log('Member added successfully');
+    }).catch((error) => {
+      console.error('Error adding member to channel:', error);
     });
     this.closeDialog();
   }

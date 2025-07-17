@@ -3,6 +3,8 @@ import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angula
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddChannelMemberComponent } from '../add-channel-member/add-channel-member.component';
 import { NgClass } from '@angular/common';
+import { NavbarInterface } from '../../../interfaces/navbar.interface';
+import { addDoc, Firestore, collection, } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-new-channel',
@@ -16,30 +18,49 @@ import { NgClass } from '@angular/common';
 })
 export class NewChannelComponent {
 
+  navbar: Partial<NavbarInterface> = {}
+  channelName = '';
+  channelDescription = '';
+
   form = new FormGroup({
     channelName: new FormControl('', Validators.required),
     channelDescription: new FormControl('')
   });
 
   private dialogRef = inject(MatDialogRef<NewChannelComponent>);
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private firestore: Firestore) {}
 
   closeDialog() {
     this.dialogRef.close();
   }
 
-  setChannelDetails() {
+  createChannel() {
     console.log(this.form.value);
 
-    const channelName = this.form.get('channelName')?.value as string;
-    const channelDescription = this.form.get('channelDescription')?.value as string;
+    this.navbar.name = this.form.get('channelName')?.value as string;
+    this.navbar.description = this.form.get('channelDescription')?.value as string;
 
-    this.dialog.open(AddChannelMemberComponent, {
-      data: { channelName, channelDescription }
-    }).afterClosed().subscribe(result => {
-      console.log('AddMember‑Result', this.form.value);
+    addDoc(collection(this.firestore, 'channels'), this.navbar)
+      .then((docRef) => {
+        console.log('Channel was successfully created!', docRef.id);
+        this.navbar.channelId = docRef.id
+        console.log("channelId", this.navbar.channelId);
+        this.openAddMemberDialog(this.navbar.channelId);
+        this.closeDialog();
+      })
+      .catch((error) => {
+        console.error('Issue during channel creation', error);
     });
+  }
 
-    this.closeDialog();
+  openAddMemberDialog(channelId: string) {
+    this.dialog.open(AddChannelMemberComponent, {
+      data: { channelName: this.navbar.name, channelDescription: this.navbar.description, channelId: channelId }
+    }).afterClosed().subscribe(result => {
+      console.log('AddMember－Result', this.form.value);
+    });
+    return channelId
   }
 }
