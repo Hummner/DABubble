@@ -14,5 +14,5 @@ export const routes: Routes = [
   { path: 'avatarSelection', component: AvatarSelectionComponent },
   { path: 'resetPassword', component: ResetPasswordComponent },
   { path: 'resetPassword/newPassword', component: NewPasswordComponent },
-  { path: 'directMessages', component: DirectMessagesComponent },
+  { path: 'directMessages/:id', component: DirectMessagesComponent },
 ];

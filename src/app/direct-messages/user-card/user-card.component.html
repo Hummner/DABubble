@@ -1,0 +1,37 @@
+          <div class="profile-content">
+            <mat-card *ngIf="profileOpen" class="user-card">
+              <mat-card-content class="card-header">
+                <p>Profil</p>
+                <img
+                  (click)="onCloseClick()"
+                  src="assets/icon/close.png"
+                  alt="Close Icon"
+                />
+              </mat-card-content>
+              <div class="img-section">
+                <img
+                  class="profile-img"
+                  mat-card-image
+                  [src]="userProfileB?.imgUrl"
+                  alt="Profile Image"
+                />
+              </div>
+              <mat-card-content class="card-content">
+                <div class="profile-name">
+                  <h1>{{ userProfileB?.name }}</h1>
+                 
+                </div>
+                <div class="status">
+                  <img src="assets/icon/Online.png" alt="Status Icon" />
+                  <p>Online</p>
+                </div>
+                <div class="email-section">
+                  <img src="assets/icon/mail_black.png" alt="Email Icon" />
+                  <div class="email">
+                    <p class="label">Email Adresse</p>
+                    <p>{{ userProfileB?.email }}</p>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>

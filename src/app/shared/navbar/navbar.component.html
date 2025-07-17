@@ -100,20 +100,20 @@
         </div>
 
         @if (showMessage) {
-        <ul class="direct-messages-list">
-          <li *ngIf="userProfile() as user" class="direct-messages-item">
+        <ul  *ngIf="userProfile() as userA" class="direct-messages-list">
+          <li class="direct-messages-item">
             <div class="avatar">
-              <img [src]="user.imgUrl" alt="Elias Neumann" />
+              <img [src]="userA.imgUrl" alt="Elias Neumann" />
             </div>
-            <p>{{ user.name }} (Du)</p>
+            <p>{{ userA.name }} (Du)</p>
           </li>
-          @for(user of getOtherUserList(); track user){
-          <a [routerLink]="['/directMessages']"
-            ><li class="direct-messages-item">
+          @for(userB of getOtherUserList(); track userB){
+          <a (click)="findOrCreateDMchannel(userA.uid,userB.uid)" 
+            ><li class="direct-messages-item" >
               <div class="avatar">
-                <img [src]="user.imgUrl" alt="Elise Roth" />
+                <img [src]="userB.imgUrl" alt="Elise Roth" />
               </div>
-              <p>{{ user.name }}</p>
+              <p>{{ userB.name }}</p>
             </li>
           </a>
           }

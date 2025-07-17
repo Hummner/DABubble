@@ -1,4 +1,15 @@
-<section>
+<section *ngIf="userProfileB">
+  <div
+    class="custom-backdrop"
+    [class.visible]="backdropVisible"
+    (click)="closeProfileCard()"
+  ></div>
+  <app-user-card
+    *ngIf="profileOpen && userProfileB()"
+    [userProfileB]="userProfileB()"
+    [profileOpen]="profileOpen"
+    (closeProfile)="closeProfileCard()"
+  ></app-user-card>
   <mat-drawer-container class="container" autosize>
     <div class="content">
       <div class="backdrop"></div>
@@ -7,7 +18,7 @@
           <div class="dm-img">
             <img
               class="message-to-img"
-              src="assets/img/sofia_müller.svg"
+              [src]="userB?.imgUrl"
               alt="MessageTo-Image"
             />
             <img
@@ -16,29 +27,36 @@
               alt="Status Image"
             />
           </div>
-          <p>Sofia Müller</p>
+          <p>{{ userB?.name }}</p>
         </div>
       </header>
       <main>
-        <div class="scroll-wrapper">
+        <div *ngIf="userProfileB" class="scroll-wrapper" #scrollContainer>
           <div class="dm-msg-name">
-            <img src="assets/img/sofia_müller.svg" alt="" />
-            <p>Sofia Müller</p>
+            <img [src]="userB?.imgUrl" alt="" />
+            <p>{{ userB?.name }}</p>
           </div>
           <div class="dm-msg-info">
             <p>
               Diese Unterhaltung findet nur zwischen
-              <span class="purple">&#64;Sofia Müller</span> und dir statt.
+              <span (click)="openProfileView()" class="purple"
+                >&#64;{{ userB?.name }}</span
+              >
+              und dir statt.
             </p>
+            @for(msg of getMsgList(); track msg){
+            <app-message-ticket [message]="msg"></app-message-ticket>
+            }
           </div>
         </div>
       </main>
       <footer>
         <div class="text-area">
           <textarea
+            [(ngModel)]="content"
             name="chat_input"
             id="chat_input"
-            placeholder="Nachricht an @Sofia Müller"
+            placeholder="Nachricht an @{{ userB?.name }}"
           ></textarea>
         </div>
         <div class="input-buttons">
@@ -50,7 +68,7 @@
               <img src="assets/icon/tag_icon.png" alt="" />
             </div>
           </div>
-          <div class="send-icon">
+          <div class="send-icon" (click)="addMessage()">
             <img src="assets/icon/send.png" alt="" />
           </div>
         </div>

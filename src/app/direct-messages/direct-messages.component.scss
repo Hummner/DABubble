@@ -159,6 +159,7 @@ main {
 }
 
 .scroll-wrapper {
+  height: 470px;
   overflow-y: auto;
   width: 100%;
   padding: 0 45px;
@@ -356,25 +357,6 @@ main {
 ///
 ///
 
-// ::ng-deep .mat-mdc-menu-panel {
-//   border-radius: 30px 0 30px 30px !important;
-
-//   max-width: 600px !important;
-// }
-
-// ::ng-deep .cdk-overlay-pane {
-//   position: absolute !important;
-//   top: 10px;
-// }
-
-// ::ng-deep .mat-mdc-menu-content {
-//   padding: 0 !important;
-// }
-
-// ::ng-deep .mat-typography {
-//   font: unset !important;
-// }
-
 .no-margin {
   margin: 0px !important;
 }
@@ -382,4 +364,26 @@ main {
 .margin-16 {
   margin-left: 0 !important;
   margin-right: 16px !important;
+}
+
+app-user-card {
+  position: absolute;
+  top: 10%;
+  right: 30%;
+  z-index: 1000;
+}
+
+.custom-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
 }

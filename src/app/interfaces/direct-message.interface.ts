@@ -1,4 +1,4 @@
 export interface DirectMessageInterface {
-    uid:string;
+    id?:string;
     users:string[];
 }
