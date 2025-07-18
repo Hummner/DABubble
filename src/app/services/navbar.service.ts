@@ -13,14 +13,13 @@ export class NavbarService implements OnDestroy {
   private fs = inject(Firestore);
   private stop!: Unsubscribe;
 
-  /** Live‑Stream der Channels */
   private channels$ = new BehaviorSubject<NavbarInterface[]>([]);
   channelsObs$ = this.channels$.asObservable();
 
   constructor() {
     const colRef = collection(this.fs, 'channels');
     this.stop = onSnapshot(colRef, snap => {
-      const arr = snap.docs.map(d => ({ id: d.id, ...d.data() } as NavbarInterface));
+      const arr = snap.docs.map(d => ({ ...d.data() } as NavbarInterface));
       this.channels$.next(arr);
     });
   }

@@ -1,33 +1,86 @@
-<form #memberForm="ngForm" (ngSubmit)="addMember()">
-  <div class="add-members-header">
-    <h2>Leute hinzufügen</h2>
-    <span mat-icon-button (click)="closeDialog()">
-      <mat-icon>close</mat-icon>
-    </span>
-  </div>
-      <mat-radio-group [(ngModel)]="inviteMode" name="inviteMode">
-        <mat-radio-button [value]="1">Alle Mitglieder von 
-          <span class="channel-name">{{ channelName }} </span>
-          hinzufügen
-        </mat-radio-button>
-        <mat-radio-button [value]="2">Bestimmte Leute hinzufügen</mat-radio-button>
-        <ng-container *ngIf="inviteMode === 2">
-          <mat-form-field class="full-width" appearance="outline">
-            <input 
-              matInput 
-              placeholder="Name eingeben" 
-              [(ngModel)]="searchText" 
-              name="search"
-              [attr.required]="inviteMode === 2 ? '' : null" />
-          </mat-form-field>
-        </ng-container>
-      </mat-radio-group>
-      <mat-dialog-actions class="actions" align="end">
-        <button 
+<div class="dialog-overlay" (click)="closeDialog()">
+  <div class="dialog-box" (click)="$event.stopPropagation()">
+    <form #memberForm="ngForm" (ngSubmit)="addMemberToChannel()">
+
+      <div class="add-members-header">
+        <h2>Leute hinzufügen</h2>
+        <span class="close-icon material-symbols-outlined" (click)="closeDialog()">close</span>
+      </div>
+
+      <fieldset class="radio-group">
+        <label class="radio-option">
+          <input
+            type="radio"
+            name="inviteMode"
+            [(ngModel)]="inviteMode"
+            [value]="1" />
+          <span>Alle Mitglieder von <span class="channel-name">{{ channelName }}</span> hinzufügen</span>
+        </label>
+
+        <label class="radio-option">
+          <input
+            type="radio"
+            name="inviteMode"
+            [(ngModel)]="inviteMode"
+            [value]="2" />
+          <span>Bestimmte Leute hinzufügen</span>
+        </label>
+        <ul class="direct-messages-list" >
+            @for(member of this.members; track member){
+              <a [routerLink]="['/directMessages']" class="direct-messages-content"
+                ><li class="direct-messages-item">
+                  <div class="avatar">
+                    <!-- <img [src]="member.imgUrl" alt="Elise Roth" /> -->
+                  </div>
+                  <p>{{ member.name }}</p>
+                  <span (click)="deleteMember(member.uid)" class="material-symbols-outlined">close</span>
+                </li>
+              </a>
+              }
+            </ul>
+
+        <div *ngIf="inviteMode === 2" class="search-wrapper">
+          <input
+            type="text"
+            name="search"
+            [(ngModel)]="searchText"
+            placeholder="Name eingeben"
+            [required]="inviteMode === 2"
+            class="full-input" 
+            />
+
+            @if (inviteMode == 2 && searchText != '') {
+              <div class="member-box">
+                <ul class="direct-messages-list" >
+                  @for(user of getOtherUserList(); track user){
+                  <a [routerLink]="['/directMessages']" class="direct-messages-content"
+                    ><li class="direct-messages-item" (click)="addMember(user.uid)">
+                      <div class="avatar">
+                        <img [src]="user.imgUrl" alt="Elise Roth" />
+                      </div>
+                      <p>{{ user.name }}</p>
+                    </li>
+                    <!-- <div class="check">
+                      @for(member of navbar.members; track $index){
+                        <span *ngIf="member.uid == user.uid" class="material-symbols-outlined">check</span>
+                      }
+                    </div> -->
+                  </a>
+                  }
+                </ul>
+              </div>
+            }
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button
           type="submit"
           [disabled]="isDisabled()"
           [ngClass]="isDisabled() ? 'btn-disabled' : 'btn-active'">
-            Erstellen
-          </button>
-      </mat-dialog-actions>
-</form>
+          Erstellen
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

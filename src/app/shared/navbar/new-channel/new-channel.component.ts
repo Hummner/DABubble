@@ -1,13 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDialogActions, MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { NgClass } from '@angular/common';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddChannelMemberComponent } from '../add-channel-member/add-channel-member.component';
+import { NgClass } from '@angular/common';
+import { NavbarInterface } from '../../../interfaces/navbar.interface';
+import { addDoc, Firestore, collection, } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-new-channel',
@@ -15,40 +12,55 @@ import { AddChannelMemberComponent } from '../add-channel-member/add-channel-mem
   templateUrl: './new-channel.component.html',
   styleUrl: './new-channel.component.scss',
   imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogActions,
-    MatDialogModule,
-    NgClass,
-  ],
+    ReactiveFormsModule, 
+    NgClass
+  ]
 })
 export class NewChannelComponent {
 
-  constructor(public radioDialog: MatDialog) {}
+  navbar: Partial<NavbarInterface> = {}
+  channelName = '';
+  channelDescription = '';
 
-  channelName: string = '';
-  dialogRef = inject(MatDialogRef<NewChannelComponent>);
-  radioRef = inject(MatDialogRef<AddChannelMemberComponent>);
+  form = new FormGroup({
+    channelName: new FormControl('', Validators.required),
+    channelDescription: new FormControl('')
+  });
+
+  private dialogRef = inject(MatDialogRef<NewChannelComponent>);
+  constructor(
+    private dialog: MatDialog,
+    private firestore: Firestore) {}
 
   closeDialog() {
     this.dialogRef.close();
   }
 
   createChannel() {
-    const dialogRef = this.radioDialog.open(AddChannelMemberComponent, {
-      data: {
-        channelName: this.channelName
-      }
-    });
+    console.log(this.form.value);
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
+    this.navbar.name = this.form.get('channelName')?.value as string;
+    this.navbar.description = this.form.get('channelDescription')?.value as string;
 
-    this.closeDialog();
+    addDoc(collection(this.firestore, 'channels'), this.navbar)
+      .then((docRef) => {
+        console.log('Channel was successfully created!', docRef.id);
+        this.navbar.channelId = docRef.id
+        console.log("channelId", this.navbar.channelId);
+        this.openAddMemberDialog(this.navbar.channelId);
+        this.closeDialog();
+      })
+      .catch((error) => {
+        console.error('Issue during channel creation', error);
+    });
   }
 
+  openAddMemberDialog(channelId: string) {
+    this.dialog.open(AddChannelMemberComponent, {
+      data: { channelName: this.navbar.name, channelDescription: this.navbar.description, channelId: channelId }
+    }).afterClosed().subscribe(result => {
+      console.log('AddMember－Result', this.form.value);
+    });
+    return channelId
+  }
 }
