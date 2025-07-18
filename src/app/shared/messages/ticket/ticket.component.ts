@@ -23,6 +23,7 @@ export class TicketComponent implements OnInit {
   firestoreService = inject(FirestoreService);
   threadsService = inject(ThreadService);
   private auth = inject(AuthService);
+  firstThread?: TicketInterface;
 
   showPopup = false;
   showMenu = false;
@@ -42,12 +43,19 @@ export class TicketComponent implements OnInit {
   }
 
   openThreadPanel() {
+    this.renderFirstThread();
     if (this.ticket.threads?.path) {
       this.threadsService.getThreadsFromTicket(this.ticket.threads?.path);
       this.openThread.emit()
     }
 
   }
+
+  renderFirstThread() {
+    
+  }
+
+  
 
   showName() {
     const userIndex = this.findUser(this.ticket.senderId)
