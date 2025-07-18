@@ -13,6 +13,7 @@ import { AuthService } from '../services/auth.service';
 import { FirestoreService } from '../services/firestore.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { TicketInterface } from '../interfaces/ticket.interface';
+import { ThreadService } from '../services/thread.service';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class ChannelComponent implements OnInit, OnDestroy {
   @ViewChild('discInput') discInput!: ElementRef<HTMLInputElement>;
 
   channelsService = inject(ChannelsService);
+  threadsServvice = inject(ThreadService)
   firestoreService = inject(FirestoreService)
   private auth = inject(AuthService);
   showMenu = false;
@@ -57,9 +59,21 @@ export class ChannelComponent implements OnInit, OnDestroy {
     this.messagesSubscription = this.channelsService.messages$.subscribe(msgs => {
       if (this.channel) {
         this.channel.messages = msgs;
+        console.log(this.channel.messages[0].threads?.path);
       }
 
     });
+
+
+
+
+
+  }
+
+  openThread() {
+    if (this.channel) {
+      this.threadsServvice.getThreadsFromTicket("channels/KRIw2GN8Ym9EQmijM84l/messages/UfhxjyXgWbsEC4Z5pz16/threads")
+    }
 
   }
 

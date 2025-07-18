@@ -4,6 +4,7 @@ import { TicketInterface } from '../../../interfaces/ticket.interface';
 import { getDocs, Timestamp } from '@angular/fire/firestore';
 import { AuthService } from '../../../services/auth.service';
 import { FirestoreService } from '../../../services/firestore.service';
+import { ThreadService } from '../../../services/thread.service';
 
 @Component({
   selector: 'app-ticket',
@@ -19,7 +20,8 @@ export class TicketComponent implements OnInit {
   @Input() ticket!: TicketInterface;
   @Input() members?: any[];
   userName!: string;
-  firestoreService = inject(FirestoreService)
+  firestoreService = inject(FirestoreService);
+  threadsService = inject(ThreadService);
   private auth = inject(AuthService);
 
   showPopup = false;
@@ -33,9 +35,17 @@ export class TicketComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.ticket.senderId);
     this.showName();
+    console.log(this.ticket.threads?.path)
 
+
+  }
+
+  openThreadPanel() {
+    if (this.ticket.threads?.path) {
+      this.threadsService.getThreadsFromTicket(this.ticket.threads?.path);
+      this.openThread.emit()
+    }
 
   }
 
@@ -52,16 +62,16 @@ export class TicketComponent implements OnInit {
 
   }
 
-findUser(uId: string): number {
-  if (this.members) {
-    return this.members.findIndex(member => member.uid === uId);
+  findUser(uId: string): number {
+    if (this.members) {
+      return this.members.findIndex(member => member.uid === uId);
+    }
+    return -1;
   }
-  return -1;
-}
 
-isMember(userIndex: number, members: any[]): boolean {
-  return userIndex >= 0 && !!members[userIndex];
-}
+  isMember(userIndex: number, members: any[]): boolean {
+    return userIndex >= 0 && !!members[userIndex];
+  }
 
   //   showName() {
   //   this.userName = this.findUser(this.ticket.senderId)
@@ -107,11 +117,11 @@ isMember(userIndex: number, members: any[]): boolean {
 
   isReaction() {
     if (this.ticket.reactions.length == 0) {
-   
+
 
       return true;
     } else {
-     
+
       return false
     }
   }
