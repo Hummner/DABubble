@@ -18,20 +18,33 @@ import { FirestoreService } from '../../services/firestore.service';
   templateUrl: './message-ticket.component.html',
   styleUrl: './message-ticket.component.scss',
 })
-export class MessageTicketComponent implements OnChanges {
+export class MessageTicketComponent implements OnChanges, AfterViewInit {
   @Input() userProfileB!: UserProfileInterface | null;
   @Input() userProfile!: UserProfileInterface | null;
   @Input() message!: Message;
+  showEmojiMenu = false;
+
+
   senderId = '';
   user!: UserProfileInterface | null | undefined;
-
+  currentUserText = false;
+  ngAfterViewInit(): void {}
   ngOnChanges(): void {
     const userList = this.firestore.userList;
     this.user = userList.find((user) => user.uid === this.message.senderId);
-    console.log(this.user);
+    const currentUserId=this.firestore.getUserId();
+    this.currentUserText = this.message.senderId === currentUserId;
   }
   constructor(private firestore: FirestoreService) {}
   isTimestamp(value: any): value is Timestamp {
     return value instanceof Timestamp;
+  }
+
+  addEmoji(emoji:string, msgId?:string){
+    if(!msgId){
+      console.error("Message Id not available");
+      return;
+    }
+    console.log(emoji, "added to this", msgId, "message")
   }
 }

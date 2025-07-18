@@ -2,11 +2,11 @@ section {
   gap: 64px;
   display: flex;
   height: 100%;
-  padding-bottom: 16px;
+  // padding-bottom: 16px;
 }
 
 :host {
-  width: 100%;
+  width: 90%;
 }
 
 .container {
@@ -27,6 +27,7 @@ section {
   background-color: white;
   border-radius: 30px;
   height: 100%;
+  width: 100%;
 }
 
 .dm-name {
@@ -159,19 +160,19 @@ main {
 }
 
 .scroll-wrapper {
-  height: 470px;
   overflow-y: auto;
+  overflow-x: hidden;
   width: 100%;
-  padding: 0 45px;
+  padding: 25px 0px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
 .dm-msg-name {
   display: flex;
   align-items: flex-end;
   gap: 20px;
+  padding-top: 20px;
   > img {
     width: 80px;
     height: 80px;
@@ -197,161 +198,120 @@ main {
   }
 }
 
-//////////////// Ticket
-
-.ticket-container {
-  &:hover {
-    background-color: #eceefe;
-    cursor: pointer;
-
-    .ticket {
-      .message {
-        background-color: white;
-      }
-    }
-  }
-}
-
-.ticket {
-  display: flex;
-  gap: 24px;
-  padding: 20px 45px;
-  position: relative;
-}
-
-.member-img-ticket {
-  width: 70px;
-  height: 70px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 100%;
-  overflow: hidden;
-
-  > img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.message-content {
+.first-msg {
+  padding: 20px;
+  padding-left: 40px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
 }
 
-.message {
-  background-color: #eceefe;
-  border-radius: 0 30px 30px 30px;
-  padding: 15px;
-  font-size: 18px;
+//////////////// Ticket
 
-  > p {
-    margin: 0;
-  }
-}
+// .ticket-container {
+//   &:hover {
+//     background-color: #eceefe;
+//     cursor: pointer;
 
-.name-date {
-  display: flex;
-  gap: 24px;
-}
+//     .ticket {
+//       .message {
+//         background-color: white;
+//       }
+//     }
+//   }
+// }
 
-.msg-name {
-  font-weight: bold;
-  font-size: 18px;
-}
+// .ticket {
+//   display: flex;
+//   gap: 24px;
+//   padding: 20px 45px;
+//   position: relative;
+// }
 
-.answers {
-  display: flex;
-  align-items: center;
-}
+// .member-img-ticket {
+//   width: 70px;
+//   height: 70px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   border-radius: 100%;
+//   overflow: hidden;
 
-.msg-date {
-  color: #686868;
-  font-size: 14px;
-}
+//   > img {
+//     width: 100%;
+//     height: 100%;
+//     object-fit: cover;
+//   }
+// }
 
-.msg-answer {
-  color: #535af1;
-  font-size: 18px;
-  cursor: pointer;
-  font-weight: 400;
+// .message-content {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 8px;
+// }
 
-  &:hover {
-    font-weight: 700;
-  }
-}
+// .message {
+//   background-color: #eceefe;
+//   border-radius: 0 30px 30px 30px;
+//   padding: 15px;
+//   font-size: 18px;
 
-.msg-answer-container {
-  width: 150px;
-  display: flex;
-  align-items: center;
-}
+//   > p {
+//     margin: 0;
+//   }
+// }
 
-.emoji-menu {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid #adb0d9;
-  border-radius: 25px 25px 0 25px;
-  width: 210px;
-  height: 46px;
-  padding: 3px 15px 3px 15px;
-  background-color: white;
-  top: -24px;
-  right: 48px;
+// .name-date {
+//   display: flex;
+//   gap: 24px;
+// }
 
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(20px);
-  transition: opacity 200ms ease, transform 200ms ease;
-}
+// .msg-name {
+//   font-weight: bold;
+//   font-size: 18px;
+// }
 
-.emoji-menu.visible {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(0);
-}
+// .answers {
+//   display: flex;
+//   align-items: center;
+// }
 
-.emoji-menu.hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(20px);
-}
+// .msg-date {
+//   color: #686868;
+//   font-size: 14px;
+// }
 
-.emoji-menu-item {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+// .msg-answer {
+//   color: #535af1;
+//   font-size: 18px;
+//   cursor: pointer;
+//   font-weight: 400;
 
-  &:hover {
-    background-color: #eceefe;
-    border-radius: 100%;
+//   &:hover {
+//     font-weight: 700;
+//   }
+// }
 
-    .hover-purple {
-      filter: brightness(0) saturate(100%) invert(43%) sepia(61%)
-        saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
-    }
-  }
-}
+// .msg-answer-container {
+//   width: 150px;
+//   display: flex;
+//   align-items: center;
+// }
 
-.reverse {
-  flex-direction: row-reverse !important;
-}
 
-.reverse-backround {
-  background-color: #797ef3 !important;
-  border-radius: 30px 0 30px 30px !important;
 
-  > p {
-    color: white !important;
-  }
-}
+// .reverse {
+//   flex-direction: row-reverse !important;
+// }
+
+// .reverse-backround {
+//   background-color: #797ef3 !important;
+//   border-radius: 30px 0 30px 30px !important;
+
+//   > p {
+//     color: white !important;
+//   }
+// }
 
 /////////////////////// ticket end
 ///
