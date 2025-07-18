@@ -60,6 +60,7 @@ export class DirectMessagesComponent
   unsubList?: () => void;
   content = '';
   senderId = '';
+  id='';
   shouldScroll = false;
 
   message: Message = {
@@ -161,7 +162,7 @@ export class DirectMessagesComponent
 
   addMessage() {
     let message: Message = {
-      id: '',
+      id: this.id,
       createdAt: serverTimestamp(),
       senderId: this.senderId,
       content: this.content,

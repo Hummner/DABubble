@@ -1,18 +1,201 @@
 .container {
-  display: flex;
-  height: 150px;
-  gap:10px;
+  > .ticket {
+    display: flex;
+    padding: 30px;
+    gap: 20px;
+  }
+}
+
+.content {
+  &:hover {
+    background-color: #eceefe;
+    cursor: pointer;
+    -webkit-transition: background-color 300ms linear;
+    -ms-transition: background-color 300ms linear;
+    transition: background-color 300ms linear;
+    .ticket-content {
+      .msg {
+        .text {
+          background-color: white;
+          -webkit-transition: background-color 300ms linear;
+          -ms-transition: background-color 300ms linear;
+          transition: background-color 300ms linear;
+        }
+      }
+    }
+  }
 }
 
 .ticket-img {
   > img {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
   }
 }
 
+h3 {
+  font-weight: 700;
+  font-family: "Nunito", sans-serif;
+}
+
+.text {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  white-space: pre-wrap;
+  background-color: #eceefe;
+  padding: 15px;
+  border-radius: 50px;
+  border-top-left-radius: 0;
+}
+
+.text-reverse {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  white-space: pre-wrap;
+  padding: 15px;
+  border-radius: 50px;
+  border-top-right-radius: 0;
+  background-color: #797ef3;
+  color: #ffffff;
+}
+
+.msg,
+.msg-reverse {
+  display: flex;
+  flex-direction: column;
+}
 .msg {
-display:flex;
-flex-direction: column;
+  align-items: flex-start;
+}
+
+.msg-reverse {
+  align-items: flex-end;
+}
+
+.container-reverse {
+  > .ticket-reverse {
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 30px;
+    gap: 20px;
+  }
+  &:hover {
+    background-color: #eceefe;
+    cursor: pointer;
+    -webkit-transition: background-color 300ms linear;
+    -ms-transition: background-color 300ms linear;
+    transition: background-color 300ms linear;
+  }
+}
+
+.ticket-content-reverse,
+.ticket-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+}
+.sender-name-reverse,
+.msg-reverse {
+  text-align: end;
+}
+
+.separator {
+  background-color: #adb0d9;
+  width: 100%;
+  height: 0.5px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.content {
+  position: relative;
+}
+.emoji-menu {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #adb0d9;
+  border-radius: 25px 25px 0 25px;
+  width: 210px;
+  height: 46px;
+  padding: 3px 15px 3px 15px;
+  background-color: white;
+  top: -30px;
+  right: 0px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(20px);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.emoji-menu-reverse {
+  left: 0;
+}
+
+.emoji-menu.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.emoji-menu.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(20px);
+}
+
+.emoji-menu-item {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #eceefe;
+    border-radius: 100%;
+
+    .hover-purple {
+      filter: brightness(0) saturate(100%) invert(43%) sepia(61%)
+        saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+    }
+  }
+}
+
+.emoji-list-reversed {
+  display: flex;
+  gap: 30px;
+  justify-content: flex-end;
+}
+
+.emoji-list {
+  display: flex;
+  gap: 30px;
+  justify-content: flex-start;
+}
+
+.emoji {
+  // width: 60px;
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: 30px;
+  border: 0.5px solid #adb0d9;
+  background-color: #ffffff;
+  &:hover {
+    border: 0.5px solid #8688ac;
+  }
+  > img {
+    width: 20px;
+    height: 20px;
+  }
+  > p {
+    margin: 0;
+  }
 }

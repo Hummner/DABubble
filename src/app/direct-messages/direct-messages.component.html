@@ -32,22 +32,24 @@
       </header>
       <main>
         <div *ngIf="userProfileB" class="scroll-wrapper" #scrollContainer>
-          <div class="dm-msg-name">
-            <img [src]="userB?.imgUrl" alt="" />
-            <p>{{ userB?.name }}</p>
+          <div class="first-msg">
+            <div class="dm-msg-name">
+              <img [src]="userB?.imgUrl" alt="" />
+              <p>{{ userB?.name }}</p>
+            </div>
+            <div class="dm-msg-info">
+              <p>
+                Diese Unterhaltung findet nur zwischen
+                <span (click)="openProfileView()" class="purple"
+                  >&#64;{{ userB?.name }}</span
+                >
+                und dir statt.
+              </p>
+            </div>
           </div>
-          <div class="dm-msg-info">
-            <p>
-              Diese Unterhaltung findet nur zwischen
-              <span (click)="openProfileView()" class="purple"
-                >&#64;{{ userB?.name }}</span
-              >
-              und dir statt.
-            </p>
-            @for(msg of getMsgList(); track msg){
-            <app-message-ticket [message]="msg"></app-message-ticket>
-            }
-          </div>
+          @for(msg of getMsgList(); track msg){
+          <app-message-ticket [message]="msg"></app-message-ticket>
+          }
         </div>
       </main>
       <footer>

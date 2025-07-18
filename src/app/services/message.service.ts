@@ -1,16 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Message } from '../interfaces/message.interface';
-import { Observable } from 'rxjs';
 import {
   Firestore,
   collection,
   doc,
   onSnapshot,
   query,
-  where,
-  getDocs,
   addDoc,
   orderBy,
+  setDoc,
 } from '@angular/fire/firestore';
 
 @Injectable({
@@ -23,13 +21,17 @@ export class MessageService {
   constructor() {}
 
   async addMessage(item: Message, docId: string) {
-    await addDoc(this.getSubCollectionRef(docId), item)
-      .catch((err) => {
-        console.error(err);
-      })
-      .then((docRef) => {
-        console.log('Document written with ID: ', docRef?.id);
-      });
+    const docRef = await addDoc(this.getSubCollectionRef(docId), {
+      ...item,
+      id: '',
+    }).catch((err) => {
+      console.error(err);
+    });
+    if (docRef) {
+      console.log('Document written with ID: ', docRef.id);
+      const msgRef = docRef;
+      await setDoc(msgRef, { id: docRef.id }, { merge: true });
+    }
   }
 
   subList(channelId: string) {

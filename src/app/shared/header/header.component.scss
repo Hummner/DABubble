@@ -57,6 +57,7 @@ header {
   .user-name {
     font-weight: bold;
     font-size: 32px;
+    line-height: 30px;
   }
 
   > .profile-img-section {
@@ -84,8 +85,8 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 30px;
-  border-top-right-radius: 0;
+  border-radius: 30px !important;
+  border-top-right-radius: 0 !important;
 }
 
 ::ng-deep .profile-menu-wrap {
