@@ -89,9 +89,9 @@
             <main>
                 <div class="scroll-wrapper">
                     @for (ticket of channel?.messages; track $index) {
-                    <app-ticket [index]="$index" [ticket]="ticket" [members]="channel?.members" (openThread)="drawer.toggle()"></app-ticket>
+                    <app-ticket [index]="$index" [ticket]="ticket" [members]="channel?.members" (openThread)="drawer.open()"></app-ticket>
                     }
-                    <div class="placeholder">
+                    <div class="placeholder" (click)="openThread()">
                         <div class="placeholder-date">Heute</div>
                     </div>
                     <!-- <div class="ticket-container">

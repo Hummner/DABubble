@@ -45,7 +45,9 @@ export class ChannelsService implements OnDestroy {
       };
 
       this.channelSubject.next(channel);
-      this.putMessagesInArray(channelId)
+      this.putMessagesInArray(channelId);
+      
+      
     }
   }
 
@@ -116,6 +118,21 @@ export class ChannelsService implements OnDestroy {
     };
 
     addDoc(this.getNewMessageRef(channelId), newTicket)
+  }
+
+  renderThread(channelId: string, ticketId: string) {
+    let threadRef = this.getThreadRef(channelId, ticketId);
+    
+
+  }
+
+  async getThreadsCount(channelId: string, ticketId: string) {
+    let threadRef = this.getThreadRef(channelId, ticketId);
+    let threadsCount;
+    let snapshot = await getDocs(threadRef).then((thread) => {
+      threadsCount = thread.docs.length
+    })
+    return threadsCount
   }
 
 

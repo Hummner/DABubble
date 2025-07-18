@@ -17,7 +17,7 @@
 
             <div class="answers" [ngClass]="{'reverse' : isCurrentUser()}">
                 <div class="msg-answer-container" [ngClass]="{'reverse' : isCurrentUser()}">
-                    <span class="msg-answer" (click)="openThread.emit()">span{{
+                    <span class="msg-answer" (click)="openThreadPanel()">{{
                         ticket.threadsCount}}
                         <span class="answer-span" *ngIf="ticket.threadsCount == 0">Kein Antwort</span>
                         <span class="answer-span" *ngIf="ticket.threadsCount == 1">Antwort</span>
