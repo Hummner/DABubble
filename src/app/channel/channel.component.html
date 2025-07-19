@@ -3,7 +3,7 @@
     <mat-drawer-container class="container" autosize>
 
         <mat-drawer #drawer class="example-sidenav" mode="side" position="end">
-            <app-thread (close)="drawer.toggle()"></app-thread>
+            <app-thread [tickets]="channel?.messages" (close)="drawer.toggle()"></app-thread>
         </mat-drawer>
         <div class="content">
             <header>

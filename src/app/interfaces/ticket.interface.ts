@@ -5,6 +5,6 @@ export interface TicketInterface {
     reactions: [],
     senderId: string,
     text: string,
-    threadsCount: number,
+    threadsCount?: number,
     threads?: CollectionReference<DocumentData>
 }

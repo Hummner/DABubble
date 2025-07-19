@@ -9,6 +9,21 @@
             <div class="close-dialog" (click)="close.emit()"><mat-icon class="icon">close</mat-icon></div>
         </header>
         <main>
+            <div class="ticket">
+                <div class="member-img-ticket">
+                    <img src="assets/img/elias_neumann.svg" alt="">
+                </div>
+                <div class="message-content">
+                    <div class="name-date">
+                        <span class="msg-name">Elias Neumann</span>
+                        <span class="msg-date">14:10 Uhr</span>
+                    </div>
+                    <div class="message">
+                        <p>Welche Version ist aktuell von Angular?</p>
+                    </div>
+                </div>
+
+            </div>
             <div class="placeholder">
                 <div class="placeholder-date msg-answer">2 Answers</div>
             </div>
@@ -42,26 +57,26 @@
             </div>
 
         </main>
-         <footer>
-                <div class="text-area">
-                    <textarea name="chat_input" id="chat_input" placeholder="Antworten..."></textarea>
-                </div>
-                <div class="input-buttons">
-                    <div class="icons">
-                        <div class="input-icon">
-                            <img src="assets/icon/reaction.png" alt="">
-                        </div>
-                        <div class="input-icon">
-                            <img src="assets/icon/tag_icon.png" alt="">
-                        </div>
-
+        <footer>
+            <div class="text-area">
+                <textarea name="chat_input" id="chat_input" placeholder="Antworten..."></textarea>
+            </div>
+            <div class="input-buttons">
+                <div class="icons">
+                    <div class="input-icon">
+                        <img src="assets/icon/reaction.png" alt="">
                     </div>
-                    <div class="send-icon">
-                        <img src="assets/icon/send.png" alt="">
+                    <div class="input-icon">
+                        <img src="assets/icon/tag_icon.png" alt="">
                     </div>
-                </div>
 
-            </footer>
+                </div>
+                <div class="send-icon">
+                    <img src="assets/icon/send.png" alt="">
+                </div>
+            </div>
+
+        </footer>
 
     </div>
 

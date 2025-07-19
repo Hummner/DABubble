@@ -8,7 +8,7 @@ import { NewPasswordComponent } from './auth/reset-password/new-password/new-pas
 import { DirectMessagesComponent } from './direct-messages/direct-messages.component';
 
 export const routes: Routes = [
-  { path: 'channel', component: ChannelComponent },
+  { path: 'channel/:ChannelId', component: ChannelComponent },
   { path: '', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'avatarSelection', component: AvatarSelectionComponent },

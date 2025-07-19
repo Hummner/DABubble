@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, output, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
@@ -14,6 +14,7 @@ import { FirestoreService } from '../services/firestore.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { ThreadService } from '../services/thread.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -28,6 +29,8 @@ export class ChannelComponent implements OnInit, OnDestroy {
   @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>;
   @ViewChild('discInput') discInput!: ElementRef<HTMLInputElement>;
 
+
+
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService)
   firestoreService = inject(FirestoreService)
@@ -41,13 +44,15 @@ export class ChannelComponent implements OnInit, OnDestroy {
   private channelSubscription?: Subscription;
   private messagesSubscription?: Subscription;
   messages: TicketInterface[] = [];
+  channelId!: string;
+  routeSub?: Subscription;
 
-
-  constructor() {
-
-  }
+  constructor(
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
+    this.getActiveRoute();
     this.channelSubscription = this.channelsService.channel$.subscribe(channel => {
       if (channel) {
         this.channel = channel;
@@ -68,6 +73,14 @@ export class ChannelComponent implements OnInit, OnDestroy {
 
 
 
+  }
+
+  getActiveRoute() {
+    this.route.params.subscribe((params) => {
+      if (params) {
+        this.channelId = params['ChannelId']
+      }
+    })
   }
 
   openThread() {
@@ -124,7 +137,7 @@ export class ChannelComponent implements OnInit, OnDestroy {
   }
 
   getChannelInfo() {
-    return this.channelsService.getChannel("KRIw2GN8Ym9EQmijM84l");
+    return this.channelsService.getChannel(this.channelId);
   }
 
   addTicket() {
