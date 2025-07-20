@@ -9,61 +9,93 @@ import {
   addDoc,
   orderBy,
   setDoc,
+  updateDoc,
+  serverTimestamp,
 } from '@angular/fire/firestore';
+import { BehaviorSubject } from 'rxjs';
+import { Timestamp } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MessageService {
   private firestore = inject(Firestore);
-  messageList: Message[] = [];
+  private messageListSubject = new BehaviorSubject<Message[]>([]);
+  messageList$ = this.messageListSubject.asObservable();
+
+  private internalList: Message[] = [];
 
   constructor() {}
 
-  async addMessage(item: Message, docId: string) {
-    const docRef = await addDoc(this.getSubCollectionRef(docId), {
-      ...item,
-      id: '',
-    }).catch((err) => {
-      console.error(err);
-    });
-    if (docRef) {
-      console.log('Document written with ID: ', docRef.id);
-      const msgRef = docRef;
-      await setDoc(msgRef, { id: docRef.id }, { merge: true });
+async addMessage(item: Message, docId: string) {
+  const ref = this.getSubCollectionRef(docId);
+  const docRef = await addDoc(ref, {
+    senderId: item.senderId,
+    content: item.content,
+    createdAt: serverTimestamp(),
+    reactions: item.reactions || [],
+  });
+  await setDoc(docRef, { id: docRef.id }, { merge: true });
+}
+
+  async updateMessage(message: Message, docId: string, channelId: string) {
+    if (message.id) {
+      let ref = this.getSingleMessageRef(channelId, docId);
+      await updateDoc(ref, this.getCleanJson(message)).catch((err) => {
+        console.log(err);
+      });
     }
   }
 
-  subList(channelId: string) {
-    let ref = this.getSubCollectionRef(channelId);
-    const q = query(ref, orderBy('createdAt'));
-    return onSnapshot(q, (list) => {
-      this.messageList = [];
-      list.forEach((element) => {
-        this.messageList.push(
-          this.setMessageObject(element.data(), element.id)
-        );
-      });
-    });
-  }
-
-  setMessageObject(obj: any, id: string) {
+  getCleanJson(message: Message): {} {
     return {
-      id: id || '',
-      createdAt: obj.createdAt || 0,
-      senderId: obj.senderId || '',
-      content: obj.content || '',
-      reactions: obj.reactions || '',
+      id: message.id,
+      createdAt: message.createdAt,
+      senderId: message.senderId,
+      content: message.content,
+      reactions: message.reactions,
     };
   }
 
-  getSubCollectionRef(docId: string) {
-    const docRef = this.getSingleDocRef(docId);
+  subList(channelId: string) {
+    const ref = this.getSubCollectionRef(channelId);
+    const q = query(ref, orderBy('createdAt'));
+    return onSnapshot(q, (list) => {
+      const newList: Message[] = [];
+      list.forEach((element) => {
+        newList.push(this.setMessageObject(element.data(), element.id));
+      });
+      this.internalList = newList;
+      this.messageListSubject.next(newList);
+    });
+  }
+
+  getCurrentMessages(): Message[] {
+    return this.internalList;
+  }
+
+setMessageObject(obj: any, id: string) {
+  return {
+    id,
+    createdAt: obj.createdAt ?? obj.clientCreatedAt ?? null,
+    senderId: obj.senderId || '',
+    content: obj.content || '',
+    reactions: obj.reactions || [],
+  };
+}
+
+  getSingleMessageRef(channelId: string, docId: string) {
+    const messageDocRef = doc(this.getSubCollectionRef(channelId), docId);
+    return messageDocRef;
+  }
+
+  getSubCollectionRef(channelId: string) {
+    const docRef = this.getSingleDocRef(channelId);
     return collection(docRef, 'messages');
   }
 
-  getSingleDocRef(docId: string) {
-    const singleDoc = doc(this.getCollectionRef(), docId);
+  getSingleDocRef(channelId: string) {
+    const singleDoc = doc(this.getCollectionRef(), channelId);
     return singleDoc;
   }
 

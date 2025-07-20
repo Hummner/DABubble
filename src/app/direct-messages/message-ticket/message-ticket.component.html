@@ -1,73 +1,107 @@
-<div class="separator"></div>
 <div
-  class="content"
+  class="ticket-container"
   (mouseenter)="showEmojiMenu = true"
-  (mouseleave)="showEmojiMenu = false"
+  (mouseleave)="showEmojiMenu = false; smallEmojiMenu = false"
+  (click)="closeMoreEmoji($event)"
 >
-  <div *ngIf="!currentUserText" class="container">
-    <div class="ticket">
-      <div class="ticket-img">
-        <img [src]="user?.imgUrl" alt="" />
+  <div class="ticket" [ngClass]="{ 'reverse reverse-hover': currentUserText }">
+    <div class="member-img-ticket">
+      <img src="assets/img/elias_neumann.svg" alt="" />
+    </div>
+    <div class="message-content">
+      <div class="name-date" [ngClass]="{ reverse: currentUserText }">
+        <span class="msg-name"> {{ user?.name }}</span>
       </div>
-      <div class="ticket-content">
-        <div class="sender-name">
-          <h3>{{ user?.name }}</h3>
+      <div class="message-wrapper" [ngClass]="{ reverse: currentUserText }">
+        <div
+          class="message"
+          [ngClass]="{ 'reverse-backround': currentUserText }"
+        >
+          <p>{{ message.content }}</p>
         </div>
-        <div class="msg">
-          <p class="text">{{ message.content }}</p>
-          <p class="time" *ngIf="isTimestamp(message.createdAt)">
-            {{ message.createdAt.toDate() | date : "HH:mm" }}
-          </p>
+      </div>
+
+      <div class="answers" [ngClass]="{ reverse: currentUserText }">
+        <p class="time" *ngIf="isTimestamp(message.createdAt)">
+          {{ message.createdAt.toDate() | date : "dd/MM/yyyy HH:mm" }}
+        </p>
+      </div>
+      <div
+        class="emoji-container"
+        [ngClass]="{ reverse: currentUserText }"
+        *ngIf="message.reactions"
+      >
+        @for(emoji of message.reactions; track emoji){
+        <div
+          class="checked emoji"
+          (click)="removeEmoji(emoji, message.id, channelId)"
+        >
+          <img src="assets/emojis/{{ emoji }}.svg" alt="" />
+          <p>1</p>
         </div>
-        <div class="emoji-list" *ngIf="message.reactions">
-          @for(emoji of message.reactions; track emoji){
-          <div class="checked emoji">
-            <img src="assets/emojis/{{ emoji }}.svg" alt="" />
-            <p>1</p>
-          </div>
-          }
-        </div>
+        }
       </div>
     </div>
-  </div>
-  <div *ngIf="currentUserText" class="container-reverse">
-    <div class="ticket-reverse">
-      <div class="ticket-img">
-        <img [src]="user?.imgUrl" alt="" />
+    <div
+      class="emoji-menu"
+      [ngClass]="{
+        visible: showEmojiMenu,
+        hidden: !showEmojiMenu,
+        'emoji-menu-reverse': currentUserText
+      }"
+    >
+      <div
+        class="emoji-menu-item"
+        (click)="addOrRemoveEmoji('checked', message.id, channelId)"
+      >
+        <img src="assets/emojis/checked.svg" />
       </div>
-      <div class="ticket-content-reverse">
-        <div class="sender-name-reverse">
-          <h3>{{ user?.name }}</h3>
-        </div>
-        <div class="msg-reverse">
-          <p class="text-reverse">{{ message.content }}</p>
-          <p class="time" *ngIf="isTimestamp(message.createdAt)">
-            {{ message.createdAt.toDate() | date : "HH:mm" }}
-          </p>
-        </div>
-        <div class="emoji-list-reversed" *ngIf="message.reactions">
-          @for(emoji of message.reactions; track emoji){
-          <div class="checked emoji">
-            <img src="assets/emojis/{{ emoji }}.svg" alt="" />
-            <p>1</p>
-          </div>
-          }
-        </div>
+      <div
+        class="emoji-menu-item"
+        (click)="addOrRemoveEmoji('thumb', message.id, channelId)"
+      >
+        <img src="assets/emojis/thumb.svg" />
       </div>
+      <div class="emoji-menu-item">
+        <img
+          class="hover-purple"
+          (click)="openMoreEmoji($event)"
+          src="assets/icon/add_reaction.svg"
+        />
+      </div>
+      <!-- <div class="emoji-menu-item">
+        <img class="hover-purple" src="assets/icon/comment.svg" />
+      </div> -->
     </div>
-  </div>
-  <div
-    class="emoji-menu"
-    [ngClass]="{
-      visible: showEmojiMenu,
-      hidden: !showEmojiMenu,
-      'emoji-menu-reverse': currentUserText
-    }"
-  >
-    <div class="emoji-menu-item" (click)="addEmoji('checked', message.id)"><img src="assets/emojis/checked.svg" /></div>
-    <div class="emoji-menu-item" (click)="addEmoji('thumb', message.id)"><img src="assets/emojis/thumb.svg" /></div>
-    <div class="emoji-menu-item">
-      <img class="hover-purple" src="assets/icon/add_reaction.svg" />
+    <div
+      class="small-emoji-menu"
+      *ngIf="smallEmojiMenu"
+      [class.reversed-s-e-m]="!currentUserText"
+    >
+      <div
+        class="emoji-menu-item"
+        (click)="addOrRemoveEmoji('checked', message.id, channelId)"
+      >
+        <img src="assets/emojis/checked.svg" />
+      </div>
+      <div
+        class="emoji-menu-item"
+        (click)="addOrRemoveEmoji('thumb', message.id, channelId)"
+      >
+        <img src="assets/emojis/thumb.svg" />
+      </div>
+      <div
+        class="emoji-menu-item"
+        (click)="addOrRemoveEmoji('rocket', message.id, channelId)"
+      >
+        <img src="assets/emojis/rocket.svg" />
+      </div>
+      <div
+        class="emoji-menu-item"
+        (click)="addOrRemoveEmoji('nerd', message.id, channelId)"
+      >
+        <img src="assets/emojis/nerd.svg" />
+      </div>
     </div>
   </div>
 </div>

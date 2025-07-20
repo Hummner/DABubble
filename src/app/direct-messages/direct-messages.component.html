@@ -12,7 +12,6 @@
   ></app-user-card>
   <mat-drawer-container class="container" autosize>
     <div class="content">
-      <div class="backdrop"></div>
       <header>
         <div class="dm-name">
           <div class="dm-img">
@@ -47,9 +46,25 @@
               </p>
             </div>
           </div>
-          @for(msg of getMsgList(); track msg){
-          <app-message-ticket [message]="msg"></app-message-ticket>
-          }
+          <div></div>
+          <div *ngFor="let date of Object.keys(getMessagesGroupedByDate())">
+            <div class="date-separator">
+              <div class="separator"></div>
+              <div class="date-container">
+                <h3 class="date">{{ date }}</h3>
+              </div>
+              <div class="separator"></div>
+            </div>
+
+            <app-message-ticket
+              *ngFor="
+                let msg of getMessagesGroupedByDate()[date];
+                trackBy: trackByMessageId
+              "
+              [message]="msg"
+              [channelId]="channelId"
+            ></app-message-ticket>
+          </div>
         </div>
       </main>
       <footer>

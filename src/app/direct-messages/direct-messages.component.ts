@@ -10,22 +10,24 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { NgIf } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatCardModule } from '@angular/material/card';
+import { FormsModule } from '@angular/forms';
 
 import { DirectMessageService } from '../services/direct-message.service';
 import { FirestoreService } from '../services/firestore.service';
-import { UserProfileInterface } from '../interfaces/user-profile.interface';
-import { MatCardModule } from '@angular/material/card';
-import { UserCardComponent } from './user-card/user-card.component';
-import { FormsModule } from '@angular/forms';
-import { Message } from '../interfaces/message.interface';
 import { MessageService } from '../services/message.service';
-import { serverTimestamp } from '@angular/fire/firestore';
+import { UserProfileInterface } from '../interfaces/user-profile.interface';
+import { Message } from '../interfaces/message.interface';
+
+import { UserCardComponent } from './user-card/user-card.component';
 import { MessageTicketComponent } from './message-ticket/message-ticket.component';
-import { Timestamp } from 'firebase/firestore';
+
+import { serverTimestamp, Timestamp } from '@angular/fire/firestore';
+import { FieldValue } from 'firebase/firestore';
 
 @Component({
   selector: 'app-direct-messages',
@@ -39,6 +41,7 @@ import { Timestamp } from 'firebase/firestore';
     UserCardComponent,
     FormsModule,
     MessageTicketComponent,
+    NgFor,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrl: './direct-messages.component.scss',
@@ -60,16 +63,10 @@ export class DirectMessagesComponent
   unsubList?: () => void;
   content = '';
   senderId = '';
-  id='';
   shouldScroll = false;
 
-  message: Message = {
-    id: '2',
-    createdAt: Timestamp.fromDate(new Date()),
-    senderId: 'fdsfsfsd',
-    content: 'this is my message',
-    reactions: ['thumb', 'heart'],
-  };
+  messages: Message[] = [];
+  public Object = Object;
 
   constructor(
     private route: ActivatedRoute,
@@ -83,6 +80,7 @@ export class DirectMessagesComponent
       const id = params.get('id');
       if (id) {
         this.channelId = id;
+
         const checkUserInterval = setInterval(() => {
           const currentUser = this.userProfile();
           if (currentUser?.uid) {
@@ -91,12 +89,14 @@ export class DirectMessagesComponent
             this.senderId = currentUser.uid;
           }
         }, 100);
-      } else {
-        console.warn('No channel ID in route.');
-      }
 
-      this.unsubList = this.messageService.subList(this.channelId);
-      this.shouldScroll = true;
+        this.unsubList = this.messageService.subList(this.channelId);
+        this.messageService.messageList$.subscribe((msgs) => {
+          console.log('Messages received:', msgs);
+          this.messages = msgs;
+          this.shouldScroll = true;
+        });
+      }
     });
   }
 
@@ -108,9 +108,20 @@ export class DirectMessagesComponent
     setTimeout(() => {
       if (this.shouldScroll) {
         this.scrollToBottom();
-        this.shouldScroll = false; 
+        this.shouldScroll = false;
       }
     }, 500);
+  }
+
+  ngOnDestroy(): void {
+    this.unsubSingleDM?.();
+    this.routeSub?.unsubscribe();
+    this.unsubUserList?.();
+    this.unsubList?.();
+  }
+
+  get userB() {
+    return this.userProfileB();
   }
 
   openProfileView() {
@@ -134,35 +145,17 @@ export class DirectMessagesComponent
     });
   }
 
-  get userB() {
-    return this.userProfileB();
-  }
-
   getOtherUserProfile(otherUserId: string) {
     this.unsubUserList = this.firestoreService.subUserList((users) => {
       const otherUser = users.find((user) => user.uid === otherUserId);
       if (otherUser) {
         this.userProfileB.set(otherUser);
-        // this.userProfileB = otherUser;
-        // console.log('Other user profile:', this.userProfileB);
       }
     });
   }
 
-  ngOnDestroy(): void {
-    this.unsubSingleDM?.();
-    this.routeSub?.unsubscribe();
-    this.unsubUserList?.();
-    this.unsubList;
-  }
-
-  getMsgList() {
-    return this.messageService.messageList;
-  }
-
   addMessage() {
-    let message: Message = {
-      id: this.id,
+    const message: Message = {
       createdAt: serverTimestamp(),
       senderId: this.senderId,
       content: this.content,
@@ -170,9 +163,6 @@ export class DirectMessagesComponent
     this.messageService.addMessage(message, this.channelId);
     this.content = '';
   }
-  // trackByMsgId(index: number, msg: Message): string {
-  //   return msg.id ?? index.toString(); // fallback in case id is missing
-  // }
 
   scrollToBottom(): void {
     try {
@@ -185,5 +175,53 @@ export class DirectMessagesComponent
     } catch (err) {
       console.error('Failed to scroll:', err);
     }
+  }
+
+  getMsgList() {
+    return this.messages;
+  }
+
+  //Firebase creates Timestamp - realdate/time value, it has a method ".toDate()"
+  //which converts it to native JavaScript Date Object
+  //when we fetch a message, createdAt filed value will be a Timestamp
+  //FieldValue it not a real date/time value, it is a placeholder used ONLY when writing to Firestore
+  //serverTimestamp() returns a FieldValue
+  //  - and Firestore replace this with actual Timestamp when the document is written on the server
+  //we chack first if -date- has a "toDate method", when yes, then it converts to JavaScript date
+  formatDateLabel(date: Date | Timestamp): string {
+    if ('toDate' in date) {
+      date = date.toDate();
+    }
+    const now = new Date();
+    const isToday =
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear();
+    if (isToday) {
+      return 'Heute';
+    }
+    const weekday = date.toLocaleDateString('de-DE', { weekday: 'long' });
+    const formattedDate = date.toLocaleDateString('de-DE'); // 20/07/2025 → UK format
+    return `${weekday}, ${formattedDate}`;
+  }
+
+  getMessagesGroupedByDate(): { [date: string]: Message[] } {
+    return this.messages.reduce((groups, message) => {
+      const createdAt = message.createdAt;
+      // Skip if createdAt is missing or a FieldValue (e.g. serverTimestamp)
+      if (!createdAt || createdAt instanceof FieldValue) {
+        return groups;
+      }
+      const dateStr = this.formatDateLabel(createdAt);
+      if (!groups[dateStr]) {
+        groups[dateStr] = [];
+      }
+      groups[dateStr].push(message);
+      return groups;
+    }, {} as { [date: string]: Message[] });
+  }
+
+  trackByMessageId(index: number, message: Message) {
+    return message.id || index;
   }
 }
