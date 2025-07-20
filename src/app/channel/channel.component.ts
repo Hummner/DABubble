@@ -14,7 +14,7 @@ import { FirestoreService } from '../services/firestore.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { ThreadService } from '../services/thread.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -46,9 +46,12 @@ export class ChannelComponent implements OnInit, OnDestroy {
   messages: TicketInterface[] = [];
   channelId!: string;
   routeSub?: Subscription;
+  isThreadOpen = false;
+  currentThreadPath?: string;
 
   constructor(
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -75,6 +78,10 @@ export class ChannelComponent implements OnInit, OnDestroy {
 
   }
 
+  currentThreadPathRef(data: string) {
+    this.currentThreadPath = data
+  }
+
   getActiveRoute() {
     this.route.params.subscribe((params) => {
       if (params) {
@@ -83,12 +90,6 @@ export class ChannelComponent implements OnInit, OnDestroy {
     })
   }
 
-  openThread() {
-    if (this.channel) {
-      this.threadsServvice.getThreadsFromTicket("channels/KRIw2GN8Ym9EQmijM84l/messages/UfhxjyXgWbsEC4Z5pz16/threads")
-    }
-
-  }
 
   getCurrentUserId(): string | null {
     return this.auth.firebaseAuth.currentUser?.uid ?? null;

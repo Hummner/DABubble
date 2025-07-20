@@ -10,7 +10,7 @@
             </div>
             <div class="message-wrapper" [ngClass]="{'reverse' : isCurrentUser()}">
                 <div class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}">
-                    <p></p>
+                    <p>{{message.text}}</p>
                 </div>
             </div>
             <!-- <div class="emoji-container" [ngClass]="{'reverse' : isCurrentUser()}" *ngIf="isReaction()">

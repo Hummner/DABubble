@@ -1,4 +1,4 @@
-<div class="ticket-container" (mouseenter)="showMenu = true" (mouseleave)="showMenu = false">
+<div class="ticket-container" (mouseenter)="showMenu = true" (mouseleave)="showMenu = false" (click)="openThreadPanel()">
     <div class="ticket" [ngClass]="{'reverse reverse-hover' : isCurrentUser()}">
         <div class="member-img-ticket">
             <img src="assets/img/elias_neumann.svg" alt="">
@@ -7,7 +7,7 @@
 
             <div class="name-date" [ngClass]="{'reverse' : isCurrentUser()}">
                 <span class="msg-name"> {{ userName }}</span>
-                <span class="msg-date"> Uhr</span>
+                <span class="msg-date">{{ time }} Uhr</span>
             </div>
             <div class="message-wrapper" [ngClass]="{'reverse' : isCurrentUser()}">
                 <div class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}">
@@ -18,10 +18,7 @@
             <div class="answers" [ngClass]="{'reverse' : isCurrentUser()}">
                 <div class="msg-answer-container" [ngClass]="{'reverse' : isCurrentUser()}">
                     <span class="msg-answer" (click)="openThreadPanel()">
-                        {{ticket.threadsCount}}
-                        <!-- <span class="answer-span" *ngIf="ticket.threadsCount < 0">Kein Antwort</span>
-                        <span class="answer-span" *ngIf="ticket.threadsCount == 1">Antwort</span>
-                        <span class="answer-span" *ngIf="ticket.threadsCount > 1">Antworten</span> -->
+                        {{answers}}
                     </span>
                 </div>
                 <span class="msg-date">Letze Antwort </span>

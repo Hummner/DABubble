@@ -2,8 +2,8 @@
     <div class="backdrop" *ngIf="menuOpen" (click)="menuOpen = false"></div>
     <mat-drawer-container class="container" autosize>
 
-        <mat-drawer #drawer class="example-sidenav" mode="side" position="end">
-            <app-thread [tickets]="channel?.messages" (close)="drawer.toggle()"></app-thread>
+        <mat-drawer #drawer class="example-sidenav" mode="side" position="end" [(opened)]="isThreadOpen">
+            <app-thread [currentThreadPath]="currentThreadPath" [isThreadOpen]="isThreadOpen" [members]="channel?.members" [tickets]="channel?.messages" (close)="drawer.toggle()"></app-thread>
         </mat-drawer>
         <div class="content">
             <header>
@@ -89,9 +89,9 @@
             <main>
                 <div class="scroll-wrapper">
                     @for (ticket of channel?.messages; track $index) {
-                    <app-ticket [index]="$index" [ticket]="ticket" [members]="channel?.members" (openThread)="drawer.open()"></app-ticket>
+                    <app-ticket (currentPath)="currentThreadPathRef($event)" [index]="$index" [ticket]="ticket" [members]="channel?.members" (openThread)="drawer.open()"></app-ticket>
                     }
-                    <div class="placeholder" (click)="openThread()">
+                    <div class="placeholder">
                         <div class="placeholder-date">Heute</div>
                     </div>
                     <!-- <div class="ticket-container">
