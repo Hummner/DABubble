@@ -1,4 +1,4 @@
-import { inject, Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable, OnDestroy, signal } from '@angular/core';
 import {
   Firestore,
   collection,
@@ -16,7 +16,8 @@ import { DirectMessageInterface } from '../interfaces/direct-message.interface';
 })
 export class DirectMessageService {
   private firestore = inject(Firestore);
-  userIds: string[] = [];
+  private userIdsSignal = signal<string[]>([]);
+  readonly userIds = this.userIdsSignal; 
   private unsubDMList?: () => void;
   constructor() {}
 
@@ -50,10 +51,9 @@ export class DirectMessageService {
     const unsubSingle = onSnapshot(ref, (snapshot) => {
       const data = snapshot.data();
       if (data) {
-        this.userIds = data['users'];
-        if (data) {
-          handleData?.(data);
-        }
+        const users = data['users'] || [];
+        this.userIdsSignal.set(users); // ✅ set signal value
+        handleData?.(data);
       }
     });
     return unsubSingle;

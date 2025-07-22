@@ -1,0 +1,16 @@
+@import "../../../mixins";
+
+@include respond-to(sm) {
+  .footer {
+    > p {
+      font-size: 16px;
+    }
+  }
+}
+@include respond-to(ssm) {
+  .footer {
+    > p {
+      font-size: 15px;
+    }
+  }
+}

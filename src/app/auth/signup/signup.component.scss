@@ -1,39 +1,24 @@
-// .login-content-wrap {
-//   background-color: #eceefe;
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-// }
-// .signup-content-wrap {
-//   width: 100%;
-//   height: 100%;
-//   display: flex;
-//   justify-content: center;
-// }
-// .signup-content {
-//   height: 100vh;
-//   width: 100%;
-//   max-width: 1440px;
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   gap: 10px;
-// }
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #eceefe;
+}
 
-// .signup-header {
-//   width: 100%;
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   padding: 40px;
-// }
-
+.section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 .content {
-  width: 100%;
+  // flex: 1;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: 30px;
 }
+
 .signup-dialog {
   background-color: #fdfdfd;
   width: 600px;
@@ -110,6 +95,7 @@
 }
 .error-pw-list {
   font-size: 13px;
+  padding:10px;
 }
 
 .ok {
@@ -193,3 +179,6 @@
     cursor: pointer;
   }
 }
+
+
+@import "./responsive.signup"

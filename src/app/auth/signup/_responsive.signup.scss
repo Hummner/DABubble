@@ -1,0 +1,206 @@
+@import "../../../mixins";
+
+@include respond-to(md) {
+  .signup-dialog {
+    width: 500px;
+    padding: 40px;
+  }
+  .resp-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 30px;
+  }
+  .create-acc {
+    border: none;
+    border: 2px solid #444df2;
+    border-radius: 50px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-weight: 700;
+  }
+  .title-section {
+    > h1 {
+      font-size: 35px;
+    }
+  }
+}
+
+@include respond-to(sm) {
+  .signup-dialog {
+    width: 400px;
+    height: 600px;
+  }
+  .title-section {
+    height: 100px;
+    gap: 0;
+    > h1 {
+      font-size: 33px;
+    }
+
+    > p {
+      font-size: 16px;
+    }
+  }
+  .title-section {
+    > a {
+      top: 5px;
+      left: 5px;
+      > img {
+        height: 20px;
+        width: 20px;
+      }
+    }
+  }
+  .input-section > .input-email,
+  .input-section > .input-password,
+  .input-section > .input-name {
+    height: 60px;
+    > input {
+      height: 40px;
+      padding: 25px;
+      padding-left: 70px;
+    }
+  }
+
+  .ph-img {
+    width: 25px;
+    height: 25px;
+    top: 12px;
+  }
+  .error {
+    font-size: 10px;
+  }
+
+  .error-pw-list {
+    padding-top: 0;
+  }
+}
+
+@include respond-to(ssm) {
+  .signup-dialog {
+    width: 340px;
+
+    padding: 20px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .title-section {
+    height: 130px;
+    gap: 0;
+    > h1 {
+      font-size: 28px;
+    }
+  }
+  p {
+    font-size: 15px;
+  }
+
+  .input-section > .input-email,
+  .input-section > .input-password,
+  .input-section > .input-name {
+    height: 50px;
+    > input {
+      height: 35px;
+      padding: 20px;
+      padding-left: 60px;
+      font-size: 15px;
+    }
+  }
+  .ph-img {
+    width: 20px;
+    height: 20px;
+    top: 10px;
+  }
+
+  .btn-section {
+    > button {
+      height: 40px;
+      width: 120px;
+    }
+    > .disabled {
+      height: 40px;
+      width: 120px;
+    }
+  }
+
+  button {
+    font-size: 16px;
+  }
+
+  .error {
+    font-size: 10px;
+  }
+}
+
+@include respond-to(sssm) {
+  .signup-dialog {
+    width: 280px;
+    height: 500px;
+    padding: 18px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    justify-content: unset;
+    > form {
+      justify-content: unset;
+    }
+  }
+
+  .title-section {
+    > p {
+      font-size: 15px;
+    }
+    > h1 {
+      font-size: 25px;
+      margin-bottom: 10px;
+    }
+  }
+  .input-section {
+    gap: 0px;
+  }
+  .input-section > .input-email,
+  .input-section > .input-password,
+  .input-section > .input-name {
+    height: 50px;
+    > input {
+      height: 30px;
+      padding: 17px;
+      padding-left: 50px;
+      font-size: 14px;
+    }
+  }
+  .ph-img {
+    top: 8px;
+  }
+
+  .btn-section {
+    gap: 20px;
+    > button {
+      height: 30px;
+      width: 110px;
+    }
+    .disabled {
+      height: 30px;
+      width: 110px;
+    }
+  }
+
+  .error {
+    font-size: 10px;
+  }
+
+  .title-section {
+    height: 110px;
+    > p {
+      padding: 0;
+      margin-bottom: 10px;
+    }
+  }
+
+  .input-checkbox {
+    text-align: center;
+  }
+}

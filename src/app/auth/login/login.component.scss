@@ -1,7 +1,29 @@
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #eceefe;
+}
+
+.section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .content {
-  width: 100%;
-  display:flex;
+  flex: 1;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: 30px;
+}
+
+app-footer {
+  // height: 100px;
+  width: 100%;
+  background-color: #eceefe;
 }
 
 .create-acc {
@@ -85,6 +107,7 @@
     height: 50px;
     width: 130px;
     cursor: pointer;
+    font-weight: 700;
   }
   > :nth-child(1) {
     color: #fdfdfd;
@@ -173,6 +196,10 @@
     opacity: 1;
   }
 }
+
+.resp-footer {
+  display: none;
+}
 // .greeting-logo {
 //   width: 150px;
 //   position: absolute;
@@ -183,3 +210,5 @@
 //   opacity: 0;
 //   pointer-events: none;
 // }
+
+@import "./responsive.login";

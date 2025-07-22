@@ -1,7 +1,21 @@
+@import "../../../mixins";
+
 .header {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 40px;
+}
+
+.header {
+  @include respond-to(md) {
+    justify-content: center;
+  }
+
+  > .create-account-section {
+    @include respond-to(md) {
+      display: none;
+    }
+  }
 }

@@ -1,10 +1,13 @@
-@if(excludeHeaderMainandNavbar()){
-<app-header></app-header>
-}
+<!-- <app-header *ngIf="excludeHeaderMainandNavbar"></app-header>
 
-<section>
-  @if(excludeHeaderMainandNavbar()){
-  <app-navbar></app-navbar>
-  }
+<section [class.section-2]="!excludeHeaderMainandNavbar">
+  <app-navbar *ngIf="excludeHeaderMainandNavbar"></app-navbar>
+  <router-outlet></router-outlet>
+</section> -->
+
+<app-header *ngIf="!isAuthLayout"></app-header>
+
+<section [ngClass]="{ 'main-layout': !isAuthLayout, 'auth-layout': isAuthLayout }">
+  <app-navbar *ngIf="!isAuthLayout"></app-navbar>
   <router-outlet></router-outlet>
 </section>

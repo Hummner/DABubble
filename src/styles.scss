@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
+
 html,
 body {
   height: 100%;
@@ -21,17 +22,17 @@ a {
 
 .primary-button {
   padding: 12px 25px;
-  background-color: #444DF2;
+  background-color: #444df2;
   border-radius: 25px;
   color: white;
   cursor: pointer;
 
   &:hover {
-    background-color: #797EF3;
+    background-color: #797ef3;
   }
 
   &:active {
-    background-color: #444DF2;
+    background-color: #444df2;
   }
 
   &:disabled {
@@ -39,8 +40,6 @@ a {
     cursor: none;
   }
 }
-
-
 
 @font-face {
   font-family: Nunito;
@@ -78,8 +77,6 @@ app-new-password {
   width: 100%;
 }
 
-
-
 $breakpoint-sm: 576px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
@@ -89,15 +86,11 @@ $breakpoint-lg: 992px;
     @media (max-width: $breakpoint-sm) {
       @content;
     }
-  }
-
-  @else if $breakpoint ==md {
+  } @else if $breakpoint ==md {
     @media (max-width: $breakpoint-md) {
       @content;
     }
-  }
-
-  @else if $breakpoint ==lg {
+  } @else if $breakpoint ==lg {
     @media (max-width: $breakpoint-lg) {
       @content;
     }

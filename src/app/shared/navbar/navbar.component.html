@@ -109,7 +109,7 @@
           </li>
           @for(userB of getOtherUserList(); track userB){
           <a (click)="findOrCreateDMchannel(userA.uid,userB.uid)" 
-            ><li class="direct-messages-item" >
+            ><li class="direct-messages-item" [ngClass]="{'selected':userB.uid === selectedUserId()}">
               <div class="avatar">
                 <img [src]="userB.imgUrl" alt="Elise Roth" />
               </div>
