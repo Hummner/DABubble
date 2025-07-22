@@ -32,7 +32,7 @@ export class AddChannelMemberComponent {
   channelId = '';
   inviteMode  = 1;
   searchText  = '';
-  members: { uid: string; role: string; name: string }[] = [];
+  members: { uid: string; role: string; name: string, imgUrl: string }[] = [];
   allUsers: UserProfileInterface[] = [];
 
   constructor(
@@ -69,6 +69,7 @@ export class AddChannelMemberComponent {
     for (let i = 0; i < this.allUsers.length; i++) {
       if (this.allUsers[i].uid === userId) {
         this.fillInterfaceWithMember(this.allUsers[i]);
+        this.searchText = '';
       }
     }
   }
@@ -101,7 +102,8 @@ export class AddChannelMemberComponent {
     const newMember = {
       uid: data.uid,
       role: data.uid === this.userProfile()?.uid ? 'admin' : 'member',
-      name: data.name
+      name: data.name,
+      imgUrl: data.imgUrl
     };
 
     if (!this.members.find(m => m.uid === newMember.uid)) {
@@ -127,6 +129,5 @@ export class AddChannelMemberComponent {
     }).catch((error) => {
       console.error('Error adding member to channel:', error);
     });
-    this.closeDialog();
   }
 }

@@ -25,19 +25,19 @@
             [value]="2" />
           <span>Bestimmte Leute hinzufügen</span>
         </label>
-        <ul class="direct-messages-list" >
+        <ul class="member-list" >
             @for(member of this.members; track member){
-              <a [routerLink]="['/directMessages']" class="direct-messages-content"
-                ><li class="direct-messages-item">
+              <a [routerLink]="['/directMessages']" class="member-content"
+                ><li class="member-item">
                   <div class="avatar">
-                    <!-- <img [src]="member.imgUrl" alt="Elise Roth" /> -->
+                    <img [src]="member.imgUrl" alt="Elise Roth" />
                   </div>
                   <p>{{ member.name }}</p>
                   <span (click)="deleteMember(member.uid)" class="material-symbols-outlined">close</span>
                 </li>
               </a>
-              }
-            </ul>
+            }
+        </ul>
 
         <div *ngIf="inviteMode === 2" class="search-wrapper">
           <input
@@ -60,11 +60,11 @@
                       </div>
                       <p>{{ user.name }}</p>
                     </li>
-                    <!-- <div class="check">
+                    <div class="check">
                       @for(member of navbar.members; track $index){
                         <span *ngIf="member.uid == user.uid" class="material-symbols-outlined">check</span>
                       }
-                    </div> -->
+                    </div>
                   </a>
                   }
                 </ul>
