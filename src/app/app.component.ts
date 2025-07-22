@@ -1,11 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { collection, onSnapshot, Firestore } from '@angular/fire/firestore';
+
 import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -17,14 +16,11 @@ import { filter } from 'rxjs/operators';
 export class AppComponent {
   title = 'dabubble';
   router = inject(Router);
-
   isAuthLayout = false;
   constructor() {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects;
-
-        // Root is login, and possibly other auth paths
         this.isAuthLayout =
           url === '/' ||
           [
@@ -37,14 +33,3 @@ export class AppComponent {
     });
   }
 }
-// get excludeHeaderMainandNavbar() {
-
-//   return ![
-//     '',
-//     '/',
-//     '/signup',
-//     '/avatarSelection',
-//     '/resetPassword',
-//     '/resetPassword/newPassword',
-//   ].includes(this.currentPath);
-// }

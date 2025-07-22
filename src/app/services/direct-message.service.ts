@@ -52,7 +52,7 @@ export class DirectMessageService {
       const data = snapshot.data();
       if (data) {
         const users = data['users'] || [];
-        this.userIdsSignal.set(users); // ✅ set signal value
+        this.userIdsSignal.set(users);
         handleData?.(data);
       }
     });

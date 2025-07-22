@@ -16,16 +16,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
-
 import { DirectMessageService } from '../services/direct-message.service';
 import { FirestoreService } from '../services/firestore.service';
 import { MessageService } from '../services/message.service';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { Message } from '../interfaces/message.interface';
-
 import { UserCardComponent } from './user-card/user-card.component';
 import { MessageTicketComponent } from './message-ticket/message-ticket.component';
-
 import { serverTimestamp, Timestamp } from '@angular/fire/firestore';
 import { FieldValue } from 'firebase/firestore';
 
@@ -220,7 +217,6 @@ export class DirectMessagesComponent
       return groups;
     }, {} as { [date: string]: Message[] });
   }
-
   trackByMessageId(index: number, message: Message) {
     return message.id || index;
   }
