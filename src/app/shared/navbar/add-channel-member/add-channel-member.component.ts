@@ -8,6 +8,7 @@ import { FirestoreService } from '../../../services/firestore.service';
 import { NavbarInterface } from '../../../interfaces/navbar.interface';
 import { User } from 'firebase/auth';
 import { updateDoc, arrayUnion, Firestore, doc } from '@angular/fire/firestore';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-channel-member',
@@ -39,6 +40,9 @@ export class AddChannelMemberComponent {
     private firestore: Firestore,
     private firestoreService: FirestoreService,
     private dialogRef: MatDialogRef<AddChannelMemberComponent>,
+    private route: ActivatedRoute,
+    private router: Router,
+
     @Inject(MAT_DIALOG_DATA) data: { channelName: string, channelDescription: string, channelId: string },
   ) {
     this.channelName = data?.channelName ?? '';
@@ -83,7 +87,7 @@ export class AddChannelMemberComponent {
   }
 
   isDisabled(): boolean {
-    return this.inviteMode === 2 && !this.searchText.trim();
+    return this.inviteMode === 2 && this.members.length === 0;
   }
 
   searchUser() {
@@ -92,6 +96,7 @@ export class AddChannelMemberComponent {
       this.allUsers = this.firestoreService.userList.filter(
         (user) =>
           user.name.toLowerCase().includes(this.searchText.toLowerCase()) 
+          && !this.members.find(m => m.uid === user.uid)
       );
     }
   }
@@ -117,9 +122,25 @@ export class AddChannelMemberComponent {
   }
 
   addMemberToChannel() {
+    this.updateChannel();
+  }
 
+  addAllMemmberToChannel() {
+    this.getOtherUserList();
+    this.navbar.createdBy = this.userProfile()?.name || '';
+    this.navbar.members = this.allUsers.map((user) => ({
+      uid: user.uid,
+      role: user.uid === this.userProfile()?.uid ? 'admin' : 'member',
+      name: user.name,
+      imgUrl: user.imgUrl
+    }));
+
+    this.updateChannel();
+  }
+
+  updateChannel() {
     const channelRef = doc(this.firestore, 'channels', this.channelId); 
-    console.log('Member(s) to add:', this.navbar.members);
+    console.log('Add all Members:', this.navbar.members);
     
     updateDoc(channelRef, {
       members: arrayUnion(...(this.navbar.members || [])),
@@ -129,5 +150,15 @@ export class AddChannelMemberComponent {
     }).catch((error) => {
       console.error('Error adding member to channel:', error);
     });
+    this.closeDialog();
+    this.router.navigateByUrl('/channel/' + this.channelId);
+  }
+
+  submitForm() {
+    if (this.inviteMode === 2) {
+      this.addMemberToChannel();
+    } else if (this.inviteMode === 1) {
+      this.addAllMemmberToChannel();
+    }
   }
 }

@@ -116,28 +116,13 @@ form {
 
 .direct-messages-list {
   display: flex;
-  gap: 8px;
   flex-direction: column;
+  gap: 8px;
   list-style: none;
   margin-bottom: 32px;
   margin-top: 8px;
   padding-left: 8px;
-
-  .direct-messages-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .check {
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    &:hover {
-      background: #eceefe;
-      color: #535af1;
-    }
-  }
+  margin-right: 16px;
 
     .direct-messages-item {
       display: flex;
@@ -226,20 +211,20 @@ form {
   padding-left: 8px;
   flex-wrap: wrap;
 
-  .member-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
   .check {
     cursor: pointer;
     padding: 8px;
     border-radius: 50%;
+
+    .material-symbols-outlined {
+      transition: color 0.2s ease;
+    }
+
     &:hover {
       background: #eceefe;
-      color: #535af1;
+      color: red; 
     }
+
   }
 
     .member-item {
@@ -261,6 +246,16 @@ form {
           width: 30px;
           height: 30px;
           border-radius: 50%;
+        }
+      }
+
+      .material-symbols-outlined {
+        cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: red; 
+          background-color: #eceefe;
         }
       }
 
