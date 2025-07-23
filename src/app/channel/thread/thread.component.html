@@ -7,32 +7,35 @@
             <div class="close-dialog" (click)="close.emit()"><mat-icon class="icon">close</mat-icon></div>
         </header>
         <main>
-            <div class="ticket">
-                <div class="member-img-ticket">
-                    <img src="assets/img/elias_neumann.svg" alt="">
-                </div>
-                <div class="message-content">
-                    <div class="name-date">
-                        <span class="msg-name">{{ ticketUserName}}</span>
-                        <span class="msg-date">{{ ticketCreatedAt }}</span>
+            <div class="scroll-wrapper">
+                <div class="ticket">
+                    <div class="member-img-ticket">
+                        <img src="assets/img/elias_neumann.svg" alt="">
                     </div>
-                    <div class="message">
-                        <p>{{ticketText}}</p>
+                    <div class="message-content">
+                        <div class="name-date">
+                            <span class="msg-name">{{ ticketUserName}}</span>
+                            <span class="msg-date">{{ ticketCreatedAt }}</span>
+                        </div>
+                        <div class="message">
+                            <p>{{ticketText}}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="placeholder">
-                <div class="placeholder-date msg-answer">2 Answers</div>
-            </div>
-            <div>
-                @for (message of messages; track $index) {
-                <app-thread-messages [members]="members" [message]="message" [index]="$index"></app-thread-messages>
-                }
+                <div class="placeholder">
+                    <div class="placeholder-date msg-answer">{{ messagesCount }}</div>
+                </div>
+                <div>
+                    @for (message of messages; track $index) {
+                    <app-thread-messages [members]="members" [message]="message" [index]="$index"></app-thread-messages>
+                    }
+                </div>
             </div>
         </main>
         <footer>
             <div class="text-area">
-                <textarea name="chat_input" id="chat_input" placeholder="Antworten..."></textarea>
+                <textarea [(ngModel)]="textInput" name="chat_input" id="chat_input"
+                    placeholder="Antworten..."></textarea>
             </div>
             <div class="input-buttons">
                 <div class="icons">
@@ -44,7 +47,7 @@
                     </div>
 
                 </div>
-                <div class="send-icon">
+                <div class="send-icon" (click)="addMessageToThread()">
                     <img src="assets/icon/send.png" alt="">
                 </div>
             </div>

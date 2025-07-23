@@ -21,6 +21,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
   @Input() message!: TicketInterface;
   @Input() members?: any[];
   userName!: string;
+  time!: string;
   firestoreService = inject(FirestoreService);
   private auth = inject(AuthService);
   currentUser?: string | null;
@@ -36,6 +37,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
     if (this.message) {
       console.log(this.message);
       this.showName();
+      this.time = this.showTime();
 
     }
     this.getChannelId();
@@ -70,6 +72,10 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
       const channelId = params['ChannelId'];
       return channelId
     })
+  }
+
+  showTime(): string {
+    return this.message?.createdAt instanceof Date ? this.message.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
   }
 
   findUser(uId: string): number {

@@ -22,6 +22,12 @@ header {
     height: 100%;
 }
 
+.scroll-wrapper {
+    overflow-y: auto;
+    width: 100%;
+    padding: 25px 0;
+}
+
 
 section {
     height: 100%;
@@ -127,6 +133,7 @@ main {
     flex-direction: column;
     justify-content: flex-end;
     flex: 1;
+    overflow: hidden;
 }
 
 .ticket {
@@ -240,4 +247,3 @@ footer {
         padding: 0;
     }
 }
-

@@ -6,7 +6,7 @@
 
             <div class="name-date" [ngClass]="{'reverse' : isCurrentUser()}">
                 <span class="msg-name"> {{ userName }}</span>
-                <span class="msg-date"> Uhr</span>
+                <span class="msg-date">{{ time }} Uhr</span>
             </div>
             <div class="message-wrapper" [ngClass]="{'reverse' : isCurrentUser()}">
                 <div class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}">
