@@ -1,5 +1,5 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { CollectionReference, doc, Firestore, getDoc, getDocs, serverTimestamp, Timestamp } from '@angular/fire/firestore';
+import { CollectionReference, doc, Firestore, getCountFromServer, getDoc, getDocs, serverTimestamp, Timestamp } from '@angular/fire/firestore';
 import { collection, onSnapshot } from '@angular/fire/firestore';
 import { ChannelInterface } from '../interfaces/channel.interface';
 import { TicketInterface } from '../interfaces/ticket.interface';
@@ -101,7 +101,7 @@ export class ChannelsService implements OnDestroy {
     this.unsubMessages = onSnapshot(q, (msgList) => {
       const messagesArray: TicketInterface[] = [];
       msgList.docs.forEach(msg => {
-        let ticketToJson = this.getTickets(msg.id, msg.data(), channelId)
+        let ticketToJson =  this.getTickets(msg.id, msg.data(), channelId)
         if (ticketToJson) {
           messagesArray.push(ticketToJson)
         }
@@ -131,10 +131,9 @@ export class ChannelsService implements OnDestroy {
 
   async getThreadsCount(channelId: string, ticketId: string) {
     let threadRef = this.getThreadRef(channelId, ticketId);
-    let threadsCount;
-    let snapshot = await getDocs(threadRef).then((thread) => {
-      threadsCount = thread.docs.length
-    })
+    let snapshot = await getCountFromServer(threadRef)
+    let threadsCount  = snapshot.data().count
+    
     return threadsCount
   }
 

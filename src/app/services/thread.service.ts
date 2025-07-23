@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { collection, doc, DocumentData, onSnapshot, Timestamp } from '@angular/fire/firestore';
+import { addDoc, collection, doc, DocumentData, increment, onSnapshot, orderBy, query, serverTimestamp, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { Firestore } from '@angular/fire/firestore';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { BehaviorSubject } from 'rxjs';
@@ -14,7 +14,8 @@ export class ThreadService {
   private messagesSubscribe = new BehaviorSubject<TicketInterface[]>([])
   messagesSubscribe$ = this.messagesSubscribe.asObservable();
   currentTicketOpened!: TicketInterface;
-  threadPath!:string;
+  threadPath!: string;
+  threadMessageCount!: number;
 
 
 
@@ -29,8 +30,10 @@ export class ThreadService {
     let getThreadRef = collection(this.firestore, threadPath);
     this.threadPath = threadPath
     this.currentTicketOpened = ticket
-    this.unsubMessages = onSnapshot(getThreadRef, (msgList) => {
+    let q = query(getThreadRef, orderBy('createdAt'))
+    this.unsubMessages = onSnapshot(q, (msgList) => {
       let messageArray: TicketInterface[] = [];
+      this.threadMessageCount = msgList.docs.length
       msgList.forEach(msg => {
         let message: TicketInterface = this.getMessageToJson(msg.data())
         messageArray.push(message)
@@ -45,8 +48,36 @@ export class ThreadService {
   }
 
 
+  getThreadLenght() {
+    return this.threadMessageCount;
+  }
+
+
   getThreadPath() {
     return this.threadPath
+  }
+
+  async addMessageToThread(senderId: string, text: string) {
+    const newMessage: TicketInterface = {
+      createdAt: serverTimestamp(),
+      reactions: [],
+      senderId: senderId,
+      text: text,
+    };
+
+    try {
+      await addDoc(collection(this.firestore, this.threadPath), newMessage);
+      await this.increaseThreadCounter()
+    } catch (error) {
+      console.error("Error by add a message", error);
+      
+    }
+  }
+
+
+  async increaseThreadCounter() {
+    let ticketPath = this.threadPath.split("/").slice(0, 4).join("/");
+   await updateDoc(doc(this.firestore, ticketPath), { threadsCount: increment(1) })
   }
 
 

@@ -13,7 +13,7 @@ import { ThreadService } from '../../../services/thread.service';
   templateUrl: './ticket.component.html',
   styleUrl: './ticket.component.scss'
 })
-export class TicketComponent implements OnInit {
+export class TicketComponent implements OnInit, OnChanges {
 
   @Output() openThread = new EventEmitter<void>();
   @Output() currentPath = new EventEmitter<string>()
@@ -35,8 +35,15 @@ export class TicketComponent implements OnInit {
     if (this.ticket) {
       this.showName();
       this.time = this.showTime();
-      this.answers = this.showAnswer();
+      ;
 
+    }
+
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['ticket']) {
+      this.answers = this.showAnswer()
     }
 
   }
@@ -59,8 +66,8 @@ export class TicketComponent implements OnInit {
     let answers = "Keine Antwort"
     let counter = this.ticket.threadsCount
     if (counter) {
-       if (counter == 1) return `${counter} Antwort`
-      if (counter > 0) return `${counter} Antworten`
+      if (counter == 1) return `${counter} Antwort`
+      if (counter > 1) return `${counter} Antworten`
 
 
     }

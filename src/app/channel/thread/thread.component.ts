@@ -8,11 +8,12 @@ import { AuthService } from '../../services/auth.service';
 import { FirestoreService } from '../../services/firestore.service';
 import { FieldValue, Timestamp } from '@angular/fire/firestore';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-thread',
   standalone: true,
-  imports: [MatIconModule, ThreadMessagesComponent, CommonModule],
+  imports: [MatIconModule, ThreadMessagesComponent, CommonModule, FormsModule],
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss'
 })
@@ -34,7 +35,10 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
   ticketUserName!: string;
   ticketCreatedAt!: string;
   ticketText!: string;
-  
+  textInput!: string;
+  messagesCount!: number;
+  ticketPath!: string| void;
+
 
 
   constructor() {
@@ -48,26 +52,52 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
     this.messagesSubscription = this.threadService.messagesSubscribe$.subscribe(msgArray => {
       this.messages = msgArray
     });
-
-
-
-
-
-
-
   }
+
+
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
     if (changes['isThreadOpen'] || this.isThreadOpen || changes['currentThreadPath']) {
       this.currentTicket = this.threadService.getTicketFromChannel();
+      this.messagesCount = this.threadService.getThreadLenght();
+      
+      if (this.messagesCount) {
+        this.messagesCounter();
+      }
+
+      console.log(this.messagesCount);
+      
+      
+
       if (this.currentTicket) {
         this.createCurrentTicket();
-        console.log('neue Pfad: ', this.currentThreadPath);
+        
+
+
       }
-      console.log("Das Ticket was ich suche: ", this.currentTicket);
+
     }
+
+    if (changes['messages']) {
+      console.log("YESS");
+
+    }
+
+
   }
+
+
+  addMessageToThread() {
+    let senderId = this.getCurrentUserId();
+    let text = this.textInput;
+    if (senderId && text) {
+      this.threadService.addMessageToThread(senderId, text);
+
+    }
+
+  }
+
 
   createCurrentTicket() {
     this.showName();
@@ -75,8 +105,8 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
     this.ticketText = this.currentTicket.text
   }
 
-  showTime():string {
-   return this.currentTicket?.createdAt instanceof Date ? this.currentTicket.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
+  showTime(): string {
+    return this.currentTicket?.createdAt instanceof Date ? this.currentTicket.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
   }
 
   showName() {
@@ -89,13 +119,14 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  messagesCounter() {
+    let number = this.messagesCount
+    if (number > 1) return `${number} Antworten`
+    if (number == 1) return '1 Antwort'
+    return "Kein Antwort"
+  }
 
-  // getChannelId() {
-  //   this.channelId = this.route.params.subscribe(params => {
-  //     const channelId = params['ChannelId'];
-  //     return channelId
-  //   })
-  // }
+
 
   findUser(uId: string): number {
     if (this.members) {
@@ -119,12 +150,9 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 
-
   ngOnDestroy(): void {
     this.messagesSubscription?.unsubscribe();
     console.log("messagesSubctiption destroyed");
 
   }
-
-
 }
