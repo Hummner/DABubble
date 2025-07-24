@@ -48,11 +48,6 @@ export class ThreadService {
   }
 
 
-  getThreadLenght() {
-    return this.threadMessageCount;
-  }
-
-
   getThreadPath() {
     return this.threadPath
   }
@@ -76,10 +71,14 @@ export class ThreadService {
 
 
   async increaseThreadCounter() {
-    let ticketPath = this.threadPath.split("/").slice(0, 4).join("/");
+    let ticketPath = this.getTicketPath();
    await updateDoc(doc(this.firestore, ticketPath), { threadsCount: increment(1) })
   }
 
+  getTicketPath() {
+    return this.threadPath.split("/").slice(0, 4).join("/");
+  }
+ 
 
   getMessageToJson(messageData: DocumentData) {
     const rawCreatedAt = messageData['createdAt'];

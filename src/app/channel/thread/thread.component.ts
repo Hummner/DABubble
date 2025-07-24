@@ -37,7 +37,7 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
   ticketText!: string;
   textInput!: string;
   messagesCount!: number;
-  ticketPath!: string| void;
+  ticketPath!: string | void;
 
 
 
@@ -60,31 +60,21 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
     console.log(changes);
     if (changes['isThreadOpen'] || this.isThreadOpen || changes['currentThreadPath']) {
       this.currentTicket = this.threadService.getTicketFromChannel();
-      this.messagesCount = this.threadService.getThreadLenght();
-      
-      if (this.messagesCount) {
+
+      if (this.messagesCount) { // vllt lööschen
         this.messagesCounter();
       }
 
-      console.log(this.messagesCount);
-      
-      
 
       if (this.currentTicket) {
         this.createCurrentTicket();
-        
-
-
       }
-
     }
 
     if (changes['messages']) {
       console.log("YESS");
 
     }
-
-
   }
 
 

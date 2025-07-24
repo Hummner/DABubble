@@ -37,12 +37,12 @@
                 }
             </div>
         </div>
-        <div class="emoji-menu"
+        <div class="emoji-menu" (click)="$event.stopPropagation()"
             [ngClass]="{ 'visible': showMenu, 'hidden': !showMenu, 'emoji-menu-reverse' : isCurrentUser()}">
             <div class="emoji-menu-item"><img src="assets/emojis/checked.svg"></div>
             <div class="emoji-menu-item"><img src="assets/emojis/thumb.svg"></div>
-            <div class="emoji-menu-item "><img class="hover-purple" src="assets/icon/add_reaction.svg"></div>
-            <div class="emoji-menu-item "><img class="hover-purple" src="assets/icon/comment.svg"></div>
+            <div class="emoji-menu-item"><img class="hover-purple" src="assets/icon/add_reaction.svg"></div>
+            <div class="emoji-menu-item"><img class="hover-purple" src="assets/icon/comment.svg"></div>
         </div>
 
     </div>
