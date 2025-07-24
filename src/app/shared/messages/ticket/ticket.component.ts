@@ -1,10 +1,12 @@
 import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketInterface } from '../../../interfaces/ticket.interface';
-import { getDocs, Timestamp } from '@angular/fire/firestore';
+import { addDoc, arrayUnion, collection, doc, getDocs, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { AuthService } from '../../../services/auth.service';
 import { FirestoreService } from '../../../services/firestore.service';
 import { ThreadService } from '../../../services/thread.service';
+import { ActivatedRoute } from '@angular/router';
+import { ChannelsService } from '../../../services/channels.service';
 
 @Component({
   selector: 'app-ticket',
@@ -25,17 +27,19 @@ export class TicketComponent implements OnInit, OnChanges {
   answers!: string;
   firestoreService = inject(FirestoreService);
   threadsService = inject(ThreadService);
+  channelService = inject(ChannelsService)
   private auth = inject(AuthService);
   showPopup = false;
   showMenu = false;
+  channelId!: string;
 
-  constructor() { }
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     if (this.ticket) {
       this.showName();
       this.time = this.showTime();
-      ;
+      this.getChannelId();
 
     }
 
@@ -56,6 +60,55 @@ export class TicketComponent implements OnInit, OnChanges {
       this.openThread.emit()
     }
   }
+
+  async addEmojiToTicket(emoji: string) {
+    let ticketRef = this.getTicketRef();
+    let senderId = this.getCurrentUserId();
+    let isEmoji: boolean = this.checkEmojiInArray(emoji);
+    let isUserAddedReaction: boolean = this.checkUserReactions(senderId!)
+
+    if (isEmoji && isUserAddedReaction) {
+      console.log("This user yet added This emoji:", emoji);
+
+    }
+
+    if (isEmoji && isUserAddedReaction) {
+      
+    }
+
+
+    try {
+      await updateDoc(ticketRef, "reactions", arrayUnion())
+    } catch (err) {
+      console.error("Error by add a reaction", err);
+
+    }
+  }
+
+  checkUserReactions(senderId: string) {
+    let isUserAddedReaction = false;
+    this.ticket.reactions.forEach((reaction) => {
+      return isUserAddedReaction = reaction.users.includes(senderId)
+    });
+    return isUserAddedReaction
+  }
+
+  checkReaction(emoji: string, senderId: string) {
+    let emojiInArray = this.checkEmojiInArray(emoji);
+  }
+
+  checkEmojiInArray(emoji: string) {
+    let isEmoji = false;
+
+    this.ticket.reactions.forEach((reaction) => {
+      if (reaction.emoji == emoji) {
+        isEmoji = true
+      }
+    })
+
+    return isEmoji
+  }
+
 
 
   getThreadPath(path: string) {
@@ -111,6 +164,18 @@ export class TicketComponent implements OnInit, OnChanges {
     return this.auth.firebaseAuth.currentUser?.uid ?? null;
   }
 
+  getChannelId() {
+    this.route.params.subscribe((params) => {
+      if (params) {
+        this.channelId = params['ChannelId']
+      }
+    })
+  }
+
+  getTicketRef() {
+    return doc(this.channelService.firestore, this.threadsService.getTicketPath())
+  }
+
 
   isCurrentUser() {
     return (this.getCurrentUserId() === this.ticket.senderId)
@@ -118,9 +183,9 @@ export class TicketComponent implements OnInit, OnChanges {
 
   isReaction() {
     if (this.ticket.reactions.length == 0) {
-      return true;
+      return false;
     } else {
-      return false
+      return true
     }
   }
 }

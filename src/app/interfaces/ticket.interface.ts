@@ -2,7 +2,7 @@ import { CollectionReference, DocumentData, FieldValue, Timestamp } from "@angul
 
 export interface TicketInterface {
     createdAt: FieldValue | Date | null,
-    reactions: [],
+    reactions: { emoji: string; users: string[] }[];
     senderId: string,
     text: string,
     threadsCount?: number,
