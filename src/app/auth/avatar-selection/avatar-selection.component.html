@@ -1,36 +1,40 @@
-<app-header-2></app-header-2>
-<div class="content">
-  <div class="avatar-dialog">
-    <div class="title-section">
-      <a [routerLink]="['/signup']">
-        <img src="assets/icon/arrow_back.svg" alt=""
-      /></a>
-      <h1 class="blue">Wähle deinen Avatar</h1>
-    </div>
-    <div class="current-profile">
-      @if(profileImageChosen){
-      <img
-        class="chosenImg"
-        [src]="currentProfilImageUrl"
-        alt="Profile Picture"
-      />
-      } @if(!profileImageChosen){
-      <img src="assets/img/profile.png" alt="Profile Picture" />
-      }
+<div class="auth-page">
+  <app-header-2></app-header-2>
+  <div class="section">
+    <div class="content">
+      <div class="avatar-dialog">
+        <div class="title-section">
+          <a [routerLink]="['/signup']">
+            <img src="assets/icon/arrow_back.svg" alt=""
+          /></a>
+          <h1 class="blue">Wähle deinen Avatar</h1>
+        </div>
+        <div class="current-profile">
+          @if(profileImageChosen){
+          <img
+            class="chosenImg"
+            [src]="currentProfilImageUrl"
+            alt="Profile Picture"
+          />
+          } @if(!profileImageChosen){
+          <img src="assets/img/profile.png" alt="Profile Picture" />
+          }
 
-      <h3>{{ userName }}</h3>
-    </div>
-    <div class="choose-avatar">
-      <p class="fs-20">Aus der Liste wählen</p>
-      <div class="img-list">
-        @for(imgUrl of profileImageUrls; track imgUrl; let index = $index){
-        <img [src]="imgUrl" (click)="chooseProfilImg(imgUrl)" alt="" />
-        }
+          <h3>{{ userName }}</h3>
+        </div>
+        <div class="choose-avatar">
+          <p class="fs-20">Aus der Liste wählen</p>
+          <div class="img-list">
+            @for(imgUrl of profileImageUrls; track imgUrl; let index = $index){
+            <img [src]="imgUrl" (click)="chooseProfilImg(imgUrl)" alt="" />
+            }
+          </div>
+        </div>
+        <div class="btn-section">
+          <button (click)="completeRegistration()" class="fs-18">Weiter</button>
+        </div>
       </div>
     </div>
-    <div class="btn-section">
-      <button (click)="completeRegistration()" class="fs-18">Weiter</button>
-    </div>
   </div>
+  <!-- <app-footer></app-footer> -->
 </div>
-<app-footer></app-footer>

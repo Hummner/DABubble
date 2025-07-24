@@ -1,7 +1,7 @@
 <header class="header">
   <img #headerLogo src="assets/img/Logo-1.png" alt="" />
 
-  <div class="create-account-section">
+  <div *ngIf = "isLoginPage"class="create-account-section">
     <p class="fs-18">Neu bei DABubble?</p>
     <a [routerLink]="['signup']"
       ><p class="fs-18 blue create-acc">Konto erstellen</p></a
