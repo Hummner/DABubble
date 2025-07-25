@@ -51,7 +51,7 @@
         </div>
 
         <ul *ngIf="showChannel" class="channel-list">
-          <li *ngFor="let ch of channels$ | async; let i = index" class="channel-item">
+          <li *ngFor="let ch of channels$ | async; let i = index" class="channel-item" (click)="selectChannel(ch.channelId)">
             <span class="material-symbols-outlined edit-icon">tag</span>
             <p>{{ ch.name }}</p>
           </li>

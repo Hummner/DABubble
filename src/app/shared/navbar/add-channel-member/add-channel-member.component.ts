@@ -144,7 +144,8 @@ export class AddChannelMemberComponent {
     
     updateDoc(channelRef, {
       members: arrayUnion(...(this.navbar.members || [])),
-      createdBy: this.navbar.createdBy
+      createdBy: this.navbar.createdBy,
+      channelId: this.channelId
     }).then(() => {
       console.log('Member added successfully');
     }).catch((error) => {
