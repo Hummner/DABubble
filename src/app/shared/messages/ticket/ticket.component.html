@@ -1,4 +1,5 @@
-<div class="ticket-container" (mouseenter)="showMenu = true" (mouseleave)="showMenu = false" (click)="openThreadPanel()">
+<div class="ticket-container" (mouseenter)="showMenu = true" (mouseleave)="showMenu = false"
+    (click)="openThreadPanel()">
     <div class="ticket" [ngClass]="{'reverse reverse-hover' : isCurrentUser()}">
         <div class="member-img-ticket">
             <img src="assets/img/elias_neumann.svg" alt="">
@@ -46,4 +47,25 @@
         </div>
 
     </div>
+</div>
+<div class="ticket-edit">
+
+    <div class="message-edit">
+        <textarea class="edit-textarea" name="edit-textarea" id="">{{ ticket.text}}</textarea>
+        <div class="button-container">
+            <div class="input-icon">
+                <img src="assets/icon/reaction.png" alt="">
+            </div>
+            <div class="buttons">
+                <span class="secondary-button">Abbrechen</span>
+                <span class="primary-button">Speichern</span>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="member-img-ticket">
+        <img src="assets/img/elias_neumann.svg" alt="">
+    </div>
+
 </div>
