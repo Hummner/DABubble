@@ -40,6 +40,30 @@ a {
   }
 }
 
+.secondary-button {
+  padding: 12px 25px;
+  background-color: white;
+  border-radius: 25px;
+  border: 1px solid #444DF2;
+  color: #444DF2;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #535AF1;
+    color: white;
+  }
+
+  &:active {
+    background-color: #444DF2;
+  }
+
+  &:disabled {
+    color: #686868;
+    cursor: none;
+  }
+
+}
+
 
 
 @font-face {

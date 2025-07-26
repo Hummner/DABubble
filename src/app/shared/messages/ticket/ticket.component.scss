@@ -221,6 +221,79 @@
     }
 }
 
+.message-edit {
+    background-color: white;
+    border: 1px solid #ADB0D9;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+     flex: 1;
+}
+
+
+.ticket-edit {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    padding: 20px 45px 20px 140px;
+    gap: 24px;
+    background-color: #ECEEFE;
+}
+
+.edit-textarea {
+   
+    border: none;
+    width: 100%;
+    font-size: 18px;
+    color: #686868;
+    resize: none;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.button-container {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input-icon {
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background-color: #ECEEFE;
+        cursor: pointer;
+    }
+
+    &:hover img {
+        filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+    }
+
+    >img {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.buttons {
+    gap: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 @media(max-width: 768px) {
     .ticket {
         padding: 20px 24px;
