@@ -47,6 +47,7 @@ export class NavbarComponent {
     private firestoreService: FirestoreService,
     private directMessageService: DirectMessageService,
     private router: Router
+    
   ) {}
 
   isOpen = true;
@@ -82,5 +83,16 @@ export class NavbarComponent {
     );
     this.router.navigateByUrl(`directMessages/${channelId}`);
         this.directMessageService.subSingleDM(channelId);
+  }
+ 
+  selectChannel(channelId: string) {
+    this.channels$.subscribe((channels) => {
+      const selectedChannel = channels.find(channel => channel.channelId === channelId);
+      if (selectedChannel) {
+        this.router.navigateByUrl(`channel/${selectedChannel.channelId}`);
+      } else {
+        console.error('Channel not found:', channelId);
+      }
+  });
   }
 }

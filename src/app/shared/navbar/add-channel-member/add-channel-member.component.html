@@ -1,6 +1,6 @@
 <div class="dialog-overlay" (click)="closeDialog()">
   <div class="dialog-box" (click)="$event.stopPropagation()">
-    <form #memberForm="ngForm" (ngSubmit)="addMemberToChannel()">
+    <form #memberForm="ngForm"  (ngSubmit)="submitForm()">
 
       <div class="add-members-header">
         <h2>Leute hinzufügen</h2>
@@ -14,7 +14,7 @@
             name="inviteMode"
             [(ngModel)]="inviteMode"
             [value]="1" />
-          <span>Alle Mitglieder von <span class="channel-name">{{ channelName }}</span> hinzufügen</span>
+          <span>Alle Mitglieder zu <span class="channel-name">{{ channelName }}</span> hinzufügen</span>
         </label>
 
         <label class="radio-option">
@@ -25,20 +25,21 @@
             [value]="2" />
           <span>Bestimmte Leute hinzufügen</span>
         </label>
-        <ul class="direct-messages-list" >
+        <ul class="member-list" >
             @for(member of this.members; track member){
-              <a [routerLink]="['/directMessages']" class="direct-messages-content"
-                ><li class="direct-messages-item">
+                <li class="member-item">
                   <div class="avatar">
-                    <!-- <img [src]="member.imgUrl" alt="Elise Roth" /> -->
+                    <img [src]="member.imgUrl" alt="Elise Roth" />
                   </div>
                   <p>{{ member.name }}</p>
-                  <span (click)="deleteMember(member.uid)" class="material-symbols-outlined">close</span>
+                  <span 
+                    (click)="deleteMember(member.uid)" 
+                    class="material-symbols-outlined">
+                    close
+                  </span>
                 </li>
-              </a>
-              }
-            </ul>
-
+            }
+        </ul>
         <div *ngIf="inviteMode === 2" class="search-wrapper">
           <input
             type="text"
@@ -53,19 +54,12 @@
               <div class="member-box">
                 <ul class="direct-messages-list" >
                   @for(user of getOtherUserList(); track user){
-                  <a [routerLink]="['/directMessages']" class="direct-messages-content"
-                    ><li class="direct-messages-item" (click)="addMember(user.uid)">
+                    <li class="direct-messages-item" (click)="addMember(user.uid)" >
                       <div class="avatar">
                         <img [src]="user.imgUrl" alt="Elise Roth" />
                       </div>
                       <p>{{ user.name }}</p>
-                    </li>
-                    <!-- <div class="check">
-                      @for(member of navbar.members; track $index){
-                        <span *ngIf="member.uid == user.uid" class="material-symbols-outlined">check</span>
-                      }
-                    </div> -->
-                  </a>
+                  </li>
                   }
                 </ul>
               </div>

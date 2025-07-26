@@ -5,6 +5,7 @@ import { ChannelInterface } from '../interfaces/channel.interface';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { addDoc, DocumentData, query, orderBy } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -46,8 +47,8 @@ export class ChannelsService implements OnDestroy {
 
       this.channelSubject.next(channel);
       this.putMessagesInArray(channelId);
-      
-      
+
+
     }
   }
 
@@ -78,8 +79,10 @@ export class ChannelsService implements OnDestroy {
 
   getTickets(ticketId: string, ticketData: DocumentData, channelId: string) {
     if (ticketData) {
+      const rawCreatedAt = ticketData['createdAt'];
+      const createdAtDate = rawCreatedAt instanceof Timestamp ? rawCreatedAt.toDate() : null;
       const ticket: TicketInterface = {
-        createdAt: ticketData['createdAt'],
+        createdAt: createdAtDate,
         reactions: ticketData['reactions'],
         senderId: ticketData['senderId'],
         text: ticketData['text'],
@@ -122,7 +125,7 @@ export class ChannelsService implements OnDestroy {
 
   renderThread(channelId: string, ticketId: string) {
     let threadRef = this.getThreadRef(channelId, ticketId);
-    
+
 
   }
 
