@@ -7,6 +7,21 @@
   align-items: center;
   padding: 40px;
 }
+.whole-img {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.greeting-logo {
+  width: 60px;
+  height: auto;
+}
+
+.greeting-name {
+  width: 150px;
+  height: auto;
+  filter: invert(100%);
+}
 
 .header {
   @include respond-to(md) {

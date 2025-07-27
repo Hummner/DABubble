@@ -6,6 +6,7 @@ import { AvatarSelectionComponent } from './auth/avatar-selection/avatar-selecti
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { NewPasswordComponent } from './auth/reset-password/new-password/new-password.component';
 import { DirectMessagesComponent } from './direct-messages/direct-messages.component';
+import { ThreadDirectMessageComponent } from './direct-messages/thread-direct-message/thread-direct-message.component';
 
 export const routes: Routes = [
   { path: 'channel/:ChannelId', component: ChannelComponent },
@@ -14,5 +15,9 @@ export const routes: Routes = [
   { path: 'avatarSelection', component: AvatarSelectionComponent },
   { path: 'resetPassword', component: ResetPasswordComponent },
   { path: 'resetPassword/newPassword', component: NewPasswordComponent },
-  { path: 'directMessages/:id', component: DirectMessagesComponent },
+  { path: 'directMessages/:id', component: DirectMessagesComponent, 
+    children :[
+      {path:'threadMessages/:threadMessageId', component: ThreadDirectMessageComponent}
+    ]
+  },
 ];
