@@ -11,6 +11,18 @@
     (closeProfile)="closeProfileCard()"
   ></app-user-card>
   <mat-drawer-container class="container" autosize>
+    <mat-drawer
+      #drawer
+      class="example-sidenav"
+      mode="side"
+      position="end"
+      [(opened)]="isThreadOpen"
+    >
+      <app-thread-direct-message
+        [isThreadOpen]="isThreadOpen"
+        (close)="drawer.toggle()"
+      ></app-thread-direct-message>
+    </mat-drawer>
     <div class="content">
       <header>
         <div class="dm-name">
@@ -63,6 +75,7 @@
               "
               [message]="msg"
               [channelId]="channelId"
+              (openThread)="drawer.open()"
             ></app-message-ticket>
           </div>
         </div>

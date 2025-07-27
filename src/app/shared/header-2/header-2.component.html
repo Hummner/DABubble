@@ -1,6 +1,17 @@
 <header class="header">
-  <img #headerLogo src="assets/img/Logo-1.png" alt="" />
-
+  <!-- <img #headerLogo src="assets/img/Logo-1.png" alt="" /> -->
+      <div class="whole-img" #wholeLogo>
+        <img
+          #greetingLogo
+          src="assets/img/Logo-intro.png"
+          class="greeting-logo"
+        />
+        <img
+          class="greeting-name"
+          src="assets/img/Logo-intro-name.png"
+          alt="greeting-logo-name"
+        />
+      </div>
   <div *ngIf = "isLoginPage"class="create-account-section">
     <p class="fs-18">Neu bei DABubble?</p>
     <a [routerLink]="['signup']"

@@ -55,7 +55,7 @@ export class LoginComponent implements AfterViewInit {
     const rawForm = this.loginForm.getRawValue();
     this.authService.login(rawForm.email!, rawForm.password!).subscribe({
       next: () => {
-        this.router.navigateByUrl('channel');
+        this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
       },
       error: (err) => {
         if (err.code === 'auth/invalid-email') {
@@ -70,38 +70,26 @@ export class LoginComponent implements AfterViewInit {
       },
     });
   }
-  // @ViewChild('greetingContainer') greetingContainer!: ElementRef;
+  @ViewChild('greetingContainer') greetingContainer!: ElementRef;
+  @ViewChild('greetingName') greetingName!: ElementRef;
   @ViewChild('greeting') greeting!: ElementRef;
-  // @ViewChild('headerLogo') headerLogo!: ElementRef;
+  @ViewChild('wholeLogo') wholeLogo!: ElementRef;
 
   ngAfterViewInit(): void {
-    // const greetingContainer = this.greetingContainer
-    //   .nativeElement as HTMLElement;
-    // const target = this.headerLogo.nativeElement as HTMLElement;
-    // const targetRect = target.getBoundingClientRect();
-    // const containerRect = greetingContainer.getBoundingClientRect();
-    // const deltaX =
-    //   targetRect.left +
-    //   targetRect.width / 2 -
-    //   (containerRect.left + containerRect.width / 2);
-    // const deltaY =
-    //   targetRect.top +
-    //   targetRect.height / 2 -
-    //   (containerRect.top + containerRect.height / 2);
-    // const scale = targetRect.width / containerRect.width;
-    // setTimeout(() => {
-    //   greetingContainer.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
-    // }, 3000);
-    // setTimeout(() => {
-    //   this.greeting.nativeElement.classList.add('hide');
-    // }, 3500);
+    setTimeout(() => {
+      this.greetingContainer.nativeElement.classList.add('slide');
+      this.greetingName.nativeElement.classList.add('changeColor');
+    }, 2500);
+    setTimeout(() => {
+      this.greeting.nativeElement.classList.add('hide');
+    }, 3000);
   }
 
   guestLogin() {
     this.authService.signInAnonymously().subscribe({
       next: () => {
         console.log('Anonymous login successful');
-        this.router.navigateByUrl('channel');
+        this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
         const uid = this.auth.currentUser?.uid;
         if (uid) {
           this.fireStore.getGuestLoginData(uid);

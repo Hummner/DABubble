@@ -4,6 +4,8 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { Message } from '../../interfaces/message.interface';
@@ -11,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { Timestamp } from '@angular/fire/firestore';
 import { FirestoreService } from '../../services/firestore.service';
 import { MessageService } from '../../services/message.service';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-message-ticket',
   standalone: true,
@@ -25,6 +28,7 @@ export class MessageTicketComponent implements OnChanges {
   @Input() channelId!: string;
   showEmojiMenu = false;
   smallEmojiMenu = false;
+  @Output() openThread = new EventEmitter<void>();
 
   senderId = '';
   user!: UserProfileInterface | null | undefined;
@@ -40,7 +44,9 @@ export class MessageTicketComponent implements OnChanges {
   }
   constructor(
     private firestore: FirestoreService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   isTimestamp(value: any): value is Timestamp {
@@ -83,5 +89,12 @@ export class MessageTicketComponent implements OnChanges {
   closeMoreEmoji(event: Event) {
     this.smallEmojiMenu = false;
     event?.stopPropagation();
+  }
+
+  openThreadPanel() {
+    this.openThread.emit();
+    this.router.navigate(['threadMessages', 'Jk3DjT4MulJZnkRk5v6q'], {
+      relativeTo: this.route,
+    });
   }
 }

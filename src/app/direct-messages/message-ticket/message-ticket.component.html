@@ -9,6 +9,11 @@
       <img src="assets/img/elias_neumann.svg" alt="" />
     </div>
     <div class="message-content">
+      <div>
+        <p class="time" *ngIf="isTimestamp(message.createdAt)">
+          {{ message.createdAt.toDate() | date : "dd/MM/yyyy HH:mm" }}
+        </p>
+      </div>
       <div class="name-date" [ngClass]="{ reverse: currentUserText }">
         <span class="msg-name"> {{ user?.name }}</span>
       </div>
@@ -22,10 +27,11 @@
       </div>
 
       <div class="answers" [ngClass]="{ reverse: currentUserText }">
-        <p class="time" *ngIf="isTimestamp(message.createdAt)">
-          {{ message.createdAt.toDate() | date : "dd/MM/yyyy HH:mm" }}
-        </p>
+        <span class="thread-answers" (click)="openThreadPanel()">
+          Keine Antwort
+        </span>
       </div>
+
       <div
         class="emoji-container"
         [ngClass]="{ reverse: currentUserText }"

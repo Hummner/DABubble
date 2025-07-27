@@ -130,6 +130,98 @@ app-footer {
   }
 }
 
+.whole-img {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 58px;
+  > .greeting-logo {
+    position: absolute;
+    top: -40px;
+    left: -58px;
+    width: 150px;
+    height: auto;
+  }
+  > .greeting-name {
+    top: 0;
+    left: 128px;
+    position: absolute;
+    width: 380px;
+    height: auto;
+  }
+}
+
+.changeColor {
+  animation: changeColor;
+  animation-duration: 1.8s;
+}
+
+@keyframes changeColor {
+  0% {
+    filter: invert(0%);
+  }
+  100% {
+    filter: invert(100%);
+  }
+}
+
+.greeting-container {
+  position: absolute;
+  top: calc(50vh - 40px);
+  z-index: 9999;
+  left: calc(50% - 250px);
+  width: 425px;
+  margin: 40px;
+  height: 95px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide {
+  position: absolute;
+  top: calc(50vh - 40px);
+  z-index: 9999;
+  left: calc(50% - 250px);
+  width: 425px;
+  margin: 40px;
+  height: 95px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: slideToCorner 1s ease-in-out;
+}
+
+@keyframes slideToCorner {
+  0% {
+    left: calc(50% - 250px);
+    top: calc(50vh - 40px);
+    scale: 1;
+  }
+  100% {
+    left: -94px;
+    top: -15px;
+    scale: 0.4;
+    opacity: 0.4;
+  }
+}
+
+.greeting {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .greeting {
   position: fixed;
   top: 0;
@@ -143,26 +235,12 @@ app-footer {
   z-index: 9999;
   transition: opacity 0.5s ease;
 }
-.greeting-container {
-  width: 700px;
-  height: 188px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  // opacity:1;
-}
 
 .greeting-logo {
   position: absolute;
   animation-name: shiftLogo;
   animation-duration: 2s;
-  left: calc(10% - 70px);
   z-index: 3;
-  transition: transform 1s ease-in-out, width 1s ease-in-out;
-}
-
-.greeting.hide {
-  opacity: 0;
 }
 
 @keyframes shiftLogo {
@@ -170,7 +248,7 @@ app-footer {
     left: calc(50% - 74px);
   }
   100% {
-    left: calc(10% - 70px);
+    left: calc(50% - 270px);
   }
 }
 
@@ -200,15 +278,5 @@ app-footer {
 .resp-footer {
   display: none;
 }
-// .greeting-logo {
-//   width: 150px;
-//   position: absolute;
-//   transition: transform 1s ease-in-out, width 1s ease-in-out;
-// }
-
-// .greeting.hide {
-//   opacity: 0;
-//   pointer-events: none;
-// }
 
 @import "./responsive.login";

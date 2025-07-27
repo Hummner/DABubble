@@ -25,6 +25,7 @@ import { UserCardComponent } from './user-card/user-card.component';
 import { MessageTicketComponent } from './message-ticket/message-ticket.component';
 import { serverTimestamp, Timestamp } from '@angular/fire/firestore';
 import { FieldValue } from 'firebase/firestore';
+import { ThreadDirectMessageComponent } from './thread-direct-message/thread-direct-message.component';
 
 @Component({
   selector: 'app-direct-messages',
@@ -39,6 +40,7 @@ import { FieldValue } from 'firebase/firestore';
     FormsModule,
     MessageTicketComponent,
     NgFor,
+    ThreadDirectMessageComponent,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrl: './direct-messages.component.scss',
@@ -53,7 +55,6 @@ export class DirectMessagesComponent
   profileOpen = false;
   backdropVisible = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
-
   unsubSingleDM?: () => void;
   unsubUserList?: () => void;
   routeSub!: Subscription;
@@ -61,9 +62,10 @@ export class DirectMessagesComponent
   content = '';
   senderId = '';
   shouldScroll = false;
-
   messages: Message[] = [];
   public Object = Object;
+
+  isThreadOpen = true;
 
   constructor(
     private route: ActivatedRoute,
