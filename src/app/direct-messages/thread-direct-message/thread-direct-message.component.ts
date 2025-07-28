@@ -1,14 +1,71 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MessageTicketComponent } from '../message-ticket/message-ticket.component';
+import { Message } from '../../interfaces/message.interface';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { DirectMessageService } from '../../services/direct-message.service';
+import { MessageService } from '../../services/message.service';
+import { Timestamp } from '@angular/fire/firestore';
+import { CommonModule, NgIf } from '@angular/common';
+
 
 @Component({
   selector: 'app-thread-direct-message',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [MatIconModule, NgIf, CommonModule, MessageTicketComponent],
   templateUrl: './thread-direct-message.component.html',
-  styleUrl: './thread-direct-message.component.scss'
+  styleUrl: './thread-direct-message.component.scss',
 })
-export class ThreadDirectMessageComponent {
-@Input() isThreadOpen!:boolean;
-@Output() close = new EventEmitter<void>
+export class ThreadDirectMessageComponent implements OnInit {
+  @Input() isThreadOpen!: boolean;
+  @Output() close = new EventEmitter<void>();
+  @Input() message!: Message|null;
+  routeSub!: Subscription;
+  messageId!: string | null;
+  channelId!: string | null;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private directMessageService: DirectMessageService,
+    private messageService: MessageService
+  ) {}
+  
+  ngOnInit(): void {
+    this.route.paramMap.subscribe((params) => {
+      this.messageId = params.get('messageId');
+      console.log('Message ID:', this.messageId);
+
+      this.route.parent?.paramMap.subscribe((parentParams) => {
+        this.channelId = parentParams.get('id');
+        if (this.channelId && this.messageId) {
+          this.fetchMessage(this.channelId, this.messageId);
+        }
+      });
+    });
+  }
+
+  async fetchMessage(channelId: string, messageId: string) {
+    this.message = await this.messageService.getMessageById(
+      channelId,
+      messageId
+    );
+    if (this.message) {
+      console.log('Loaded message:', this.message);
+    } else {
+      console.log('Message not found');
+    }
+  }
+  closeThread() {
+    this.close.emit();
+    this.router.navigate([
+      '/directMessages',
+      this.route.snapshot.parent?.paramMap.get('id'),
+    ]);
+  }
+
+isValidTimestamp(value: any): value is Timestamp {
+  return value instanceof Timestamp && typeof value.toDate === 'function';
+}
 }

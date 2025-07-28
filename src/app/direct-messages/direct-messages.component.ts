@@ -8,7 +8,7 @@ import {
   AfterViewInit,
   AfterViewChecked,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NgIf, NgFor } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -26,6 +26,7 @@ import { MessageTicketComponent } from './message-ticket/message-ticket.componen
 import { serverTimestamp, Timestamp } from '@angular/fire/firestore';
 import { FieldValue } from 'firebase/firestore';
 import { ThreadDirectMessageComponent } from './thread-direct-message/thread-direct-message.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-direct-messages',
@@ -40,7 +41,7 @@ import { ThreadDirectMessageComponent } from './thread-direct-message/thread-dir
     FormsModule,
     MessageTicketComponent,
     NgFor,
-    ThreadDirectMessageComponent,
+    RouterOutlet,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrl: './direct-messages.component.scss',
@@ -65,16 +66,23 @@ export class DirectMessagesComponent
   messages: Message[] = [];
   public Object = Object;
 
-  isThreadOpen = true;
+  isThreadOpen = false;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private directMessageService: DirectMessageService,
     private firestoreService: FirestoreService,
     private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.isThreadOpen = this.router.url.includes('threadMessages');
+      }
+    });
+
     this.routeSub = this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
@@ -134,7 +142,7 @@ export class DirectMessagesComponent
   }
 
   subscribeToDM(id: string) {
-    this.unsubSingleDM = this.directMessageService.subSingleDM(id, (data) => {
+    this.unsubSingleDM = this.directMessageService.subDMChannel(id, (data) => {
       const users = data['users'] as string[];
       const currentId = this.userProfile()?.uid;
       const otherUserId = users.find((uid) => uid !== currentId);
@@ -221,5 +229,18 @@ export class DirectMessagesComponent
   }
   trackByMessageId(index: number, message: Message) {
     return message.id || index;
+  }
+  openThread(messageId: string | undefined) {
+    if (!messageId) {
+      console.warn('No message id');
+      return;
+    }
+    this.isThreadOpen = true;
+    this.router.navigate([
+      'directMessages',
+      this.channelId,
+      'threadMessages',
+      messageId,
+    ]);
   }
 }

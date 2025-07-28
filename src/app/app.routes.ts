@@ -17,7 +17,7 @@ export const routes: Routes = [
   { path: 'resetPassword/newPassword', component: NewPasswordComponent },
   { path: 'directMessages/:id', component: DirectMessagesComponent, 
     children :[
-      {path:'threadMessages/:threadMessageId', component: ThreadDirectMessageComponent}
+      {path:'threadMessages/:messageId', component: ThreadDirectMessageComponent}
     ]
   },
 ];

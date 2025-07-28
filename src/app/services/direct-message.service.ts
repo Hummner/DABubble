@@ -46,8 +46,10 @@ export class DirectMessageService {
     }
   }
 
-  subSingleDM(docId: string, handleData?: (data: any) => void): () => void {
-    const ref = this.getSingleDMRef('directMessages', docId);
+  
+
+  subDMChannel(docId: string, handleData?: (data: any) => void): () => void {
+    const ref = this.getSingleDMChannelRef('directMessages', docId);
     const unsubSingle = onSnapshot(ref, (snapshot) => {
       const data = snapshot.data();
       if (data) {
@@ -58,6 +60,7 @@ export class DirectMessageService {
     });
     return unsubSingle;
   }
+
 
   subDMList(
     handleData?: (dmList: DirectMessageInterface[]) => void
@@ -95,7 +98,7 @@ export class DirectMessageService {
     return collection(this.firestore, 'directMessages');
   }
 
-  getSingleDMRef(colId: string, docId: string) {
+  getSingleDMChannelRef(colId: string, docId: string) {
     return doc(collection(this.firestore, colId), docId);
   }
 }

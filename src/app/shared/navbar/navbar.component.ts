@@ -82,7 +82,7 @@ export class NavbarComponent {
       clickedUserId
     );
     this.router.navigateByUrl(`directMessages/${channelId}`);
-        this.directMessageService.subSingleDM(channelId);
+        this.directMessageService.subDMChannel(channelId);
   }
  
   selectChannel(channelId: string) {

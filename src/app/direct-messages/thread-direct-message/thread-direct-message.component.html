@@ -1,54 +1,70 @@
-
 <section>
-    <div class="content">
-        <header>
-            <div class="channel-name">
-                <h2>Thread</h2><span># Entwicklerteam</span>
+  <div class="content">
+    <header>
+      <div class="channel-name">
+        <h2>Thread</h2>
+        <span># Entwicklerteam</span>
+      </div>
+      <div class="close-dialog" (click)="closeThread()">
+        <mat-icon class="icon">close</mat-icon>
+      </div>
+    </header>
+    <main>
+      <!-- <div class="ticket" *ngIf="message as msg">
+        <div class="member-img-ticket">
+          <img src="assets/img/elias_neumann.svg" alt="" />
+        </div>
+        <div class="message-content">
+          <div class="name-date">
+            <span class="msg-name">{{ msg.senderId }}</span>
+            <span *ngIf="msg.createdAt && isValidTimestamp(msg.createdAt)">
+              {{ msg.createdAt.toDate() | date : "dd/MM/yyyy HH:mm" }}
+            </span>
+          </div>
+          <div class="message">
+            <p>{{ msg.content }}</p>
+          </div>
+        </div>
+        <div class="emoji-container" *ngIf="msg.reactions">
+          @for(emoji of msg.reactions;track emoji){
+            <div class="emoji">
+              <img src="assets/emojis/{{ emoji }}.svg" alt="">
             </div>
-            <div class="close-dialog"  (click)="close.emit()"><mat-icon class="icon">close</mat-icon></div>
-        </header>
-        <main>
-            <div class="ticket">
-                <div class="member-img-ticket">
-                    <img src="assets/img/elias_neumann.svg" alt="">
-                </div>
-                <div class="message-content">
-                    <div class="name-date">
-                        <span class="msg-name">Username</span>
-                        <span class="msg-date">CreatedAt</span>
-                    </div>
-                    <div class="message">
-                        <p>Text</p>
-                    </div>
-                </div>
-            </div>
-            <div class="placeholder">
-                <div class="placeholder-date msg-answer">2 Answers</div>
-            </div>
-            <div>
-                <!-- @for (message of messages; track $index) {
-                <app-thread-messages [members]="members" [message]="message" [index]="$index"></app-thread-messages>
-                } -->
-            </div>
-        </main>
-        <footer>
-            <div class="text-area">
-                <textarea name="chat_input" id="chat_input" placeholder="Antworten..."></textarea>
-            </div>
-            <div class="input-buttons">
-                <div class="icons">
-                    <div class="input-icon">
-                        <img src="assets/icon/reaction.png" alt="">
-                    </div>
-                    <div class="input-icon">
-                        <img src="assets/icon/tag_icon.png" alt="">
-                    </div>
+          }
+        </div>
+      </div> -->
+      <app-message-ticket
+        *ngIf="message && channelId"
+        [message]="message"
+        [channelId]="channelId"
+      ></app-message-ticket>
 
-                </div>
-                <div class="send-icon">
-                    <img src="assets/icon/send.png" alt="">
-                </div>
-            </div>
-        </footer>
-    </div>
+      <div class="placeholder">
+        <div class="placeholder-date msg-answer">2 Answers</div>
+      </div>
+      <div></div>
+    </main>
+    <footer>
+      <div class="text-area">
+        <textarea
+          name="chat_input"
+          id="chat_input"
+          placeholder="Antworten..."
+        ></textarea>
+      </div>
+      <div class="input-buttons">
+        <div class="icons">
+          <div class="input-icon">
+            <img src="assets/icon/reaction.png" alt="" />
+          </div>
+          <div class="input-icon">
+            <img src="assets/icon/tag_icon.png" alt="" />
+          </div>
+        </div>
+        <div class="send-icon">
+          <img src="assets/icon/send.png" alt="" />
+        </div>
+      </div>
+    </footer>
+  </div>
 </section>
