@@ -26,9 +26,14 @@
         </div>
       </div>
 
-      <div class="answers" [ngClass]="{ reverse: currentUserText }">
+      <div
+        *ngIf="inThreadView == false"
+        class="answers"
+        [ngClass]="{ reverse: currentUserText }"
+      >
         <span class="thread-answers" (click)="openThreadPanel()">
-          Keine Antwort
+          @if(message.threadCount == 0){ Keine Antwort } @else {
+          {{ message.threadCount }} Antwort }
         </span>
       </div>
 
@@ -58,12 +63,14 @@
     >
       <div
         class="emoji-menu-item"
+        *ngIf="inThreadView == false"
         (click)="addOrRemoveEmoji('checked', message.id, channelId)"
       >
         <img src="assets/emojis/checked.svg" />
       </div>
       <div
         class="emoji-menu-item"
+        *ngIf="inThreadView == false"
         (click)="addOrRemoveEmoji('thumb', message.id, channelId)"
       >
         <img src="assets/emojis/thumb.svg" />
@@ -75,9 +82,13 @@
           src="assets/icon/add_reaction.svg"
         />
       </div>
-      <!-- <div class="emoji-menu-item">
-        <img class="hover-purple" src="assets/icon/comment.svg" />
-      </div> -->
+      <div class="emoji-menu-item" *ngIf="inThreadView == false">
+        <img
+          class="hover-purple"
+          (click)="openThreadPanel()"
+          src="assets/icon/comment.svg"
+        />
+      </div>
     </div>
     <div
       class="small-emoji-menu"

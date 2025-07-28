@@ -62,6 +62,8 @@ export class DirectMessagesComponent
   unsubList?: () => void;
   content = '';
   senderId = '';
+  hasThread = false;
+  threadCount = 0;
   shouldScroll = false;
   messages: Message[] = [];
   public Object = Object;
@@ -166,6 +168,8 @@ export class DirectMessagesComponent
       createdAt: serverTimestamp(),
       senderId: this.senderId,
       content: this.content,
+      hasThread:this.hasThread,
+      threadCount:this.threadCount,
     };
     this.messageService.addMessage(message, this.channelId);
     this.content = '';

@@ -6,4 +6,6 @@ export interface Message {
   senderId: string;
   content: string;
   reactions?: string[];
+  hasThread:boolean;
+  threadCount:number;
 }

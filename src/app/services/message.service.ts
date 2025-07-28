@@ -35,6 +35,8 @@ async addMessage(item: Message, docId: string) {
     content: item.content,
     createdAt: serverTimestamp(),
     reactions: item.reactions || [],
+    hasThread:item.hasThread || false,
+    threadCount:item.threadCount || 0
   });
   await setDoc(docRef, { id: docRef.id }, { merge: true });
 }
@@ -52,7 +54,6 @@ async addMessage(item: Message, docId: string) {
     console.error('Missing docId or channelId:', { docId, channelId });
     return;
   }
-
   if (message.id) {
     let ref = this.getSingleMessageRef(channelId, docId);
     await updateDoc(ref, this.getCleanJson(message)).catch((err) => {
@@ -104,6 +105,8 @@ setMessageObject(obj: any, id: string) {
     senderId: obj.senderId || '',
     content: obj.content || '',
     reactions: obj.reactions || [],
+    hasThread:obj.hasThread || false,
+    threadCount:obj.threadCount || 0,
   };
 }
 

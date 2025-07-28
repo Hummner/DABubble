@@ -37,7 +37,16 @@
         *ngIf="message && channelId"
         [message]="message"
         [channelId]="channelId"
+        [inThreadView]="true"
       ></app-message-ticket>
+      <div *ngFor="let msg of threadMessages">
+        <app-message-ticket
+          *ngIf="message && channelId"
+          [channelId]="channelId"
+          [inThreadView]="true"
+          [message]="msg"
+        ></app-message-ticket>
+      </div>
 
       <div class="placeholder">
         <div class="placeholder-date msg-answer">2 Answers</div>
