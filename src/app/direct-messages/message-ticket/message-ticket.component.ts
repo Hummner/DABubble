@@ -6,6 +6,7 @@ import {
   SimpleChanges,
   Output,
   EventEmitter,
+  OnInit,
 } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { Message } from '../../interfaces/message.interface';
@@ -14,6 +15,8 @@ import { Timestamp } from '@angular/fire/firestore';
 import { FirestoreService } from '../../services/firestore.service';
 import { MessageService } from '../../services/message.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-message-ticket',
   standalone: true,
@@ -21,32 +24,34 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './message-ticket.component.html',
   styleUrl: './message-ticket.component.scss',
 })
-export class MessageTicketComponent implements OnChanges {
+export class MessageTicketComponent implements OnChanges, OnInit {
   @Input() userProfileB!: UserProfileInterface | null;
   @Input() userProfile!: UserProfileInterface | null;
+  senderId = '';
+  user!: UserProfileInterface | null | undefined;
+  currentUserText = false;
   @Input() message!: Message;
   @Input() channelId!: string;
   showEmojiMenu = false;
   smallEmojiMenu = false;
-@Output() openThread = new EventEmitter<string | undefined>();
+  @Input() inThreadView: boolean = false;
+  @Output() openThread = new EventEmitter<string | undefined>();
 
-  senderId = '';
-  user!: UserProfileInterface | null | undefined;
-  currentUserText = false;
-  // ngAfterViewInit(): void {
-  //   console.log(this.channelId);
-  // }
   ngOnChanges(): void {
     const userList = this.firestore.userList;
     this.user = userList.find((user) => user.uid === this.message.senderId);
     const currentUserId = this.firestore.getUserId();
     this.currentUserText = this.message.senderId === currentUserId;
   }
+
+  ngOnInit(): void {}
+
   constructor(
     private firestore: FirestoreService,
     private messageService: MessageService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private threadMessageService: ThreadDirectMessageService
   ) {}
 
   isTimestamp(value: any): value is Timestamp {
@@ -99,8 +104,4 @@ export class MessageTicketComponent implements OnChanges {
       relativeTo: this.route,
     });
   }
-  // openThreadPanel(parentMessageId: string) {
-  // this.router.navigate(['threadMessages', parentMessageId], {
-  //   relativeTo: this.route
-  // });
 }

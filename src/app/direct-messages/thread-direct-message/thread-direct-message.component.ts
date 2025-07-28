@@ -8,7 +8,7 @@ import { DirectMessageService } from '../../services/direct-message.service';
 import { MessageService } from '../../services/message.service';
 import { Timestamp } from '@angular/fire/firestore';
 import { CommonModule, NgIf } from '@angular/common';
-
+import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
 
 @Component({
   selector: 'app-thread-direct-message',
@@ -20,30 +20,49 @@ import { CommonModule, NgIf } from '@angular/common';
 export class ThreadDirectMessageComponent implements OnInit {
   @Input() isThreadOpen!: boolean;
   @Output() close = new EventEmitter<void>();
-  @Input() message!: Message|null;
+  @Input() message!: Message | null;
   routeSub!: Subscription;
   messageId!: string | null;
   channelId!: string | null;
+  threadMessages: Message[] = [];
+  private threadMessagesSub!: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private directMessageService: DirectMessageService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private threadMessageService: ThreadDirectMessageService
   ) {}
-  
+
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.messageId = params.get('messageId');
-      console.log('Message ID:', this.messageId);
 
       this.route.parent?.paramMap.subscribe((parentParams) => {
         this.channelId = parentParams.get('id');
         if (this.channelId && this.messageId) {
           this.fetchMessage(this.channelId, this.messageId);
+          this.subscribeToThreadMessages(this.channelId, this.messageId);
         }
       });
     });
+  }
+
+  subscribeToThreadMessages(channelId: string, messageId: string) {
+    // Subscribe to observable
+    this.threadMessageService.subThreadList(channelId, messageId);
+    this.threadMessagesSub =
+      this.threadMessageService.threadMessages$.subscribe((messages) => {
+        this.threadMessages = messages;
+        console.log('Updated thread messages:', this.threadMessages);
+      });
+  }
+
+  ngOnDestroy(): void {
+    if (this.threadMessagesSub) {
+      this.threadMessagesSub.unsubscribe();
+    }
   }
 
   async fetchMessage(channelId: string, messageId: string) {
@@ -65,7 +84,7 @@ export class ThreadDirectMessageComponent implements OnInit {
     ]);
   }
 
-isValidTimestamp(value: any): value is Timestamp {
-  return value instanceof Timestamp && typeof value.toDate === 'function';
-}
+  isValidTimestamp(value: any): value is Timestamp {
+    return value instanceof Timestamp && typeof value.toDate === 'function';
+  }
 }
