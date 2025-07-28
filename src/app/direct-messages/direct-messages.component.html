@@ -18,10 +18,14 @@
       position="end"
       [(opened)]="isThreadOpen"
     >
-      <app-thread-direct-message
+    <router-outlet></router-outlet>
+      <!-- <app-thread-direct-message
         [isThreadOpen]="isThreadOpen"
         (close)="drawer.toggle()"
-      ></app-thread-direct-message>
+     
+       
+        
+      ></app-thread-direct-message> -->
     </mat-drawer>
     <div class="content">
       <header>
@@ -75,7 +79,7 @@
               "
               [message]="msg"
               [channelId]="channelId"
-              (openThread)="drawer.open()"
+              (openThread)="openThread($event)"
             ></app-message-ticket>
           </div>
         </div>

@@ -11,6 +11,7 @@ import {
   setDoc,
   updateDoc,
   serverTimestamp,
+  getDoc,
 } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { Timestamp } from 'firebase/firestore';
@@ -38,13 +39,35 @@ async addMessage(item: Message, docId: string) {
   await setDoc(docRef, { id: docRef.id }, { merge: true });
 }
 
+  // async updateMessage(message: Message, docId: string, channelId: string) {
+  //   if (message.id) {
+  //     let ref = this.getSingleMessageRef(channelId, docId);
+  //     await updateDoc(ref, this.getCleanJson(message)).catch((err) => {
+  //       console.log(err);
+  //     });
+  //   }
+  // }
   async updateMessage(message: Message, docId: string, channelId: string) {
-    if (message.id) {
-      let ref = this.getSingleMessageRef(channelId, docId);
-      await updateDoc(ref, this.getCleanJson(message)).catch((err) => {
-        console.log(err);
-      });
+  if (!docId || !channelId) {
+    console.error('Missing docId or channelId:', { docId, channelId });
+    return;
+  }
+
+  if (message.id) {
+    let ref = this.getSingleMessageRef(channelId, docId);
+    await updateDoc(ref, this.getCleanJson(message)).catch((err) => {
+      console.log(err);
+    });
+  }
+}
+
+  async getMessageById(channelId:string, messageId:string): Promise<Message | null> {
+    const ref = this.getSingleMessageRef(channelId, messageId);
+    const snap = await getDoc(ref);
+    if(snap.exists()){
+      return this.setMessageObject(snap.data(), snap.id)
     }
+    return null;
   }
 
   getCleanJson(message: Message): {} {

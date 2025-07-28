@@ -28,7 +28,7 @@ export class MessageTicketComponent implements OnChanges {
   @Input() channelId!: string;
   showEmojiMenu = false;
   smallEmojiMenu = false;
-  @Output() openThread = new EventEmitter<void>();
+@Output() openThread = new EventEmitter<string | undefined>();
 
   senderId = '';
   user!: UserProfileInterface | null | undefined;
@@ -92,9 +92,15 @@ export class MessageTicketComponent implements OnChanges {
   }
 
   openThreadPanel() {
-    this.openThread.emit();
-    this.router.navigate(['threadMessages', 'Jk3DjT4MulJZnkRk5v6q'], {
+    this.openThread.emit(this.message.id);
+
+    console.log(this.message.id);
+    this.router.navigate(['threadMessages', this.message.id], {
       relativeTo: this.route,
     });
   }
+  // openThreadPanel(parentMessageId: string) {
+  // this.router.navigate(['threadMessages', parentMessageId], {
+  //   relativeTo: this.route
+  // });
 }
