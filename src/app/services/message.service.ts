@@ -115,6 +115,10 @@ setMessageObject(obj: any, id: string) {
     return messageDocRef;
   }
 
+
+  getSingleSingleMessageRef(){
+    
+  }
   getSubCollectionRef(channelId: string) {
     const docRef = this.getSingleDocRef(channelId);
     return collection(docRef, 'messages');

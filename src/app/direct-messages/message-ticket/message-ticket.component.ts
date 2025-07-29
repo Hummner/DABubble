@@ -32,6 +32,8 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   currentUserText = false;
   @Input() message!: Message;
   @Input() channelId!: string;
+  @Input() threadId?: string;
+  @Input() messageId!: string;
   showEmojiMenu = false;
   smallEmojiMenu = false;
   @Input() inThreadView: boolean = false;
@@ -58,28 +60,49 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     return value instanceof Timestamp;
   }
 
-  addOrRemoveEmoji(emoji: string, msgId: any, channelId: string) {
-    if (!msgId) {
-      console.error('Message Id not available');
-      return;
-    }
+  onEmojiToggle(emoji: string) {
+    if (!this.message?.id) return;
+    const threadId = this.message.id; 
+    const docId = this.messageId ?? this.message.id; 
     const reactions = this.message.reactions ? [...this.message.reactions] : [];
-    if (!reactions.includes(emoji)) {
+    if (reactions.includes(emoji)) {
+      reactions.splice(reactions.indexOf(emoji), 1);
+    } else {
       reactions.push(emoji);
-    } else if (reactions.includes(emoji)) {
-      const indexToDelete = reactions.indexOf(emoji);
-      reactions.splice(indexToDelete, 1);
     }
     this.message.reactions = reactions;
-    this.messageService.updateMessage(this.message, msgId, channelId);
+    if (this.inThreadView && docId && threadId) {
+      this.threadMessageService.updateThreadMessage(
+        this.message,
+        docId,
+        this.channelId,
+        threadId
+      );
+    } else {
+      this.messageService.updateMessage(this.message, docId, this.channelId);
+    }
   }
 
-  removeEmoji(emoji: string, msgId: any, channelId: string) {
+  onEmojiRemove(emoji: string) {
+    if (!this.message?.id) return;
+    const threadId = this.message.id; 
+    const docId = this.messageId ?? this.message.id; 
     const reactions = this.message.reactions ? [...this.message.reactions] : [];
-    const indexToDelete = reactions.indexOf(emoji);
-    reactions.splice(indexToDelete, 1);
-    this.message.reactions = reactions;
-    this.messageService.updateMessage(this.message, msgId, channelId);
+    const index = reactions.indexOf(emoji);
+    if (index !== -1) {
+      reactions.splice(index, 1);
+      this.message.reactions = reactions;
+      if (this.inThreadView && docId && threadId) {
+        this.threadMessageService.updateThreadMessage(
+          this.message,
+          docId,
+          this.channelId,
+          threadId
+        );
+      } else {
+        this.messageService.updateMessage(this.message, docId, this.channelId);
+      }
+    }
   }
 
   openMoreEmoji(event: Event) {

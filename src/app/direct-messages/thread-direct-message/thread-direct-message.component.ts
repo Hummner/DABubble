@@ -9,6 +9,7 @@ import { MessageService } from '../../services/message.service';
 import { Timestamp } from '@angular/fire/firestore';
 import { CommonModule, NgIf } from '@angular/common';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
+import { onSnapshot } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-thread-direct-message',
@@ -20,12 +21,14 @@ import { ThreadDirectMessageService } from '../../services/thread-direct-message
 export class ThreadDirectMessageComponent implements OnInit {
   @Input() isThreadOpen!: boolean;
   @Output() close = new EventEmitter<void>();
-  @Input() message!: Message | null;
+  @Input() message: Message | null = null;
   routeSub!: Subscription;
   messageId!: string | null;
   channelId!: string | null;
+  threadId!: string | null;
   threadMessages: Message[] = [];
   private threadMessagesSub!: Subscription;
+  private parentMessageUnsub: (() => void) | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -38,11 +41,10 @@ export class ThreadDirectMessageComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.messageId = params.get('messageId');
-
       this.route.parent?.paramMap.subscribe((parentParams) => {
         this.channelId = parentParams.get('id');
         if (this.channelId && this.messageId) {
-          this.fetchMessage(this.channelId, this.messageId);
+          this.subscribeToParentMessage(this.channelId, this.messageId);
           this.subscribeToThreadMessages(this.channelId, this.messageId);
         }
       });
@@ -50,7 +52,6 @@ export class ThreadDirectMessageComponent implements OnInit {
   }
 
   subscribeToThreadMessages(channelId: string, messageId: string) {
-    // Subscribe to observable
     this.threadMessageService.subThreadList(channelId, messageId);
     this.threadMessagesSub =
       this.threadMessageService.threadMessages$.subscribe((messages) => {
@@ -63,19 +64,28 @@ export class ThreadDirectMessageComponent implements OnInit {
     if (this.threadMessagesSub) {
       this.threadMessagesSub.unsubscribe();
     }
+    if (this.parentMessageUnsub) {
+      this.parentMessageUnsub();
+    }
   }
 
-  async fetchMessage(channelId: string, messageId: string) {
-    this.message = await this.messageService.getMessageById(
+  subscribeToParentMessage(channelId: string, messageId: string) {
+    const docRef = this.messageService.getSingleMessageRef(
       channelId,
       messageId
     );
-    if (this.message) {
-      console.log('Loaded message:', this.message);
-    } else {
-      console.log('Message not found');
-    }
+
+    this.parentMessageUnsub = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        this.message = this.messageService.setMessageObject(
+          docSnap.data(),
+          docSnap.id
+        );
+        console.log('Live updated parent message:', this.message);
+      }
+    });
   }
+  
   closeThread() {
     this.close.emit();
     this.router.navigate([

@@ -10,48 +10,28 @@
       </div>
     </header>
     <main>
-      <!-- <div class="ticket" *ngIf="message as msg">
-        <div class="member-img-ticket">
-          <img src="assets/img/elias_neumann.svg" alt="" />
-        </div>
-        <div class="message-content">
-          <div class="name-date">
-            <span class="msg-name">{{ msg.senderId }}</span>
-            <span *ngIf="msg.createdAt && isValidTimestamp(msg.createdAt)">
-              {{ msg.createdAt.toDate() | date : "dd/MM/yyyy HH:mm" }}
-            </span>
-          </div>
-          <div class="message">
-            <p>{{ msg.content }}</p>
-          </div>
-        </div>
-        <div class="emoji-container" *ngIf="msg.reactions">
-          @for(emoji of msg.reactions;track emoji){
-            <div class="emoji">
-              <img src="assets/emojis/{{ emoji }}.svg" alt="">
-            </div>
-          }
-        </div>
-      </div> -->
-      <app-message-ticket
-        *ngIf="message && channelId"
-        [message]="message"
-        [channelId]="channelId"
-        [inThreadView]="true"
-      ></app-message-ticket>
-      <div *ngFor="let msg of threadMessages">
+      <div class="scroller-wrapper">
         <app-message-ticket
           *ngIf="message && channelId"
+          [message]="message"
           [channelId]="channelId"
-          [inThreadView]="true"
-          [message]="msg"
+          [inThreadView]="false"
         ></app-message-ticket>
-      </div>
+        <div *ngFor="let msg of threadMessages">
+          <app-message-ticket
+            *ngIf="message && channelId"
+            [channelId]="channelId"
+            [inThreadView]="true"
+            [message]="msg"
+            [threadId]="msg.id"
+            [messageId]="message.id!"
+          ></app-message-ticket>
+        </div>
 
-      <div class="placeholder">
-        <div class="placeholder-date msg-answer">2 Answers</div>
+        <div class="placeholder">
+          <div class="placeholder-date msg-answer">2 Answers</div>
+        </div>
       </div>
-      <div></div>
     </main>
     <footer>
       <div class="text-area">
