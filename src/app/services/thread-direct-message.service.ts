@@ -8,7 +8,9 @@ import {
   where,
   getDoc,
   addDoc,
-  updateDoc
+  updateDoc,
+  serverTimestamp,
+  setDoc
 } from '@angular/fire/firestore';
 import { DirectMessageService } from './direct-message.service';
 import { Message } from '../interfaces/message.interface';
@@ -27,6 +29,17 @@ export class ThreadDirectMessageService {
 
   constructor() {
     // this.unsubThreadMessages = this.subThreadList();
+  }
+
+  async addThreadMessage(item: Message, channelId: string, messageId:string) {
+    const ref = this.getThreadMessagesRef(channelId,messageId);
+    const docRef = await addDoc(ref, {
+      senderId: item.senderId,
+      content: item.content,
+      createdAt: serverTimestamp(),
+      reactions: item.reactions || [],
+    });
+    await setDoc(docRef, { id: docRef.id }, { merge: true });
   }
 
   subThreadList(channelId: string, docId: string) {
