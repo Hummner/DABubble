@@ -45,7 +45,7 @@
         @for(emoji of message.reactions; track emoji){
         <div
           class="checked emoji"
-          (click)="removeEmoji(emoji, message.id, channelId)"
+          (click)="onEmojiRemove(emoji)"
         >
           <img src="assets/emojis/{{ emoji }}.svg" alt="" />
           <p>1</p>
@@ -64,14 +64,14 @@
       <div
         class="emoji-menu-item"
         *ngIf="inThreadView == false"
-        (click)="addOrRemoveEmoji('checked', message.id, channelId)"
+        (click)="onEmojiToggle('checked')"
       >
         <img src="assets/emojis/checked.svg" />
       </div>
       <div
         class="emoji-menu-item"
         *ngIf="inThreadView == false"
-        (click)="addOrRemoveEmoji('thumb', message.id, channelId)"
+        (click)="onEmojiToggle('thumb')"
       >
         <img src="assets/emojis/thumb.svg" />
       </div>
@@ -97,25 +97,25 @@
     >
       <div
         class="emoji-menu-item"
-        (click)="addOrRemoveEmoji('checked', message.id, channelId)"
+        (click)="onEmojiToggle('checked')"
       >
         <img src="assets/emojis/checked.svg" />
       </div>
       <div
         class="emoji-menu-item"
-        (click)="addOrRemoveEmoji('thumb', message.id, channelId)"
+        (click)="onEmojiToggle('thumb')"
       >
         <img src="assets/emojis/thumb.svg" />
       </div>
       <div
         class="emoji-menu-item"
-        (click)="addOrRemoveEmoji('rocket', message.id, channelId)"
+        (click)="onEmojiToggle('rocket')"
       >
         <img src="assets/emojis/rocket.svg" />
       </div>
       <div
         class="emoji-menu-item"
-        (click)="addOrRemoveEmoji('nerd', message.id, channelId)"
+        (click)="onEmojiToggle('nerd')"
       >
         <img src="assets/emojis/nerd.svg" />
       </div>

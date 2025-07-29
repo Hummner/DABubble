@@ -6,8 +6,9 @@ import {
   onSnapshot,
   query,
   where,
-  getDocs,
+  getDoc,
   addDoc,
+  updateDoc
 } from '@angular/fire/firestore';
 import { DirectMessageService } from './direct-message.service';
 import { Message } from '../interfaces/message.interface';
@@ -40,6 +41,33 @@ export class ThreadDirectMessageService {
         this._threadMessages$.next(threadMessages);
       }
     );
+  }
+
+    async updateThreadMessage(message: Message, docId: string, channelId: string, threadId:string) {
+    if (!docId || !channelId) {
+      console.error('Missing docId or channelId:', { docId, channelId });
+      return;
+    }
+    if (message.id) {
+      let ref = this.getSingleThreadRef(channelId, docId, threadId);
+      await updateDoc(ref, this.messageService.getCleanJson(message)).catch((err) => {
+        console.log(err);
+      });
+    }
+  }
+
+  async getThreadMessageById(channelId:string, messageId:string, threadId:string): Promise<Message | null>{
+    const ref = this.getSingleThreadRef(channelId, messageId, threadId);
+    const snap = await getDoc(ref);
+    if(snap.exists()){
+      return this.messageService.setMessageObject(snap.data(), snap.id)
+    }
+    return null;
+  }
+
+  getSingleThreadRef(channelId: string, docId: string, threadId:string){
+    const threadMessageDocRef = doc(this.getThreadMessagesRef(channelId, docId), threadId);
+    return threadMessageDocRef;
   }
 
   // ngOnDestroy(){
