@@ -17,17 +17,24 @@
           [channelId]="channelId"
           [inThreadView]="false"
         ></app-message-ticket>
-        <div *ngFor="let msg of threadMessages">
-          <app-message-ticket
-            *ngIf="message && channelId"
-            [channelId]="channelId"
-            [inThreadView]="true"
-            [message]="msg"
-            [threadId]="msg.id"
-            [messageId]="message.id!"
-          ></app-message-ticket>
-        </div>
+        <div *ngFor="let date of Object.keys(getMessagesGroupedByDate())">
+          <div class="separator"></div>
+          <div class="date-container">
+            <h3 class="date">{{ date }}</h3>
+          </div>
+          <div class="separator"></div>
 
+          <div *ngFor="let msg of getMessagesGroupedByDate()[date]">
+            <app-message-ticket
+              *ngIf="message && channelId"
+              [channelId]="channelId"
+              [inThreadView]="true"
+              [message]="msg"
+              [threadId]="msg.id"
+              [messageId]="message.id!"
+            ></app-message-ticket>
+          </div>
+        </div>
         <div class="placeholder">
           <div class="placeholder-date msg-answer">2 Answers</div>
         </div>
@@ -39,6 +46,7 @@
           name="chat_input"
           id="chat_input"
           placeholder="Antworten..."
+          [(ngModel)]="content"
         ></textarea>
       </div>
       <div class="input-buttons">
@@ -50,7 +58,7 @@
             <img src="assets/icon/tag_icon.png" alt="" />
           </div>
         </div>
-        <div class="send-icon">
+        <div class="send-icon" (click)="addThreadMessage()">
           <img src="assets/icon/send.png" alt="" />
         </div>
       </div>
