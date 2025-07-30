@@ -149,7 +149,16 @@
     }
 }
 
+::ng-deep .edit-menu {
+    border-radius: 0 30px 30px 30px !important;
+    span {
+        font-family: Nunito !important;
+    }
+}
 
+.width-255 {
+    width: 255px !important;
+}
 
 .reverse {
     flex-direction: row-reverse !important;
@@ -230,7 +239,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-     flex: 1;
+    flex: 1;
 }
 
 
@@ -244,7 +253,7 @@
 }
 
 .edit-textarea {
-   
+
     border: none;
     width: 100%;
     font-size: 18px;
@@ -293,6 +302,8 @@
     align-items: center;
     justify-content: center;
 }
+
+
 
 @media(max-width: 768px) {
     .ticket {
