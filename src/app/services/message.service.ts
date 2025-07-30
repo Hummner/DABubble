@@ -9,6 +9,8 @@ import {
   addDoc,
   orderBy,
   setDoc,
+  updateDoc,
+  DocumentReference,
 } from '@angular/fire/firestore';
 
 @Injectable({
@@ -18,7 +20,7 @@ export class MessageService {
   private firestore = inject(Firestore);
   messageList: Message[] = [];
 
-  constructor() {}
+  constructor() { }
 
   async addMessage(item: Message, docId: string) {
     const docRef = await addDoc(this.getSubCollectionRef(docId), {
@@ -32,6 +34,17 @@ export class MessageService {
       const msgRef = docRef;
       await setDoc(msgRef, { id: docRef.id }, { merge: true });
     }
+  }
+
+  async editTicketText(ticketRef: DocumentReference, text: string) {
+    try {
+      await updateDoc(ticketRef, { text: text })
+
+    } catch (err) {
+      console.error("The message could not be updated: ", err);
+
+    }
+
   }
 
   subList(channelId: string) {

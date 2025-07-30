@@ -129,6 +129,8 @@ export class ChannelsService implements OnDestroy {
 
   }
 
+  
+
   async getThreadsCount(channelId: string, ticketId: string) {
     let threadRef = this.getThreadRef(channelId, ticketId);
     let snapshot = await getCountFromServer(threadRef)
