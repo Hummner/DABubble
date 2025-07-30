@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketInterface } from '../../../interfaces/ticket.interface';
 import { addDoc, arrayUnion, collection, doc, getDocs, Timestamp, updateDoc } from '@angular/fire/firestore';
@@ -7,11 +7,14 @@ import { FirestoreService } from '../../../services/firestore.service';
 import { ThreadService } from '../../../services/thread.service';
 import { ActivatedRoute } from '@angular/router';
 import { ChannelsService } from '../../../services/channels.service';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-ticket',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule, MatMenuModule],
   templateUrl: './ticket.component.html',
   styleUrl: './ticket.component.scss'
 })
@@ -32,6 +35,8 @@ export class TicketComponent implements OnInit, OnChanges {
   showPopup = false;
   showMenu = false;
   channelId!: string;
+  editView: boolean = false;
+  editMenuOpen = false;
 
   constructor(private route: ActivatedRoute) { }
 
@@ -50,6 +55,28 @@ export class TicketComponent implements OnInit, OnChanges {
       this.answers = this.showAnswer()
     }
 
+  }
+
+  onMouseEnter() {
+    this.showMenu = true
+  }
+
+
+  onMouseLeave() {
+    if (!this.editMenuOpen)
+      this.showMenu = false
+  }
+
+
+  onEditMenuOpened() {
+    this.editMenuOpen = true;
+    this.showMenu = true
+  }
+  
+
+  onEditMenuClosed() {
+    this.editMenuOpen = false;
+    this.showMenu = false;
   }
 
 

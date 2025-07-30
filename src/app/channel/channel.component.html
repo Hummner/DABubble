@@ -3,7 +3,8 @@
     <mat-drawer-container class="container" autosize>
 
         <mat-drawer #drawer class="example-sidenav" mode="side" position="end" [(opened)]="isThreadOpen">
-            <app-thread [currentThreadPath]="currentThreadPath" [isThreadOpen]="isThreadOpen" [members]="channel?.members" [tickets]="channel?.messages" (close)="drawer.toggle()"></app-thread>
+            <app-thread [currentThreadPath]="currentThreadPath" [isThreadOpen]="isThreadOpen"
+                [members]="channel?.members" [tickets]="channel?.messages" (close)="drawer.toggle()"></app-thread>
         </mat-drawer>
         <div class="content">
             <header>
@@ -89,37 +90,19 @@
             <main>
                 <div class="scroll-wrapper">
                     @for (ticket of channel?.messages; track $index) {
-                    <app-ticket (currentPath)="currentThreadPathRef($event)" [index]="$index" [ticket]="ticket" [members]="channel?.members" (openThread)="drawer.open()"></app-ticket>
-                    }
-                    <div class="placeholder">
-                        <div class="placeholder-date">Heute</div>
+                    <div *ngIf="!isTheSameDate($index)" class="placeholder">
+                        <div class="placeholder-date">{{ showPlaceholder($index)}}</div>
                     </div>
-                    <!-- <div class="ticket-container">
-                        <div class="ticket" [ngClass]="{'reverse reverse-hover' : isCurrentUser()}">
-                            <div class="member-img-ticket">
-                                <img src="assets/img/elias_neumann.svg" alt="">
-                            </div>
-                            <div class="message-content">
-                                <div class="name-date" [ngClass]="{'reverse' : isCurrentUser()}">
-                                    <span class="msg-name">Elias Neumann</span>
-                                    <span class="msg-date">14:10 Uhr</span>
-                                </div>
-                                <div class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}"> 
-                                    <p>Welche Version ist aktuell von Angular?</p>
-                                </div>
-                                <div class="answers" [ngClass]="{'reverse' : isCurrentUser()}">
-                                    <div class="msg-answer-container" [ngClass]="{'reverse' : isCurrentUser()}"><span class="msg-answer"
-                                            (click)="drawer.toggle()">2 Antworten</span></div>
-                                    <span class="msg-date">Letze Antwort 14:26</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
+                    <app-ticket (currentPath)="currentThreadPathRef($event)" [index]="$index" [ticket]="ticket"
+                        [members]="channel?.members" (openThread)="drawer.open()"></app-ticket>
+                    }
+
                 </div>
             </main>
             <footer>
                 <div class="text-area">
-                    <textarea [(ngModel)]="textInput" name="chat_input" id="chat_input" placeholder="Nachricht an #Entwicklerteam"></textarea>
+                    <textarea [(ngModel)]="textInput" name="chat_input" id="chat_input"
+                        placeholder="Nachricht an #Entwicklerteam"></textarea>
                 </div>
                 <div class="input-buttons">
                     <div class="icons">

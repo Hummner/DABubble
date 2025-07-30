@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnDestroy, OnInit, output, ViewChild } from '@angular/core';
+import { booleanAttribute, Component, ElementRef, inject, OnDestroy, OnInit, output, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
@@ -15,6 +15,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { ThreadService } from '../services/thread.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Timestamp } from '@angular/fire/firestore';
 
 
 @Component({
@@ -69,13 +70,7 @@ export class ChannelComponent implements OnInit, OnDestroy {
         this.channel.messages = msgs;
         console.log(this.channel.messages[0].threads?.path);
       }
-
     });
-
-
-
-
-
   }
 
   currentThreadPathRef(data: string) {
@@ -99,6 +94,47 @@ export class ChannelComponent implements OnInit, OnDestroy {
     trigger.openMenu();
     this.menuOpen = true;
   }
+
+  showPlaceholder(index: number): string {
+    const createdAt = this.channel?.messages[index]?.createdAt;
+    const today = new Date().toLocaleDateString('de-De', { weekday: 'long', day: 'numeric', month: 'long' })
+    let date: Date | null = null;
+    let dateCopy: string;
+
+    date = this.convertToDate(createdAt)
+    if (date) {
+      dateCopy = date.toLocaleDateString('de-De', { weekday: 'long', day: 'numeric', month: 'long' })
+    }
+    if (dateCopy! && dateCopy == today) return "Heute"
+
+    return date ? date.toLocaleDateString('de-DE', {weekday: 'long', day: 'numeric', month: 'long'}) : '-';
+  }
+
+  isTheSameDate(index: number) {
+    let isSame: boolean;
+    if (index == 0) return isSame = false;
+
+    let thisTicketDate = this.channel?.messages[index]?.createdAt;
+    let lastTicketDate = this.channel?.messages[index - 1]?.createdAt;
+
+    thisTicketDate = this.convertToDate(thisTicketDate);
+    lastTicketDate = this.convertToDate(lastTicketDate);
+
+    if (thisTicketDate && lastTicketDate) {
+      let thisTicketDateDatefrom = thisTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+      let lastTicketDateDatefrom = lastTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+      if (thisTicketDateDatefrom === lastTicketDateDatefrom) return isSame = true;
+    }
+    return false
+  }
+
+  convertToDate(dateToConvert: any): Date | null {
+    if (dateToConvert instanceof Date) return dateToConvert;
+    if (dateToConvert instanceof Timestamp) return dateToConvert.toDate();
+    return null;
+  }
+
+
 
   closeMenu(trigger: MatMenuTrigger) {
     trigger.closeMenu();
