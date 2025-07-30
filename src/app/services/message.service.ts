@@ -25,7 +25,7 @@ export class MessageService {
 
   private internalList: Message[] = [];
 
-  constructor() {}
+  constructor() { }
 
 async addMessage(item: Message, docId: string) {
   const ref = this.getSubCollectionRef(docId);

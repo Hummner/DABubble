@@ -49,7 +49,7 @@
             <div *ngIf="isCurrentUser()" class="emoji-menu-item">
                 <mat-icon #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="editTicket" (menuOpened)="onEditMenuOpened()" (menuClosed)="onEditMenuClosed()">more_vert</mat-icon>
                 <mat-menu #editTicket="matMenu"  class="edit-menu" >
-                    <span (click)="editView = true" mat-menu-item>Nachricht bearbeiten</span>
+                    <span (click)="openEditView()" mat-menu-item>Nachricht bearbeiten</span>
                 </mat-menu>
             </div>
         </div>
@@ -59,14 +59,14 @@
 <div *ngIf="editView" class="ticket-edit">
 
     <div class="message-edit">
-        <textarea class="edit-textarea" name="edit-textarea" id="edit_textarea">{{ ticket.text}}</textarea>
+        <textarea class="edit-textarea" [(ngModel)]="editedText" name="edit-textarea" id="edit_textarea"></textarea>
         <div class="button-container">
             <div class="input-icon">
                 <img src="assets/icon/reaction.png" alt="">
             </div>
             <div class="buttons">
                 <span class="secondary-button" (click)="editView = false">Abbrechen</span>
-                <span class="primary-button">Speichern</span>
+                <span class="primary-button" (click)="editText()">Speichern</span>
             </div>
 
         </div>

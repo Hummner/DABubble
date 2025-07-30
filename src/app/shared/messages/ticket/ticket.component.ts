@@ -5,23 +5,25 @@ import { addDoc, arrayUnion, collection, doc, getDocs, Timestamp, updateDoc } fr
 import { AuthService } from '../../../services/auth.service';
 import { FirestoreService } from '../../../services/firestore.service';
 import { ThreadService } from '../../../services/thread.service';
+import { MessageService } from '../../../services/message.service';
 import { ActivatedRoute } from '@angular/router';
 import { ChannelsService } from '../../../services/channels.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-ticket',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatMenuModule],
+  imports: [CommonModule, MatIconModule, MatMenuModule, FormsModule],
   templateUrl: './ticket.component.html',
   styleUrl: './ticket.component.scss'
 })
 export class TicketComponent implements OnInit, OnChanges {
 
   @Output() openThread = new EventEmitter<void>();
-  @Output() currentPath = new EventEmitter<string>()
+  @Output() currentPath = new EventEmitter<string>();
   @Input() index!: number;
   @Input() ticket!: TicketInterface;
   @Input() members?: any[];
@@ -31,12 +33,14 @@ export class TicketComponent implements OnInit, OnChanges {
   firestoreService = inject(FirestoreService);
   threadsService = inject(ThreadService);
   channelService = inject(ChannelsService)
+  messageService = inject(MessageService)
   private auth = inject(AuthService);
   showPopup = false;
   showMenu = false;
   channelId!: string;
   editView: boolean = false;
   editMenuOpen = false;
+  editedText!: string;
 
   constructor(private route: ActivatedRoute) { }
 
@@ -72,11 +76,27 @@ export class TicketComponent implements OnInit, OnChanges {
     this.editMenuOpen = true;
     this.showMenu = true
   }
-  
+
 
   onEditMenuClosed() {
     this.editMenuOpen = false;
     this.showMenu = false;
+  }
+
+  openEditView() {
+    this.editView = true;
+    this.editedText = this.ticket.text;
+  }
+
+
+  editText() {
+
+    this.messageService.editTicketText(this.getTicketRef(), this.editedText).then(() => {
+      this.ticket.text = this.editedText
+      this.editView = false;
+    })
+
+
   }
 
 
