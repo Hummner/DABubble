@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '../../services/firestore.service';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { DirectMessageService } from '../../services/direct-message.service';
+import { ChannelsService } from '../../services/channels.service';
 
 @Component({
   selector: 'app-navbar',
@@ -33,6 +34,7 @@ import { DirectMessageService } from '../../services/direct-message.service';
 export class NavbarComponent {
   userProfile = this.firestoreService.userProfile;
   channels$ = inject(NavbarService).channelsObs$;
+  channelService = inject(ChannelsService);
   readonly channelUsers = this.directMessageService.userIds;
   readonly currentUserId = computed(() => this.userProfile()?.uid);
   readonly selectedUserId = computed(() => {
@@ -86,9 +88,11 @@ export class NavbarComponent {
   }
  
   selectChannel(channelId: string) {
+
     this.channels$.subscribe((channels) => {
       const selectedChannel = channels.find(channel => channel.channelId === channelId);
       if (selectedChannel) {
+        this.channelService.getChannel(selectedChannel.channelId);
         this.router.navigateByUrl(`channel/${selectedChannel.channelId}`);
       } else {
         console.error('Channel not found:', channelId);

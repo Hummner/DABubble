@@ -33,7 +33,7 @@ export class AddChannelMemberComponent {
   channelId = '';
   inviteMode  = 1;
   searchText  = '';
-  members: { uid: string; role: string; name: string, imgUrl: string }[] = [];
+  members: { id: string; role: string; name: string, imgUrl: string }[] = [];
   allUsers: UserProfileInterface[] = [];
 
   constructor(
@@ -80,7 +80,7 @@ export class AddChannelMemberComponent {
 
   deleteMember(userId: string) {
     for (let i = 0; i < this.members.length; i++) {
-      if (this.members[i].uid === userId) {
+      if (this.members[i].id === userId) {
         this.members.splice(i, 1);
       }
     }
@@ -96,7 +96,7 @@ export class AddChannelMemberComponent {
       this.allUsers = this.firestoreService.userList.filter(
         (user) =>
           user.name.toLowerCase().includes(this.searchText.toLowerCase()) 
-          && !this.members.find(m => m.uid === user.uid)
+          && !this.members.find(m => m.id === user.uid)
       );
     }
   }
@@ -105,13 +105,13 @@ export class AddChannelMemberComponent {
     this.navbar.createdBy = this.userProfile()?.name || '';
 
     const newMember = {
-      uid: data.uid,
-      role: data.uid === this.userProfile()?.uid ? 'admin' : 'member',
+      id: data.id,
+      role: data.id === this.userProfile()?.uid ? 'admin' : 'member',
       name: data.name,
       imgUrl: data.imgUrl
     };
 
-    if (!this.members.find(m => m.uid === newMember.uid)) {
+    if (!this.members.find(m => m.id === newMember.id)) {
       this.members.push(newMember);
     }
 
@@ -129,7 +129,7 @@ export class AddChannelMemberComponent {
     this.getOtherUserList();
     this.navbar.createdBy = this.userProfile()?.name || '';
     this.navbar.members = this.allUsers.map((user) => ({
-      uid: user.uid,
+      id: user.uid,
       role: user.uid === this.userProfile()?.uid ? 'admin' : 'member',
       name: user.name,
       imgUrl: user.imgUrl
