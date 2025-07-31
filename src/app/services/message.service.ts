@@ -43,6 +43,14 @@ async addMessage(item: Message, docId: string) {
       let ref = this.getSingleMessageRef(channelId, docId);
       await updateDoc(ref, this.getCleanJson(message)).catch((err) => {
         console.log(err);
+
+  subList(channelId: string) {
+    const ref = this.getSubCollectionRef(channelId);
+    const q = query(ref, orderBy('createdAt'));
+    return onSnapshot(q, (list) => {
+      const newList: Message[] = [];
+      list.forEach((element) => {
+        newList.push(this.setMessageObject(element.data(), element.id));
       });
     }
   }

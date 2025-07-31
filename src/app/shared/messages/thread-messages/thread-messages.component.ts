@@ -35,23 +35,16 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     if (this.message) {
-      console.log(this.message);
       this.showName();
       this.time = this.showTime();
 
     }
     this.getChannelId();
-
-
-
-
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.currentUser = this.getCurrentUserId();
-    console.log(this.currentUser);
-
+    this.time = this.showTime();
   }
 
 

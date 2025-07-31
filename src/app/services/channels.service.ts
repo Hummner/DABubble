@@ -1,5 +1,5 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { CollectionReference, doc, Firestore, getCountFromServer, getDoc, getDocs, serverTimestamp, Timestamp } from '@angular/fire/firestore';
+import { CollectionReference, doc, DocumentReference, Firestore, getCountFromServer, getDoc, getDocs, serverTimestamp, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { collection, onSnapshot } from '@angular/fire/firestore';
 import { ChannelInterface } from '../interfaces/channel.interface';
 import { TicketInterface } from '../interfaces/ticket.interface';
@@ -111,7 +111,7 @@ export class ChannelsService implements OnDestroy {
   }
 
 
-  addTicketToChannel(channelId: string, senderId: string, text: string) {
+  async addTicketToChannel(channelId: string, senderId: string, text: string) {
     const newTicket: TicketInterface = {
       createdAt: serverTimestamp(),
       reactions: [],
@@ -119,8 +119,19 @@ export class ChannelsService implements OnDestroy {
       text: text,
       threadsCount: 0,
     };
+    
+    await addDoc(this.getNewMessageRef(channelId), newTicket)
+  }
 
-    addDoc(this.getNewMessageRef(channelId), newTicket)
+    async editTicketText(ticketRef: DocumentReference, text: string) {
+    try {
+      await updateDoc(ticketRef, { text: text })
+
+    } catch (err) {
+      console.error("The message could not be updated: ", err);
+
+    }
+
   }
 
   renderThread(channelId: string, ticketId: string) {

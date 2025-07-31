@@ -5,7 +5,6 @@ import { addDoc, arrayUnion, collection, doc, getDocs, Timestamp, updateDoc } fr
 import { AuthService } from '../../../services/auth.service';
 import { FirestoreService } from '../../../services/firestore.service';
 import { ThreadService } from '../../../services/thread.service';
-import { MessageService } from '../../../services/message.service';
 import { ActivatedRoute } from '@angular/router';
 import { ChannelsService } from '../../../services/channels.service';
 import { MatMenuModule } from '@angular/material/menu';
@@ -32,8 +31,7 @@ export class TicketComponent implements OnInit, OnChanges {
   answers!: string;
   firestoreService = inject(FirestoreService);
   threadsService = inject(ThreadService);
-  channelService = inject(ChannelsService)
-  messageService = inject(MessageService)
+  channelService = inject(ChannelsService);
   private auth = inject(AuthService);
   showPopup = false;
   showMenu = false;
@@ -56,7 +54,8 @@ export class TicketComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['ticket']) {
-      this.answers = this.showAnswer()
+      this.answers = this.showAnswer();
+      this.time = this.showTime();
     }
 
   }
@@ -91,7 +90,7 @@ export class TicketComponent implements OnInit, OnChanges {
 
   editText() {
 
-    this.messageService.editTicketText(this.getTicketRef(), this.editedText).then(() => {
+    this.channelService.editTicketText(this.getTicketRef(), this.editedText).then(() => {
       this.ticket.text = this.editedText
       this.editView = false;
     })
