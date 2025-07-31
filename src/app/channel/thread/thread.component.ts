@@ -6,7 +6,7 @@ import { ThreadService } from '../../services/thread.service';
 import { ThreadMessagesComponent } from '../../shared/messages/thread-messages/thread-messages.component';
 import { AuthService } from '../../services/auth.service';
 import { FirestoreService } from '../../services/firestore.service';
-import { FieldValue, Timestamp } from '@angular/fire/firestore';
+import { doc, FieldValue, getDoc, Timestamp } from '@angular/fire/firestore';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -36,22 +36,23 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
   ticketCreatedAt!: string;
   ticketText!: string;
   textInput!: string;
-  messagesCount!: number;
+  messagesCount!: string;
   ticketPath!: string | void;
 
 
-
   constructor() {
-
   }
-
-
 
 
   ngOnInit(): void {
     this.messagesSubscription = this.threadService.messagesSubscribe$.subscribe(msgArray => {
       this.messages = msgArray
     });
+
+
+
+
+
   }
 
 
@@ -60,39 +61,43 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
     console.log(changes);
     if (changes['isThreadOpen'] || this.isThreadOpen || changes['currentThreadPath']) {
       this.currentTicket = this.threadService.getTicketFromChannel();
-
-      if (this.messagesCount) { // vllt lööschen
-        this.messagesCounter();
-      }
-
-
       if (this.currentTicket) {
         this.createCurrentTicket();
       }
     }
 
-    if (changes['messages']) {
-      console.log("YESS");
-
+    if (this.currentTicket) {
+      // this.messagesCount = this.messagesCounter();
+      let path = this.threadService.getTicketPath()
+      console.log(path);
     }
+
+
+
+
   }
 
 
-  addMessageToThread() {
+  async addMessageToThread() {
     let senderId = this.getCurrentUserId();
     let text = this.textInput;
-    if (senderId && text) {
-      this.threadService.addMessageToThread(senderId, text);
-
+    this.textInput = "";
+    try {
+      if (senderId && text) {
+        await this.threadService.addMessageToThread(senderId, text);
+      }
+    } catch (err) {
+      console.error("Failed by add a message: ", err);
+      this.textInput = text;
     }
-
   }
 
 
-  createCurrentTicket() {
+  async createCurrentTicket() {
     this.showName();
-    this.ticketCreatedAt = this.showTime()
-    this.ticketText = this.currentTicket.text
+    this.ticketCreatedAt = this.showTime();
+    this.ticketText = this.currentTicket.text;
+    this.messagesCount =  await this.messagesCounter();
   }
 
   showTime(): string {
@@ -109,13 +114,71 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  messagesCounter() {
-    let number = this.messagesCount
+
+  showPlaceholder(index: number): string {
+    const createdAt = this.messages[index]?.createdAt;
+    const today = new Date().toLocaleDateString('de-De', { weekday: 'long', day: 'numeric', month: 'long' })
+    let date: Date | null = null;
+    let dateCopy: string;
+
+    date = this.convertToDate(createdAt)
+    if (date) {
+      dateCopy = date.toLocaleDateString('de-De', { weekday: 'long', day: 'numeric', month: 'long' })
+    }
+    if (dateCopy! && dateCopy == today) return "Heute"
+
+    return date ? date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) : '-';
+  }
+
+  isTheSameDate(index: number) {
+    let isSame: boolean;
+    if (index == 0) return isSame = false;
+
+    let thisTicketDate = this.messages[index]?.createdAt;
+    let lastTicketDate = this.messages[index - 1]?.createdAt;
+
+    thisTicketDate = this.convertToDate(thisTicketDate);
+    lastTicketDate = this.convertToDate(lastTicketDate);
+
+    if (thisTicketDate && lastTicketDate) {
+      let thisTicketDateDatefrom = thisTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+      let lastTicketDateDatefrom = lastTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+      if (thisTicketDateDatefrom === lastTicketDateDatefrom) return isSame = true;
+    }
+    return false
+  }
+
+  convertToDate(dateToConvert: any): Date | null {
+    if (dateToConvert instanceof Date) return dateToConvert;
+    if (dateToConvert instanceof Timestamp) return dateToConvert.toDate();
+    return null;
+  }
+
+  async messagesCounter() {
+    let ticketThread = this.threadService.getTicketPathDoc(this.threadService.getTicketPath());
+    let asd = await getDoc(ticketThread)
+    if (asd.exists()) {
+      console.log(asd.data());
+    }
+
+
+
+
+
+    let number = this.currentTicket.threadsCount ? this.currentTicket.threadsCount : 0;
     if (number > 1) return `${number} Antworten`
     if (number == 1) return '1 Antwort'
     return "Kein Antwort"
   }
 
+
+  checkTheKey(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      if (this.textInput != "") {
+        this.addMessageToThread();
+      }
+    }
+  }
 
 
   findUser(uId: string): number {

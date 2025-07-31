@@ -107,7 +107,7 @@ export class ChannelComponent implements OnInit, OnDestroy {
     }
     if (dateCopy! && dateCopy == today) return "Heute"
 
-    return date ? date.toLocaleDateString('de-DE', {weekday: 'long', day: 'numeric', month: 'long'}) : '-';
+    return date ? date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) : '-';
   }
 
   isTheSameDate(index: number) {
@@ -134,6 +134,13 @@ export class ChannelComponent implements OnInit, OnDestroy {
     return null;
   }
 
+  checkTheKey(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      if (this.textInput != "") {
+        this.addTicket();
+      }
+    }
+  }
 
 
   closeMenu(trigger: MatMenuTrigger) {

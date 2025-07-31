@@ -78,6 +78,10 @@ export class ThreadService {
   getTicketPath() {
     return this.threadPath.split("/").slice(0, 4).join("/");
   }
+
+  getTicketPathDoc(ticketPath: string) {
+    return doc(this.firestore, ticketPath)
+  }
  
 
   getMessageToJson(messageData: DocumentData) {

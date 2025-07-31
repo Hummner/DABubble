@@ -101,7 +101,7 @@
             </main>
             <footer>
                 <div class="text-area">
-                    <textarea [(ngModel)]="textInput" name="chat_input" id="chat_input"
+                    <textarea (keyup)="checkTheKey($event)" [(ngModel)]="textInput" name="chat_input" id="chat_input"
                         placeholder="Nachricht an #Entwicklerteam"></textarea>
                 </div>
                 <div class="input-buttons">

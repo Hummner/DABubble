@@ -36,16 +36,6 @@ export class MessageService {
     }
   }
 
-  async editTicketText(ticketRef: DocumentReference, text: string) {
-    try {
-      await updateDoc(ticketRef, { text: text })
-
-    } catch (err) {
-      console.error("The message could not be updated: ", err);
-
-    }
-
-  }
 
   subList(channelId: string) {
     let ref = this.getSubCollectionRef(channelId);

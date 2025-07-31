@@ -27,6 +27,9 @@
                 </div>
                 <div>
                     @for (message of messages; track $index) {
+                    <div *ngIf="!isTheSameDate($index)" class="placeholder-thread">
+                        <div class="placeholder-date-thread">{{ showPlaceholder($index)}}</div>
+                    </div>
                     <app-thread-messages [members]="members" [message]="message" [index]="$index"></app-thread-messages>
                     }
                 </div>
@@ -34,7 +37,7 @@
         </main>
         <footer>
             <div class="text-area">
-                <textarea [(ngModel)]="textInput" name="chat_input" id="chat_input"
+                <textarea (keyup)="checkTheKey($event)" [(ngModel)]="textInput" name="chat_input" id="chat_input"
                     placeholder="Antworten..."></textarea>
             </div>
             <div class="input-buttons">
