@@ -27,42 +27,18 @@ export class MessageService {
 
   constructor() { }
 
-async addMessage(item: Message, docId: string) {
-  const ref = this.getSubCollectionRef(docId);
-  const docRef = await addDoc(ref, {
-    senderId: item.senderId,
-    content: item.content,
-    createdAt: serverTimestamp(),
-    reactions: item.reactions || [],
-  });
-  await setDoc(docRef, { id: docRef.id }, { merge: true });
-}
-
-  async updateMessage(message: Message, docId: string, channelId: string) {
-    if (message.id) {
-      let ref = this.getSingleMessageRef(channelId, docId);
-      await updateDoc(ref, this.getCleanJson(message)).catch((err) => {
-        console.log(err);
-
-  subList(channelId: string) {
-    const ref = this.getSubCollectionRef(channelId);
-    const q = query(ref, orderBy('createdAt'));
-    return onSnapshot(q, (list) => {
-      const newList: Message[] = [];
-      list.forEach((element) => {
-        newList.push(this.setMessageObject(element.data(), element.id));
-      });
+  async addMessage(item: Message, docId: string) {
+    const docRef = await addDoc(this.getSubCollectionRef(docId), {
+      ...item,
+      id: '',
+    }).catch((err) => {
+      console.error(err);
+    });
+    if (docRef) {
+      console.log('Document written with ID: ', docRef.id);
+      const msgRef = docRef;
+      await setDoc(msgRef, { id: docRef.id }, { merge: true });
     }
-  }
-
-  getCleanJson(message: Message): {} {
-    return {
-      id: message.id,
-      createdAt: message.createdAt,
-      senderId: message.senderId,
-      content: message.content,
-      reactions: message.reactions,
-    };
   }
 
   subList(channelId: string) {
