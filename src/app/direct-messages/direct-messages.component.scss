@@ -75,6 +75,7 @@ footer {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+  position: relative;
 }
 
 .input-buttons {
@@ -262,3 +263,5 @@ app-user-card {
   height: 1px;
   background-color: #adb0d9;
 }
+
+

@@ -6,6 +6,7 @@ import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { Router, NavigationEnd } from '@angular/router';
 
+
 @Component({
   selector: 'app-root',
   standalone: true,

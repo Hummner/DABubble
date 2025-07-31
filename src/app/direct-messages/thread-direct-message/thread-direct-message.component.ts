@@ -13,19 +13,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DirectMessageService } from '../../services/direct-message.service';
 import { MessageService } from '../../services/message.service';
-
 import { CommonModule, NgIf } from '@angular/common';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
 import { onSnapshot } from '@angular/fire/firestore';
-
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { FirestoreService } from '../../services/firestore.service';
 import { FormsModule } from '@angular/forms';
-import {
-  Timestamp,
-  serverTimestamp,
-  FieldValue,
-} from '@angular/fire/firestore';
+import { ClickStopPropagation } from '../../click-stop-propagation.directive';
+import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
+import { serverTimestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-thread-direct-message',
@@ -36,10 +32,13 @@ import {
     CommonModule,
     MessageTicketComponent,
     FormsModule,
+    EmojiPickerComponent,
+    ClickStopPropagation,
   ],
   templateUrl: './thread-direct-message.component.html',
   styleUrl: './thread-direct-message.component.scss',
 })
+
 export class ThreadDirectMessageComponent implements OnInit {
   @Input() isThreadOpen!: boolean;
   @Output() close = new EventEmitter<void>();
@@ -60,6 +59,7 @@ export class ThreadDirectMessageComponent implements OnInit {
   userProfileB = signal<UserProfileInterface | null>(null);
   content = '';
   senderId = '';
+  smallEmojiMenu = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -77,7 +77,7 @@ export class ThreadDirectMessageComponent implements OnInit {
       this.unsubList = this.messageService.subList(this.channelId);
     }
     this.messageService.messageList$.subscribe((msgs) => {
-      console.log('Messages received:', msgs);
+      // console.log('Messages received:', msgs);
       this.messages = msgs;
     });
   }
@@ -171,7 +171,7 @@ export class ThreadDirectMessageComponent implements OnInit {
     this.threadMessagesSub =
       this.threadMessageService.threadMessages$.subscribe((messages) => {
         this.threadMessages = messages;
-        console.log('Updated thread messages:', this.threadMessages);
+        // console.log('Updated thread messages:', this.threadMessages);
       });
   }
 
@@ -195,7 +195,7 @@ export class ThreadDirectMessageComponent implements OnInit {
           docSnap.data(),
           docSnap.id
         );
-        console.log('Live updated parent message:', this.message);
+        // console.log('Live updated parent message:', this.message);
       }
     });
   }
@@ -206,5 +206,24 @@ export class ThreadDirectMessageComponent implements OnInit {
       '/directMessages',
       this.route.snapshot.parent?.paramMap.get('id'),
     ]);
+  }
+
+  toggleSmallEmojiMenu() {
+    if (this.smallEmojiMenu == false) {
+      this.smallEmojiMenu = true;
+    } else {
+      this.smallEmojiMenu = false;
+    }
+  }
+
+  closeEmojiBox() {
+    this.smallEmojiMenu = false;
+  }
+
+  addEmoji(emoji: any) {
+    // console.log(emoji.name, 'added');
+    if (emoji) {
+      this.content += emoji;
+    }
   }
 }
