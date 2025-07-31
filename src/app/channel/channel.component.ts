@@ -18,6 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Timestamp } from '@angular/fire/firestore';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EmojiArrayService } from '../services/emoji-array.service';
+import { AddMemberComponent } from '../channel/add-member/add-member.component';
 
 
 @Component({
@@ -262,6 +263,15 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   }
 
-
-
+  addMemberDialog() {
+    // this.dialog
+    //       .open(AddMemberComponent)
+    //       .afterClosed()
+          // .subscribe((channelName) => {
+          //   if (!channelName) return;
+          //   this.dialog.open(AddChannelMemberComponent, {
+          //     data: { channelName },
+          //   });
+          // });
+  }
 }
