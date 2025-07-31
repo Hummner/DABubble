@@ -3,7 +3,6 @@
     <header>
       <div class="channel-name">
         <h2>Thread</h2>
-        <span># Entwicklerteam</span>
       </div>
       <div class="close-dialog" (click)="closeThread()">
         <mat-icon class="icon">close</mat-icon>
@@ -17,14 +16,15 @@
           [channelId]="channelId"
           [inThreadView]="false"
         ></app-message-ticket>
-        <div *ngFor="let date of Object.keys(getMessagesGroupedByDate())">
-          <div class="separator"></div>
-          <div class="date-container">
-            <h3 class="date">{{ date }}</h3>
+        <div *ngFor="let date of Object.keys(groupMessagesByDate())">
+          <div class="date-separator">
+            <div class="separator"></div>
+            <div class="date-container">
+              <h3 class="date">{{ date }}</h3>
+            </div>
+            <div class="separator"></div>
           </div>
-          <div class="separator"></div>
-
-          <div *ngFor="let msg of getMessagesGroupedByDate()[date]">
+          <div *ngFor="let msg of groupMessagesByDate()[date]">
             <app-message-ticket
               *ngIf="message && channelId"
               [channelId]="channelId"
@@ -36,7 +36,13 @@
           </div>
         </div>
         <div class="placeholder">
-          <div class="placeholder-date msg-answer">2 Answers</div>
+          @if(message?.threadCount == 0){
+          <div class="placeholder-date msg-answer">Keine Antwort</div>
+          } @else {
+          <div class="placeholder-date msg-answer">
+            {{ message?.threadCount }} Antwort
+          </div>
+          }
         </div>
       </div>
     </main>

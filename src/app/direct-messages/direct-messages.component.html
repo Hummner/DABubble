@@ -63,7 +63,7 @@
             </div>
           </div>
           <div></div>
-          <div *ngFor="let date of Object.keys(getMessagesGroupedByDate())">
+          <div *ngFor="let date of Object.keys(groupMessagesByDate())">
             <div class="date-separator">
               <div class="separator"></div>
               <div class="date-container">
@@ -74,7 +74,7 @@
 
             <app-message-ticket
               *ngFor="
-                let msg of getMessagesGroupedByDate()[date];
+                let msg of groupMessagesByDate()[date];
                 trackBy: trackByMessageId
               "
               [message]="msg"

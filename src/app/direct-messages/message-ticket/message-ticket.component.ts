@@ -39,6 +39,21 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   @Input() inThreadView: boolean = false;
   @Output() openThread = new EventEmitter<string | undefined>();
 
+  emojiList = [
+    'checked',
+    'thumb',
+    'nerd',
+    'rocket',
+    'sad',
+    'party',
+    'surprised',
+    'love',
+    'confusion',
+    'heart',
+    'cool',
+    'angry'
+  ];
+
   ngOnChanges(): void {
     const userList = this.firestore.userList;
     this.user = userList.find((user) => user.uid === this.message.senderId);
@@ -62,8 +77,8 @@ export class MessageTicketComponent implements OnChanges, OnInit {
 
   onEmojiToggle(emoji: string) {
     if (!this.message?.id) return;
-    const threadId = this.message.id; 
-    const docId = this.messageId ?? this.message.id; 
+    const threadId = this.message.id;
+    const docId = this.messageId ?? this.message.id;
     const reactions = this.message.reactions ? [...this.message.reactions] : [];
     if (reactions.includes(emoji)) {
       reactions.splice(reactions.indexOf(emoji), 1);
@@ -85,8 +100,8 @@ export class MessageTicketComponent implements OnChanges, OnInit {
 
   onEmojiRemove(emoji: string) {
     if (!this.message?.id) return;
-    const threadId = this.message.id; 
-    const docId = this.messageId ?? this.message.id; 
+    const threadId = this.message.id;
+    const docId = this.messageId ?? this.message.id;
     const reactions = this.message.reactions ? [...this.message.reactions] : [];
     const index = reactions.indexOf(emoji);
     if (index !== -1) {
