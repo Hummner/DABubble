@@ -52,10 +52,10 @@
                 <div class="members">
                     <div class="members-container" [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger"
                         (click)="openMenu(menuTrigger)">
-                        <div class="member-img"><img src="assets/img/elias_neumann.svg"></div>
-                        <div class="member-img"><img src="assets/img/elias_neumann.svg"></div>
-                        <div class="member-img"><img src="assets/img/elias_neumann.svg"></div>
-                        <div class="member-img"><span>3</span></div>
+                        @for (member of channel?.members?.slice(0, 10); track $index) {
+                            <div class="member-img"><img [src]="member?.imgUrl" alt=""></div>
+                        }
+                        <div class="member-img"><span>{{ channel?.members?.length }}</span></div>
                     </div>
                     <div class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
                 </div>
@@ -68,20 +68,21 @@
                             </div>
                         </div>
                         <div class="members-menu-list">
-                            @for (member of [1,2,3]; track $index) {
+                            @for (member of channel?.members; track $index) {
                             <div class="members-menu-listelement">
-                                <div class="member-img margin-16">
-                                    <img src="assets/img/elias_neumann.svg" alt="">
-                                </div>
-                                <div class="member-menu-name">Elias Neumann</div>
+                                
+                                    <div class="member-img margin-16">
+                                        <img [src]="member?.imgUrl" alt="">
+                                    </div>
+                                    <div class="member-menu-name">{{member?.name}}</div>
                             </div>
                             }
-                            <div class="members-menu-add margin-16">
-                                <div class="add-member-icon">
-                                    <img src="assets/icon/person_add.png">
-                                </div>
-                                <span>Mitglieder hinzufügen</span>
+                        </div>
+                        <div class="members-menu-add margin-16">
+                            <div class="add-member-icon">
+                                <img src="assets/icon/person_add.png">
                             </div>
+                            <span>Mitglieder hinzufügen</span>
                         </div>
                     </div>
                 </mat-menu>
