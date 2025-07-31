@@ -247,3 +247,26 @@ footer {
     padding: 0;
   }
 }
+
+.date-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  > .date-container {
+    width: auto;
+    border: 1px solid #adb0d9;
+    border-radius: 30px;
+    padding: 5px;
+    > h3 {
+      font-family: "Nunito";
+      font-size: 20px;
+      margin: 0;
+      color: #34343a;
+    }
+  }
+}
+.separator {
+  width: 40%;
+  height: 1px;
+  background-color: #adb0d9;
+}

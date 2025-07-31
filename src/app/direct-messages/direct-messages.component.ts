@@ -23,10 +23,8 @@ import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { Message } from '../interfaces/message.interface';
 import { UserCardComponent } from './user-card/user-card.component';
 import { MessageTicketComponent } from './message-ticket/message-ticket.component';
-import { serverTimestamp, Timestamp } from '@angular/fire/firestore';
-import { FieldValue } from 'firebase/firestore';
-import { ThreadDirectMessageComponent } from './thread-direct-message/thread-direct-message.component';
 import { RouterOutlet } from '@angular/router';
+import { serverTimestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-direct-messages',
@@ -46,13 +44,13 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './direct-messages.component.html',
   styleUrl: './direct-messages.component.scss',
 })
+
 export class DirectMessagesComponent
   implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked
 {
   channelId!: string;
   userProfile = this.firestoreService.userProfile;
   userProfileB = signal<UserProfileInterface | null>(null);
-
   profileOpen = false;
   backdropVisible = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
@@ -67,7 +65,6 @@ export class DirectMessagesComponent
   shouldScroll = false;
   messages: Message[] = [];
   public Object = Object;
-
   isThreadOpen = false;
 
   constructor(
@@ -78,35 +75,39 @@ export class DirectMessagesComponent
     private messageService: MessageService
   ) {}
 
-  ngOnInit(): void {
+  subThreadRoute() {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.isThreadOpen = this.router.url.includes('threadMessages');
       }
     });
+  }
 
+  ngOnInit(): void {
+    this.subThreadRoute();
     this.routeSub = this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
         this.channelId = id;
-
-        const checkUserInterval = setInterval(() => {
-          const currentUser = this.userProfile();
-          if (currentUser?.uid) {
-            clearInterval(checkUserInterval);
-            this.subscribeToDM(id);
-            this.senderId = currentUser.uid;
-          }
-        }, 100);
-
+        this.waitForUserThenSubscribe(id);
         this.unsubList = this.messageService.subList(this.channelId);
         this.messageService.messageList$.subscribe((msgs) => {
-          console.log('Messages received:', msgs);
           this.messages = msgs;
           this.shouldScroll = true;
         });
       }
     });
+  }
+
+  waitForUserThenSubscribe(id: string) {
+    const checkUserInterval = setInterval(() => {
+      const currentUser = this.userProfile();
+      if (currentUser?.uid) {
+        clearInterval(checkUserInterval);
+        this.subscribeToDM(id);
+        this.senderId = currentUser.uid;
+      }
+    }, 100);
   }
 
   ngAfterViewInit() {
@@ -168,8 +169,8 @@ export class DirectMessagesComponent
       createdAt: serverTimestamp(),
       senderId: this.senderId,
       content: this.content,
-      hasThread:this.hasThread,
-      threadCount:this.threadCount,
+      hasThread: this.hasThread,
+      threadCount: this.threadCount,
     };
     this.messageService.addMessage(message, this.channelId);
     this.content = '';
@@ -188,52 +189,14 @@ export class DirectMessagesComponent
     }
   }
 
-  getMsgList() {
-    return this.messages;
+  groupMessagesByDate(): { [date: string]: Message[] } {
+    return this.messageService.getMessagesGroupedByDate(this.messages);
   }
 
-  //Firebase creates Timestamp - realdate/time value, it has a method ".toDate()"
-  //which converts it to native JavaScript Date Object
-  //when we fetch a message, createdAt filed value will be a Timestamp
-  //FieldValue it not a real date/time value, it is a placeholder used ONLY when writing to Firestore
-  //serverTimestamp() returns a FieldValue
-  //  - and Firestore replace this with actual Timestamp when the document is written on the server
-  //we chack first if -date- has a "toDate method", when yes, then it converts to JavaScript date
-  formatDateLabel(date: Date | Timestamp): string {
-    if ('toDate' in date) {
-      date = date.toDate();
-    }
-    const now = new Date();
-    const isToday =
-      date.getDate() === now.getDate() &&
-      date.getMonth() === now.getMonth() &&
-      date.getFullYear() === now.getFullYear();
-    if (isToday) {
-      return 'Heute';
-    }
-    const weekday = date.toLocaleDateString('de-DE', { weekday: 'long' });
-    const formattedDate = date.toLocaleDateString('de-DE'); // 20/07/2025 → UK format
-    return `${weekday}, ${formattedDate}`;
-  }
-
-  getMessagesGroupedByDate(): { [date: string]: Message[] } {
-    return this.messages.reduce((groups, message) => {
-      const createdAt = message.createdAt;
-      // Skip if createdAt is missing or a FieldValue (e.g. serverTimestamp)
-      if (!createdAt || createdAt instanceof FieldValue) {
-        return groups;
-      }
-      const dateStr = this.formatDateLabel(createdAt);
-      if (!groups[dateStr]) {
-        groups[dateStr] = [];
-      }
-      groups[dateStr].push(message);
-      return groups;
-    }, {} as { [date: string]: Message[] });
-  }
   trackByMessageId(index: number, message: Message) {
     return message.id || index;
   }
+
   openThread(messageId: string | undefined) {
     if (!messageId) {
       console.warn('No message id');

@@ -13,13 +13,19 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DirectMessageService } from '../../services/direct-message.service';
 import { MessageService } from '../../services/message.service';
-import { Timestamp, serverTimestamp, FieldValue } from '@angular/fire/firestore';
+
 import { CommonModule, NgIf } from '@angular/common';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
 import { onSnapshot } from '@angular/fire/firestore';
+
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { FirestoreService } from '../../services/firestore.service';
 import { FormsModule } from '@angular/forms';
+import {
+  Timestamp,
+  serverTimestamp,
+  FieldValue,
+} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-thread-direct-message',
@@ -47,7 +53,6 @@ export class ThreadDirectMessageComponent implements OnInit {
   private parentMessageUnsub: (() => void) | null = null;
   messages: Message[] = [];
   public Object = Object;
-
   unsubSingleDM?: () => void;
   unsubUserList?: () => void;
   unsubList?: () => void;
@@ -66,6 +71,18 @@ export class ThreadDirectMessageComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.handleRouteParams();
+    this.waitForUserThenSubscribe();
+    if (this.channelId) {
+      this.unsubList = this.messageService.subList(this.channelId);
+    }
+    this.messageService.messageList$.subscribe((msgs) => {
+      console.log('Messages received:', msgs);
+      this.messages = msgs;
+    });
+  }
+
+  handleRouteParams() {
     this.route.paramMap.subscribe((params) => {
       this.messageId = params.get('messageId');
       this.route.parent?.paramMap.subscribe((parentParams) => {
@@ -76,6 +93,9 @@ export class ThreadDirectMessageComponent implements OnInit {
         }
       });
     });
+  }
+
+  waitForUserThenSubscribe() {
     const checkUserInterval = setInterval(() => {
       const currentUser = this.userProfile();
       if (currentUser?.uid) {
@@ -86,51 +106,11 @@ export class ThreadDirectMessageComponent implements OnInit {
         }
       }
     }, 100);
-    if (this.channelId) {
-      this.unsubList = this.messageService.subList(this.channelId);
-    }
-
-    this.messageService.messageList$.subscribe((msgs) => {
-      console.log('Messages received:', msgs);
-      this.messages = msgs;
-    });
   }
 
-
-    formatDateLabel(date: Date | Timestamp): string {
-    if ('toDate' in date) {
-      date = date.toDate();
-    }
-    const now = new Date();
-    const isToday =
-      date.getDate() === now.getDate() &&
-      date.getMonth() === now.getMonth() &&
-      date.getFullYear() === now.getFullYear();
-    if (isToday) {
-      return 'Heute';
-    }
-    const weekday = date.toLocaleDateString('de-DE', { weekday: 'long' });
-    const formattedDate = date.toLocaleDateString('de-DE'); // 20/07/2025 → UK format
-    return `${weekday}, ${formattedDate}`;
+  groupMessagesByDate(): { [date: string]: Message[] } {
+    return this.messageService.getMessagesGroupedByDate(this.threadMessages);
   }
-
-  getMessagesGroupedByDate(): { [date: string]: Message[] } {
-    return this.threadMessages.reduce((groups, message) => {
-      const createdAt = message.createdAt;
-      // Skip if createdAt is missing or a FieldValue (e.g. serverTimestamp)
-    if (!this.isValidTimestamp(createdAt)) {
-      return groups;
-    }
-      const dateStr = this.formatDateLabel(createdAt);
-      if (!groups[dateStr]) {
-        groups[dateStr] = [];
-      }
-      groups[dateStr].push(message);
-      return groups;
-    }, {} as { [date: string]: Message[] });
-  }
-
-
 
   subscribeToDM(id: string) {
     this.unsubSingleDM = this.directMessageService.subDMChannel(id, (data) => {
@@ -166,8 +146,24 @@ export class ThreadDirectMessageComponent implements OnInit {
         this.channelId,
         this.message?.id
       );
+      this.updateParentMessageWithThreadInfo(this.message);
     }
     this.content = '';
+  }
+
+  updateParentMessageWithThreadInfo(message: Message) {
+    let hasThread = message.hasThread;
+    let threadCount = message.threadCount;
+    hasThread = true;
+    threadCount++;
+    this.messageService.updateMessagePartial(
+      {
+        hasThread: true,
+        threadCount: (this.message?.threadCount || 0) + 1,
+      },
+      message.id!,
+      this.channelId!
+    );
   }
 
   subscribeToThreadMessages(channelId: string, messageId: string) {
@@ -193,7 +189,6 @@ export class ThreadDirectMessageComponent implements OnInit {
       channelId,
       messageId
     );
-
     this.parentMessageUnsub = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         this.message = this.messageService.setMessageObject(
@@ -211,9 +206,5 @@ export class ThreadDirectMessageComponent implements OnInit {
       '/directMessages',
       this.route.snapshot.parent?.paramMap.get('id'),
     ]);
-  }
-
-  isValidTimestamp(value: any): value is Timestamp {
-    return value instanceof Timestamp && typeof value.toDate === 'function';
   }
 }

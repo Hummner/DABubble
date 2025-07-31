@@ -8,6 +8,7 @@ import {
   where,
   getDocs,
   addDoc,
+  orderBy,
 } from '@angular/fire/firestore';
 import { DirectMessageInterface } from '../interfaces/direct-message.interface';
 
@@ -17,7 +18,7 @@ import { DirectMessageInterface } from '../interfaces/direct-message.interface';
 export class DirectMessageService {
   private firestore = inject(Firestore);
   private userIdsSignal = signal<string[]>([]);
-  readonly userIds = this.userIdsSignal; 
+  readonly userIds = this.userIdsSignal;
   private unsubDMList?: () => void;
   constructor() {}
 
@@ -46,8 +47,6 @@ export class DirectMessageService {
     }
   }
 
-  
-
   subDMChannel(docId: string, handleData?: (data: any) => void): () => void {
     const ref = this.getSingleDMChannelRef('directMessages', docId);
     const unsubSingle = onSnapshot(ref, (snapshot) => {
@@ -61,12 +60,12 @@ export class DirectMessageService {
     return unsubSingle;
   }
 
-
   subDMList(
     handleData?: (dmList: DirectMessageInterface[]) => void
   ): () => void {
     const ref = this.getDMListRef();
-    const unsubList = onSnapshot(ref, (snapshot) => {
+    const q = query(ref, orderBy('createdAt'));
+    const unsubList = onSnapshot(q, (snapshot) => {
       const dmList: DirectMessageInterface[] = [];
       snapshot.forEach((docSnap) => {
         dmList.push(this.setDMObject(docSnap.data(), docSnap.id));

@@ -10,12 +10,14 @@ import {
   addDoc,
   updateDoc,
   serverTimestamp,
-  setDoc
+  setDoc,
 } from '@angular/fire/firestore';
 import { DirectMessageService } from './direct-message.service';
 import { Message } from '../interfaces/message.interface';
 import { MessageService } from './message.service';
 import { BehaviorSubject } from 'rxjs';
+import { orderBy } from '@angular/fire/firestore';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -25,14 +27,11 @@ export class ThreadDirectMessageService {
   @Input() message!: Message;
   private _threadMessages$ = new BehaviorSubject<Message[]>([]);
   threadMessages$ = this._threadMessages$.asObservable();
-  // unsubThreadMessages;
 
-  constructor() {
-    // this.unsubThreadMessages = this.subThreadList();
-  }
+  constructor() {}
 
-  async addThreadMessage(item: Message, channelId: string, messageId:string) {
-    const ref = this.getThreadMessagesRef(channelId,messageId);
+  async addThreadMessage(item: Message, channelId: string, messageId: string) {
+    const ref = this.getThreadMessagesRef(channelId, messageId);
     const docRef = await addDoc(ref, {
       senderId: item.senderId,
       content: item.content,
@@ -43,49 +42,63 @@ export class ThreadDirectMessageService {
   }
 
   subThreadList(channelId: string, docId: string) {
-    return onSnapshot(
-      this.getThreadMessagesRef(channelId, docId),
-      (list) => {
-        const threadMessages: Message[] = [];
-        list.forEach((element) => {
-          const msg = this.messageService.setMessageObject(element.data(), element.id);
-          threadMessages.push(msg);
-        });
-        this._threadMessages$.next(threadMessages);
-      }
-    );
+    const ref = this.getThreadMessagesRef(channelId, docId);
+    const q = query(ref, orderBy('createdAt'));
+    const unsubList = onSnapshot(q, (list) => {
+      const threadMessages: Message[] = [];
+      list.forEach((element) => {
+        const msg = this.messageService.setMessageObject(
+          element.data(),
+          element.id
+        );
+        threadMessages.push(msg);
+      });
+      this._threadMessages$.next(threadMessages);
+    });
+    return unsubList;
   }
 
-    async updateThreadMessage(message: Message, docId: string, channelId: string, threadId:string) {
+  async updateThreadMessage(
+    message: Message,
+    docId: string,
+    channelId: string,
+    threadId: string
+  ) {
     if (!docId || !channelId) {
       console.error('Missing docId or channelId:', { docId, channelId });
       return;
     }
     if (message.id) {
       let ref = this.getSingleThreadRef(channelId, docId, threadId);
-      await updateDoc(ref, this.messageService.getCleanJson(message)).catch((err) => {
-        console.log(err);
-      });
+      await updateDoc(ref, this.messageService.getCleanJson(message)).catch(
+        (err) => {
+          console.log(err);
+        }
+      );
     }
   }
 
-  async getThreadMessageById(channelId:string, messageId:string, threadId:string): Promise<Message | null>{
+  async getThreadMessageById(
+    channelId: string,
+    messageId: string,
+    threadId: string
+  ): Promise<Message | null> {
     const ref = this.getSingleThreadRef(channelId, messageId, threadId);
     const snap = await getDoc(ref);
-    if(snap.exists()){
-      return this.messageService.setMessageObject(snap.data(), snap.id)
+    if (snap.exists()) {
+      return this.messageService.setMessageObject(snap.data(), snap.id);
     }
     return null;
   }
 
-  getSingleThreadRef(channelId: string, docId: string, threadId:string){
-    const threadMessageDocRef = doc(this.getThreadMessagesRef(channelId, docId), threadId);
+  getSingleThreadRef(channelId: string, docId: string, threadId: string) {
+    const threadMessageDocRef = doc(
+      this.getThreadMessagesRef(channelId, docId),
+      threadId
+    );
     return threadMessageDocRef;
   }
 
-  // ngOnDestroy(){
-  //   this.unsubThreadMessages();
-  // }
 
   getThreadMessagesRef(channelId: string, docId: string) {
     return collection(

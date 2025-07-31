@@ -1,4 +1,4 @@
-import { Timestamp, FieldValue } from 'firebase/firestore';
+import { Timestamp, FieldValue } from '@angular/fire/firestore';
 
 export interface Message {
   id?: string;

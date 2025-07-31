@@ -43,11 +43,8 @@
         *ngIf="message.reactions"
       >
         @for(emoji of message.reactions; track emoji){
-        <div
-          class="checked emoji"
-          (click)="onEmojiRemove(emoji)"
-        >
-          <img src="assets/emojis/{{ emoji }}.svg" alt="" />
+        <div class="checked emoji" (click)="onEmojiRemove(emoji)">
+          <img src="assets/emojis/{{ emoji }}.png" alt="" />
           <p>1</p>
         </div>
         }
@@ -95,30 +92,11 @@
       *ngIf="smallEmojiMenu"
       [class.reversed-s-e-m]="!currentUserText"
     >
-      <div
-        class="emoji-menu-item"
-        (click)="onEmojiToggle('checked')"
-      >
-        <img src="assets/emojis/checked.svg" />
+      @for(emoji of emojiList;track emojiList){
+      <div class="emoji-menu-item" (click)="onEmojiToggle(emoji)">
+        <img src="assets/emojis/{{ emoji }}.png" />
       </div>
-      <div
-        class="emoji-menu-item"
-        (click)="onEmojiToggle('thumb')"
-      >
-        <img src="assets/emojis/thumb.svg" />
-      </div>
-      <div
-        class="emoji-menu-item"
-        (click)="onEmojiToggle('rocket')"
-      >
-        <img src="assets/emojis/rocket.svg" />
-      </div>
-      <div
-        class="emoji-menu-item"
-        (click)="onEmojiToggle('nerd')"
-      >
-        <img src="assets/emojis/nerd.svg" />
-      </div>
+      }
     </div>
   </div>
 </div>
