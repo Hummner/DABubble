@@ -1,0 +1,11 @@
+<div class="small-emoji-menu">
+  @for(emoji of emojiList;track emoji){
+  <div
+    class="emoji-menu-item"
+    (click)="selectEmoji(emoji.code)"
+    click-stop-propagation
+  >
+    <img src="assets/emojis/{{ emoji.name }}.png" />
+  </div>
+  }
+</div>

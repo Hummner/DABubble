@@ -92,11 +92,15 @@
       *ngIf="smallEmojiMenu"
       [class.reversed-s-e-m]="!currentUserText"
     >
-      @for(emoji of emojiList;track emojiList){
-      <div class="emoji-menu-item" (click)="onEmojiToggle(emoji)">
-        <img src="assets/emojis/{{ emoji }}.png" />
+      @for(emoji of emojiUnicodeMap;track emojiUnicodeMap){
+      <div class="emoji-menu-item" (click)="onEmojiToggle(emoji.name)">
+        <img src="assets/emojis/{{ emoji.name }}.png" />
       </div>
       }
     </div>
+          <!-- <app-emoji-picker
+        *ngIf="smallEmojiMenu"
+        (emojiSelected)="onEmojiToggle(emoji.name)"
+      ></app-emoji-picker> -->
   </div>
 </div>

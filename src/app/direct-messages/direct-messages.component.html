@@ -27,7 +27,7 @@
         
       ></app-thread-direct-message> -->
     </mat-drawer>
-    <div class="content">
+    <div class="content" (click)="closeEmojiBox()">
       <header>
         <div class="dm-name">
           <div class="dm-img">
@@ -81,6 +81,7 @@
               [channelId]="channelId"
               (openThread)="openThread($event)"
               [inThreadView]="false"
+              (emojiListChange)="updateEmojiList($event)"
             ></app-message-ticket>
           </div>
         </div>
@@ -96,10 +97,14 @@
         </div>
         <div class="input-buttons">
           <div class="icons">
-            <div class="input-icon">
+            <div
+              class="input-icon"
+              (click)="toggleSmallEmojiMenu()"
+              click-stop-propagation
+            >
               <img src="assets/icon/reaction.png" alt="" />
             </div>
-            <div class="input-icon">
+            <div class="input-icon" click-stop-propagation>
               <img src="assets/icon/tag_icon.png" alt="" />
             </div>
           </div>
@@ -107,6 +112,10 @@
             <img src="assets/icon/send.png" alt="" />
           </div>
         </div>
+        <app-emoji-picker
+          *ngIf="smallEmojiMenu"
+          (emojiSelected)="addEmoji($event)"
+        ></app-emoji-picker>
       </footer>
     </div>
   </mat-drawer-container>

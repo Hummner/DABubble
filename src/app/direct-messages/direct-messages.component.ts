@@ -7,6 +7,7 @@ import {
   ElementRef,
   AfterViewInit,
   AfterViewChecked,
+  NgModule,
 } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -25,7 +26,8 @@ import { UserCardComponent } from './user-card/user-card.component';
 import { MessageTicketComponent } from './message-ticket/message-ticket.component';
 import { RouterOutlet } from '@angular/router';
 import { serverTimestamp } from '@angular/fire/firestore';
-
+import { ClickStopPropagation } from '../click-stop-propagation.directive';
+import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.component';
 @Component({
   selector: 'app-direct-messages',
   standalone: true,
@@ -40,11 +42,12 @@ import { serverTimestamp } from '@angular/fire/firestore';
     MessageTicketComponent,
     NgFor,
     RouterOutlet,
+    ClickStopPropagation,
+    EmojiPickerComponent
   ],
   templateUrl: './direct-messages.component.html',
-  styleUrl: './direct-messages.component.scss',
+  styleUrls: ['./direct-messages.component.scss'],
 })
-
 export class DirectMessagesComponent
   implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked
 {
@@ -66,6 +69,8 @@ export class DirectMessagesComponent
   messages: Message[] = [];
   public Object = Object;
   isThreadOpen = false;
+  smallEmojiMenu = false;
+  parentEmojiList: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -74,6 +79,10 @@ export class DirectMessagesComponent
     private firestoreService: FirestoreService,
     private messageService: MessageService
   ) {}
+
+  updateEmojiList(emojis: any) {
+    this.parentEmojiList = emojis;
+  }
 
   subThreadRoute() {
     this.router.events.subscribe((event) => {
@@ -209,5 +218,26 @@ export class DirectMessagesComponent
       'threadMessages',
       messageId,
     ]);
+  }
+
+  toggleSmallEmojiMenu() {
+    if (this.smallEmojiMenu == false) {
+      this.smallEmojiMenu = true;
+    } else {
+      this.smallEmojiMenu = false;
+    }
+  }
+
+  closeEmojiBox() {
+    this.smallEmojiMenu = false;
+
+  }
+
+  addEmoji(emoji: any) {
+    console.log(emoji.name, 'added');
+    if(emoji){
+      this.content += emoji
+    }
+
   }
 }

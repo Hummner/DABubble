@@ -16,11 +16,11 @@ import { FirestoreService } from '../../services/firestore.service';
 import { MessageService } from '../../services/message.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
-import { Subscription } from 'rxjs';
+import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
 @Component({
   selector: 'app-message-ticket',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EmojiPickerComponent],
   templateUrl: './message-ticket.component.html',
   styleUrl: './message-ticket.component.scss',
 })
@@ -39,20 +39,9 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   @Input() inThreadView: boolean = false;
   @Output() openThread = new EventEmitter<string | undefined>();
 
-  emojiList = [
-    'checked',
-    'thumb',
-    'nerd',
-    'rocket',
-    'sad',
-    'party',
-    'surprised',
-    'love',
-    'confusion',
-    'heart',
-    'cool',
-    'angry'
-  ];
+  @Output() emojiListChange = new EventEmitter<
+    { name: string; code: string }[]
+  >();
 
   ngOnChanges(): void {
     const userList = this.firestore.userList;
@@ -61,7 +50,24 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     this.currentUserText = this.message.senderId === currentUserId;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.emojiListChange.emit(this.emojiUnicodeMap);
+  }
+
+  emojiUnicodeMap = [
+    { name: 'checked', code: '✅' },
+    { name: 'thumb', code: '👍' },
+    { name: 'nerd', code: '🤓' },
+    { name: 'rocket', code: '🚀' },
+    { name: 'sad', code: '😢' },
+    { name: 'party', code: '🥳' },
+    { name: 'surprised', code: '😲' },
+    { name: 'love', code: '😍' },
+    { name: 'confusion', code: '😕' },
+    { name: 'heart', code: '❤️' },
+    { name: 'cool', code: '😎' },
+    { name: 'angry', code: '😠' },
+  ];
 
   constructor(
     private firestore: FirestoreService,
@@ -75,7 +81,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     return value instanceof Timestamp;
   }
 
-  onEmojiToggle(emoji: string) {
+  onEmojiToggle(emoji: any) {
     if (!this.message?.id) return;
     const threadId = this.message.id;
     const docId = this.messageId ?? this.message.id;
