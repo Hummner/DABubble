@@ -103,6 +103,7 @@ export class TicketComponent implements OnInit, OnChanges {
     if (this.ticket.threads?.path) {
       this.getThreadPath(this.ticket.threads?.path)
       this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
+      this.threadsService.getCurrentTicket()
       this.openThread.emit()
     }
   }
