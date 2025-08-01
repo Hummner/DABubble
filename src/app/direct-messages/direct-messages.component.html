@@ -89,6 +89,7 @@
       <footer>
         <div class="text-area">
           <textarea
+            #input
             [(ngModel)]="content"
             name="chat_input"
             id="chat_input"
@@ -104,7 +105,12 @@
             >
               <img src="assets/icon/reaction.png" alt="" />
             </div>
-            <div class="input-icon" click-stop-propagation>
+            <div
+              class="input-icon"
+              click-stop-propagation
+              [matMenuTriggerFor]="tagBoxMenu"
+              (click)="tagInputStart()"
+            >
               <img src="assets/icon/tag_icon.png" alt="" />
             </div>
           </div>
@@ -116,6 +122,22 @@
           *ngIf="smallEmojiMenu"
           (emojiSelected)="addEmoji($event)"
         ></app-emoji-picker>
+
+        <mat-menu #tagBoxMenu="matMenu" class="tag-box-menu">
+          <div class="tag-menu-wrap">
+            @for(user of getUserList();track user){
+            <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
+              <img
+                class="tagbox-img"
+                [src]="user.imgUrl"
+                alt=""
+              />
+              <p>{{user.name}}</p>
+            </menu>
+            }
+            
+          </div>
+        </mat-menu>
       </footer>
     </div>
   </mat-drawer-container>

@@ -28,6 +28,7 @@ import { RouterOutlet } from '@angular/router';
 import { serverTimestamp } from '@angular/fire/firestore';
 import { ClickStopPropagation } from '../click-stop-propagation.directive';
 import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.component';
+
 @Component({
   selector: 'app-direct-messages',
   standalone: true,
@@ -43,7 +44,7 @@ import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.compon
     NgFor,
     RouterOutlet,
     ClickStopPropagation,
-    EmojiPickerComponent
+    EmojiPickerComponent,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
@@ -71,6 +72,7 @@ export class DirectMessagesComponent
   isThreadOpen = false;
   smallEmojiMenu = false;
   parentEmojiList: any;
+  @ViewChild('input') input!: ElementRef<HTMLInputElement>;
 
   constructor(
     private route: ActivatedRoute,
@@ -230,14 +232,31 @@ export class DirectMessagesComponent
 
   closeEmojiBox() {
     this.smallEmojiMenu = false;
-
   }
 
   addEmoji(emoji: any) {
     console.log(emoji.name, 'added');
-    if(emoji){
-      this.content += emoji
+    if (emoji) {
+      this.content += emoji;
     }
+  }
 
+  tagInputStart() {
+    setTimeout(() => {
+      if (!this.content.includes('@')) {
+        this.content += `@`;
+      }
+      this.input.nativeElement.focus();
+    }, 0);
+  }
+
+  getUserList(): UserProfileInterface[] {
+    return this.firestoreService.userList.filter(
+      (user) => user.uid !== this.userProfile()?.uid && user.name !== 'Guest'
+    );
+  }
+
+  takeUser(name: string) {
+    this.content += `${name} `;
   }
 }
