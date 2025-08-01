@@ -60,26 +60,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
   }
 
 
-
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   console.log(changes);
-  //   if (changes['isThreadOpen'] || this.isThreadOpen || changes['currentThreadPath']) {
-  //     this.currentTicket = this.threadService.getTicketFromChannel();
-  //     if (this.currentTicket) {
-  //       this.createCurrentTicket();
-  //     }
-  //   }
-
-
-
-  //   // if (this.currentTicket) {
-  //   //   // this.messagesCount = this.messagesCounter();
-  //   //   let path = this.threadService.getTicketPath()
-  //   //   console.log(path);
-  //   // }
-  // }
-
-
   async addMessageToThread() {
     let senderId = this.getCurrentUserId();
     let text = this.textInput;

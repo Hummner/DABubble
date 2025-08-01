@@ -47,7 +47,6 @@ export class TicketComponent implements OnInit, OnChanges {
       this.showName();
       this.time = this.showTime();
       this.getChannelId();
-
     }
 
   }

@@ -54,7 +54,7 @@
                     <div class="members-container" [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger"
                         (click)="openMenu(menuTrigger)">
                         @for (member of channel?.members?.slice(0, 10); track $index) {
-                            <div class="member-img"><img [src]="member?.imgUrl" alt=""></div>
+                        <div class="member-img"><img [src]="member?.imgUrl" alt=""></div>
                         }
                         <div class="member-img"><span>{{ channel?.members?.length }}</span></div>
                     </div>
@@ -71,11 +71,11 @@
                         <div class="members-menu-list">
                             @for (member of channel?.members; track $index) {
                             <div class="members-menu-listelement">
-                                
-                                    <div class="member-img margin-16">
-                                        <img [src]="member?.imgUrl" alt="">
-                                    </div>
-                                    <div class="member-menu-name">{{member?.name}}</div>
+
+                                <div class="member-img margin-16">
+                                    <img [src]="member?.imgUrl" alt="">
+                                </div>
+                                <div class="member-menu-name">{{member?.name}}</div>
                             </div>
                             }
                         </div>
@@ -89,20 +89,34 @@
                 </mat-menu>
             </header>
             <main>
-                <div class="scroll-wrapper">
-                    @for (ticket of channel?.messages; track $index) {
-                    <div *ngIf="!isTheSameDate($index)" class="placeholder">
-                        <div class="placeholder-date">{{ showPlaceholder($index)}}</div>
+                <div *ngIf="loading" class="laoding-spinner">
+                    <mat-spinner></mat-spinner>
+                </div>
+                <div #chat class="scroll-wrapper" *ngIf="!loading">
+                    <div class="first-message">
+                        <div class="first-message-title">
+                            <h2>
+                                # {{ channel?.name }}
+                            </h2>
+                        </div>
+                        <div class="first-message-text">
+                            <p>{{ channel?.createdBy }} hat diese Channel erstellt.</p>
+                        </div>
                     </div>
-                    <app-ticket (currentPath)="currentThreadPathRef($event)" [index]="$index" [ticket]="ticket"
-                        [members]="channel?.members" (openThread)="drawer.open()"></app-ticket>
-                    }
-
+                    <div *ngIf="isMessage">
+                        @for (ticket of channel?.messages; track $index) {
+                        <div *ngIf="!isTheSameDate($index)" class="placeholder">
+                            <div class="placeholder-date">{{ showPlaceholder($index)}}</div>
+                        </div>
+                        <app-ticket (currentPath)="currentThreadPathRef($event)" [index]="$index" [ticket]="ticket"
+                            [members]="channel?.members" (openThread)="drawer.open()"></app-ticket>
+                        }
+                    </div>
                 </div>
             </main>
             <footer>
                 <div class="text-area">
-                    <textarea (keyup)="checkTheKey($event)" [(ngModel)]="textInput" name="chat_input" id="chat_input"
+                    <textarea [disabled]="loading" (keyup)="checkTheKey($event)" [(ngModel)]="textInput" name="chat_input" id="chat_input"
                         placeholder="Nachricht an #Entwicklerteam"></textarea>
                 </div>
                 <div class="input-buttons">
