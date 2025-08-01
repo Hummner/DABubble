@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, ElementRef, inject, OnDestroy, OnInit, output, ViewChild } from '@angular/core';
+import { AfterViewChecked, booleanAttribute, Component, ElementRef, inject, OnDestroy, OnInit, output, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
@@ -16,19 +16,21 @@ import { TicketInterface } from '../interfaces/ticket.interface';
 import { ThreadService } from '../services/thread.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Timestamp } from '@angular/fire/firestore';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @Component({
   selector: 'app-channel',
   standalone: true,
-  imports: [MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent, FormsModule],
+  imports: [MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent, FormsModule, MatProgressSpinnerModule],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
 })
-export class ChannelComponent implements OnInit, OnDestroy {
+export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>;
   @ViewChild('discInput') discInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('chat') chatContainer!: ElementRef<HTMLInputElement>;
 
 
 
@@ -49,6 +51,9 @@ export class ChannelComponent implements OnInit, OnDestroy {
   routeSub?: Subscription;
   isThreadOpen = false;
   currentThreadPath?: string;
+  loading = false;
+  isMessage = false;
+  initialScrollDone = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -56,11 +61,19 @@ export class ChannelComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
+    console.log(this.loading);
+
     this.getActiveRoute();
     this.channelSubscription = this.channelsService.channel$.subscribe(channel => {
       if (channel) {
         this.channel = channel;
         console.log('Channel empfangen:', this.channel);
+        this.loading = false;
+        this.initialScrollDone = false;
+        console.log(this.loading);
+
+
       }
     });
 
@@ -68,9 +81,19 @@ export class ChannelComponent implements OnInit, OnDestroy {
     this.messagesSubscription = this.channelsService.messages$.subscribe(msgs => {
       if (this.channel) {
         this.channel.messages = msgs;
-        console.log(this.channel.messages[0].threads?.path);
+        if (this.channel.messages.length > 0) {
+          this.isMessage = true;
+         
+        }
       }
     });
+  }
+
+  ngAfterViewChecked() {
+    if (!this.initialScrollDone && this.channel?.messages.length) {
+      this.scrollToBottom();
+      this.initialScrollDone = true;
+    }
   }
 
   currentThreadPathRef(data: string) {
@@ -80,6 +103,7 @@ export class ChannelComponent implements OnInit, OnDestroy {
   getActiveRoute() {
     this.route.params.subscribe((params) => {
       if (params) {
+        this.loading = true
         this.channelId = params['ChannelId']
       }
     })
@@ -188,12 +212,20 @@ export class ChannelComponent implements OnInit, OnDestroy {
     const currentUser = this.getCurrentUserId();
     const textMessage = this.textInput;
     console.log(currentUser, ": ", textMessage);
+    this.initialScrollDone = false;
+    
 
     if (currentUser && textMessage) {
-      this.channelsService.addTicketToChannel("KRIw2GN8Ym9EQmijM84l", currentUser, textMessage)
+      this.channelsService.addTicketToChannel(this.channelId, currentUser, textMessage)
     } else {
       console.error("No User or Text");
     }
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+    } catch (err) { }
   }
 
   ngOnDestroy(): void {

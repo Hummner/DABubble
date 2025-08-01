@@ -192,6 +192,32 @@ section {
     font-size: 18px;
 }
 
+.laoding-spinner {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.first-message {
+    padding: 25px 45px;
+}
+
+.first-message-title {
+    >h2 {
+        font-weight: bold;
+        font-size: 24px;
+    }
+}
+
+.first-message-text {
+    >p {
+        font-size: 20px;
+    }
+}
+
 .channel-name-input {
     width: 100%;
     font-size: 18px;
