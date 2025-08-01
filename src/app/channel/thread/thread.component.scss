@@ -71,7 +71,7 @@ section {
 }
 
 .member-img-ticket {
-    width: 97px;
+    width: 70px;
     height: 70px;
     display: flex;
     justify-content: center;
@@ -89,6 +89,7 @@ section {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 1;
 }
 
 .message {
@@ -96,6 +97,7 @@ section {
     border-radius: 0 30px 30px 30px;
     padding: 15px;
     font-size: 18px;
+    width: fit-content;
 
     >p {
         margin: 0;

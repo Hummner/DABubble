@@ -11,8 +11,11 @@ import { BehaviorSubject } from 'rxjs';
 export class ThreadService {
   firestore = inject(Firestore);
   unsubMessages?: () => void;
+  unsubCurrentTicket?: () => void;
   private messagesSubscribe = new BehaviorSubject<TicketInterface[]>([])
   messagesSubscribe$ = this.messagesSubscribe.asObservable();
+  private currentTicketSubscribe = new BehaviorSubject<TicketInterface>({} as TicketInterface);
+  currentTicketSubscribe$ = this.currentTicketSubscribe.asObservable();
   currentTicketOpened!: TicketInterface;
   threadPath!: string;
   threadMessageCount!: number;
@@ -39,12 +42,16 @@ export class ThreadService {
         messageArray.push(message)
       });
       this.messagesSubscribe.next(messageArray);
+
     });
   }
 
-
-  getTicketFromChannel() {
-    return this.currentTicketOpened
+  getCurrentTicket() {
+    let ticketPath = this.getTicketPathDoc(this.getTicketPath());
+    this.unsubCurrentTicket = onSnapshot(ticketPath, (ticket) => {
+      let ticketData = ticket.data() as TicketInterface;;
+      this.currentTicketSubscribe.next(ticketData);
+    });
   }
 
 
@@ -65,14 +72,14 @@ export class ThreadService {
       await this.increaseThreadCounter()
     } catch (error) {
       console.error("Error by add a message", error);
-      
+
     }
   }
 
 
   async increaseThreadCounter() {
     let ticketPath = this.getTicketPath();
-   await updateDoc(doc(this.firestore, ticketPath), { threadsCount: increment(1) })
+    await updateDoc(doc(this.firestore, ticketPath), { threadsCount: increment(1) })
   }
 
   getTicketPath() {
@@ -82,7 +89,7 @@ export class ThreadService {
   getTicketPathDoc(ticketPath: string) {
     return doc(this.firestore, ticketPath)
   }
- 
+
 
   getMessageToJson(messageData: DocumentData) {
     const rawCreatedAt = messageData['createdAt'];

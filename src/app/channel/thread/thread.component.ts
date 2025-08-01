@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss'
 })
-export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
+export class ThreadComponent implements OnInit, OnDestroy {
 
 
   @Output() close = new EventEmitter<void>;
@@ -28,8 +28,10 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
   firestoreService = inject(FirestoreService);
   private auth = inject(AuthService);
 
-  threadService = inject(ThreadService)
-  private messagesSubscription?: Subscription
+  threadService = inject(ThreadService);
+  private messagesSubscription?: Subscription;
+  private currentTicketSubscription?: Subscription;
+  currentTicketSub!: TicketInterface;
   messages: TicketInterface[] = [];
   currentTicket!: TicketInterface;
   ticketUserName!: string;
@@ -38,6 +40,7 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
   textInput!: string;
   messagesCount!: string;
   ticketPath!: string | void;
+  number?: number
 
 
   constructor() {
@@ -49,33 +52,32 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
       this.messages = msgArray
     });
 
-
-
-
-
+    this.currentTicketSubscription = this.threadService.currentTicketSubscribe$.subscribe(ticket => {
+      this.currentTicket = ticket
+      console.log(ticket);
+      this.createCurrentTicket();
+    });
   }
 
 
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-    if (changes['isThreadOpen'] || this.isThreadOpen || changes['currentThreadPath']) {
-      this.currentTicket = this.threadService.getTicketFromChannel();
-      if (this.currentTicket) {
-        this.createCurrentTicket();
-      }
-    }
-
-    if (this.currentTicket) {
-      // this.messagesCount = this.messagesCounter();
-      let path = this.threadService.getTicketPath()
-      console.log(path);
-    }
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   console.log(changes);
+  //   if (changes['isThreadOpen'] || this.isThreadOpen || changes['currentThreadPath']) {
+  //     this.currentTicket = this.threadService.getTicketFromChannel();
+  //     if (this.currentTicket) {
+  //       this.createCurrentTicket();
+  //     }
+  //   }
 
 
 
-
-  }
+  //   // if (this.currentTicket) {
+  //   //   // this.messagesCount = this.messagesCounter();
+  //   //   let path = this.threadService.getTicketPath()
+  //   //   console.log(path);
+  //   // }
+  // }
 
 
   async addMessageToThread() {
@@ -84,7 +86,8 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
     this.textInput = "";
     try {
       if (senderId && text) {
-        await this.threadService.addMessageToThread(senderId, text);
+        await this.threadService.addMessageToThread(senderId, text).then(() => {
+        });
       }
     } catch (err) {
       console.error("Failed by add a message: ", err);
@@ -93,15 +96,18 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 
-  async createCurrentTicket() {
+  createCurrentTicket() {
     this.showName();
+    console.log(this.currentTicket.createdAt);
+    
     this.ticketCreatedAt = this.showTime();
     this.ticketText = this.currentTicket.text;
-    this.messagesCount =  await this.messagesCounter();
+    this.messagesCount = this.messagesCounter();
   }
 
   showTime(): string {
-    return this.currentTicket?.createdAt instanceof Date ? this.currentTicket.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
+    const createdAtDate = this.currentTicket?.createdAt instanceof Timestamp ? this.currentTicket?.createdAt.toDate() : null;
+    return createdAtDate instanceof Date ? createdAtDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
   }
 
   showName() {
@@ -154,13 +160,12 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
     return null;
   }
 
-  async messagesCounter() {
-    let ticketThread = this.threadService.getTicketPathDoc(this.threadService.getTicketPath());
-    let asd = await getDoc(ticketThread)
-    if (asd.exists()) {
-      console.log(asd.data());
-    }
-
+  messagesCounter() {
+    // let ticketThread = this.threadService.getTicketPathDoc(this.threadService.getTicketPath());
+    // let asd = await getDoc(ticketThread)
+    // if (asd.exists()) {
+    //   console.log(asd.data());
+    // }
 
 
 
@@ -168,7 +173,7 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
     let number = this.currentTicket.threadsCount ? this.currentTicket.threadsCount : 0;
     if (number > 1) return `${number} Antworten`
     if (number == 1) return '1 Antwort'
-    return "Kein Antwort"
+    return "Keine Antwort"
   }
 
 
@@ -205,7 +210,8 @@ export class ThreadComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy(): void {
     this.messagesSubscription?.unsubscribe();
-    console.log("messagesSubctiption destroyed");
+    this.currentTicketSubscription?.unsubscribe();
+    console.log("messagesSubctiption und currentTicketSubscription destroyed");
 
   }
 }
