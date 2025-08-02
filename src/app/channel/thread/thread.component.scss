@@ -128,7 +128,6 @@ section {
 }
 
 main {
-    padding: 25px 45px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -144,10 +143,10 @@ main {
 }
 
 .placeholder {
-    width: 100%;
+    width: calc(100% - 90px);
     height: 1px;
     background-color: #ADB0D9;
-    margin: 12px 0;
+    margin: 12px 45px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -161,10 +160,10 @@ main {
 }
 
 .placeholder-thread {
-    width: 100%;
+    width: calc(100% - 90px);
     height: 1px;
     background-color: #ADB0D9;
-    margin: 24px 0px;
+    margin: 24px 45px;
     display: flex;
     justify-content: center;
     align-items: center;

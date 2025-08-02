@@ -1,4 +1,6 @@
-   <div class="ticket" [ngClass]="{'reverse reverse-hover' : isCurrentUser()}">
+<div *ngIf="!editView" class="ticket-container" (mouseenter)="onMouseEnter()"
+        (mouseleave)="onMouseLeave()">
+    <div class="ticket" [ngClass]="{'reverse reverse-hover' : isCurrentUser()}" >
         <div class="member-img-ticket">
             <img src="assets/img/elias_neumann.svg" alt="">
         </div>
@@ -27,12 +29,34 @@
                 }
             </div> -->
         </div>
-        <!-- <div class="emoji-menu"
-            [ngClass]="{ 'visible': showMenu, 'hidden': !showMenu, 'emoji-menu-reverse' : isCurrentUser()}">
-            <div class="emoji-menu-item"><img src="assets/emojis/checked.svg"></div>
-            <div class="emoji-menu-item"><img src="assets/emojis/thumb.svg"></div>
-            <div class="emoji-menu-item "><img class="hover-purple" src="assets/icon/add_reaction.svg"></div>
-            <div class="emoji-menu-item "><img class="hover-purple" src="assets/icon/comment.svg"></div>
-        </div> -->
+        <div class="emoji-menu" (click)="$event.stopPropagation()"
+            [ngClass]="{ 'visible': showMenu, 'hidden': !showMenu, 'emoji-menu-reverse width-255' : isCurrentUser()}">
+            <div class="emoji-menu-item"><img class="hover-purple" src="assets/icon/add_reaction.svg"></div>
+            <div *ngIf="isCurrentUser()" class="emoji-menu-item">
+                <mat-icon #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="editTicket"
+                    (menuOpened)="onEditMenuOpened()" (menuClosed)="onEditMenuClosed()">more_vert</mat-icon>
+                <mat-menu #editTicket="matMenu" class="edit-menu">
+                    <span (click)="openEditView()" mat-menu-item>Nachricht bearbeiten</span>
+                </mat-menu>
+            </div>
+        </div>
 
     </div>
+</div>
+<div *ngIf="editView" class="ticket-edit">
+
+    <div class="message-edit">
+        <textarea class="edit-textarea" [(ngModel)]="editedText" name="edit-textarea" id="edit_textarea"></textarea>
+        <div class="button-container">
+            <div class="input-icon">
+                <img src="assets/icon/reaction.png" alt="">
+            </div>
+            <div class="buttons">
+                <span class="secondary-button" (click)="editView = false">Abbrechen</span>
+                <span class="primary-button" (click)="editText()">Speichern</span>
+            </div>
+
+        </div>
+
+    </div>
+</div>

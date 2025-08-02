@@ -7,7 +7,7 @@ import { FirestoreService } from '../../../services/firestore.service';
 import { ThreadService } from '../../../services/thread.service';
 import { ActivatedRoute } from '@angular/router';
 import { ChannelsService } from '../../../services/channels.service';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
@@ -39,6 +39,7 @@ export class TicketComponent implements OnInit, OnChanges {
   editView: boolean = false;
   editMenuOpen = false;
   editedText!: string;
+  emojiMenuOpen = false;
 
   constructor(private route: ActivatedRoute) { }
 
@@ -65,7 +66,7 @@ export class TicketComponent implements OnInit, OnChanges {
 
 
   onMouseLeave() {
-    if (!this.editMenuOpen)
+    if (!this.editMenuOpen && !this.emojiMenuOpen) 
       this.showMenu = false
   }
 
@@ -78,6 +79,19 @@ export class TicketComponent implements OnInit, OnChanges {
 
   onEditMenuClosed() {
     this.editMenuOpen = false;
+    this.showMenu = false;
+  }
+
+  onEmojiMenuOpened() {
+    this.emojiMenuOpen = true;
+    this.showMenu = true
+    console.log("Emojimenuopend");
+    
+  }
+
+
+  onEmojiMenuClosed() {
+    this.emojiMenuOpen = false;
     this.showMenu = false;
   }
 
@@ -105,6 +119,37 @@ export class TicketComponent implements OnInit, OnChanges {
       this.threadsService.getCurrentTicket()
       this.openThread.emit()
     }
+  }
+
+  emojiList = [
+    '✅', '👍', '🤓', '🚀', '😢', '🥳', '😲', '😍', '😕', '❤️', '😎', '😠'];
+
+  emojiUsageHistory: string[] = [];
+
+  get lastEmojis() {
+    const emojis = [this.emojiUsageHistory[0], this.emojiUsageHistory[1]]
+
+    return emojis
+  }
+
+  get sortedEmoji() {
+    const historySet = new Set(this.emojiUsageHistory)
+
+    const recentFirst = this.emojiUsageHistory.filter(e => this.emojiList.includes(e));
+    const rest = this.emojiList.filter(e => !historySet.has(e))
+
+
+    return [...recentFirst, ...rest]
+  }
+
+  selectEmoji(emoji: string) {
+    this.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter(e => e !== emoji)]
+    this.addEmojiToTicket(emoji);
+
+  }
+
+  openEmojiMenu(trigger: MatMenuTrigger) {
+    trigger.openMenu();
   }
 
   async addEmojiToTicket(emoji: string) {

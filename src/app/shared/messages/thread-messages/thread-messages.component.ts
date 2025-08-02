@@ -6,11 +6,14 @@ import { AuthService } from '../../../services/auth.service';
 import { FirestoreService } from '../../../services/firestore.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-thread-messages',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatMenuModule, MatIconModule, FormsModule],
   templateUrl: './thread-messages.component.html',
   styleUrl: './thread-messages.component.scss'
 })
@@ -26,6 +29,10 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
   private auth = inject(AuthService);
   currentUser?: string | null;
   channelId?: Subscription;
+  showMenu = false;
+  editMenuOpen = false;
+  editView = false;
+  editedText!: string;
 
   constructor(
     private route: ActivatedRoute
@@ -45,6 +52,40 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.currentUser = this.getCurrentUserId();
     this.time = this.showTime();
+  }
+
+  onMouseEnter() {
+    this.showMenu = true
+  }
+
+
+  onMouseLeave() {
+    if (!this.editMenuOpen)
+      this.showMenu = false
+  }
+
+
+  onEditMenuOpened() {
+    this.editMenuOpen = true;
+    this.showMenu = true
+  }
+
+
+  onEditMenuClosed() {
+    this.editMenuOpen = false;
+    this.showMenu = false;
+  }
+
+  openEditView() {
+    this.editView = true;
+    this.editedText = this.message.text;
+  }
+
+  editText() {
+
+    
+
+
   }
 
 

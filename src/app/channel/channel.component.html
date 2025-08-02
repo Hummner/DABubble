@@ -121,8 +121,15 @@
                 </div>
                 <div class="input-buttons">
                     <div class="icons">
-                        <div class="input-icon">
+                        <div class="input-icon" [matMenuTriggerFor]="reactMenu" #reactMenuTrigger="matMenuTrigger" (click)="openEmojiMenu(reactMenuTrigger)">
                             <img src="assets/icon/reaction.png" alt="">
+                            <mat-menu #reactMenu="matMenu">
+                                <div>
+                                    @for (emoji of sortedEmoji; track $index) {
+                                        <span (click)="selectEmoji(emoji)">{{emoji}}</span>
+                                    }
+                                </div>
+                            </mat-menu>
                         </div>
                         <div class="input-icon">
                             <img src="assets/icon/tag_icon.png" alt="">

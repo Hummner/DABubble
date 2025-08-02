@@ -1,5 +1,3 @@
-
-
 <div *ngIf="!editView" class="ticket-container" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()"
     (click)="openThreadPanel()">
     <div class="ticket" [ngClass]="{'reverse reverse-hover' : isCurrentUser()}">
@@ -42,13 +40,17 @@
         </div>
         <div class="emoji-menu" (click)="$event.stopPropagation()"
             [ngClass]="{ 'visible': showMenu, 'hidden': !showMenu, 'emoji-menu-reverse width-255' : isCurrentUser()}">
-            <div class="emoji-menu-item" (click)="addEmojiToTicket('✅')">✅</div>
-            <div class="emoji-menu-item" (click)="addEmojiToTicket('👍')">👍</div>
-            <div class="emoji-menu-item"><img class="hover-purple" src="assets/icon/add_reaction.svg"></div>
+            <div class="emoji-menu-item" (click)="addEmojiToTicket(sortedEmoji[0])">{{ sortedEmoji[0] }}</div>
+            <div class="emoji-menu-item" (click)="addEmojiToTicket(sortedEmoji[1])">{{ sortedEmoji[1] }}</div>
+            <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" #reactMenuTrigger="matMenuTrigger" (menuOpened)="onEmojiMenuOpened()" (menuClosed)="onEmojiMenuClosed()"><img
+                    class="hover-purple" src="assets/icon/add_reaction.svg">
+            </div>
+
             <div class="emoji-menu-item"><img class="hover-purple" src="assets/icon/comment.svg"></div>
             <div *ngIf="isCurrentUser()" class="emoji-menu-item">
-                <mat-icon #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="editTicket" (menuOpened)="onEditMenuOpened()" (menuClosed)="onEditMenuClosed()">more_vert</mat-icon>
-                <mat-menu #editTicket="matMenu"  class="edit-menu" >
+                <mat-icon #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="editTicket"
+                    (menuOpened)="onEditMenuOpened()" (menuClosed)="onEditMenuClosed()">more_vert</mat-icon>
+                <mat-menu #editTicket="matMenu" class="edit-menu">
                     <span (click)="openEditView()" mat-menu-item>Nachricht bearbeiten</span>
                 </mat-menu>
             </div>
@@ -77,3 +79,11 @@
     </div>
 
 </div>
+
+<mat-menu class="emoji-menu-small" #reactMenu="matMenu" >
+    <div>
+        @for (emoji of sortedEmoji; track $index) {
+        <span (click)="selectEmoji(emoji)">{{emoji}}</span>
+        }
+    </div>
+</mat-menu>

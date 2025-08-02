@@ -114,6 +114,11 @@
     transition: opacity 200ms ease, transform 200ms ease;
 }
 
+::ng-deep .emoji-menu-small {
+    padding: 12px;
+    
+}
+
 .emoji-menu-reverse {
     right: unset !important;
     left: 48px !important;
@@ -138,6 +143,7 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    position: relative;
 
     &:hover {
         background-color: #ECEEFE;

@@ -83,7 +83,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.channel.messages = msgs;
         if (this.channel.messages.length > 0) {
           this.isMessage = true;
-         
+
         }
       }
     });
@@ -117,6 +117,31 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   openMenu(trigger: MatMenuTrigger) {
     trigger.openMenu();
     this.menuOpen = true;
+  }
+
+  openEmojiMenu(trigger: MatMenuTrigger) {
+    trigger.openMenu();
+  }
+
+  emojiList = [
+    '✅', '👍', '🤓', '🚀', '😢', '🥳', '😲', '😍', '😕', '❤️', '😎', '😠'];
+
+  emojiUsageHistory: string[] = [];
+
+  get sortedEmoji() {
+    const historySet = new Set(this.emojiUsageHistory)
+
+    const recentFirst = this.emojiUsageHistory.filter(e => this.emojiList.includes(e));
+    const rest = this.emojiList.filter(e => !historySet.has(e))
+
+
+    return [...recentFirst, ...rest]
+  }
+
+  selectEmoji(emoji: string) {
+    this.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter(e => e !== emoji)]
+    console.log("Selected Emojio: ", emoji);
+    
   }
 
   showPlaceholder(index: number): string {
@@ -213,7 +238,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     const textMessage = this.textInput;
     console.log(currentUser, ": ", textMessage);
     this.initialScrollDone = false;
-    
+
 
     if (currentUser && textMessage) {
       this.channelsService.addTicketToChannel(this.channelId, currentUser, textMessage)
