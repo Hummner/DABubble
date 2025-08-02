@@ -5,6 +5,8 @@ import {
   OnInit,
   Output,
   signal,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MessageTicketComponent } from '../message-ticket/message-ticket.component';
@@ -22,6 +24,9 @@ import { FormsModule } from '@angular/forms';
 import { ClickStopPropagation } from '../../click-stop-propagation.directive';
 import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
 import { serverTimestamp } from '@angular/fire/firestore';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { UserMentionService } from '../../services/user-mention.service';
 
 @Component({
   selector: 'app-thread-direct-message',
@@ -34,11 +39,11 @@ import { serverTimestamp } from '@angular/fire/firestore';
     FormsModule,
     EmojiPickerComponent,
     ClickStopPropagation,
+    MatMenuModule,
   ],
   templateUrl: './thread-direct-message.component.html',
   styleUrl: './thread-direct-message.component.scss',
 })
-
 export class ThreadDirectMessageComponent implements OnInit {
   @Input() isThreadOpen!: boolean;
   @Output() close = new EventEmitter<void>();
@@ -61,13 +66,17 @@ export class ThreadDirectMessageComponent implements OnInit {
   senderId = '';
   smallEmojiMenu = false;
 
+  @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+  @ViewChild(MatMenuTrigger) mentionMenuTrigger!: MatMenuTrigger;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private directMessageService: DirectMessageService,
     private messageService: MessageService,
     private threadMessageService: ThreadDirectMessageService,
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    public userMentionService: UserMentionService
   ) {}
 
   ngOnInit(): void {
@@ -221,9 +230,31 @@ export class ThreadDirectMessageComponent implements OnInit {
   }
 
   addEmoji(emoji: any) {
-    // console.log(emoji.name, 'added');
     if (emoji) {
       this.content += emoji;
     }
+  }
+
+  tagInputStart() {
+    this.content = this.userMentionService.tagInputStart(
+      this.content,
+      this.input
+    );
+  }
+
+  updateFilteredUserList() {
+    this.userMentionService.updateFilteredUserList(this.content);
+  }
+
+  takeUser(name: string) {
+    this.content = this.userMentionService.takeUser(name, this.content);
+  }
+
+  onInputChange(event: Event) {
+    this.userMentionService.onInputChange(
+      this.content,
+      this.mentionMenuTrigger,
+      this.input
+    );
   }
 }

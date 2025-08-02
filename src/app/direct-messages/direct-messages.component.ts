@@ -28,8 +28,8 @@ import { RouterOutlet } from '@angular/router';
 import { serverTimestamp } from '@angular/fire/firestore';
 import { ClickStopPropagation } from '../click-stop-propagation.directive';
 import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.component';
-
 import { MatMenuTrigger } from '@angular/material/menu';
+import { UserMentionService } from '../services/user-mention.service';
 
 @Component({
   selector: 'app-direct-messages',
@@ -52,7 +52,6 @@ import { MatMenuTrigger } from '@angular/material/menu';
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
 })
-
 export class DirectMessagesComponent
   implements OnInit, OnDestroy, AfterViewChecked
 {
@@ -78,14 +77,14 @@ export class DirectMessagesComponent
   parentEmojiList: any;
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   @ViewChild(MatMenuTrigger) mentionMenuTrigger!: MatMenuTrigger;
-  filteredUserList = signal<UserProfileInterface[]>([]);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private directMessageService: DirectMessageService,
     private firestoreService: FirestoreService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    public userMentionService: UserMentionService
   ) {}
 
   updateEmojiList(emojis: any) {
@@ -239,64 +238,25 @@ export class DirectMessagesComponent
   }
 
   tagInputStart() {
-    this.content += '@';
-    this.firestoreService.subUserList((users) => {
-      this.updateFilteredUserList();
-    });
-    setTimeout(() => {
-      this.input.nativeElement.focus();
-    }, 0);
+    this.content = this.userMentionService.tagInputStart(
+      this.content,
+      this.input
+    );
   }
 
   updateFilteredUserList() {
-    const content = this.content;
-    const uid = this.userProfile()?.uid;
-    let list = this.firestoreService.userList(); 
-    if (content.includes('@')) {
-      const query = this.content.slice(1).toLowerCase();
-      const querySecond = this.content.split('@').pop()?.toLowerCase();
-      list = list.filter(
-        (user) =>
-          user.uid !== uid &&
-          user.name !== 'Guest' &&
-          (user.name.toLowerCase().includes(query) ||
-            user.name.toLowerCase().includes(querySecond!))
-      );
-    } else if (content.endsWith('@')) {
-      list = this.firestoreService.userList().filter(
-        (user) => user.uid !== uid && user.name !== 'Guest'
-      );
-    }
-    this.filteredUserList.set(list);
+    this.userMentionService.updateFilteredUserList(this.content);
   }
 
   takeUser(name: string) {
-    const lastAtIndex = this.content.lastIndexOf('@');
-    if (lastAtIndex !== -1) {
-      const before = this.content.slice(0, lastAtIndex);
-      const after = this.content.slice(lastAtIndex); 
-      const afterWithoutAt = after.slice(1).split(/\s/)[0]; 
-      const remaining = this.content.slice(
-        lastAtIndex + afterWithoutAt.length + 1
-      );
-      this.content = `${before}@${name} ${remaining}`.trim();
-    }
+    this.content = this.userMentionService.takeUser(name, this.content);
   }
 
   onInputChange(event: Event) {
-    this.firestoreService.subUserList((users) => {
-      this.updateFilteredUserList();
-    });
-    const chars = this.content.split('');
-    const lastChar = chars.length - 1;
-    if (chars[lastChar] == '@') {
-      this.mentionMenuTrigger.openMenu();
-      setTimeout(() => {
-        this.input.nativeElement.focus();
-      }, 0); 
-    }
-    if (this.content.length == 0) {
-      this.mentionMenuTrigger.closeMenu();
-    }
+    this.userMentionService.onInputChange(
+      this.content,
+      this.mentionMenuTrigger,
+      this.input
+    );
   }
 }

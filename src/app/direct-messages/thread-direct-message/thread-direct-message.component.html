@@ -1,5 +1,5 @@
 <section>
-  <div class="content"  (click)="closeEmojiBox()">
+  <div class="content" (click)="closeEmojiBox()">
     <header>
       <div class="channel-name">
         <h2>Thread</h2>
@@ -49,18 +49,29 @@
     <footer>
       <div class="text-area">
         <textarea
+          #input
           name="chat_input"
           id="chat_input"
           placeholder="Antworten..."
           [(ngModel)]="content"
+          (input)="onInputChange($event)"
         ></textarea>
       </div>
       <div class="input-buttons">
         <div class="icons">
-          <div class="input-icon" (click)="toggleSmallEmojiMenu()" click-stop-propagation>
+          <div
+            class="input-icon"
+            (click)="toggleSmallEmojiMenu()"
+            click-stop-propagation
+          >
             <img src="assets/icon/reaction.png" alt="" />
           </div>
-          <div class="input-icon">
+          <div
+            class="input-icon"
+            click-stop-propagation
+            [matMenuTriggerFor]="tagBoxMenu"
+            (click)="tagInputStart()"
+          >
             <img src="assets/icon/tag_icon.png" alt="" />
           </div>
         </div>
@@ -72,6 +83,20 @@
         *ngIf="smallEmojiMenu"
         (emojiSelected)="addEmoji($event)"
       ></app-emoji-picker>
+      <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu">
+        <div class="tag-menu-wrap">
+          @for(user of userMentionService.filteredUserList();track user){
+          <menu
+            mat-menu-item
+            class="tag-menu-item"
+            (click)="takeUser(user.name)"
+          >
+            <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+            <p>{{ user.name }}</p>
+          </menu>
+          }
+        </div>
+      </mat-menu>
     </footer>
   </div>
 </section>

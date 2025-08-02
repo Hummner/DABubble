@@ -124,7 +124,7 @@
 
         <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu">
           <div class="tag-menu-wrap">
-            @for(user of filteredUserList();track user){
+            @for(user of userMentionService.filteredUserList();track user){
             <menu
               mat-menu-item
               class="tag-menu-item"
