@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   Input,
   OnChanges,
@@ -7,6 +7,7 @@ import {
   Output,
   EventEmitter,
   OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { Message } from '../../interfaces/message.interface';
@@ -17,42 +18,37 @@ import { MessageService } from '../../services/message.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
 import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DirectMessageService } from '../../services/direct-message.service';
+
 @Component({
   selector: 'app-message-ticket',
   standalone: true,
   imports: [CommonModule, EmojiPickerComponent],
   templateUrl: './message-ticket.component.html',
   styleUrl: './message-ticket.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MessageTicketComponent implements OnChanges, OnInit {
   @Input() userProfileB!: UserProfileInterface | null;
   @Input() userProfile!: UserProfileInterface | null;
-  senderId = '';
-  user!: UserProfileInterface | null | undefined;
-  currentUserText = false;
   @Input() message!: Message;
   @Input() channelId!: string;
   @Input() threadId?: string;
   @Input() messageId!: string;
-  showEmojiMenu = false;
-  smallEmojiMenu = false;
   @Input() inThreadView: boolean = false;
+
   @Output() openThread = new EventEmitter<string | undefined>();
+  @Output() emojiListChange = new EventEmitter<{ name: string; code: string }[]>();
 
-  @Output() emojiListChange = new EventEmitter<
-    { name: string; code: string }[]
-  >();
+  senderId = '';
+  user: UserProfileInterface | null = null;
+  currentUserText = false;
+  smallEmojiMenu = false;
+  showEmojiMenu = false;
 
-  ngOnChanges(): void {
-    const userList = this.firestore.userList;
-    this.user = userList.find((user) => user.uid === this.message.senderId);
-    const currentUserId = this.firestore.getUserId();
-    this.currentUserText = this.message.senderId === currentUserId;
-  }
-
-  ngOnInit(): void {
-    this.emojiListChange.emit(this.emojiUnicodeMap);
-  }
+  private userMap = new Map<string, UserProfileInterface>();
+  private nameToUidMap = new Map<string, string>();
 
   emojiUnicodeMap = [
     { name: 'checked', code: '✅' },
@@ -74,24 +70,54 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     private messageService: MessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private threadMessageService: ThreadDirectMessageService
+    private threadMessageService: ThreadDirectMessageService,
+    private sanitizer: DomSanitizer,
+    private directMessageService: DirectMessageService,
+    private cdr: ChangeDetectorRef
   ) {}
+
+  ngOnInit(): void {
+    // Cache users on init to avoid repeated .find calls
+    const users = this.firestore.userList();
+    this.userMap.clear();
+    this.nameToUidMap.clear();
+    users.forEach((user) => {
+      this.userMap.set(user.uid, user);
+      if (user.name) {
+        this.nameToUidMap.set(user.name.toLowerCase(), user.uid);
+      }
+    });
+
+    // Emit emojis once on init
+    this.emojiListChange.emit(this.emojiUnicodeMap);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['message']) {
+      this.user = this.userMap.get(this.message.senderId) ?? null;
+      const currentUserId = this.firestore.getUserId();
+      this.currentUserText = this.message.senderId === currentUserId;
+      // OnPush needs manual markForCheck on async or input changes
+      this.cdr.markForCheck();
+    }
+  }
 
   isTimestamp(value: any): value is Timestamp {
     return value instanceof Timestamp;
   }
 
-  onEmojiToggle(emoji: any) {
+  onEmojiToggle(emoji: string) {
     if (!this.message?.id) return;
     const threadId = this.message.id;
     const docId = this.messageId ?? this.message.id;
-    const reactions = this.message.reactions ? [...this.message.reactions] : [];
-    if (reactions.includes(emoji)) {
-      reactions.splice(reactions.indexOf(emoji), 1);
+    const reactionsSet = new Set(this.message.reactions ?? []);
+    if (reactionsSet.has(emoji)) {
+      reactionsSet.delete(emoji);
     } else {
-      reactions.push(emoji);
+      reactionsSet.add(emoji);
     }
-    this.message.reactions = reactions;
+    this.message.reactions = Array.from(reactionsSet);
+
     if (this.inThreadView && docId && threadId) {
       this.threadMessageService.updateThreadMessage(
         this.message,
@@ -108,11 +134,10 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     if (!this.message?.id) return;
     const threadId = this.message.id;
     const docId = this.messageId ?? this.message.id;
-    const reactions = this.message.reactions ? [...this.message.reactions] : [];
-    const index = reactions.indexOf(emoji);
-    if (index !== -1) {
-      reactions.splice(index, 1);
-      this.message.reactions = reactions;
+    const reactionsSet = new Set(this.message.reactions ?? []);
+    if (reactionsSet.has(emoji)) {
+      reactionsSet.delete(emoji);
+      this.message.reactions = Array.from(reactionsSet);
       if (this.inThreadView && docId && threadId) {
         this.threadMessageService.updateThreadMessage(
           this.message,
@@ -127,11 +152,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   }
 
   openMoreEmoji(event: Event) {
-    if (this.smallEmojiMenu === false) {
-      this.smallEmojiMenu = true;
-    } else {
-      this.smallEmojiMenu = false;
-    }
+    this.smallEmojiMenu = !this.smallEmojiMenu;
     event?.stopPropagation();
   }
 
@@ -142,10 +163,37 @@ export class MessageTicketComponent implements OnChanges, OnInit {
 
   openThreadPanel() {
     this.openThread.emit(this.message.id);
-
-    console.log(this.message.id);
     this.router.navigate(['threadMessages', this.message.id], {
       relativeTo: this.route,
     });
   }
+
+  formatContent(content: string): SafeHtml {
+    const mentionTag = /@([\w]+(?:\s[\w]+)*)/g;
+    const replaced = content.replace(mentionTag, (match, username) => {
+      const channelId = this.getSelectedChannel(username.trim());
+      // Only create link if channelId exists
+      if (channelId) {
+        return `<a href="/directMessages/${channelId}" class="mention-link">@${username.trim()}</a>`;
+      }
+      // Otherwise, return plain text to avoid invalid links
+      return `@${username.trim()}`;
+    });
+    // Sanitize safely
+    return this.sanitizer.bypassSecurityTrustHtml(replaced);
+  }
+
+  getUser(name: string): string | null {
+    return this.nameToUidMap.get(name.toLowerCase()) ?? null;
+  }
+
+async getSelectedChannel(username: string): Promise<string | null> {
+  const currentUser = this.firestore.getUserId();
+  const userId = this.getUser(username);
+  if (currentUser && userId) {
+    const channelId = await this.directMessageService.getDMChannel(currentUser, userId);
+    return channelId;
+  }
+  return null;
+}
 }

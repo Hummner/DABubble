@@ -22,7 +22,7 @@
           class="message"
           [ngClass]="{ 'reverse-backround': currentUserText }"
         >
-          <p>{{ message.content }}</p>
+          <p #messageContent [innerHTML]="formatContent(message.content)"></p>
         </div>
       </div>
 
@@ -98,7 +98,7 @@
       </div>
       }
     </div>
-          <!-- <app-emoji-picker
+    <!-- <app-emoji-picker
         *ngIf="smallEmojiMenu"
         (emojiSelected)="onEmojiToggle(emoji.name)"
       ></app-emoji-picker> -->

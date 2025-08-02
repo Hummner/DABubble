@@ -72,11 +72,10 @@ export class NavbarComponent {
       });
   }
 
-  getOtherUserList(): UserProfileInterface[] {
-    return this.firestoreService.userList.filter(
-      (user) => user.uid !== this.userProfile()?.uid
-    );
-  }
+ getOtherUserList(): UserProfileInterface[] {
+  const users = this.firestoreService.userList(); // call to get the current value
+  return users.filter(user => user.uid !== this.userProfile()?.uid);
+}
 
   async findOrCreateDMchannel(currentUserId: string, clickedUserId: string) {
     const channelId = await this.directMessageService.getDMChannel(

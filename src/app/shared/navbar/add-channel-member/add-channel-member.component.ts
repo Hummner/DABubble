@@ -58,7 +58,7 @@ export class AddChannelMemberComponent {
   }
 
   getOtherUserList() {
-    this.allUsers = this.firestoreService.userList.filter(
+    this.allUsers = this.firestoreService.userList().filter(
       (user) => user.uid !== this.userProfile()?.uid
     );
     this.searchUser();
@@ -93,7 +93,7 @@ export class AddChannelMemberComponent {
   searchUser() {
     this.searchText = this.searchText.trim();
     if (this.searchText !== '') {
-      this.allUsers = this.firestoreService.userList.filter(
+      this.allUsers = this.firestoreService.userList().filter(
         (user) =>
           user.name.toLowerCase().includes(this.searchText.toLowerCase()) 
           && !this.members.find(m => m.id === user.uid)
