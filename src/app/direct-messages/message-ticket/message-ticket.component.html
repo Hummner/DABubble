@@ -17,12 +17,28 @@
       <div class="name-date" [ngClass]="{ reverse: currentUserText }">
         <span class="msg-name"> {{ user?.name }}</span>
       </div>
+
       <div class="message-wrapper" [ngClass]="{ reverse: currentUserText }">
         <div
           class="message"
           [ngClass]="{ 'reverse-backround': currentUserText }"
         >
-          <p #messageContent [innerHTML]="formatContent(message.content)"></p>
+          <p>
+            <ng-container *ngFor="let token of parsedMessageTokens">
+              <ng-container *ngIf="token.type === 'text'">
+                {{ token.value }}
+              </ng-container>
+              <ng-container *ngIf="token.type === 'mention'">
+                <a
+                  class="mention-link"
+                  (click)="onMentionClick(token.username)"
+                  style="cursor: pointer; color: #113d6b"
+                >
+                  &#64;{{ token.username }}
+                </a>
+              </ng-container>
+            </ng-container>
+          </p>
         </div>
       </div>
 

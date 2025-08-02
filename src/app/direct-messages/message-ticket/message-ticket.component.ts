@@ -8,6 +8,8 @@ import {
   EventEmitter,
   OnInit,
   ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { Message } from '../../interfaces/message.interface';
@@ -18,8 +20,9 @@ import { MessageService } from '../../services/message.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
 import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { DirectMessageService } from '../../services/direct-message.service';
+
+type MessageToken = { type: 'text'; value: string } | { type: 'mention'; username: string };
 
 @Component({
   selector: 'app-message-ticket',
@@ -50,6 +53,8 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   private userMap = new Map<string, UserProfileInterface>();
   private nameToUidMap = new Map<string, string>();
 
+  parsedMessageTokens: MessageToken[] = [];
+
   emojiUnicodeMap = [
     { name: 'checked', code: '✅' },
     { name: 'thumb', code: '👍' },
@@ -71,13 +76,11 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private threadMessageService: ThreadDirectMessageService,
-    private sanitizer: DomSanitizer,
     private directMessageService: DirectMessageService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    // Cache users on init to avoid repeated .find calls
     const users = this.firestore.userList();
     this.userMap.clear();
     this.nameToUidMap.clear();
@@ -87,8 +90,6 @@ export class MessageTicketComponent implements OnChanges, OnInit {
         this.nameToUidMap.set(user.name.toLowerCase(), user.uid);
       }
     });
-
-    // Emit emojis once on init
     this.emojiListChange.emit(this.emojiUnicodeMap);
   }
 
@@ -97,9 +98,28 @@ export class MessageTicketComponent implements OnChanges, OnInit {
       this.user = this.userMap.get(this.message.senderId) ?? null;
       const currentUserId = this.firestore.getUserId();
       this.currentUserText = this.message.senderId === currentUserId;
-      // OnPush needs manual markForCheck on async or input changes
+      this.parsedMessageTokens = this.parseMessage(this.message.content);
       this.cdr.markForCheck();
     }
+  }
+
+  parseMessage(content: string): MessageToken[] {
+    const mentionRegex = /@([\w]+(?:\s[\w]+)*)/g;
+    const tokens: MessageToken[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = mentionRegex.exec(content)) !== null) {
+      const index = match.index;
+      if (index > lastIndex) {
+        tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
+      }
+      tokens.push({ type: 'mention', username: match[1] });
+      lastIndex = mentionRegex.lastIndex;
+    }
+    if (lastIndex < content.length) {
+      tokens.push({ type: 'text', value: content.slice(lastIndex) });
+    }
+    return tokens;
   }
 
   isTimestamp(value: any): value is Timestamp {
@@ -168,32 +188,26 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     });
   }
 
-  formatContent(content: string): SafeHtml {
-    const mentionTag = /@([\w]+(?:\s[\w]+)*)/g;
-    const replaced = content.replace(mentionTag, (match, username) => {
-      const channelId = this.getSelectedChannel(username.trim());
-      // Only create link if channelId exists
-      if (channelId) {
-        return `<a href="/directMessages/${channelId}" class="mention-link">@${username.trim()}</a>`;
-      }
-      // Otherwise, return plain text to avoid invalid links
-      return `@${username.trim()}`;
-    });
-    // Sanitize safely
-    return this.sanitizer.bypassSecurityTrustHtml(replaced);
-  }
-
   getUser(name: string): string | null {
     return this.nameToUidMap.get(name.toLowerCase()) ?? null;
   }
 
-async getSelectedChannel(username: string): Promise<string | null> {
-  const currentUser = this.firestore.getUserId();
-  const userId = this.getUser(username);
-  if (currentUser && userId) {
-    const channelId = await this.directMessageService.getDMChannel(currentUser, userId);
-    return channelId;
+  async getSelectedChannel(username: string): Promise<string | null> {
+    const currentUser = this.firestore.getUserId();
+    const userId = this.getUser(username);
+    if (currentUser && userId) {
+      const channelId = await this.directMessageService.getDMChannel(currentUser, userId);
+      return channelId;
+    }
+    return null;
   }
-  return null;
-}
+
+  async onMentionClick(username: string) {
+    const channelId = await this.getSelectedChannel(username);
+    if (channelId) {
+      this.router.navigate(['/directMessages', channelId]);
+    } else {
+      console.warn(`No DM channel found for @${username}`);
+    }
+  }
 }
