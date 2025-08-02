@@ -29,6 +29,8 @@ import { serverTimestamp } from '@angular/fire/firestore';
 import { ClickStopPropagation } from '../click-stop-propagation.directive';
 import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.component';
 
+import { MatMenuTrigger } from '@angular/material/menu';
+
 @Component({
   selector: 'app-direct-messages',
   standalone: true,
@@ -45,6 +47,7 @@ import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.compon
     RouterOutlet,
     ClickStopPropagation,
     EmojiPickerComponent,
+    MatMenuTrigger,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
@@ -73,6 +76,8 @@ export class DirectMessagesComponent
   smallEmojiMenu = false;
   parentEmojiList: any;
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+  @ViewChild(MatMenuTrigger) mentionMenuTrigger!: MatMenuTrigger;
+  filteredUserList = signal<UserProfileInterface[]>([]);
 
   constructor(
     private route: ActivatedRoute,
@@ -242,21 +247,57 @@ export class DirectMessagesComponent
   }
 
   tagInputStart() {
+    const chars = this.content.split('');
+    const lastChar = chars.length - 1;
     setTimeout(() => {
-      if (!this.content.includes('@')) {
+      if (chars[lastChar] !== '@') {
         this.content += `@`;
       }
       this.input.nativeElement.focus();
     }, 0);
   }
 
-  getUserList(): UserProfileInterface[] {
-    return this.firestoreService.userList.filter(
-      (user) => user.uid !== this.userProfile()?.uid && user.name !== 'Guest'
-    );
+  updateFilteredUserList() {
+    const content = this.content;
+    const uid = this.userProfile()?.uid;
+    let list = this.firestoreService.userList;
+    if (content.includes('@') && content.length > 2) {
+      const query = this.content.slice(1).toLowerCase();
+      console.log(query);
+      list = list.filter(
+        (user) =>
+          user.uid !== uid &&
+          user.name !== 'Guest' &&
+          user.name.toLowerCase().includes(query)
+      );
+    } else {
+      list = this.firestoreService.userList.filter(
+        (user) => user.uid !== uid && user.name !== 'Guest'
+      );
+    }
+    console.log(list);
+    this.filteredUserList.set(list);
   }
 
   takeUser(name: string) {
-    this.content += `${name} `;
+    let typedText = this.content.slice(1);
+    this.content = this.content.replace(typedText, name);
+  }
+
+  onInputChange(event: Event) {
+    this.firestoreService.subUserList((users) => {
+      this.updateFilteredUserList();
+    });
+    const chars = this.content.split('');
+    const lastChar = chars.length - 1;
+    if (chars[lastChar] == '@') {
+      this.mentionMenuTrigger.openMenu();
+      setTimeout(() => {
+        this.input.nativeElement.focus();
+      }, 0);
+    }
+    if (this.content.length == 0) {
+      this.mentionMenuTrigger.closeMenu();
+    }
   }
 }

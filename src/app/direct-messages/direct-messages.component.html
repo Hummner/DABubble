@@ -89,11 +89,13 @@
       <footer>
         <div class="text-area">
           <textarea
+            class="textarea"
             #input
             [(ngModel)]="content"
             name="chat_input"
             id="chat_input"
             placeholder="Nachricht an @{{ userB?.name }}"
+            (input) = "onInputChange($event)"
           ></textarea>
         </div>
         <div class="input-buttons">
@@ -125,17 +127,16 @@
 
         <mat-menu #tagBoxMenu="matMenu" class="tag-box-menu">
           <div class="tag-menu-wrap">
-            @for(user of getUserList();track user){
-            <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
-              <img
-                class="tagbox-img"
-                [src]="user.imgUrl"
-                alt=""
-              />
-              <p>{{user.name}}</p>
+            @for(user of filteredUserList();track user){
+            <menu
+              mat-menu-item
+              class="tag-menu-item"
+              (click)="takeUser(user.name)"
+            >
+              <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+              <p>{{ user.name }}</p>
             </menu>
             }
-            
           </div>
         </mat-menu>
       </footer>
