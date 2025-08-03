@@ -12,7 +12,7 @@
                     #editChannelTrigger="matMenuTrigger">
                     <h2># {{ channel?.name}}</h2>
                     <mat-icon>keyboard_arrow_down</mat-icon>
-                    <mat-menu #editChannelMenu="matMenu" (closed)="menuOpen = false">
+                    <mat-menu #editChannelMenu="matMenu" (closed)="menuOpen = false" class="edit-channel-menu-container">
                         <div class="edit-channel-menu" (click)="$event.stopPropagation()">
                             <div class="edit-channel-header">
                                 <h2># {{ channel?.name}}</h2>
@@ -60,7 +60,7 @@
                     </div>
                     <div class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
                 </div>
-                <mat-menu (closed)="menuOpen = false" xPosition="before" #menu="matMenu">
+                <mat-menu (closed)="menuOpen = false" xPosition="before" #menu="matMenu" class="members-menu-container">
                     <div class="menu-container" (click)="$event.stopPropagation()">
                         <div class="members-menu-header">
                             <h2 class="no-margin">Mitglieder</h2>
@@ -116,17 +116,18 @@
             </main>
             <footer>
                 <div class="text-area">
-                    <textarea [disabled]="loading" (keyup)="checkTheKey($event)" [(ngModel)]="textInput" name="chat_input" id="chat_input"
-                        placeholder="Nachricht an #Entwicklerteam"></textarea>
+                    <textarea [disabled]="loading" (keyup)="checkTheKey($event)" [(ngModel)]="textInput"
+                        name="chat_input" id="chat_input" placeholder="Nachricht an #Entwicklerteam"></textarea>
                 </div>
                 <div class="input-buttons">
                     <div class="icons">
-                        <div class="input-icon" [matMenuTriggerFor]="reactMenu" #reactMenuTrigger="matMenuTrigger" (click)="openEmojiMenu(reactMenuTrigger)">
+                        <div class="input-icon" [matMenuTriggerFor]="reactMenu" #reactMenuTrigger="matMenuTrigger"
+                            (click)="openEmojiMenu(reactMenuTrigger)">
                             <img src="assets/icon/reaction.png" alt="">
-                            <mat-menu #reactMenu="matMenu">
-                                <div>
+                            <mat-menu #reactMenu="matMenu" class="emoji-menu-small">
+                                <div class="emoji-menu-container">
                                     @for (emoji of sortedEmoji; track $index) {
-                                        <span (click)="selectEmoji(emoji)">{{emoji}}</span>
+                                    <span class="emoji-in-popup" (click)="selectEmoji(emoji)">{{emoji}}</span>
                                     }
                                 </div>
                             </mat-menu>

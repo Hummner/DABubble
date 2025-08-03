@@ -569,23 +569,21 @@ main {
 /////////////////////// ticket end
 /// 
 /// 
+/// 
+/// 
+///
 
 
-::ng-deep #mat-menu-panel-1 {
+
+::ng-deep .edit-channel-menu-container {
+    border-radius: 0px 30px 30px 30px !important;
+    max-width: 832px !important;
+    min-width: 620px !important;
+}
+
+::ng-deep .members-menu-container {
     border-radius: 30px 0 30px 30px !important;
-
     max-width: 600px !important;
-}
-
-
-
-::ng-deep #cdk-overlay-1 {
-    position: absolute !important;
-    top: 10px;
-}
-
-::ng-deep .mat-mdc-menu-content {
-    padding: 0 !important;
 }
 
 ::ng-deep .mat-typography {
@@ -602,16 +600,34 @@ main {
     z-index: 4000;
 }
 
-::ng-deep #mat-menu-panel-0 {
-    border-radius: 0px 30px 30px 30px !important;
+::ng-deep .emoji-menu-small {
+    padding: 12px;
+    border-radius: 20px 20px 20px 20px;
+    border: 1px solid #ADB0D9;
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-top: -15px;
+    margin-bottom: -15px;
 
-    max-width: 832px !important;
-    min-width: 620px;
 }
 
-::ng-deep #cdk-overlay-0 {
-    position: absolute !important;
-    top: 10px;
+
+.emoji-menu-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.emoji-in-popup {
+    margin: 4px;
+    font-size: 20px;
+    padding: 6px;
+    cursor: pointer;
+    transform: scale(1);
+    transition: transform 75ms ease-in-out;
+
+    &:hover {
+        transform: scale(1.2);
+    }
 }
 
 

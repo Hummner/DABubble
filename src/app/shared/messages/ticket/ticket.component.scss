@@ -116,13 +116,41 @@
 
 ::ng-deep .emoji-menu-small {
     padding: 12px;
-    
+    border-radius: 20px 20px 20px 20px;
+    border: 1px solid #ADB0D9;
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-top: -15px;
+
 }
+
+
+.emoji-menu-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.emoji-in-popup {
+    margin: 4px;
+    font-size: 20px;
+    padding: 6px;
+    cursor: pointer;
+    transform: scale(1);
+    transition: transform 75ms ease-in-out;
+
+    &:hover {
+        transform: scale(1.2);
+    }
+}
+
+
 
 .emoji-menu-reverse {
     right: unset !important;
     left: 48px !important;
 }
+
+
 
 .emoji-menu.visible {
     opacity: 1;
@@ -157,6 +185,9 @@
 
 ::ng-deep .edit-menu {
     border-radius: 0 30px 30px 30px !important;
+    margin-left: 15px;
+    margin-top: -15px;
+
     span {
         font-family: Nunito !important;
     }
@@ -188,6 +219,7 @@
     align-items: center;
     gap: 8px;
 }
+
 
 .emoji {
     width: 64px;

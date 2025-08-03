@@ -11,6 +11,7 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import { EmojiArrayService } from '../../../services/emoji-array.service';
 
 @Component({
   selector: 'app-ticket',
@@ -33,6 +34,7 @@ export class TicketComponent implements OnInit, OnChanges {
   threadsService = inject(ThreadService);
   channelService = inject(ChannelsService);
   private auth = inject(AuthService);
+  emojiArray = inject(EmojiArrayService)
   showPopup = false;
   showMenu = false;
   channelId!: string;
@@ -66,7 +68,7 @@ export class TicketComponent implements OnInit, OnChanges {
 
 
   onMouseLeave() {
-    if (!this.editMenuOpen && !this.emojiMenuOpen) 
+    if (!this.editMenuOpen && !this.emojiMenuOpen)
       this.showMenu = false
   }
 
@@ -86,7 +88,7 @@ export class TicketComponent implements OnInit, OnChanges {
     this.emojiMenuOpen = true;
     this.showMenu = true
     console.log("Emojimenuopend");
-    
+
   }
 
 
@@ -102,7 +104,6 @@ export class TicketComponent implements OnInit, OnChanges {
 
 
   editText() {
-
     this.channelService.editTicketText(this.getTicketRef(), this.editedText).then(() => {
       this.ticket.text = this.editedText
       this.editView = false;
@@ -121,29 +122,30 @@ export class TicketComponent implements OnInit, OnChanges {
     }
   }
 
-  emojiList = [
-    '✅', '👍', '🤓', '🚀', '😢', '🥳', '😲', '😍', '😕', '❤️', '😎', '😠'];
 
-  emojiUsageHistory: string[] = [];
+  get emojiList() {
+    return this.emojiArray.emojiList
+  }
+
+  get emojiUsageHistory() {
+    return this.emojiArray.emojiUsageHistory
+  }
+
 
   get lastEmojis() {
-    const emojis = [this.emojiUsageHistory[0], this.emojiUsageHistory[1]]
-
+    const emojis = [this.emojiUsageHistory[0], this.emojiUsageHistory[1]];
     return emojis
   }
 
   get sortedEmoji() {
-    const historySet = new Set(this.emojiUsageHistory)
-
+    const historySet = new Set(this.emojiUsageHistory);
     const recentFirst = this.emojiUsageHistory.filter(e => this.emojiList.includes(e));
-    const rest = this.emojiList.filter(e => !historySet.has(e))
-
-
+    const rest = this.emojiList.filter(e => !historySet.has(e));
     return [...recentFirst, ...rest]
   }
 
   selectEmoji(emoji: string) {
-    this.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter(e => e !== emoji)]
+    this.emojiArray.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter(e => e !== emoji)]
     this.addEmojiToTicket(emoji);
 
   }

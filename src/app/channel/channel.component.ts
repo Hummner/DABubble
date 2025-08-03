@@ -17,6 +17,7 @@ import { ThreadService } from '../services/thread.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Timestamp } from '@angular/fire/firestore';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { EmojiArrayService } from '../services/emoji-array.service';
 
 
 @Component({
@@ -38,6 +39,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   threadsServvice = inject(ThreadService)
   firestoreService = inject(FirestoreService)
   private auth = inject(AuthService);
+  emojiArray = inject(EmojiArrayService)
   showMenu = false;
   menuOpen = false;
   editName = false;
@@ -123,25 +125,25 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     trigger.openMenu();
   }
 
-  emojiList = [
-    '✅', '👍', '🤓', '🚀', '😢', '🥳', '😲', '😍', '😕', '❤️', '😎', '😠'];
+  get emojiList() {
+    return this.emojiArray.emojiList
+  }
 
-  emojiUsageHistory: string[] = [];
+  get emojiUsageHistory() {
+    return this.emojiArray.emojiUsageHistory
+  }
 
   get sortedEmoji() {
     const historySet = new Set(this.emojiUsageHistory)
-
     const recentFirst = this.emojiUsageHistory.filter(e => this.emojiList.includes(e));
     const rest = this.emojiList.filter(e => !historySet.has(e))
-
-
     return [...recentFirst, ...rest]
   }
 
   selectEmoji(emoji: string) {
-    this.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter(e => e !== emoji)]
+    this.emojiArray.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter(e => e !== emoji)]
     console.log("Selected Emojio: ", emoji);
-    
+
   }
 
   showPlaceholder(index: number): string {
