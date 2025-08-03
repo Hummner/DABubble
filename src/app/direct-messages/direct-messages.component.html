@@ -136,6 +136,13 @@
             }
           </div>
         </mat-menu>
+        <mat-menu #channelBoxMenu="matMenu" class="channel-box-menu">
+          <menu mat-menu-item class="channel-menu-item">
+            <div *ngFor="let ch of channels$ | async; let i = index">
+              <p>{{ ch.name }}</p>
+            </div>
+          </menu>
+        </mat-menu>
       </footer>
     </div>
   </mat-drawer-container>

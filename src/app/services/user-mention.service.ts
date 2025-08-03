@@ -59,6 +59,7 @@ export class UserMentionService {
   onInputChange(
     content: string,
     mentionMenuTrigger: MatMenuTrigger,
+    channelMenuTrigger:MatMenuTrigger,
     input: ElementRef<HTMLInputElement>
   ) {
     this.firestoreService.subUserList((users) => {
@@ -68,6 +69,12 @@ export class UserMentionService {
     const lastChar = chars.length - 1;
     if (chars[lastChar] == '@') {
       mentionMenuTrigger.openMenu();
+      setTimeout(() => {
+        input.nativeElement.focus();
+      }, 0);
+    }
+    if (chars[lastChar] == '#') {
+      channelMenuTrigger.openMenu();
       setTimeout(() => {
         input.nativeElement.focus();
       }, 0);

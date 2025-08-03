@@ -68,6 +68,7 @@ export class ThreadDirectMessageComponent implements OnInit {
 
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   @ViewChild(MatMenuTrigger) mentionMenuTrigger!: MatMenuTrigger;
+   @ViewChild(MatMenuTrigger) channelMenuTrigger!: MatMenuTrigger;
 
   constructor(
     private route: ActivatedRoute,
@@ -254,6 +255,7 @@ export class ThreadDirectMessageComponent implements OnInit {
     this.userMentionService.onInputChange(
       this.content,
       this.mentionMenuTrigger,
+      this.channelMenuTrigger,
       this.input
     );
   }
