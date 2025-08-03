@@ -107,10 +107,24 @@
             <div
               class="input-icon"
               click-stop-propagation
+              #mentionTrigger="matMenuTrigger"
               [matMenuTriggerFor]="tagBoxMenu"
               (click)="tagInputStart()"
             >
               <img src="assets/icon/tag_icon.png" alt="" />
+            </div>
+            <div
+              class="input-icon"
+              click-stop-propagation
+              [matMenuTriggerFor]="channelBoxMenu"
+              #channelTrigger="matMenuTrigger"
+              (click)="tagInputChannelStart()"
+            >
+              <img
+                class="channel-icon"
+                src="assets/icon/tag_channel.png"
+                alt=""
+              />
             </div>
           </div>
           <div class="send-icon" (click)="addMessage()">
@@ -137,11 +151,19 @@
           </div>
         </mat-menu>
         <mat-menu #channelBoxMenu="matMenu" class="channel-box-menu">
-          <menu mat-menu-item class="channel-menu-item">
-            <div *ngFor="let ch of channels$ | async; let i = index">
-              <p>{{ ch.name }}</p>
-            </div>
-          </menu>
+          <div class="channel-menu-wrap">
+            @for(channel of userMentionService.filteredChannelList(); track
+            channel) {
+            <menu
+              mat-menu-item
+              class="channel-menu-item"
+              (click)="takeChannel(channel.name)"
+            >
+              <img src="assets/icon/tag_channel.png" alt="" />
+              <p>{{ channel.name }}</p>
+            </menu>
+            }
+          </div>
         </mat-menu>
       </footer>
     </div>

@@ -30,8 +30,9 @@ import { serverTimestamp } from '@angular/fire/firestore';
 import { ClickStopPropagation } from '../click-stop-propagation.directive';
 import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.component';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { UserMentionService } from '../services/user-mention.service';
+import { UserMentionService } from '../services/user-channel-mention.service';
 import { NavbarService } from '../services/navbar.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-direct-messages',
   standalone: true,
@@ -49,7 +50,6 @@ import { NavbarService } from '../services/navbar.service';
     ClickStopPropagation,
     EmojiPickerComponent,
     MatMenuTrigger,
-    AsyncPipe,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
@@ -78,9 +78,9 @@ export class DirectMessagesComponent
   smallEmojiMenu = false;
   parentEmojiList: any;
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
-  @ViewChild(MatMenuTrigger) mentionMenuTrigger!: MatMenuTrigger;
-   @ViewChild(MatMenuTrigger) channelMenuTrigger!: MatMenuTrigger;
-  channels$ = inject(NavbarService).channelsObs$;
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  channels = toSignal(inject(NavbarService).channelsObs$);
 
   constructor(
     private route: ActivatedRoute,
@@ -249,12 +249,27 @@ export class DirectMessagesComponent
     );
   }
 
+  tagInputChannelStart() {
+    this.content = this.userMentionService.tagChannelInputStart(
+      this.content,
+      this.input
+    );
+  }
+
   updateFilteredUserList() {
     this.userMentionService.updateFilteredUserList(this.content);
   }
 
+  updateFilteredChannelList() {
+    this.userMentionService.updateFilteredChannelList(this.content);
+  }
+
   takeUser(name: string) {
     this.content = this.userMentionService.takeUser(name, this.content);
+  }
+
+  takeChannel(name: string) {
+    this.content = this.userMentionService.takeChannel(name, this.content);
   }
 
   onInputChange(event: Event) {
@@ -264,23 +279,5 @@ export class DirectMessagesComponent
       this.channelMenuTrigger,
       this.input
     );
-  }
-
-  onInputChangeChannel(
-    content: string,
-    mentionMenuTrigger: MatMenuTrigger,
-    input: ElementRef<HTMLInputElement>
-  ) {
-    const chars = content.split('');
-    const lastChar = chars.length - 1;
-    if (chars[lastChar] == '#') {
-      mentionMenuTrigger.openMenu();
-      setTimeout(() => {
-        input.nativeElement.focus();
-      }, 0);
-    }
-    if (content.length == 0) {
-      mentionMenuTrigger.closeMenu();
-    }
   }
 }

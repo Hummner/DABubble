@@ -26,7 +26,7 @@ import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.com
 import { serverTimestamp } from '@angular/fire/firestore';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { UserMentionService } from '../../services/user-mention.service';
+import { UserMentionService } from '../../services/user-channel-mention.service';
 
 @Component({
   selector: 'app-thread-direct-message',
@@ -67,8 +67,8 @@ export class ThreadDirectMessageComponent implements OnInit {
   smallEmojiMenu = false;
 
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
-  @ViewChild(MatMenuTrigger) mentionMenuTrigger!: MatMenuTrigger;
-   @ViewChild(MatMenuTrigger) channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
 
   constructor(
     private route: ActivatedRoute,
@@ -242,13 +242,26 @@ export class ThreadDirectMessageComponent implements OnInit {
       this.input
     );
   }
+  tagInputChannelStart() {
+    this.content = this.userMentionService.tagChannelInputStart(
+      this.content,
+      this.input
+    );
+  }
 
   updateFilteredUserList() {
     this.userMentionService.updateFilteredUserList(this.content);
   }
+  updateFilteredChannelList() {
+    this.userMentionService.updateFilteredChannelList(this.content);
+  }
 
   takeUser(name: string) {
     this.content = this.userMentionService.takeUser(name, this.content);
+  }
+
+  takeChannel(name: string) {
+    this.content = this.userMentionService.takeChannel(name, this.content);
   }
 
   onInputChange(event: Event) {

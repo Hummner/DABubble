@@ -264,7 +264,8 @@ app-user-card {
   background-color: #adb0d9;
 }
 
-::ng-deep .tag-box-menu, ::ng-deep .channel-box-menu {
+::ng-deep .tag-box-menu,
+::ng-deep .channel-box-menu {
   border-bottom-left-radius: 0px !important;
   border-bottom-right-radius: 30px !important;
   border-top-left-radius: 30px !important;
@@ -274,7 +275,8 @@ app-user-card {
   position: absolute !important;
   bottom: 180px !important;
 }
-::ng-deep .tag-menu-item {
+::ng-deep .tag-menu-item,
+::ng-deep .channel-menu-item {
   > .mat-mdc-menu-item-text {
     display: flex;
     justify-content: space-between;
@@ -290,4 +292,8 @@ app-user-card {
   width: 45px;
   height: 45px;
   border-radius: 50%;
+}
+
+.channel-icon {
+  filter: invert(30%);
 }
