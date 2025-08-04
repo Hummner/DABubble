@@ -34,7 +34,7 @@ export class TicketComponent implements OnInit, OnChanges {
   threadsService = inject(ThreadService);
   channelService = inject(ChannelsService);
   private auth = inject(AuthService);
-  emojiArray = inject(EmojiArrayService)
+  emojiArray = inject(EmojiArrayService);
   showPopup = false;
   showMenu = false;
   channelId!: string;

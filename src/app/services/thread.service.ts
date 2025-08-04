@@ -38,7 +38,7 @@ export class ThreadService {
       let messageArray: TicketInterface[] = [];
       this.threadMessageCount = msgList.docs.length
       msgList.forEach(msg => {
-        let message: TicketInterface = this.getMessageToJson(msg.data())
+        let message: TicketInterface = this.getMessageToJson(msg.data(), msg.id)
         messageArray.push(message)
       });
       this.messagesSubscribe.next(messageArray);
@@ -57,6 +57,13 @@ export class ThreadService {
 
   getThreadPath() {
     return this.threadPath
+  }
+
+  getThreadMesssageRef(id: string) {
+    let path = this.threadPath + `/${id}`;
+    console.log(path);
+
+    return doc(this.firestore, path)
   }
 
   async addMessageToThread(senderId: string, text: string) {
@@ -91,7 +98,7 @@ export class ThreadService {
   }
 
 
-  getMessageToJson(messageData: DocumentData) {
+  getMessageToJson(messageData: DocumentData, threadMessageId: string) {
     const rawCreatedAt = messageData['createdAt'];
     const createdAtDate = rawCreatedAt instanceof Timestamp ? rawCreatedAt.toDate() : null;
 
@@ -100,6 +107,7 @@ export class ThreadService {
       reactions: messageData['reactions'],
       senderId: messageData['senderId'],
       text: messageData['text'],
+      threadMessageId: threadMessageId
     }
     return message
   }

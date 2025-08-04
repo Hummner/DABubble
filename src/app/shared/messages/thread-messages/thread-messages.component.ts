@@ -6,9 +6,14 @@ import { AuthService } from '../../../services/auth.service';
 import { FirestoreService } from '../../../services/firestore.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import { EmojiArrayService } from '../../../services/emoji-array.service';
+import { ChannelsService } from '../../../services/channels.service';
+import { doc, getDocs, updateDoc } from '@angular/fire/firestore';
+import { ThreadService } from '../../../services/thread.service';
+import { collection } from 'firebase/firestore';
 
 @Component({
   selector: 'app-thread-messages',
@@ -27,12 +32,17 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
   time!: string;
   firestoreService = inject(FirestoreService);
   private auth = inject(AuthService);
+  emojiArray = inject(EmojiArrayService);
+  channelService = inject(ChannelsService);
+  threadService = inject(ThreadService);
   currentUser?: string | null;
   channelId?: Subscription;
   showMenu = false;
   editMenuOpen = false;
   editView = false;
   editedText!: string;
+  emojiMenuOpen = false;
+  showPopup = false;
 
   constructor(
     private route: ActivatedRoute
@@ -81,11 +91,60 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
     this.editedText = this.message.text;
   }
 
+  onEmojiMenuOpened() {
+    this.emojiMenuOpen = true;
+    this.showMenu = true
+    console.log("Emojimenuopend");
+
+  }
+
+
+  onEmojiMenuClosed() {
+    this.emojiMenuOpen = false;
+    this.showMenu = false;
+  }
+
+  selectEmoji(emoji: string) {
+    this.emojiArray.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter(e => e !== emoji)]
+    this.addEmojiToTicket(emoji);
+
+  }
+
+  openEmojiMenu(trigger: MatMenuTrigger) {
+    trigger.openMenu();
+  }
+
   editText() {
+  }
 
-    
+  isReaction() {
+    if (this.message.reactions.length == 0) {
+      return false;
+    } else {
+      return true
+    }
+  }
 
 
+  get emojiList() {
+    return this.emojiArray.emojiList
+  }
+
+  get emojiUsageHistory() {
+    return this.emojiArray.emojiUsageHistory
+  }
+
+
+  get lastEmojis() {
+    const emojis = [this.emojiUsageHistory[0], this.emojiUsageHistory[1]];
+    return emojis
+  }
+
+  get sortedEmoji() {
+    const historySet = new Set(this.emojiUsageHistory);
+    const recentFirst = this.emojiUsageHistory.filter(e => this.emojiList.includes(e));
+    const rest = this.emojiList.filter(e => !historySet.has(e));
+    return [...recentFirst, ...rest]
   }
 
 
@@ -101,12 +160,131 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
   }
 
 
+  async addEmojiToTicket(emoji: string) {
+    let senderId = this.getCurrentUserId();
+    let isEmoji: boolean = this.checkEmojiInArray(emoji);
+    let isUserAddedReaction: boolean = this.checkUserReactions(senderId!);
+    let reactionsCopy: { emoji: string; users: string[] }[] = [...this.message.reactions];
+    let indexOfEmoji = this.getIndexOfEmoji(emoji);
+
+    if (isEmoji && !isUserAddedReaction) {
+      reactionsCopy[indexOfEmoji] = this.addUserIdToEmoji(senderId!, indexOfEmoji, emoji, reactionsCopy)
+      this.updateReaction(reactionsCopy)
+    } else if (!isEmoji) {
+      this.addnewEmoji(reactionsCopy, emoji, senderId!)
+      this.updateReaction(reactionsCopy)
+
+    } else if (isEmoji && isUserAddedReaction) {
+      this.deleteUserOrEmoji(reactionsCopy, indexOfEmoji, senderId!, emoji)
+    }
+  }
+
+  deleteUserOrEmoji(reactionsCopy: { emoji: string; users: string[] }[], indexOfEmoji: number, senderId: string, emoji: string) {
+    let users = reactionsCopy[indexOfEmoji].users
+    let indexUser = reactionsCopy[indexOfEmoji].users.findIndex(user => user === senderId!)
+    let newUserArray = users.splice(indexUser, 1)
+
+    if (users.length === 0) {
+      reactionsCopy.splice(indexOfEmoji, 1);
+      this.updateReaction(reactionsCopy)
+    } else {
+      reactionsCopy[indexOfEmoji] = {
+        emoji: emoji,
+        users: newUserArray
+      }
+      this.updateReaction(reactionsCopy)
+    }
+  }
+
+  addnewEmoji(reactionsCopy: { emoji: string; users: string[] }[], emoji: string, senderId: string) {
+    reactionsCopy.push({
+      emoji: emoji,
+      users: [senderId!]
+    })
+  }
+
+  addUserIdToEmoji(senderId: string, indexOfEmoji: number, emoji: string, reactionsCopy: { emoji: string; users: string[] }[]) {
+    let usersCopy = [...this.message.reactions[indexOfEmoji].users]
+    usersCopy.push(senderId!)
+
+    return reactionsCopy[indexOfEmoji] = {
+      emoji: emoji,
+      users: usersCopy
+    }
+  }
+
+
+  async updateReaction(reactionsCopy: { emoji: string; users: string[] }[]) {
+    let threadMessageRef = this.getThreadMessageRef()
+    try {
+      await updateDoc(threadMessageRef, {
+        reactions: reactionsCopy
+      });
+      this.message.reactions = reactionsCopy;
+    } catch (err) {
+      console.error("Failed to update reactions:", err);
+    }
+  }
+
+  getIndexOfEmoji(emoji: string) {
+    return this.message.reactions.findIndex(reaction => reaction.emoji === emoji);
+  }
+
+
+
+  checkUserReactions(senderId: string) {
+    let isUserAddedReaction = false;
+    this.message.reactions.forEach((reaction) => {
+      return isUserAddedReaction = reaction.users.includes(senderId)
+    });
+    return isUserAddedReaction
+  }
+
+  checkReaction(emoji: string, senderId: string) {
+    let emojiInArray = this.checkEmojiInArray(emoji);
+  }
+
+  checkEmojiInArray(emoji: string) {
+    let isEmoji = false;
+
+    this.message.reactions.forEach((reaction) => {
+      if (reaction.emoji == emoji) {
+        isEmoji = true
+      }
+    })
+
+    return isEmoji
+  }
+
+  getThreadMessageRef() {
+    return this.threadService.getThreadMesssageRef(this.message.threadMessageId!)
+
+  }
+
+
   getChannelId() {
     this.channelId = this.route.params.subscribe(params => {
       const channelId = params['ChannelId'];
       return channelId
     })
   }
+
+  getTicketRef() {
+    let threadPath = this.message.threads?.path;
+    let ticketPath = threadPath?.split('/').slice(0, 4).join('/')
+    return doc(this.channelService.firestore, ticketPath!)
+  }
+
+  // async serachThreadMessage() {
+  //   let threadColl = this.threadService.getThreadCollection();
+  //   let threadMessages = await getDocs(threadColl);
+  //   let messagesIds = []
+  //   threadMessages.docs.forEach(message => [
+  //     message.id
+  //   ])
+  //   console.log(threadMessages);
+
+  // }
 
   showTime(): string {
     return this.message?.createdAt instanceof Date ? this.message.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
