@@ -28,13 +28,22 @@
               <ng-container *ngIf="token.type === 'text'">
                 {{ token.value }}
               </ng-container>
-              <ng-container *ngIf="token.type === 'mention'">
+              <ng-container *ngIf="token.type === 'mentionUser'">
                 <a
                   class="mention-link"
-                  (click)="onMentionClick(token.username)"
+                  (click)="onUserMentionClick(token.userName)"
                   style="cursor: pointer; color: #113d6b"
                 >
-                  &#64;{{ token.username }}
+                  &#64;{{ token.userName }}
+                </a>
+              </ng-container>
+              <ng-container *ngIf="token.type === 'mentionChannel'">
+                <a
+                  class="mention-link"
+                  (click)="onChannelMentionClick(token.channelName)"
+                  style="cursor: pointer; color: #113d6b"
+                >
+                  &#35;{{ token.channelName }}
                 </a>
               </ng-container>
             </ng-container>

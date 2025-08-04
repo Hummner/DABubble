@@ -10,6 +10,7 @@ import {
   ChangeDetectorRef,
   ViewChild,
   ElementRef,
+  inject,
 } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { Message } from '../../interfaces/message.interface';
@@ -21,8 +22,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
 import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
 import { DirectMessageService } from '../../services/direct-message.service';
+import { NavbarInterface } from '../../interfaces/navbar.interface';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavbarService } from '../../services/navbar.service';
 
-type MessageToken = { type: 'text'; value: string } | { type: 'mention'; username: string };
+type MessageToken =
+  | { type: 'text'; value: string }
+  | { type: 'mentionUser'; userName: string }
+  | { type: 'mentionChannel'; channelName: string };
 
 @Component({
   selector: 'app-message-ticket',
@@ -42,7 +49,9 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   @Input() inThreadView: boolean = false;
 
   @Output() openThread = new EventEmitter<string | undefined>();
-  @Output() emojiListChange = new EventEmitter<{ name: string; code: string }[]>();
+  @Output() emojiListChange = new EventEmitter<
+    { name: string; code: string }[]
+  >();
 
   senderId = '';
   user: UserProfileInterface | null = null;
@@ -52,8 +61,12 @@ export class MessageTicketComponent implements OnChanges, OnInit {
 
   private userMap = new Map<string, UserProfileInterface>();
   private nameToUidMap = new Map<string, string>();
+  private channelMap = new Map<string, NavbarInterface>();
+  private channelNameToUidMap = new Map<string, string>();
+  channels = toSignal(inject(NavbarService).channelsObs$);
 
   parsedMessageTokens: MessageToken[] = [];
+  // parsedMessageTokensChannelMention: MessageToken[] = [];
 
   emojiUnicodeMap = [
     { name: 'checked', code: '✅' },
@@ -81,6 +94,12 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.createLookUpUser();
+    this.createLookupChannel();
+    this.emojiListChange.emit(this.emojiUnicodeMap);
+  }
+
+  createLookUpUser() {
     const users = this.firestore.userList();
     this.userMap.clear();
     this.nameToUidMap.clear();
@@ -90,37 +109,77 @@ export class MessageTicketComponent implements OnChanges, OnInit {
         this.nameToUidMap.set(user.name.toLowerCase(), user.uid);
       }
     });
-    this.emojiListChange.emit(this.emojiUnicodeMap);
+  }
+
+  createLookupChannel() {
+    const channels = this.channels();
+    this.channelMap.clear();
+    this.channelNameToUidMap.clear();
+    channels?.forEach((channel) => {
+      this.channelMap.set(channel.channelId, channel);
+      if (channel.name) {
+        this.channelNameToUidMap.set(
+          channel.name.toLowerCase(),
+          channel.channelId
+        );
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['message']) {
+      if (this.userMap.size === 0) {
+        this.createLookUpUser();
+      }
+      if (this.channelMap.size === 0) {
+        this.createLookupChannel();
+      }
       this.user = this.userMap.get(this.message.senderId) ?? null;
       const currentUserId = this.firestore.getUserId();
       this.currentUserText = this.message.senderId === currentUserId;
-      this.parsedMessageTokens = this.parseMessage(this.message.content);
+      this.parsedMessageTokens = this.parseMessageMention(this.message.content);
       this.cdr.markForCheck();
     }
   }
 
-  parseMessage(content: string): MessageToken[] {
-    const mentionRegex = /@([\w]+(?:\s[\w]+)*)/g;
+  parseMessageMention(content: string): MessageToken[] {
+    const mentionRegex = /([@#])([\w]+(?:\s[\w]+)*)/g;
     const tokens: MessageToken[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | null;
     while ((match = mentionRegex.exec(content)) !== null) {
       const index = match.index;
+      const mentionSymbol = match[1];
+      const mentionName = match[2];
+
       if (index > lastIndex) {
         tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
       }
-      tokens.push({ type: 'mention', username: match[1] });
+
+      if (mentionSymbol === '@') {
+        tokens.push({ type: 'mentionUser', userName: mentionName });
+      } else if (mentionSymbol === '#') {
+        tokens.push({ type: 'mentionChannel', channelName: mentionName });
+      }
       lastIndex = mentionRegex.lastIndex;
     }
     if (lastIndex < content.length) {
       tokens.push({ type: 'text', value: content.slice(lastIndex) });
     }
+
     return tokens;
   }
+
+  // createTextType(
+  //   content: string,
+  //   lastIndex: number,
+  //   index: number,
+  //   tokens: MessageToken[]
+  // ) {
+  //   if (lastIndex < content.length || index > lastIndex) {
+  //     tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
+  //   }
+  // }
 
   isTimestamp(value: any): value is Timestamp {
     return value instanceof Timestamp;
@@ -192,22 +251,39 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     return this.nameToUidMap.get(name.toLowerCase()) ?? null;
   }
 
-  async getSelectedChannel(username: string): Promise<string | null> {
+  async getSelectedDMChannel(username: string): Promise<string | null> {
     const currentUser = this.firestore.getUserId();
     const userId = this.getUser(username);
     if (currentUser && userId) {
-      const channelId = await this.directMessageService.getDMChannel(currentUser, userId);
+      const channelId = await this.directMessageService.getDMChannel(
+        currentUser,
+        userId
+      );
       return channelId;
     }
     return null;
   }
 
-  async onMentionClick(username: string) {
-    const channelId = await this.getSelectedChannel(username);
-    if (channelId) {
-      this.router.navigate(['/directMessages', channelId]);
+  selectChannel(channelName: string): string | undefined {
+    return this.channelNameToUidMap.get(channelName.toLowerCase());
+  }
+
+  async onUserMentionClick(userName: string) {
+    const dMchannelId = await this.getSelectedDMChannel(userName);
+    if (dMchannelId) {
+      this.router.navigate(['/directMessages', dMchannelId]);
     } else {
-      console.warn(`No DM channel found for @${username}`);
+      console.warn(`No DM channel found for @${userName}`);
+    }
+  }
+
+  onChannelMentionClick(channelName: string) {
+    const channelId = this.selectChannel(channelName);
+    if (this.channelId) {
+      console.log(channelId);
+      this.router.navigate(['/channel', channelId]);
+    } else {
+      console.warn(`No DM channel found for @${channelName}`);
     }
   }
 }
