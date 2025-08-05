@@ -121,7 +121,7 @@
       *ngIf="smallEmojiMenu"
       [class.reversed-s-e-m]="!currentUserText"
     >
-      @for(emoji of emojiUnicodeMap;track emojiUnicodeMap){
+      @for(emoji of emojiList;track emojiList){
       <div class="emoji-menu-item" (click)="addEmoji(emoji.name)">
         <img src="assets/emojis/{{ emoji.name }}.png" />
       </div>

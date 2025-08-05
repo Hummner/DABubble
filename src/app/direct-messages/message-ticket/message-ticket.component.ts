@@ -25,7 +25,7 @@ import { DirectMessageService } from '../../services/direct-message.service';
 import { NavbarInterface } from '../../interfaces/navbar.interface';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarService } from '../../services/navbar.service';
-
+import { EmojiServiceService } from '../../services/emoji.service';
 type MessageToken =
   | { type: 'text'; value: string }
   | { type: 'mentionUser'; userName: string }
@@ -58,6 +58,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   currentUserText = false;
   smallEmojiMenu = false;
   showEmojiMenu = false;
+  @Input() emojiChanged = false;
 
   private userMap = new Map<string, UserProfileInterface>();
   private nameToUidMap = new Map<string, string>();
@@ -67,20 +68,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
 
   parsedMessageTokens: MessageToken[] = [];
 
-  emojiUnicodeMap = [
-    { name: 'checked', code: '✅' },
-    { name: 'thumb', code: '👍' },
-    { name: 'nerd', code: '🤓' },
-    { name: 'rocket', code: '🚀' },
-    { name: 'sad', code: '😢' },
-    { name: 'party', code: '🥳' },
-    { name: 'surprised', code: '😲' },
-    { name: 'love', code: '😍' },
-    { name: 'confusion', code: '😕' },
-    { name: 'heart', code: '❤️' },
-    { name: 'cool', code: '😎' },
-    { name: 'angry', code: '😠' },
-  ];
+  emojiList = this.emojiServise.emojiList;
 
   constructor(
     private firestore: FirestoreService,
@@ -89,13 +77,14 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     private route: ActivatedRoute,
     private threadMessageService: ThreadDirectMessageService,
     private directMessageService: DirectMessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private emojiServise: EmojiServiceService
   ) {}
 
   ngOnInit(): void {
     this.createLookUpUser();
     this.createLookupChannel();
-    this.emojiListChange.emit(this.emojiUnicodeMap);
+    this.emojiListChange.emit(this.emojiList);
   }
 
   createLookUpUser() {
@@ -150,11 +139,9 @@ export class MessageTicketComponent implements OnChanges, OnInit {
       const index = match.index;
       const mentionSymbol = match[1];
       const mentionName = match[2];
-
       if (index > lastIndex) {
         tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
       }
-
       if (mentionSymbol === '@') {
         tokens.push({ type: 'mentionUser', userName: mentionName });
       } else if (mentionSymbol === '#') {
@@ -165,7 +152,6 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     if (lastIndex < content.length) {
       tokens.push({ type: 'text', value: content.slice(lastIndex) });
     }
-
     return tokens;
   }
 
@@ -186,20 +172,32 @@ export class MessageTicketComponent implements OnChanges, OnInit {
 
   addOrRemoveEmoji(emojiName: string) {
     if (!this.message?.id) return;
-    // const threadId = this.message.id;
     const docId = this.messageId ?? this.message.id;
-    if (this.user?.uid) {
+    const threadId = this.message.id;
+    const currentUserId = this.firestore.getUserId();
+    if (currentUserId) {
       let reactions = this.message.reactions ?? [];
       let reaction = reactions.find((r) => r.emojiName === emojiName);
       if (reaction) {
-        if (reaction.users.includes(this.user.uid)) {
-          let indexOfUid = reaction.users.indexOf(this.user.uid);
-
+        if (reaction.users.includes(currentUserId)) {
+          let indexOfUid = reaction.users.indexOf(currentUserId);
           reaction.users.splice(indexOfUid, 1);
         } else {
-          reaction.users.push(this.user.uid);
+          reaction.users.push(currentUserId);
         }
-        this.message.reactions = reactions;
+      } else {
+        reactions.push({ emojiName: emojiName, users: [currentUserId] });
+      }
+      this.message.reactions = reactions;
+
+      if (this.inThreadView && docId && threadId) {
+        this.threadMessageService.updateThreadMessage(
+          this.message,
+          docId,
+          this.channelId,
+          threadId
+        );
+      } else {
         this.messageService.updateMessage(this.message, docId, this.channelId);
       }
     }
@@ -209,26 +207,34 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     console.log('moji added', emojiName);
     if (!this.message?.id) return;
     const docId = this.messageId ?? this.message.id;
-    if (this.user?.uid) {
+    const threadId = this.message.id;
+    const currentUserId = this.firestore.getUserId();
+    if (currentUserId) {
       let reactions = this.message.reactions ?? [];
       let reaction = reactions.find((r) => r.emojiName === emojiName);
       if (reaction) {
-        if (reaction.users.includes(this.user.uid)) {
-          let indexOfUid = reaction.users.indexOf(this.user.uid);
-
+        if (reaction.users.includes(currentUserId)) {
+          let indexOfUid = reaction.users.indexOf(currentUserId);
           reaction.users.splice(indexOfUid, 1);
         } else {
-          reaction.users.push(this.user.uid);
+          reaction.users.push(currentUserId);
         }
-        this.message.reactions = reactions;
-        this.messageService.updateMessage(this.message, docId, this.channelId);
+      } else {
+        reactions.push({ emojiName: emojiName, users: [currentUserId] });
       }
-      else {
-        reactions.push({emojiName:emojiName, users:[this.user.uid]})
+      this.message.reactions = reactions;
+      if (this.inThreadView && docId && threadId) {
+        this.threadMessageService.updateThreadMessage(
+          this.message,
+          docId,
+          this.channelId,
+          threadId
+        );
+      } else {
+        this.messageService.updateMessage(this.message, docId, this.channelId);
       }
     }
   }
-
 
   openMoreEmoji(event: Event) {
     this.smallEmojiMenu = !this.smallEmojiMenu;
@@ -280,7 +286,6 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   onChannelMentionClick(channelName: string) {
     const channelId = this.selectChannel(channelName);
     if (this.channelId) {
-      console.log(channelId);
       this.router.navigate(['/channel', channelId]);
     } else {
       console.warn(`No DM channel found for @${channelName}`);
