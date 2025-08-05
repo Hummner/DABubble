@@ -75,6 +75,8 @@ export class DirectMessagesComponent
   threadCount = 0;
   shouldScroll = false;
   messages: Message[] = [];
+  private previousMessageCount = 0;
+  private isInitialLoad = true;
   public Object = Object;
   isThreadOpen = false;
   smallEmojiMenu = false;
@@ -117,17 +119,22 @@ export class DirectMessagesComponent
       }
     });
     this.messageListSub = this.messageService.messageList$.subscribe((msgs) => {
+      const prevLength = this.messages.length;
       this.messages = msgs;
-      this.shouldScroll = true;
+      if (this.isInitialLoad || msgs.length > this.previousMessageCount) {
+        this.shouldScroll = true;
+      }
+
+      this.previousMessageCount = msgs.length;
+      this.isInitialLoad = false;
     });
   }
 
   ngAfterViewChecked() {
     if (this.shouldScroll) {
-      // Use requestAnimationFrame for better performance and to avoid blocking
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         this.scrollToBottomInstantly();
-      });
+      }, 100);
       this.shouldScroll = false;
     }
   }
@@ -147,6 +154,9 @@ export class DirectMessagesComponent
         clearInterval(checkUserInterval);
         this.subscribeToDM(id);
         this.senderId = currentUser.uid;
+        // Reset state for new channel
+        this.previousMessageCount = 0;
+        this.isInitialLoad = true;
       }
     }, 100);
   }
