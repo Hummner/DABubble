@@ -7,6 +7,7 @@ import {
   signal,
   ViewChild,
   ElementRef,
+  AfterViewChecked,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MessageTicketComponent } from '../message-ticket/message-ticket.component';
@@ -28,6 +29,7 @@ import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { UserMentionService } from '../../services/user-channel-mention.service';
 
+
 @Component({
   selector: 'app-thread-direct-message',
   standalone: true,
@@ -44,7 +46,7 @@ import { UserMentionService } from '../../services/user-channel-mention.service'
   templateUrl: './thread-direct-message.component.html',
   styleUrl: './thread-direct-message.component.scss',
 })
-export class ThreadDirectMessageComponent implements OnInit {
+export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   @Input() isThreadOpen!: boolean;
   @Output() close = new EventEmitter<void>();
   @Input() message: Message | null = null;
@@ -65,10 +67,12 @@ export class ThreadDirectMessageComponent implements OnInit {
   content = '';
   senderId = '';
   smallEmojiMenu = false;
+  shouldScroll = false;
 
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('scrollContainerThread') scrollContainerThread!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -77,7 +81,7 @@ export class ThreadDirectMessageComponent implements OnInit {
     private messageService: MessageService,
     private threadMessageService: ThreadDirectMessageService,
     private firestoreService: FirestoreService,
-    public userMentionService: UserMentionService
+    public userMentionService: UserMentionService,
   ) {}
 
   ngOnInit(): void {
@@ -87,9 +91,27 @@ export class ThreadDirectMessageComponent implements OnInit {
       this.unsubList = this.messageService.subList(this.channelId);
     }
     this.messageService.messageList$.subscribe((msgs) => {
-      // console.log('Messages received:', msgs);
       this.messages = msgs;
     });
+    this.shouldScroll = true;
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.shouldScroll && this.threadMessages.length) {
+      setTimeout(() => {
+        this.scrollToBottomInstantly();
+      }, 0);
+      this.shouldScroll = true;
+    }
+    this.shouldScroll = false;
+  }
+
+  scrollToBottomInstantly() {
+    if (this.scrollContainerThread?.nativeElement) {
+      const el = this.scrollContainerThread.nativeElement;
+      el.scrollTop = el.scrollHeight;
+      console.log(el.scrollHeight);
+    }
   }
 
   handleRouteParams() {
@@ -100,22 +122,21 @@ export class ThreadDirectMessageComponent implements OnInit {
         if (this.channelId && this.messageId) {
           this.subscribeToParentMessage(this.channelId, this.messageId);
           this.subscribeToThreadMessages(this.channelId, this.messageId);
+          this.shouldScroll = true;
         }
       });
     });
   }
 
   waitForUserThenSubscribe() {
-    const checkUserInterval = setInterval(() => {
-      const currentUser = this.userProfile();
-      if (currentUser?.uid) {
-        clearInterval(checkUserInterval);
-        if (this.channelId) {
-          this.subscribeToDM(this.channelId);
-          this.senderId = currentUser.uid;
-        }
+    const currentUser = this.userProfile();
+    if (currentUser?.uid) {
+      if (this.channelId) {
+        this.subscribeToDM(this.channelId);
+        this.senderId = currentUser.uid;
       }
-    }, 100);
+      return;
+    }
   }
 
   groupMessagesByDate(): { [date: string]: Message[] } {
@@ -157,6 +178,7 @@ export class ThreadDirectMessageComponent implements OnInit {
         this.message?.id
       );
       this.updateParentMessageWithThreadInfo(this.message);
+      this.shouldScroll = true; 
     }
     this.content = '';
   }
@@ -181,7 +203,7 @@ export class ThreadDirectMessageComponent implements OnInit {
     this.threadMessagesSub =
       this.threadMessageService.threadMessages$.subscribe((messages) => {
         this.threadMessages = messages;
-        // console.log('Updated thread messages:', this.threadMessages);
+        this.shouldScroll = true; 
       });
   }
 
@@ -205,7 +227,6 @@ export class ThreadDirectMessageComponent implements OnInit {
           docSnap.data(),
           docSnap.id
         );
-        // console.log('Live updated parent message:', this.message);
       }
     });
   }
