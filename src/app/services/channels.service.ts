@@ -178,4 +178,15 @@ export class ChannelsService implements OnDestroy {
 
   }
 
+  updateEditChannel(channelId: string, name: string, description: string) {
+      const channelRef = doc(this.firestore, 'channels', channelId);     
+      updateDoc(channelRef, {
+        name,
+        description,
+      })
+      .then(() => {
+        console.log('Channel updated successfully');
+        console.log("Name: ", name, " Description: ", description);
+      })
+    }
 }

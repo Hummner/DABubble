@@ -232,6 +232,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.editDisc = false;
       this.discInput.nativeElement.blur();
     }
+    this.channelsService.updateEditChannel(this.channelId, this.nameInput.nativeElement.value, this.discInput.nativeElement.value);
   }
 
   getChannelInfo() {
