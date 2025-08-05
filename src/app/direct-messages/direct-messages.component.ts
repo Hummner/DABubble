@@ -66,6 +66,8 @@ export class DirectMessagesComponent
   unsubSingleDM?: () => void;
   unsubUserList?: () => void;
   routeSub!: Subscription;
+  messageListSub!: Subscription;
+  routerEventsSub!: Subscription;
   unsubList?: () => void;
   content = '';
   senderId = '';
@@ -97,7 +99,7 @@ export class DirectMessagesComponent
   }
 
   subThreadRoute() {
-    this.router.events.subscribe((event) => {
+    this.routerEventsSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.isThreadOpen = this.router.url.includes('threadMessages');
       }
@@ -112,20 +114,20 @@ export class DirectMessagesComponent
         this.channelId = id;
         this.waitForUserThenSubscribe(id);
         this.unsubList = this.messageService.subList(this.channelId);
-        this.messageService.messageList$.subscribe((msgs) => {
-          this.messages = msgs;
-          this.shouldScroll = true;
-        });
       }
     });
-    this.messageService.messageList$.subscribe((msgs) => {
+    this.messageListSub = this.messageService.messageList$.subscribe((msgs) => {
       this.messages = msgs;
+      this.shouldScroll = true;
     });
   }
 
   ngAfterViewChecked() {
     if (this.shouldScroll) {
-      this.scrollToBottomInstantly();
+      // Use requestAnimationFrame for better performance and to avoid blocking
+      requestAnimationFrame(() => {
+        this.scrollToBottomInstantly();
+      });
       this.shouldScroll = false;
     }
   }
@@ -134,6 +136,7 @@ export class DirectMessagesComponent
     if (this.scrollContainer?.nativeElement) {
       const el = this.scrollContainer.nativeElement;
       el.scrollTop = el.scrollHeight;
+      console.log(el.scrollHeight);
     }
   }
 
@@ -151,6 +154,8 @@ export class DirectMessagesComponent
   ngOnDestroy(): void {
     this.unsubSingleDM?.();
     this.routeSub?.unsubscribe();
+    this.messageListSub?.unsubscribe();
+    this.routerEventsSub?.unsubscribe();
     this.unsubUserList?.();
     this.unsubList?.();
   }

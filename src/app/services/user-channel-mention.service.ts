@@ -24,9 +24,10 @@ export class UserMentionService {
     this.firestoreService.subUserList((users) => {
       this.updateFilteredUserList(newContent);
     });
-    setTimeout(() => {
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
       input.nativeElement.focus();
-    }, 0);
+    });
     return newContent;
   }
 
@@ -36,9 +37,10 @@ export class UserMentionService {
   ): string {
     const newContent = content + '#';
     this.updateFilteredChannelList(newContent);
-    setTimeout(() => {
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
       input.nativeElement.focus();
-    }, 0);
+    });
     return newContent;
   }
 
@@ -135,9 +137,10 @@ export class UserMentionService {
   ) {
     channelTrig.closeMenu();
     menuTrig.openMenu();
-    setTimeout(() => {
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
       input.nativeElement.focus();
-    }, 20);
+    });
   }
 
   onTypeHashtag(
@@ -147,9 +150,10 @@ export class UserMentionService {
   ) {
     menuTrig.closeMenu();
     channelTrig.openMenu();
-    setTimeout(() => {
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
       input.nativeElement.focus();
-    }, 20);
+    });
   }
 
   onEmptyInput(mTrig: MatMenuTrigger, chTrig: MatMenuTrigger, cont: string) {
