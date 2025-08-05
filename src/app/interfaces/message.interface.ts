@@ -5,7 +5,7 @@ export interface Message {
   createdAt?: Timestamp | FieldValue; 
   senderId: string;
   content: string;
-  reactions?: string[];
+  reactions?: { emojiName: string; users: string[] }[];
   hasThread:boolean;
   threadCount:number;
 }

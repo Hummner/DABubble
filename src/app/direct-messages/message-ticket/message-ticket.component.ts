@@ -66,7 +66,6 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   channels = toSignal(inject(NavbarService).channelsObs$);
 
   parsedMessageTokens: MessageToken[] = [];
-  // parsedMessageTokensChannelMention: MessageToken[] = [];
 
   emojiUnicodeMap = [
     { name: 'checked', code: '✅' },
@@ -185,50 +184,51 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     return value instanceof Timestamp;
   }
 
-  onEmojiToggle(emoji: string) {
+  addOrRemoveEmoji(emojiName: string) {
     if (!this.message?.id) return;
-    const threadId = this.message.id;
+    // const threadId = this.message.id;
     const docId = this.messageId ?? this.message.id;
-    const reactionsSet = new Set(this.message.reactions ?? []);
-    if (reactionsSet.has(emoji)) {
-      reactionsSet.delete(emoji);
-    } else {
-      reactionsSet.add(emoji);
-    }
-    this.message.reactions = Array.from(reactionsSet);
+    if (this.user?.uid) {
+      let reactions = this.message.reactions ?? [];
+      let reaction = reactions.find((r) => r.emojiName === emojiName);
+      if (reaction) {
+        if (reaction.users.includes(this.user.uid)) {
+          let indexOfUid = reaction.users.indexOf(this.user.uid);
 
-    if (this.inThreadView && docId && threadId) {
-      this.threadMessageService.updateThreadMessage(
-        this.message,
-        docId,
-        this.channelId,
-        threadId
-      );
-    } else {
-      this.messageService.updateMessage(this.message, docId, this.channelId);
-    }
-  }
-
-  onEmojiRemove(emoji: string) {
-    if (!this.message?.id) return;
-    const threadId = this.message.id;
-    const docId = this.messageId ?? this.message.id;
-    const reactionsSet = new Set(this.message.reactions ?? []);
-    if (reactionsSet.has(emoji)) {
-      reactionsSet.delete(emoji);
-      this.message.reactions = Array.from(reactionsSet);
-      if (this.inThreadView && docId && threadId) {
-        this.threadMessageService.updateThreadMessage(
-          this.message,
-          docId,
-          this.channelId,
-          threadId
-        );
-      } else {
+          reaction.users.splice(indexOfUid, 1);
+        } else {
+          reaction.users.push(this.user.uid);
+        }
+        this.message.reactions = reactions;
         this.messageService.updateMessage(this.message, docId, this.channelId);
       }
     }
   }
+
+  addEmoji(emojiName: string) {
+    console.log('moji added', emojiName);
+    if (!this.message?.id) return;
+    const docId = this.messageId ?? this.message.id;
+    if (this.user?.uid) {
+      let reactions = this.message.reactions ?? [];
+      let reaction = reactions.find((r) => r.emojiName === emojiName);
+      if (reaction) {
+        if (reaction.users.includes(this.user.uid)) {
+          let indexOfUid = reaction.users.indexOf(this.user.uid);
+
+          reaction.users.splice(indexOfUid, 1);
+        } else {
+          reaction.users.push(this.user.uid);
+        }
+        this.message.reactions = reactions;
+        this.messageService.updateMessage(this.message, docId, this.channelId);
+      }
+      else {
+        reactions.push({emojiName:emojiName, users:[this.user.uid]})
+      }
+    }
+  }
+
 
   openMoreEmoji(event: Event) {
     this.smallEmojiMenu = !this.smallEmojiMenu;
