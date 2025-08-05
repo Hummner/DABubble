@@ -68,9 +68,13 @@
         *ngIf="message.reactions"
       >
         @for(emoji of message.reactions; track emoji){
-        <div class="checked emoji" (click)="onEmojiRemove(emoji)">
-          <img src="assets/emojis/{{ emoji }}.png" alt="" />
-          <p>1</p>
+        <div
+          *ngIf="emoji.users.length > 0"
+          class="checked emoji"
+          (click)="addOrRemoveEmoji(emoji.emojiName)"
+        >
+          <img src="assets/emojis/{{ emoji.emojiName }}.png" alt="" />
+          <p>{{ emoji.users.length }}</p>
         </div>
         }
       </div>
@@ -86,14 +90,14 @@
       <div
         class="emoji-menu-item"
         *ngIf="inThreadView == false"
-        (click)="onEmojiToggle('checked')"
+        (click)="addEmoji('checked')"
       >
         <img src="assets/emojis/checked.svg" />
       </div>
       <div
         class="emoji-menu-item"
         *ngIf="inThreadView == false"
-        (click)="onEmojiToggle('thumb')"
+        (click)="addEmoji('thumb')"
       >
         <img src="assets/emojis/thumb.svg" />
       </div>
@@ -118,7 +122,7 @@
       [class.reversed-s-e-m]="!currentUserText"
     >
       @for(emoji of emojiUnicodeMap;track emojiUnicodeMap){
-      <div class="emoji-menu-item" (click)="onEmojiToggle(emoji.name)">
+      <div class="emoji-menu-item" (click)="addEmoji(emoji.name)">
         <img src="assets/emojis/{{ emoji.name }}.png" />
       </div>
       }
