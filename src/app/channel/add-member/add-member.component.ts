@@ -112,9 +112,7 @@ export class AddMemberComponent {
   }
 
   updateChannel() {
-    const channelRef = doc(this.firestore, 'channels', this.channelId); 
-    console.log('Add all Members:', this.navbar.members);
-    
+    const channelRef = doc(this.firestore, 'channels', this.channelId);     
     updateDoc(channelRef, {
       members: arrayUnion(...(this.navbar.members || [])),
       channelId: this.channelId

@@ -25,7 +25,7 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-channel',
   standalone: true,
-  imports: [MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent, FormsModule, MatProgressSpinnerModule, AddMemberComponent],
+  imports: [MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent, FormsModule, MatProgressSpinnerModule],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
 })
@@ -266,10 +266,11 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   addMemberDialog() {
-    this.dialog.open(AddMemberComponent)
-          .afterClosed()
-          .subscribe((channelName) => {
-            console.log('AddMember Dialog closed', channelName);
-          });
+    this.dialog.open(AddMemberComponent, {
+      data: {
+        channelName: this.channel?.name,
+        channelId: this.channelId
+      }}
+    );
   }
 }
