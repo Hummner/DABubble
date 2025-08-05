@@ -19,12 +19,13 @@ import { Timestamp } from '@angular/fire/firestore';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EmojiArrayService } from '../services/emoji-array.service';
 import { AddMemberComponent } from '../channel/add-member/add-member.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
   selector: 'app-channel',
   standalone: true,
-  imports: [MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent, FormsModule, MatProgressSpinnerModule],
+  imports: [MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent, FormsModule, MatProgressSpinnerModule, AddMemberComponent],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
 })
@@ -60,7 +61,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -264,14 +266,10 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   addMemberDialog() {
-    // this.dialog
-    //       .open(AddMemberComponent)
-    //       .afterClosed()
-          // .subscribe((channelName) => {
-          //   if (!channelName) return;
-          //   this.dialog.open(AddChannelMemberComponent, {
-          //     data: { channelName },
-          //   });
-          // });
+    this.dialog.open(AddMemberComponent)
+          .afterClosed()
+          .subscribe((channelName) => {
+            console.log('AddMember Dialog closed', channelName);
+          });
   }
 }
