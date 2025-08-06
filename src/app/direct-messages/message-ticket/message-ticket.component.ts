@@ -68,7 +68,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
 
   parsedMessageTokens: MessageToken[] = [];
 
-  emojiList = this.emojiServise.emojiList;
+  emojiList = this.emojiServise.sortedEmoji;
 
   constructor(
     private firestore: FirestoreService,
@@ -170,25 +170,45 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     return value instanceof Timestamp;
   }
 
-  addRemoveEmoji(emojiName: string) {
-    this.emojiServise.addOrRemoveEmoji(
+  onEmojiClick(emojiName: string) {
+    this.emojiServise.toggleEmojiReaction(
       emojiName,
       this.message,
       this.channelId,
       this.inThreadView,
-      this.messageId // only needed for thread messages
+      this.messageId
     );
+    this.selectEmoji(emojiName);
   }
 
-  addEmoji(emojiName: string) {
-    this.emojiServise.addEmoji(
-      emojiName,
-      this.message,
-      this.channelId,
-      this.inThreadView,
-      this.messageId // optional for threads
+  selectEmoji(name: string) {
+    const selected = this.emojiServise.emojiList.find(
+      (emoji) => emoji.name === name
     );
+    if (!selected) return;
+    const updatedHistory = [
+      selected,
+      ...this.emojiServise.emojiUsageHistory.filter(
+        (e) => e.name !== selected.name
+      ),
+    ].slice(0, 2);
+    const rest = this.emojiServise.emojiList.filter(
+      (e) => !updatedHistory.some((used) => used.name === e.name)
+    );
+    this.emojiServise.emojiUsageHistory = [...updatedHistory, ...rest];
+    localStorage.setItem("usedEmoji", JSON.stringify(this.emojiServise.emojiUsageHistory))
   }
+
+  get sortedEmojis() {
+    if (this.emojiServise.emojiUsageHistory.length !== 0) {
+      return this.emojiServise.emojiUsageHistory;
+    }
+    const savedInLocal = localStorage.getItem("usedEmoji");
+    return savedInLocal ? JSON.parse(savedInLocal) : this.emojiServise.emojiList;
+  }
+
+
+
 
   openMoreEmoji(event: Event) {
     this.smallEmojiMenu = !this.smallEmojiMenu;

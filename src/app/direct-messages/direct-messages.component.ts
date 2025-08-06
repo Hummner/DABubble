@@ -60,7 +60,7 @@ export class DirectMessagesComponent
 {
   channelId!: string;
   userProfile = this.firestoreService.userProfile;
-  userProfileB = signal<UserProfileInterface | null>(null);
+
   profileOpen = false;
   backdropVisible = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
@@ -97,38 +97,10 @@ export class DirectMessagesComponent
     public emojiService: EmojiServiceService
   ) {}
 
-  updateEmojiList(emojis: any) {
-    this.parentEmojiList = emojis;
-  }
-
-  subThreadRoute() {
-    this.routerEventsSub = this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        this.isThreadOpen = this.router.url.includes('threadMessages');
-      }
-    });
-  }
-
   ngOnInit(): void {
     this.subThreadRoute();
-    this.routeSub = this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      if (id) {
-        this.channelId = id;
-        this.waitForUserThenSubscribe(id);
-        this.unsubList = this.messageService.subList(this.channelId);
-      }
-    });
-    this.messageListSub = this.messageService.messageList$.subscribe((msgs) => {
-      const prevLength = this.messages.length;
-      this.messages = msgs;
-      if (this.isInitialLoad || msgs.length > this.previousMessageCount) {
-        this.shouldScroll = true;
-      }
-
-      this.previousMessageCount = msgs.length;
-      this.isInitialLoad = false;
-    });
+    this.subscribeToDmChannel();
+    this.subscribeToMsgList();
   }
 
   ngAfterViewChecked() {
@@ -138,6 +110,58 @@ export class DirectMessagesComponent
       }, 100);
       this.shouldScroll = false;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubSingleDM?.();
+    this.routeSub?.unsubscribe();
+    this.messageListSub?.unsubscribe();
+    this.routerEventsSub?.unsubscribe();
+    this.unsubUserList?.();
+    this.unsubList?.();
+  }
+
+  get currentUser() {
+    return this.directMessageService.currentUserProfile();
+  }
+
+  get secondUser() {
+    return this.directMessageService.secondUserProfile();
+  }
+
+  updateEmojiList(emojis: any) {
+    this.parentEmojiList = emojis;
+  }
+
+  subscribeToDmChannel() {
+    this.routeSub = this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      if (id) {
+        this.channelId = id;
+        this.waitForUserThenSubscribe(id);
+        this.unsubList = this.messageService.subList(this.channelId);
+      }
+    });
+  }
+
+  subscribeToMsgList() {
+    this.messageListSub = this.messageService.messageList$.subscribe((msgs) => {
+      // const prevLength = this.messages.length;
+      this.messages = msgs;
+      if (this.isInitialLoad || msgs.length > this.previousMessageCount) {
+        this.shouldScroll = true;
+      }
+      this.previousMessageCount = msgs.length;
+      this.isInitialLoad = false;
+    });
+  }
+
+  subThreadRoute() {
+    this.routerEventsSub = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.isThreadOpen = this.router.url.includes('threadMessages');
+      }
+    });
   }
 
   scrollToBottomInstantly() {
@@ -162,19 +186,6 @@ export class DirectMessagesComponent
     }, 100);
   }
 
-  ngOnDestroy(): void {
-    this.unsubSingleDM?.();
-    this.routeSub?.unsubscribe();
-    this.messageListSub?.unsubscribe();
-    this.routerEventsSub?.unsubscribe();
-    this.unsubUserList?.();
-    this.unsubList?.();
-  }
-
-  get userB() {
-    return this.userProfileB();
-  }
-
   openProfileView() {
     this.profileOpen = true;
     this.backdropVisible = true;
@@ -186,23 +197,13 @@ export class DirectMessagesComponent
   }
 
   subscribeToDM(id: string) {
-    this.unsubSingleDM = this.directMessageService.subDMChannel(id, (data) => {
-      const users = data['users'] as string[];
-      const currentId = this.userProfile()?.uid;
-      const otherUserId = users.find((uid) => uid !== currentId);
-      if (otherUserId) {
-        this.getOtherUserProfile(otherUserId);
-      }
-    });
-  }
-
-  getOtherUserProfile(otherUserId: string) {
-    this.unsubUserList = this.firestoreService.subUserList((users) => {
-      const otherUser = users.find((user) => user.uid === otherUserId);
-      if (otherUser) {
-        this.userProfileB.set(otherUser);
-      }
-    });
+    const currentUserId = this.userProfile()?.uid;
+    if (!currentUserId) return;
+    this.unsubSingleDM?.();
+    this.unsubSingleDM = this.directMessageService.subDirectMessageChannel(
+      id,
+      currentUserId
+    );
   }
 
   addMessage() {

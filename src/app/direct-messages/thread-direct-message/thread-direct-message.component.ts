@@ -152,24 +152,16 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   subscribeToDM(id: string) {
-    this.unsubSingleDM = this.directMessageService.subDMChannel(id, (data) => {
-      const users = data['users'] as string[];
-      const currentId = this.userProfile()?.uid;
-      const otherUserId = users.find((uid) => uid !== currentId);
-      if (otherUserId) {
-        this.getOtherUserProfile(otherUserId);
-      }
-    });
+    const currentUserId = this.userProfile()?.uid;
+    if (!currentUserId) return;
+    this.unsubSingleDM?.();
+    this.unsubSingleDM = this.directMessageService.subDirectMessageChannel(
+      id,
+      currentUserId
+    );
+    this.userProfileB.set(this.directMessageService.secondUserProfile());
   }
 
-  getOtherUserProfile(otherUserId: string) {
-    this.unsubUserList = this.firestoreService.subUserList((users) => {
-      const otherUser = users.find((user) => user.uid === otherUserId);
-      if (otherUser) {
-        this.userProfileB.set(otherUser);
-      }
-    });
-  }
 
   addThreadMessage() {
     const currentUserId = this.senderId || this.userProfile()?.uid;
