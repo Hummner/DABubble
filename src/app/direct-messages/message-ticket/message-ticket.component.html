@@ -71,7 +71,7 @@
         <div
           *ngIf="emoji.users.length > 0"
           class="checked emoji"
-          (click)="addOrRemoveEmoji(emoji.emojiName)"
+          (click)="addRemoveEmoji(emoji.emojiName)"
         >
           <img src="assets/emojis/{{ emoji.emojiName }}.png" alt="" />
           <p>{{ emoji.users.length }}</p>

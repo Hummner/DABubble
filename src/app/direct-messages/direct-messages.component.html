@@ -79,7 +79,6 @@
               (openThread)="openThread($event)"
               [inThreadView]="false"
               (emojiListChange)="updateEmojiList($event)"
-
             ></app-message-ticket>
           </div>
         </div>
@@ -133,7 +132,7 @@
           </div>
         </div>
         <app-emoji-picker
-          *ngIf="smallEmojiMenu"
+          *ngIf="emojiService.smallEmojiMenu()"
           (emojiSelected)="addEmoji($event)"
         ></app-emoji-picker>
 
