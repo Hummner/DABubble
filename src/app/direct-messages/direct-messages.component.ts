@@ -110,6 +110,9 @@ export class DirectMessagesComponent
       }, 100);
       this.shouldScroll = false;
     }
+    if (!this.isThreadOpen && this.input?.nativeElement) {
+      this.input.nativeElement.focus();
+    }
   }
 
   ngOnDestroy(): void {
