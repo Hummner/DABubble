@@ -31,19 +31,38 @@ export class EmojiServiceService {
     { name: 'cool', code: '😎' },
     { name: 'angry', code: '😠' },
   ];
-  emojiUsageHistory: typeof this.emojiList = [];
 
-  get sortedEmoji() {
-    const historySet = new Set(this.emojiUsageHistory);
-    const recentFirst = this.emojiUsageHistory.filter((e) =>
-      this.emojiList.includes(e)
+  emojiHistory: typeof this.emojiList = [];
+  selectEmoji(name: string) {
+    const selected = this.emojiList.find(
+      (emoji) => emoji.name === name
     );
-    const rest = this.emojiList.filter((e) => !historySet.has(e));
-    return [...recentFirst, ...rest];
+    if (!selected) return;
+    const updatedHistory = [
+      selected,
+      ...this.emojiHistory.filter(
+        (e) => e.name !== selected.name
+      ),
+    ].slice(0, 2);
+    const rest = this.emojiList.filter(
+      (e) => !updatedHistory.some((used) => used.name === e.name)
+    );
+    this.emojiHistory = [...updatedHistory, ...rest];
+    localStorage.setItem(
+      'usedEmoji',
+      JSON.stringify(this.emojiHistory)
+    );
   }
 
-
-
+  get sortedEmojis() {
+    if (this.emojiHistory.length !== 0) {
+      return this.emojiHistory;
+    }
+    const savedInLocal = localStorage.getItem('usedEmoji');
+    return savedInLocal
+      ? JSON.parse(savedInLocal)
+      : this.emojiList;
+  }
 
   toggleEmojiReaction(
     emojiName: string,
@@ -86,7 +105,6 @@ export class EmojiServiceService {
     }
     return updatedReactions;
   }
-
 
   private toggleUserReaction(users: string[], userId: string): void {
     const index = users.indexOf(userId);

@@ -98,12 +98,17 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    if (this.shouldScroll && this.threadMessages.length) {
-      setTimeout(() => {
-        this.scrollToBottomInstantly();
-      }, 100);
-      this.shouldScroll = false;
-    }
+    setTimeout(() => {
+      if (this.shouldScroll && this.threadMessages.length) {
+        setTimeout(() => {
+          this.scrollToBottomInstantly();
+        }, 100);
+        this.shouldScroll = false;
+      }
+      if (this.input?.nativeElement) {
+        this.input.nativeElement.focus();
+      }
+    }, 0);
   }
 
   scrollToBottomInstantly() {
@@ -161,7 +166,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     );
     this.userProfileB.set(this.directMessageService.secondUserProfile());
   }
-
 
   addThreadMessage() {
     const currentUserId = this.senderId || this.userProfile()?.uid;

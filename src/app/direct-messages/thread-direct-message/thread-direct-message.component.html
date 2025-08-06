@@ -14,7 +14,7 @@
           *ngIf="message && channelId"
           [message]="message"
           [channelId]="channelId"
-          [inThreadView]="false"
+          [inThreadView]="true"
         ></app-message-ticket>
         <div *ngFor="let date of Object.keys(groupMessagesByDate())">
           <div class="date-separator">
@@ -49,6 +49,7 @@
     <footer>
       <div class="text-area">
         <textarea
+         
           #input
           name="chat_input"
           id="chat_input"
