@@ -71,7 +71,7 @@
         <div
           *ngIf="emoji.users.length > 0"
           class="checked emoji"
-          (click)="addRemoveEmoji(emoji.emojiName)"
+          (click)="onEmojiClick(emoji.emojiName)"
         >
           <img src="assets/emojis/{{ emoji.emojiName }}.png" alt="" />
           <p>{{ emoji.users.length }}</p>
@@ -90,16 +90,16 @@
       <div
         class="emoji-menu-item"
         *ngIf="inThreadView == false"
-        (click)="addEmoji('checked')"
+        (click)="onEmojiClick(sortedEmojis[0].name)"
       >
-        <img src="assets/emojis/checked.svg" />
+        <img  class="emoji-img" src="assets/emojis/{{ sortedEmojis[0].name }}.png" />
       </div>
       <div
         class="emoji-menu-item"
         *ngIf="inThreadView == false"
-        (click)="addEmoji('thumb')"
+        (click)="onEmojiClick(sortedEmojis[1].name)"
       >
-        <img src="assets/emojis/thumb.svg" />
+        <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[1].name }}.png" />
       </div>
       <div class="emoji-menu-item">
         <img
@@ -121,8 +121,8 @@
       *ngIf="smallEmojiMenu"
       [class.reversed-s-e-m]="!currentUserText"
     >
-      @for(emoji of emojiList;track emojiList){
-      <div class="emoji-menu-item" (click)="addEmoji(emoji.name)">
+      @for(emoji of sortedEmojis;track emojiList){
+      <div class="emoji-menu-item" (click)="onEmojiClick(emoji.name)">
         <img src="assets/emojis/{{ emoji.name }}.png" />
       </div>
       }

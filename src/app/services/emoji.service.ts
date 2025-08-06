@@ -31,8 +31,21 @@ export class EmojiServiceService {
     { name: 'cool', code: '😎' },
     { name: 'angry', code: '😠' },
   ];
+  emojiUsageHistory: typeof this.emojiList = [];
 
-  addOrRemoveEmoji(
+  get sortedEmoji() {
+    const historySet = new Set(this.emojiUsageHistory);
+    const recentFirst = this.emojiUsageHistory.filter((e) =>
+      this.emojiList.includes(e)
+    );
+    const rest = this.emojiList.filter((e) => !historySet.has(e));
+    return [...recentFirst, ...rest];
+  }
+
+
+
+
+  toggleEmojiReaction(
     emojiName: string,
     message: Message,
     channelId: string,
@@ -43,12 +56,12 @@ export class EmojiServiceService {
     const userId = this.firestore.getUserId();
     if (!userId) return;
     const docId = parentMessageId ?? message.id;
-    const reactions = [...(message.reactions ?? [])];
-    const reaction = reactions.find((r) => r.emojiName === emojiName);
-    reaction
-      ? this.toggleUserReaction(reaction.users, userId)
-      : reactions.push({ emojiName, users: [userId] });
-    message.reactions = reactions;
+    const updatedReactions = this.getUpdatedReactions(
+      emojiName,
+      message.reactions ?? [],
+      userId
+    );
+    message.reactions = updatedReactions;
     this.updateMessage(
       message,
       docId,
@@ -56,40 +69,32 @@ export class EmojiServiceService {
       inThreadView,
       parentMessageId
     );
+    console.log(`${emojiName} reaction toggled`);
   }
 
-  addEmoji(
+  private getUpdatedReactions(
     emojiName: string,
-    message: Message,
-    channelId: string,
-    inThreadView: boolean,
-    parentMessageId?: string
-  ): void {
-    if (!message?.id) return;
-    const userId = this.firestore.getUserId();
-    if (!userId) return;
-    const docId = parentMessageId ?? message.id;
-    const reaction = (message.reactions ??= []).find(
-      (r) => r.emojiName === emojiName
-    );
+    reactions: { emojiName: string; users: string[] }[],
+    userId: string
+  ): { emojiName: string; users: string[] }[] {
+    const updatedReactions = [...reactions];
+    const reaction = updatedReactions.find((r) => r.emojiName === emojiName);
     if (reaction) {
-      const i = reaction.users.indexOf(userId);
-      i >= 0 ? reaction.users.splice(i, 1) : reaction.users.push(userId);
+      this.toggleUserReaction(reaction.users, userId);
     } else {
-      message.reactions.push({ emojiName, users: [userId] });
+      updatedReactions.push({ emojiName, users: [userId] });
     }
-    this.updateMessage(
-      message,
-      docId,
-      channelId,
-      inThreadView,
-      parentMessageId
-    );
+    return updatedReactions;
   }
 
-  toggleUserReaction(users: string[], userId: string) {
-    const i = users.indexOf(userId);
-    i >= 0 ? users.splice(i, 1) : users.push(userId);
+
+  private toggleUserReaction(users: string[], userId: string): void {
+    const index = users.indexOf(userId);
+    if (index >= 0) {
+      users.splice(index, 1);
+    } else {
+      users.push(userId);
+    }
   }
 
   private updateMessage(
@@ -109,7 +114,6 @@ export class EmojiServiceService {
       : this.dmMsgService.updateMessage(msg, docId, channelId);
   }
 
-
   toggleSmallEmojiMenu(): boolean {
     const currentState = this.smallEmojiMenuSignal();
     this.smallEmojiMenuSignal.set(!currentState);
@@ -119,7 +123,6 @@ export class EmojiServiceService {
   closeEmojiBox(): void {
     this.smallEmojiMenuSignal.set(false);
   }
-
 
   addEmojiToContent(emoji: any, currentContent: string): string {
     if (emoji) {

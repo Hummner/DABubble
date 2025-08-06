@@ -11,7 +11,8 @@ import {
   orderBy,
 } from '@angular/fire/firestore';
 import { DirectMessageInterface } from '../interfaces/direct-message.interface';
-
+import { UserProfileInterface } from '../interfaces/user-profile.interface';
+import { FirestoreService } from './firestore.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -19,8 +20,12 @@ export class DirectMessageService {
   private firestore = inject(Firestore);
   private userIdsSignal = signal<string[]>([]);
   readonly userIds = this.userIdsSignal;
+
+  public currentUserProfile = signal<UserProfileInterface | null>(null);
+  public secondUserProfile = signal<UserProfileInterface | null>(null);
   private unsubDMList?: () => void;
-  constructor() {}
+  private unsubUserProfile?: () => void;
+  constructor(private firestoreService: FirestoreService) {}
 
   //we need to find the channel id, which exists between the current user and user I clicked on
   //if there is an existing one (already opened), it searches for it, if not, then creates a new one
@@ -29,31 +34,45 @@ export class DirectMessageService {
     clickedUserId: string
   ): Promise<string> {
     const q = query(
-      this.getDMListRef(),
+      this.getDirectMessageChannelListRef(),
       where('users', 'array-contains', currentUserId)
     );
     const snapshot = await getDocs(q);
-    const existingDoc = snapshot.docs.find((doc) => {
-      const users = doc.data()['users'];
-      return users.includes(clickedUserId);
+    const existingDoc = snapshot.docs.find((doc) =>
+      doc.data()['users'].includes(clickedUserId)
+    );
+    if (existingDoc) return existingDoc.id;
+    const docRef = await addDoc(this.getDirectMessageChannelListRef(), {
+      users: [currentUserId, clickedUserId],
     });
-    if (existingDoc) {
-      return existingDoc.id;
-    } else {
-      const docRef = await addDoc(this.getDMListRef(), {
-        users: [currentUserId, clickedUserId],
-      });
-      return docRef.id;
-    }
+    return docRef.id;
   }
 
-  subDMChannel(docId: string, handleData?: (data: any) => void): () => void {
-    const ref = this.getSingleDMChannelRef('directMessages', docId);
+  private subUserProfile(uid: string) {
+    this.unsubUserProfile?.();
+    this.unsubUserProfile = this.firestoreService.subUserList((users) => {
+      const secondUser = users.find((user) => user.uid === uid);
+      if (secondUser) {
+        this.secondUserProfile.set(secondUser);
+      }
+    });
+  }
+
+  subDirectMessageChannel(
+    docId: string,
+    currentUserId: string,
+    handleData?: (data: any) => void
+  ): () => void {
+    const ref = this.getSingleDirectMessageChannelRef('directMessages', docId);
     const unsubSingle = onSnapshot(ref, (snapshot) => {
       const data = snapshot.data();
       if (data) {
         const users = data['users'] || [];
         this.userIdsSignal.set(users);
+        const secondUser = users.find((uid: string) => uid !== currentUserId);
+        if (secondUser) {
+          this.subUserProfile(secondUser);
+        }
         handleData?.(data);
       }
     });
@@ -63,7 +82,7 @@ export class DirectMessageService {
   subDMList(
     handleData?: (dmList: DirectMessageInterface[]) => void
   ): () => void {
-    const ref = this.getDMListRef();
+    const ref = this.getDirectMessageChannelListRef();
     const q = query(ref, orderBy('createdAt'));
     const unsubList = onSnapshot(q, (snapshot) => {
       const dmList: DirectMessageInterface[] = [];
@@ -82,22 +101,16 @@ export class DirectMessageService {
     };
   }
 
-  getCleanJson(dm: DirectMessageInterface): Partial<DirectMessageInterface> {
-    return {
-      id: dm.id,
-      users: dm.users,
-    };
-  }
-
   ngOnDestroy(): void {
     this.unsubDMList?.();
+    this.unsubUserProfile?.();
   }
 
-  getDMListRef() {
+  getDirectMessageChannelListRef() {
     return collection(this.firestore, 'directMessages');
   }
 
-  getSingleDMChannelRef(colId: string, docId: string) {
+  getSingleDirectMessageChannelRef(colId: string, docId: string) {
     return doc(collection(this.firestore, colId), docId);
   }
 }

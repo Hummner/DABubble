@@ -1,12 +1,12 @@
-<section *ngIf="userProfileB">
+<section *ngIf="secondUser">
   <div
     class="custom-backdrop"
     [class.visible]="backdropVisible"
     (click)="closeProfileCard()"
   ></div>
   <app-user-card
-    *ngIf="profileOpen && userProfileB()"
-    [userProfileB]="userProfileB()"
+    *ngIf="profileOpen && secondUser"
+    [userProfileB]="secondUser"
     [profileOpen]="profileOpen"
     (closeProfile)="closeProfileCard()"
   ></app-user-card>
@@ -30,7 +30,7 @@
           <div class="dm-img">
             <img
               class="message-to-img"
-              [src]="userB?.imgUrl"
+              [src]="secondUser.imgUrl"
               alt="MessageTo-Image"
             />
             <img
@@ -39,21 +39,21 @@
               alt="Status Image"
             />
           </div>
-          <p>{{ userB?.name }}</p>
+          <p>{{ secondUser.name }}</p>
         </div>
       </header>
       <main>
-        <div *ngIf="userProfileB" class="scroll-wrapper" #scrollContainer>
+        <div *ngIf="secondUser" class="scroll-wrapper" #scrollContainer>
           <div class="first-msg">
             <div class="dm-msg-name">
-              <img [src]="userB?.imgUrl" alt="" />
-              <p>{{ userB?.name }}</p>
+              <img [src]="secondUser.imgUrl" alt="" />
+              <p>{{ secondUser.name }}</p>
             </div>
             <div class="dm-msg-info">
               <p>
                 Diese Unterhaltung findet nur zwischen
                 <span (click)="openProfileView()" class="purple"
-                  >&#64;{{ userB?.name }}</span
+                  >&#64;{{ secondUser.name }}</span
                 >
                 und dir statt.
               </p>
@@ -91,7 +91,7 @@
             [(ngModel)]="content"
             name="chat_input"
             id="chat_input"
-            placeholder="Nachricht an @{{ userB?.name }}"
+            placeholder="Nachricht an @{{ secondUser.name }}"
             (input)="onInputChange($event)"
           ></textarea>
         </div>
