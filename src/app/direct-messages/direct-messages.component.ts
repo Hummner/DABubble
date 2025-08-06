@@ -33,6 +33,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { UserMentionService } from '../services/user-channel-mention.service';
 import { NavbarService } from '../services/navbar.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { EmojiServiceService } from '../services/emoji.service';
 @Component({
   selector: 'app-direct-messages',
   standalone: true,
@@ -79,7 +80,6 @@ export class DirectMessagesComponent
   private isInitialLoad = true;
   public Object = Object;
   isThreadOpen = false;
-  smallEmojiMenu = false;
   parentEmojiList: any;
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
@@ -93,7 +93,8 @@ export class DirectMessagesComponent
     private firestoreService: FirestoreService,
     private messageService: MessageService,
     public userMentionService: UserMentionService,
-    public navbarService: NavbarService
+    public navbarService: NavbarService,
+    public emojiService: EmojiServiceService
   ) {}
 
   updateEmojiList(emojis: any) {
@@ -239,22 +240,15 @@ export class DirectMessagesComponent
   }
 
   toggleSmallEmojiMenu() {
-    if (this.smallEmojiMenu == false) {
-      this.smallEmojiMenu = true;
-    } else {
-      this.smallEmojiMenu = false;
-    }
+    return this.emojiService.toggleSmallEmojiMenu();
   }
 
   closeEmojiBox() {
-    this.smallEmojiMenu = false;
+    this.emojiService.closeEmojiBox();
   }
 
   addEmoji(emoji: any) {
-    console.log(emoji.name, 'added');
-    if (emoji) {
-      this.content += emoji;
-    }
+    this.content = this.emojiService.addEmojiToContent(emoji, this.content);
   }
 
   tagInputStart() {

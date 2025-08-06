@@ -28,6 +28,7 @@ import { serverTimestamp } from '@angular/fire/firestore';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { UserMentionService } from '../../services/user-channel-mention.service';
+import { EmojiServiceService } from '../../services/emoji.service';
 
 @Component({
   selector: 'app-thread-direct-message',
@@ -65,7 +66,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   userProfileB = signal<UserProfileInterface | null>(null);
   content = '';
   senderId = '';
-  smallEmojiMenu = false;
   shouldScroll = false;
   private previousThreadMessageCount = 0;
   private isInitialThreadLoad = true;
@@ -82,12 +82,12 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     private messageService: MessageService,
     private threadMessageService: ThreadDirectMessageService,
     private firestoreService: FirestoreService,
-    public userMentionService: UserMentionService
+    public userMentionService: UserMentionService,
+    public emojiService: EmojiServiceService
   ) {}
 
   ngOnInit(): void {
     this.handleRouteParams();
-    this.waitForUserThenSubscribe();
     if (this.channelId) {
       this.unsubList = this.messageService.subList(this.channelId);
     }
@@ -99,7 +99,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     if (this.shouldScroll && this.threadMessages.length) {
-      // Use a longer delay to ensure DOM is fully updated with new message
       setTimeout(() => {
         this.scrollToBottomInstantly();
       }, 100);
@@ -123,11 +122,11 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
         if (this.channelId && this.messageId) {
           this.subscribeToParentMessage(this.channelId, this.messageId);
           this.subscribeToThreadMessages(this.channelId, this.messageId);
-          // Reset state for new thread
           this.previousThreadMessageCount = 0;
           this.isInitialThreadLoad = true;
           this.shouldScroll = true;
         }
+        this.waitForUserThenSubscribe();
       });
     });
   }
@@ -135,11 +134,16 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   waitForUserThenSubscribe() {
     const currentUser = this.userProfile();
     if (currentUser?.uid) {
+      this.senderId = currentUser.uid;
       if (this.channelId) {
         this.subscribeToDM(this.channelId);
-        this.senderId = currentUser.uid;
       }
-      return;
+    } else {
+      setTimeout(() => {
+        if (!this.senderId) {
+          this.waitForUserThenSubscribe();
+        }
+      }, 100);
     }
   }
 
@@ -168,9 +172,14 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   addThreadMessage() {
+    const currentUserId = this.senderId || this.userProfile()?.uid;
+    if (!currentUserId) {
+      console.error('Cannot send thread message: No user ID available');
+      return;
+    }
     const threadMessage = {
       createdAt: serverTimestamp(),
-      senderId: this.senderId,
+      senderId: currentUserId,
       content: this.content,
       hasThread: false,
       threadCount: 0,
@@ -182,7 +191,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
         this.message?.id
       );
       this.updateParentMessageWithThreadInfo(this.message);
-      this.shouldScroll = true; // Keep this for manual message addition
+      this.shouldScroll = true;
     }
     this.content = '';
   }
@@ -206,16 +215,12 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     this.threadMessageService.subThreadList(channelId, messageId);
     this.threadMessagesSub =
       this.threadMessageService.threadMessages$.subscribe((messages) => {
-        // Only scroll if:
-        // 1. It's the initial load (first time getting thread messages)
-        // 2. New messages were added (message count increased)
         if (
           this.isInitialThreadLoad ||
           messages.length > this.previousThreadMessageCount
         ) {
           this.shouldScroll = true;
         }
-
         this.threadMessages = messages;
         this.previousThreadMessageCount = messages.length;
         this.isInitialThreadLoad = false;
@@ -255,21 +260,15 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   toggleSmallEmojiMenu() {
-    if (this.smallEmojiMenu == false) {
-      this.smallEmojiMenu = true;
-    } else {
-      this.smallEmojiMenu = false;
-    }
+    return this.emojiService.toggleSmallEmojiMenu();
   }
 
   closeEmojiBox() {
-    this.smallEmojiMenu = false;
+    this.emojiService.closeEmojiBox();
   }
 
   addEmoji(emoji: any) {
-    if (emoji) {
-      this.content += emoji;
-    }
+    this.content = this.emojiService.addEmojiToContent(emoji, this.content);
   }
 
   tagInputStart() {

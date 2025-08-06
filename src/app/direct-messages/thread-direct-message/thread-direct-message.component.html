@@ -94,7 +94,7 @@
         </div>
       </div>
       <app-emoji-picker
-        *ngIf="smallEmojiMenu"
+        *ngIf="emojiService.smallEmojiMenu()"
         (emojiSelected)="addEmoji($event)"
       ></app-emoji-picker>
       <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu">

@@ -34,7 +34,7 @@ type MessageToken =
 @Component({
   selector: 'app-message-ticket',
   standalone: true,
-  imports: [CommonModule, EmojiPickerComponent],
+  imports: [CommonModule],
   templateUrl: './message-ticket.component.html',
   styleUrl: './message-ticket.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -131,7 +131,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   }
 
   parseMessageMention(content: string): MessageToken[] {
-    const mentionRegex = /([@#])([\w]+(?:\s[\w]+)*)/g;
+    const mentionRegex = /([@#])([\wäöüÄÖÜß]+(?:\s[\wäöüÄÖÜß]+)*)/g;
     const tokens: MessageToken[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | null;
@@ -139,101 +139,55 @@ export class MessageTicketComponent implements OnChanges, OnInit {
       const index = match.index;
       const mentionSymbol = match[1];
       const mentionName = match[2];
-      if (index > lastIndex) {
-        tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
-      }
-      if (mentionSymbol === '@') {
-        tokens.push({ type: 'mentionUser', userName: mentionName });
-      } else if (mentionSymbol === '#') {
-        tokens.push({ type: 'mentionChannel', channelName: mentionName });
-      }
+      this.createTextType(content, lastIndex, tokens, index);
+      this.createMentionType(mentionSymbol, mentionName, tokens);
       lastIndex = mentionRegex.lastIndex;
     }
-    if (lastIndex < content.length) {
-      tokens.push({ type: 'text', value: content.slice(lastIndex) });
-    }
+    this.createTextType(content, lastIndex, tokens);
     return tokens;
   }
 
-  // createTextType(
-  //   content: string,
-  //   lastIndex: number,
-  //   index: number,
-  //   tokens: MessageToken[]
-  // ) {
-  //   if (lastIndex < content.length || index > lastIndex) {
-  //     tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
-  //   }
-  // }
+  createTextType(
+    content: string,
+    lastIndex: number,
+    tokens: MessageToken[],
+    index?: number
+  ) {
+    if (lastIndex < content.length || index! > lastIndex) {
+      tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
+    }
+  }
+
+  createMentionType(symbol: string, name: string, tokens: MessageToken[]) {
+    if (symbol === '@') {
+      tokens.push({ type: 'mentionUser', userName: name });
+    } else if (symbol === '#') {
+      tokens.push({ type: 'mentionChannel', channelName: name });
+    }
+  }
 
   isTimestamp(value: any): value is Timestamp {
     return value instanceof Timestamp;
   }
 
-  addOrRemoveEmoji(emojiName: string) {
-    if (!this.message?.id) return;
-    const docId = this.messageId ?? this.message.id;
-    const threadId = this.message.id;
-    const currentUserId = this.firestore.getUserId();
-    if (currentUserId) {
-      let reactions = this.message.reactions ?? [];
-      let reaction = reactions.find((r) => r.emojiName === emojiName);
-      if (reaction) {
-        if (reaction.users.includes(currentUserId)) {
-          let indexOfUid = reaction.users.indexOf(currentUserId);
-          reaction.users.splice(indexOfUid, 1);
-        } else {
-          reaction.users.push(currentUserId);
-        }
-      } else {
-        reactions.push({ emojiName: emojiName, users: [currentUserId] });
-      }
-      this.message.reactions = reactions;
-
-      if (this.inThreadView && docId && threadId) {
-        this.threadMessageService.updateThreadMessage(
-          this.message,
-          docId,
-          this.channelId,
-          threadId
-        );
-      } else {
-        this.messageService.updateMessage(this.message, docId, this.channelId);
-      }
-    }
+  addRemoveEmoji(emojiName: string) {
+    this.emojiServise.addOrRemoveEmoji(
+      emojiName,
+      this.message,
+      this.channelId,
+      this.inThreadView,
+      this.messageId // only needed for thread messages
+    );
   }
 
   addEmoji(emojiName: string) {
-    console.log('moji added', emojiName);
-    if (!this.message?.id) return;
-    const docId = this.messageId ?? this.message.id;
-    const threadId = this.message.id;
-    const currentUserId = this.firestore.getUserId();
-    if (currentUserId) {
-      let reactions = this.message.reactions ?? [];
-      let reaction = reactions.find((r) => r.emojiName === emojiName);
-      if (reaction) {
-        if (reaction.users.includes(currentUserId)) {
-          let indexOfUid = reaction.users.indexOf(currentUserId);
-          reaction.users.splice(indexOfUid, 1);
-        } else {
-          reaction.users.push(currentUserId);
-        }
-      } else {
-        reactions.push({ emojiName: emojiName, users: [currentUserId] });
-      }
-      this.message.reactions = reactions;
-      if (this.inThreadView && docId && threadId) {
-        this.threadMessageService.updateThreadMessage(
-          this.message,
-          docId,
-          this.channelId,
-          threadId
-        );
-      } else {
-        this.messageService.updateMessage(this.message, docId, this.channelId);
-      }
-    }
+    this.emojiServise.addEmoji(
+      emojiName,
+      this.message,
+      this.channelId,
+      this.inThreadView,
+      this.messageId // optional for threads
+    );
   }
 
   openMoreEmoji(event: Event) {
