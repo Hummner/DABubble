@@ -45,7 +45,7 @@
                                 <span class="created-by-name">{{channel?.createdBy}}</span>
                             </div>
                             <div class="edit-channel-footer">
-                                <span class="primary-button">Channel verlassen</span>
+                                <span (click)="leaveChannel(this.userProfile(), editChannelTrigger)" class="primary-button">Channel verlassen</span>
                             </div>
                         </div>
                     </mat-menu>
