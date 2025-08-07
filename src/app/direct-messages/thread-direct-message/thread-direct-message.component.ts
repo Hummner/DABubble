@@ -1,14 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  signal,
-  ViewChild,
-  ElementRef,
-  AfterViewChecked,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, signal, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MessageTicketComponent } from '../message-ticket/message-ticket.component';
 import { Message } from '../../interfaces/message.interface';
@@ -69,6 +59,8 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   shouldScroll = false;
   private previousThreadMessageCount = 0;
   private isInitialThreadLoad = true;
+  private previousMessageCount = 0;
+  private isInitialLoad = true;
 
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
@@ -93,29 +85,30 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     }
     this.messageService.messageList$.subscribe((msgs) => {
       this.messages = msgs;
+      this.isInitialLoad = false;
     });
-    this.shouldScroll = true;
   }
 
   ngAfterViewChecked(): void {
-    setTimeout(() => {
-      if (this.shouldScroll && this.threadMessages.length) {
-        setTimeout(() => {
-          this.scrollToBottomInstantly();
-        }, 100);
+    if (this.shouldScroll && this.threadMessages.length) {
+      setTimeout(() => {
+        this.scrollToBottomInstantly();
         this.shouldScroll = false;
-      }
-      if (this.input?.nativeElement) {
-        this.input.nativeElement.focus();
-      }
-    }, 0);
+      }, 100);
+    }
+    if (this.input?.nativeElement) {
+      this.input.nativeElement.focus();
+    }
   }
 
   scrollToBottomInstantly() {
     if (this.scrollContainerThread?.nativeElement) {
       const el = this.scrollContainerThread.nativeElement;
-      el.scrollTop = el.scrollHeight;
-      console.log(el.scrollHeight);
+      setTimeout(() => {
+        el.scrollTop = el.scrollHeight;
+      }, 0);
+    } else {
+      console.log('ScrollContainer not available');
     }
   }
 
@@ -127,9 +120,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
         if (this.channelId && this.messageId) {
           this.subscribeToParentMessage(this.channelId, this.messageId);
           this.subscribeToThreadMessages(this.channelId, this.messageId);
-          this.previousThreadMessageCount = 0;
-          this.isInitialThreadLoad = true;
-          this.shouldScroll = true;
         }
         this.waitForUserThenSubscribe();
       });
@@ -142,6 +132,8 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       this.senderId = currentUser.uid;
       if (this.channelId) {
         this.subscribeToDM(this.channelId);
+        this.previousThreadMessageCount = 0;
+        this.isInitialLoad = true;
       }
     } else {
       setTimeout(() => {
@@ -160,10 +152,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     const currentUserId = this.userProfile()?.uid;
     if (!currentUserId) return;
     this.unsubSingleDM?.();
-    this.unsubSingleDM = this.directMessageService.subDirectMessageChannel(
-      id,
-      currentUserId
-    );
+    this.unsubSingleDM = this.directMessageService.subDirectMessageChannel(id, currentUserId);
     this.userProfileB.set(this.directMessageService.secondUserProfile());
   }
 
@@ -181,11 +170,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       threadCount: 0,
     };
     if (this.channelId && this.message?.id) {
-      this.threadMessageService.addThreadMessage(
-        threadMessage,
-        this.channelId,
-        this.message?.id
-      );
+      this.threadMessageService.addThreadMessage(threadMessage, this.channelId, this.message?.id);
       this.updateParentMessageWithThreadInfo(this.message);
       this.shouldScroll = true;
     }
@@ -209,18 +194,18 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
 
   subscribeToThreadMessages(channelId: string, messageId: string) {
     this.threadMessageService.subThreadList(channelId, messageId);
-    this.threadMessagesSub =
-      this.threadMessageService.threadMessages$.subscribe((messages) => {
-        if (
-          this.isInitialThreadLoad ||
-          messages.length > this.previousThreadMessageCount
-        ) {
+    this.threadMessagesSub = this.threadMessageService.threadMessages$.subscribe((messages) => {
+      if (this.isInitialThreadLoad || messages.length > this.previousThreadMessageCount) {
+        const wasEmpty = this.messages.length === 0;
+        const hadNewMessage = messages.length > this.previousThreadMessageCount;
+        this.threadMessages = messages;
+        if (wasEmpty || (hadNewMessage && this.previousThreadMessageCount > 0)) {
           this.shouldScroll = true;
         }
-        this.threadMessages = messages;
-        this.previousThreadMessageCount = messages.length;
-        this.isInitialThreadLoad = false;
-      });
+      }
+      this.previousThreadMessageCount = messages.length;
+      this.isInitialThreadLoad = false;
+    });
   }
 
   ngOnDestroy(): void {
@@ -233,26 +218,17 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   subscribeToParentMessage(channelId: string, messageId: string) {
-    const docRef = this.messageService.getSingleMessageRef(
-      channelId,
-      messageId
-    );
+    const docRef = this.messageService.getSingleMessageRef(channelId, messageId);
     this.parentMessageUnsub = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
-        this.message = this.messageService.setMessageObject(
-          docSnap.data(),
-          docSnap.id
-        );
+        this.message = this.messageService.setMessageObject(docSnap.data(), docSnap.id);
       }
     });
   }
 
   closeThread() {
     this.close.emit();
-    this.router.navigate([
-      '/directMessages',
-      this.route.snapshot.parent?.paramMap.get('id'),
-    ]);
+    this.router.navigate(['/directMessages', this.route.snapshot.parent?.paramMap.get('id')]);
   }
 
   toggleSmallEmojiMenu() {
@@ -268,16 +244,10 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   tagInputStart() {
-    this.content = this.userMentionService.tagInputStart(
-      this.content,
-      this.input
-    );
+    this.content = this.userMentionService.tagInputStart(this.content, this.input);
   }
   tagInputChannelStart() {
-    this.content = this.userMentionService.tagChannelInputStart(
-      this.content,
-      this.input
-    );
+    this.content = this.userMentionService.tagChannelInputStart(this.content, this.input);
   }
 
   updateFilteredUserList() {
@@ -296,11 +266,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   onInputChange(event: Event) {
-    this.userMentionService.onInputChange(
-      this.content,
-      this.mentionMenuTrigger,
-      this.channelMenuTrigger,
-      this.input
-    );
+    this.userMentionService.onInputChange(this.content, this.mentionMenuTrigger, this.channelMenuTrigger, this.input);
   }
 }

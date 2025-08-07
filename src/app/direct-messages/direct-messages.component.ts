@@ -1,18 +1,7 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  signal,
-  ViewChild,
-  ElementRef,
-  AfterViewInit,
-  AfterViewChecked,
-  NgModule,
-  inject,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -21,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { DirectMessageService } from '../services/direct-message.service';
 import { FirestoreService } from '../services/firestore.service';
 import { MessageService } from '../services/message.service';
-import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { Message } from '../interfaces/message.interface';
 import { UserCardComponent } from './user-card/user-card.component';
 import { MessageTicketComponent } from './message-ticket/message-ticket.component';
@@ -34,6 +22,7 @@ import { UserMentionService } from '../services/user-channel-mention.service';
 import { NavbarService } from '../services/navbar.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EmojiServiceService } from '../services/emoji.service';
+
 @Component({
   selector: 'app-direct-messages',
   standalone: true,
@@ -55,12 +44,9 @@ import { EmojiServiceService } from '../services/emoji.service';
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
 })
-export class DirectMessagesComponent
-  implements OnInit, OnDestroy, AfterViewChecked
-{
+export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
   channelId!: string;
   userProfile = this.firestoreService.userProfile;
-
   profileOpen = false;
   backdropVisible = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
@@ -104,11 +90,11 @@ export class DirectMessagesComponent
   }
 
   ngAfterViewChecked() {
-    if (this.shouldScroll) {
+    if (this.shouldScroll && this.messages.length && this.scrollContainer?.nativeElement) {
       setTimeout(() => {
         this.scrollToBottomInstantly();
+        this.shouldScroll = false;
       }, 100);
-      this.shouldScroll = false;
     }
     if (!this.isThreadOpen && this.input?.nativeElement) {
       this.input.nativeElement.focus();
@@ -141,6 +127,8 @@ export class DirectMessagesComponent
       const id = params.get('id');
       if (id) {
         this.channelId = id;
+        this.shouldScroll = true;
+        this.isInitialLoad = true;
         this.waitForUserThenSubscribe(id);
         this.unsubList = this.messageService.subList(this.channelId);
       }
@@ -149,9 +137,10 @@ export class DirectMessagesComponent
 
   subscribeToMsgList() {
     this.messageListSub = this.messageService.messageList$.subscribe((msgs) => {
-      // const prevLength = this.messages.length;
+      const wasEmpty = this.messages.length === 0;
+      const hadNewMessage = msgs.length > this.previousMessageCount;
       this.messages = msgs;
-      if (this.isInitialLoad || msgs.length > this.previousMessageCount) {
+      if (wasEmpty || (hadNewMessage && this.previousMessageCount > 0)) {
         this.shouldScroll = true;
       }
       this.previousMessageCount = msgs.length;
@@ -170,8 +159,11 @@ export class DirectMessagesComponent
   scrollToBottomInstantly() {
     if (this.scrollContainer?.nativeElement) {
       const el = this.scrollContainer.nativeElement;
-      el.scrollTop = el.scrollHeight;
-      console.log(el.scrollHeight);
+      setTimeout(() => {
+        el.scrollTop = el.scrollHeight;
+      }, 0);
+    } else {
+      console.log('ScrollContainer not available');
     }
   }
 
@@ -182,7 +174,6 @@ export class DirectMessagesComponent
         clearInterval(checkUserInterval);
         this.subscribeToDM(id);
         this.senderId = currentUser.uid;
-        // Reset state for new channel
         this.previousMessageCount = 0;
         this.isInitialLoad = true;
       }
@@ -203,10 +194,7 @@ export class DirectMessagesComponent
     const currentUserId = this.userProfile()?.uid;
     if (!currentUserId) return;
     this.unsubSingleDM?.();
-    this.unsubSingleDM = this.directMessageService.subDirectMessageChannel(
-      id,
-      currentUserId
-    );
+    this.unsubSingleDM = this.directMessageService.subDirectMessageChannel(id, currentUserId);
   }
 
   addMessage() {
@@ -235,12 +223,7 @@ export class DirectMessagesComponent
       return;
     }
     this.isThreadOpen = true;
-    this.router.navigate([
-      'directMessages',
-      this.channelId,
-      'threadMessages',
-      messageId,
-    ]);
+    this.router.navigate(['directMessages', this.channelId, 'threadMessages', messageId]);
   }
 
   toggleSmallEmojiMenu() {
@@ -256,17 +239,11 @@ export class DirectMessagesComponent
   }
 
   tagInputStart() {
-    this.content = this.userMentionService.tagInputStart(
-      this.content,
-      this.input
-    );
+    this.content = this.userMentionService.tagInputStart(this.content, this.input);
   }
 
   tagInputChannelStart() {
-    this.content = this.userMentionService.tagChannelInputStart(
-      this.content,
-      this.input
-    );
+    this.content = this.userMentionService.tagChannelInputStart(this.content, this.input);
   }
 
   updateFilteredUserList() {
@@ -286,11 +263,6 @@ export class DirectMessagesComponent
   }
 
   onInputChange(event: Event) {
-    this.userMentionService.onInputChange(
-      this.content,
-      this.mentionMenuTrigger,
-      this.channelMenuTrigger,
-      this.input
-    );
+    this.userMentionService.onInputChange(this.content, this.mentionMenuTrigger, this.channelMenuTrigger, this.input);
   }
 }

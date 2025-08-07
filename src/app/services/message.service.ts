@@ -54,11 +54,7 @@ export class MessageService {
     }
   }
 
-  async updateMessagePartial(
-    partialData: Partial<Message>,
-    docId: string,
-    channelId: string
-  ) {
+  async updateMessagePartial(partialData: Partial<Message>, docId: string, channelId: string) {
     if (!docId || !channelId) {
       console.error('Missing docId or channelId:', { docId, channelId });
       return;
@@ -71,10 +67,7 @@ export class MessageService {
     }
   }
 
-  async getMessageById(
-    channelId: string,
-    messageId: string
-  ): Promise<Message | null> {
+  async getMessageById(channelId: string, messageId: string): Promise<Message | null> {
     const ref = this.getSingleMessageRef(channelId, messageId);
     const snap = await getDoc(ref);
     if (snap.exists()) {
@@ -143,22 +136,13 @@ export class MessageService {
     return collection(this.firestore, 'directMessages');
   }
 
-  //Firebase creates Timestamp - realdate/time value, it has a method ".toDate()"
-  //which converts it to native JavaScript Date Object
-  //when we fetch a message, createdAt filed value will be a Timestamp
-  //FieldValue it not a real date/time value, it is a placeholder used ONLY when writing to Firestore
-  //serverTimestamp() returns a FieldValue
-  //  - and Firestore replace this with actual Timestamp when the document is written on the server
-  //we chack first if -date- has a "toDate method", when yes, then it converts to JavaScript date
   formatDateLabel(date: Date | Timestamp): string {
     if ('toDate' in date) {
       date = date.toDate();
     }
     const now = new Date();
     const isToday =
-      date.getDate() === now.getDate() &&
-      date.getMonth() === now.getMonth() &&
-      date.getFullYear() === now.getFullYear();
+      date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
     if (isToday) {
       return 'Heute';
     }
@@ -182,7 +166,6 @@ export class MessageService {
         groups[dateStr] = [];
       }
       groups[dateStr].push(message);
-
       return groups;
     }, {} as { [date: string]: Message[] });
   }

@@ -8,8 +8,6 @@ import {
   EventEmitter,
   OnInit,
   ChangeDetectorRef,
-  ViewChild,
-  ElementRef,
   inject,
 } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
@@ -17,15 +15,13 @@ import { Message } from '../../interfaces/message.interface';
 import { CommonModule } from '@angular/common';
 import { Timestamp } from '@angular/fire/firestore';
 import { FirestoreService } from '../../services/firestore.service';
-import { MessageService } from '../../services/message.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
-import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
 import { DirectMessageService } from '../../services/direct-message.service';
 import { NavbarInterface } from '../../interfaces/navbar.interface';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarService } from '../../services/navbar.service';
 import { EmojiServiceService } from '../../services/emoji.service';
+
 type MessageToken =
   | { type: 'text'; value: string }
   | { type: 'mentionUser'; userName: string }
@@ -50,16 +46,14 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   @Input() isParentInThread: boolean = false; // New input to indicate parent message in thread context
 
   @Output() openThread = new EventEmitter<string | undefined>();
-  @Output() emojiListChange = new EventEmitter<
-    { name: string; code: string }[]
-  >();
+  @Output() emojiListChange = new EventEmitter<{ name: string; code: string }[]>();
 
   senderId = '';
   user: UserProfileInterface | null = null;
   currentUserText = false;
   smallEmojiMenu = false;
   showEmojiMenu = false;
-  @Input() emojiChanged = false;
+  // @Input() emojiChanged = false;
 
   private userMap = new Map<string, UserProfileInterface>();
   private nameToUidMap = new Map<string, string>();
@@ -73,10 +67,8 @@ export class MessageTicketComponent implements OnChanges, OnInit {
 
   constructor(
     private firestore: FirestoreService,
-    private messageService: MessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private threadMessageService: ThreadDirectMessageService,
     private directMessageService: DirectMessageService,
     private cdr: ChangeDetectorRef,
     private emojiServise: EmojiServiceService
@@ -107,10 +99,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     channels?.forEach((channel) => {
       this.channelMap.set(channel.channelId, channel);
       if (channel.name) {
-        this.channelNameToUidMap.set(
-          channel.name.toLowerCase(),
-          channel.channelId
-        );
+        this.channelNameToUidMap.set(channel.name.toLowerCase(), channel.channelId);
       }
     });
   }
@@ -148,12 +137,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     return tokens;
   }
 
-  createTextType(
-    content: string,
-    lastIndex: number,
-    tokens: MessageToken[],
-    index?: number
-  ) {
+  createTextType(content: string, lastIndex: number, tokens: MessageToken[], index?: number) {
     if (lastIndex < content.length || index! > lastIndex) {
       tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
     }
@@ -172,13 +156,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   }
 
   onEmojiClick(emojiName: string) {
-    this.emojiServise.toggleEmojiReaction(
-      emojiName,
-      this.message,
-      this.channelId,
-      this.inThreadView,
-      this.messageId
-    );
+    this.emojiServise.toggleEmojiReaction(emojiName, this.message, this.channelId, this.inThreadView, this.messageId);
     this.emojiServise.selectEmoji(emojiName);
   }
 
@@ -211,10 +189,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     const currentUser = this.firestore.getUserId();
     const userId = this.getUser(username);
     if (currentUser && userId) {
-      const channelId = await this.directMessageService.getDMChannel(
-        currentUser,
-        userId
-      );
+      const channelId = await this.directMessageService.getDMChannel(currentUser, userId);
       return channelId;
     }
     return null;

@@ -1,15 +1,5 @@
 import { inject, Injectable, OnDestroy, signal } from '@angular/core';
-import {
-  Firestore,
-  collection,
-  doc,
-  onSnapshot,
-  query,
-  where,
-  getDocs,
-  addDoc,
-  orderBy,
-} from '@angular/fire/firestore';
+import { Firestore, collection, doc, onSnapshot, query, where, getDocs, addDoc, orderBy } from '@angular/fire/firestore';
 import { DirectMessageInterface } from '../interfaces/direct-message.interface';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { FirestoreService } from './firestore.service';
@@ -29,18 +19,10 @@ export class DirectMessageService {
 
   //we need to find the channel id, which exists between the current user and user I clicked on
   //if there is an existing one (already opened), it searches for it, if not, then creates a new one
-  async getDMChannel(
-    currentUserId: string,
-    clickedUserId: string
-  ): Promise<string> {
-    const q = query(
-      this.getDirectMessageChannelListRef(),
-      where('users', 'array-contains', currentUserId)
-    );
+  async getDMChannel(currentUserId: string, clickedUserId: string): Promise<string> {
+    const q = query(this.getDirectMessageChannelListRef(), where('users', 'array-contains', currentUserId));
     const snapshot = await getDocs(q);
-    const existingDoc = snapshot.docs.find((doc) =>
-      doc.data()['users'].includes(clickedUserId)
-    );
+    const existingDoc = snapshot.docs.find((doc) => doc.data()['users'].includes(clickedUserId));
     if (existingDoc) return existingDoc.id;
     const docRef = await addDoc(this.getDirectMessageChannelListRef(), {
       users: [currentUserId, clickedUserId],
@@ -58,11 +40,7 @@ export class DirectMessageService {
     });
   }
 
-  subDirectMessageChannel(
-    docId: string,
-    currentUserId: string,
-    handleData?: (data: any) => void
-  ): () => void {
+  subDirectMessageChannel(docId: string, currentUserId: string, handleData?: (data: any) => void): () => void {
     const ref = this.getSingleDirectMessageChannelRef('directMessages', docId);
     const unsubSingle = onSnapshot(ref, (snapshot) => {
       const data = snapshot.data();
@@ -79,9 +57,7 @@ export class DirectMessageService {
     return unsubSingle;
   }
 
-  subDMList(
-    handleData?: (dmList: DirectMessageInterface[]) => void
-  ): () => void {
+  subDMList(handleData?: (dmList: DirectMessageInterface[]) => void): () => void {
     const ref = this.getDirectMessageChannelListRef();
     const q = query(ref, orderBy('createdAt'));
     const unsubList = onSnapshot(q, (snapshot) => {
