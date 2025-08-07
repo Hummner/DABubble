@@ -19,21 +19,14 @@
       </div>
 
       <div class="message-wrapper" [ngClass]="{ reverse: currentUserText }">
-        <div
-          class="message"
-          [ngClass]="{ 'reverse-backround': currentUserText }"
-        >
+        <div class="message" [ngClass]="{ 'reverse-backround': currentUserText }">
           <p>
             <ng-container *ngFor="let token of parsedMessageTokens">
               <ng-container *ngIf="token.type === 'text'">
                 {{ token.value }}
               </ng-container>
               <ng-container *ngIf="token.type === 'mentionUser'">
-                <a
-                  class="mention-link"
-                  (click)="onUserMentionClick(token.userName)"
-                  style="cursor: pointer; color: #113d6b"
-                >
+                <a class="mention-link" (click)="onUserMentionClick(token.userName)" style="cursor: pointer; color: #113d6b">
                   &#64;{{ token.userName }}
                 </a>
               </ng-container>
@@ -51,28 +44,16 @@
         </div>
       </div>
 
-      <div
-        *ngIf="inThreadView == false"
-        class="answers"
-        [ngClass]="{ reverse: currentUserText }"
-      >
+      <div *ngIf="inThreadView == false" class="answers" [ngClass]="{ reverse: currentUserText }">
         <span class="thread-answers" (click)="openThreadPanel()">
           @if(message.threadCount == 0){ Keine Antwort } @else {
           {{ message.threadCount }} Antwort }
         </span>
       </div>
 
-      <div
-        class="emoji-container"
-        [ngClass]="{ reverse: currentUserText }"
-        *ngIf="message.reactions"
-      >
+      <div class="emoji-container" [ngClass]="{ reverse: currentUserText }" *ngIf="message.reactions">
         @for(emoji of message.reactions; track emoji){
-        <div
-          *ngIf="emoji.users.length > 0"
-          class="checked emoji"
-          (click)="onEmojiClick(emoji.emojiName)"
-        >
+        <div *ngIf="emoji.users && emoji.users.length > 0" class="checked emoji" (click)="onEmojiClick(emoji.emojiName)">
           <img src="assets/emojis/{{ emoji.emojiName }}.png" alt="" />
           <p>{{ emoji.users.length }}</p>
         </div>
@@ -87,40 +68,20 @@
         'emoji-menu-reverse': currentUserText
       }"
     >
-      <div
-        class="emoji-menu-item"
-        *ngIf="inThreadView == false"
-        (click)="onEmojiClick(sortedEmojis[0].name)"
-      >
-        <img  class="emoji-img" src="assets/emojis/{{ sortedEmojis[0].name }}.png" />
+      <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[0].name)">
+        <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[0].name }}.png" />
       </div>
-      <div
-        class="emoji-menu-item"
-        *ngIf="inThreadView == false"
-        (click)="onEmojiClick(sortedEmojis[1].name)"
-      >
+      <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[1].name)">
         <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[1].name }}.png" />
       </div>
       <div class="emoji-menu-item">
-        <img
-          class="hover-purple"
-          (click)="openMoreEmoji($event)"
-          src="assets/icon/add_reaction.svg"
-        />
+        <img class="hover-purple" (click)="openMoreEmoji($event)" src="assets/icon/add_reaction.svg" />
       </div>
       <div class="emoji-menu-item" *ngIf="inThreadView == false">
-        <img
-          class="hover-purple"
-          (click)="openThreadPanel()"
-          src="assets/icon/comment.svg"
-        />
+        <img class="hover-purple" (click)="openThreadPanel()" src="assets/icon/comment.svg" />
       </div>
     </div>
-    <div
-      class="small-emoji-menu"
-      *ngIf="smallEmojiMenu"
-      [class.reversed-s-e-m]="!currentUserText"
-    >
+    <div class="small-emoji-menu" *ngIf="smallEmojiMenu" [class.reversed-s-e-m]="!currentUserText">
       @for(emoji of sortedEmojis;track emojiList){
       <div class="emoji-menu-item" (click)="onEmojiClick(emoji.name)">
         <img src="assets/emojis/{{ emoji.name }}.png" />

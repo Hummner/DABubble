@@ -33,25 +33,14 @@ export class EmojiServiceService {
   ];
 
   emojiHistory: typeof this.emojiList = [];
+
   selectEmoji(name: string) {
-    const selected = this.emojiList.find(
-      (emoji) => emoji.name === name
-    );
+    const selected = this.emojiList.find((emoji) => emoji.name === name);
     if (!selected) return;
-    const updatedHistory = [
-      selected,
-      ...this.emojiHistory.filter(
-        (e) => e.name !== selected.name
-      ),
-    ].slice(0, 2);
-    const rest = this.emojiList.filter(
-      (e) => !updatedHistory.some((used) => used.name === e.name)
-    );
+    const updatedHistory = [selected, ...this.emojiHistory.filter((e) => e.name !== selected.name)].slice(0, 2);
+    const rest = this.emojiList.filter((e) => !updatedHistory.some((used) => used.name === e.name));
     this.emojiHistory = [...updatedHistory, ...rest];
-    localStorage.setItem(
-      'usedEmoji',
-      JSON.stringify(this.emojiHistory)
-    );
+    localStorage.setItem('usedEmoji', JSON.stringify(this.emojiHistory));
   }
 
   get sortedEmojis() {
@@ -59,9 +48,7 @@ export class EmojiServiceService {
       return this.emojiHistory;
     }
     const savedInLocal = localStorage.getItem('usedEmoji');
-    return savedInLocal
-      ? JSON.parse(savedInLocal)
-      : this.emojiList;
+    return savedInLocal ? JSON.parse(savedInLocal) : this.emojiList;
   }
 
   toggleEmojiReaction(
@@ -75,20 +62,9 @@ export class EmojiServiceService {
     const userId = this.firestore.getUserId();
     if (!userId) return;
     const docId = parentMessageId ?? message.id;
-    const updatedReactions = this.getUpdatedReactions(
-      emojiName,
-      message.reactions ?? [],
-      userId
-    );
+    const updatedReactions = this.getUpdatedReactions(emojiName, message.reactions ?? [], userId);
     message.reactions = updatedReactions;
-    this.updateMessage(
-      message,
-      docId,
-      channelId,
-      inThreadView,
-      parentMessageId
-    );
-    console.log(`${emojiName} reaction toggled`);
+    this.updateMessage(message, docId, channelId, inThreadView, parentMessageId);
   }
 
   private getUpdatedReactions(
@@ -115,20 +91,9 @@ export class EmojiServiceService {
     }
   }
 
-  private updateMessage(
-    msg: Message,
-    docId: string,
-    channelId: string,
-    inThread: boolean,
-    threadId?: string
-  ) {
+  private updateMessage(msg: Message, docId: string, channelId: string, inThread: boolean, threadId?: string) {
     inThread && threadId
-      ? this.threadMsgService.updateThreadMessage(
-          msg,
-          threadId,
-          channelId,
-          msg.id!
-        )
+      ? this.threadMsgService.updateThreadMessage(msg, threadId, channelId, msg.id!)
       : this.dmMsgService.updateMessage(msg, docId, channelId);
   }
 

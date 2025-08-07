@@ -138,9 +138,9 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  >img{
-    width:25px;
-    height:25px;
+  > img {
+    width: 25px;
+    height: 25px;
   }
 
   &:hover {
@@ -148,8 +148,7 @@
     border-radius: 100%;
 
     .hover-purple {
-      filter: brightness(0) saturate(100%) invert(43%) sepia(61%)
-        saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+      filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
     }
   }
 }
