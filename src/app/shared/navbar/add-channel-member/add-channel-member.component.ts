@@ -122,6 +122,7 @@ export class AddChannelMemberComponent {
   }
 
   addMemberToChannel() {
+    this.addCreatorToMembers();
     this.updateChannel();
   }
 
@@ -134,7 +135,7 @@ export class AddChannelMemberComponent {
       name: user.name,
       imgUrl: user.imgUrl
     }));
-
+    this.addCreatorToMembers();
     this.updateChannel();
   }
 
@@ -153,6 +154,19 @@ export class AddChannelMemberComponent {
     });
     this.closeDialog();
     this.router.navigateByUrl('/channel/' + this.channelId);
+  }
+
+  addCreatorToMembers() {
+    if (!this.members.find(m => m.id === this.userProfile()?.uid)) {
+      this.members.push({
+        id: this.userProfile()?.uid || '',
+        role: 'admin',
+        name: this.userProfile()?.name || '',
+        imgUrl: this.userProfile()?.imgUrl || ''
+      });
+    }
+    this.navbar.members = this.members;
+    return this.navbar;
   }
 
   submitForm() {
