@@ -105,8 +105,8 @@ export class AddChannelMemberComponent {
     this.navbar.createdBy = this.userProfile()?.name || '';
 
     const newMember = {
-      id: data.id,
-      role: data.id === this.userProfile()?.uid ? 'admin' : 'member',
+      id: data.uid,
+      role: data.uid === this.userProfile()?.uid ? 'admin' : 'member',
       name: data.name,
       imgUrl: data.imgUrl
     };

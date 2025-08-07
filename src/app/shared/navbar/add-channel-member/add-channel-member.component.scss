@@ -210,6 +210,8 @@ form {
   margin-bottom: 16px;
   padding-left: 8px;
   flex-wrap: wrap;
+  max-height: 100px;
+  overflow-y: auto;
 
   .check {
     cursor: pointer;
