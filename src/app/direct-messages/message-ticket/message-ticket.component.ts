@@ -64,6 +64,10 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   parsedMessageTokens: MessageToken[] = [];
 
   emojiList = this.emojiServise.emojiList;
+  reactionList: any;
+  showReactions = false;
+  shownEmoji!: string;
+  emojiIndex!: number;
 
   constructor(
     private firestore: FirestoreService,
@@ -215,5 +219,17 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     } else {
       console.warn(`No DM channel found for @${channelName}`);
     }
+  }
+
+  showUsers(users: string[], emojiName: string, index: number) {
+    const filteredUserList = this.firestore.userList().filter((user) => users.includes(user.uid));
+    this.reactionList = filteredUserList;
+    this.showReactions = true;
+    this.shownEmoji = emojiName;
+    this.emojiIndex = index;
+  }
+
+  hideUsers(users: string[]) {
+    this.showReactions = false;
   }
 }
