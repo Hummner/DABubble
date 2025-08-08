@@ -232,4 +232,27 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   hideUsers(users: string[]) {
     this.showReactions = false;
   }
+
+  formatNames(userList: any, reactionList: any) {
+    let text = '';
+    // let currentUText = '';
+    // const currentUserName = reactionList.filter((user: any) => {
+    //   user.uid == this.userProfile?.uid;
+    //   return user.name;
+    // });
+
+    // let nameFirst = reactionList[0].name;
+    // let nameSecond = reactionList[1].name;
+    // if (userName == currentUserName) {
+    //   text = 'Du';
+    // }
+    if (userList.length > 1) {
+      text = reactionList[0].name + ' und ' + reactionList[1]?.name;
+      console.log(reactionList);
+    } else if(userList.length = 1){
+      text = reactionList[0].name;
+      console.log(reactionList);
+    }
+    return text;
+  }
 }

@@ -252,18 +252,29 @@
 }
 
 .reactionBox {
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+  align-items: center;
+  padding:13px;
   position: absolute;
   background-color: #444df2;
   color: white;
-  width: 150px;
-  height: 100px;
+  width: 180px;
+  height: 130px;
   border-radius: 30px;
   border-bottom-left-radius: 0px;
-  bottom: 30px;
-  // right:30px;
+  bottom: 32px;
+  left: 25px;
+  font-size:17px;
   > img {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
+    margin-bottom:10px;
+  }
+  >span{
+    font-weight: 700;
+    text-align: center;
   }
 }
 
@@ -280,8 +291,7 @@
   }
 }
 
-
-.valami{
-  position:relative;
-  display:flex;
+.valami {
+  position: relative;
+  display: flex;
 }
