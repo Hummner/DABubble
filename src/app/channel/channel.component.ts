@@ -20,6 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EmojiArrayService } from '../services/emoji-array.service';
 import { AddMemberComponent } from '../channel/add-member/add-member.component';
 import { MatDialog } from '@angular/material/dialog';
+import { UserProfileInterface } from '../interfaces/user-profile.interface';
 
 
 @Component({
@@ -42,6 +43,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   firestoreService = inject(FirestoreService)
   private auth = inject(AuthService);
   emojiArray = inject(EmojiArrayService)
+  userProfile = this.firestoreService.userProfile;
+  user: UserProfileInterface | null = null;
   showMenu = false;
   menuOpen = false;
   editName = false;
@@ -273,5 +276,11 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         channelId: this.channelId
       }}
     );
+  }
+
+  leaveChannel(userProfile: UserProfileInterface | null, editChannelMenuTrigger: MatMenuTrigger) {
+    let currentChannel = this.channelsService.getChannel(this.channelId)
+    this.channelsService.deleteMember(currentChannel, userProfile);
+    this.closeMenu(editChannelMenuTrigger);
   }
 }
