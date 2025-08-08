@@ -50,21 +50,20 @@
         </span>
       </div>
       <div class="emoji-container" [ngClass]="{ reverse: currentUserText }" *ngIf="message.reactions">
-        <div class="valami">
-          <div *ngFor="let emoji of message.reactions; let i = index" class="emoji-wrapper">
-            <div
-              *ngIf="emoji.users && emoji.users.length > 0"
-              class="checked emoji"
-              (click)="onEmojiClick(emoji.emojiName)"
-              (mouseenter)="showUsers(emoji.users, emoji.emojiName, i)"
-              (mouseleave)="hideUsers(emoji.users)"
-            >
-              <img src="assets/emojis/{{ emoji.emojiName }}.png" alt="" />
-              <p>{{ emoji.users.length }}</p>
-              <div class="reactionBox" *ngIf="showReactions && emojiIndex === i" [ngStyle]="{ left: i * 5 + 'px' }">
-                <img src="assets/emojis/{{ shownEmoji }}.png" alt="" />
-                <span *ngFor="let user of reactionList">{{ user.name }}</span>
-              </div>
+        <div *ngFor="let emoji of message.reactions; let i = index" class="emoji-wrapper">
+          <div
+            *ngIf="emoji.users && emoji.users.length > 0"
+            class="checked emoji"
+            (click)="onEmojiClick(emoji.emojiName)"
+            (mouseenter)="showUsers(emoji.users, emoji.emojiName, i)"
+            (mouseleave)="hideUsers(emoji.users)"
+          >
+            <img src="assets/emojis/{{ emoji.emojiName }}.png" alt="" />
+            <p>{{ emoji.users.length }}</p>
+            <div class="reactionBox" *ngIf="showReactions && emojiIndex === i">
+              <img src="assets/emojis/{{ shownEmoji }}.png" alt="" />
+              <span>{{ formatNames(emoji.users, reactionList) }}</span>
+              <p>hat reagiert</p>
             </div>
           </div>
         </div>
