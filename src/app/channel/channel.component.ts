@@ -69,6 +69,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   ) { }
 
   ngOnInit(): void {
+
     this.loading = true;
     console.log(this.loading);
 
@@ -80,8 +81,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.loading = false;
         this.initialScrollDone = false;
         console.log(this.loading);
-
-
       }
     });
 
@@ -278,9 +277,14 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
   }
 
-  leaveChannel(userProfile: UserProfileInterface | null, editChannelMenuTrigger: MatMenuTrigger) {
+  async leaveChannel(userProfile: UserProfileInterface | null, editChannelMenuTrigger: MatMenuTrigger) {
     let currentChannel = this.channelsService.getChannel(this.channelId)
     this.channelsService.deleteMember(currentChannel, userProfile);
     this.closeMenu(editChannelMenuTrigger);
+    
+    let allChannels = this.channelsService.getAllChannels();
+    for (const channel of await allChannels) {
+      channel.members = channel.members.filter((member: any) => member.id !== userProfile?.uid);
+    }
   }
 }
