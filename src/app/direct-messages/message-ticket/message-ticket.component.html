@@ -17,37 +17,56 @@
       <div class="name-date" [ngClass]="{ reverse: currentUserText }">
         <span class="msg-name"> {{ user?.name }}</span>
       </div>
+
       <div class="message-wrapper" [ngClass]="{ reverse: currentUserText }">
-        <div
-          class="message"
-          [ngClass]="{ 'reverse-backround': currentUserText }"
-        >
-          <p>{{ message.content }}</p>
+        <div class="message" [ngClass]="{ 'reverse-backround': currentUserText }">
+          <p>
+            <ng-container *ngFor="let token of parsedMessageTokens">
+              <ng-container *ngIf="token.type === 'text'">
+                {{ token.value }}
+              </ng-container>
+              <ng-container *ngIf="token.type === 'mentionUser'">
+                <a class="mention-link" (click)="onUserMentionClick(token.userName)" style="cursor: pointer; color: #113d6b">
+                  &#64;{{ token.userName }}
+                </a>
+              </ng-container>
+              <ng-container *ngIf="token.type === 'mentionChannel'">
+                <a
+                  class="mention-link"
+                  (click)="onChannelMentionClick(token.channelName)"
+                  style="cursor: pointer; color: #113d6b"
+                >
+                  &#35;{{ token.channelName }}
+                </a>
+              </ng-container>
+            </ng-container>
+          </p>
         </div>
       </div>
-
-      <div
-        *ngIf="inThreadView == false"
-        class="answers"
-        [ngClass]="{ reverse: currentUserText }"
-      >
+      <div *ngIf="inThreadView == false" class="answers" [ngClass]="{ reverse: currentUserText }">
         <span class="thread-answers" (click)="openThreadPanel()">
           @if(message.threadCount == 0){ Keine Antwort } @else {
           {{ message.threadCount }} Antwort }
         </span>
       </div>
-
-      <div
-        class="emoji-container"
-        [ngClass]="{ reverse: currentUserText }"
-        *ngIf="message.reactions"
-      >
-        @for(emoji of message.reactions; track emoji){
-        <div class="checked emoji" (click)="onEmojiRemove(emoji)">
-          <img src="assets/emojis/{{ emoji }}.png" alt="" />
-          <p>1</p>
+      <div class="emoji-container" [ngClass]="{ reverse: currentUserText }" *ngIf="message.reactions">
+        <div *ngFor="let emoji of message.reactions; let i = index" class="emoji-wrapper">
+          <div
+            *ngIf="emoji.users && emoji.users.length > 0"
+            class="checked emoji"
+            (click)="onEmojiClick(emoji.emojiName)"
+            (mouseenter)="showUsers(emoji.users, emoji.emojiName, i)"
+            (mouseleave)="hideUsers(emoji.users)"
+          >
+            <img src="assets/emojis/{{ emoji.emojiName }}.png" alt="" />
+            <p>{{ emoji.users.length }}</p>
+            <div class="reactionBox" *ngIf="showReactions && emojiIndex === i">
+              <img src="assets/emojis/{{ shownEmoji }}.png" alt="" />
+              <span>{{ formatNames(emoji.users, reactionList) }}</span>
+              <p>hat reagiert</p>
+            </div>
+          </div>
         </div>
-        }
       </div>
     </div>
     <div
@@ -58,47 +77,27 @@
         'emoji-menu-reverse': currentUserText
       }"
     >
-      <div
-        class="emoji-menu-item"
-        *ngIf="inThreadView == false"
-        (click)="onEmojiToggle('checked')"
-      >
-        <img src="assets/emojis/checked.svg" />
+      <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[0].name)">
+        <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[0].name }}.png" />
       </div>
-      <div
-        class="emoji-menu-item"
-        *ngIf="inThreadView == false"
-        (click)="onEmojiToggle('thumb')"
-      >
-        <img src="assets/emojis/thumb.svg" />
+      <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[1].name)">
+        <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[1].name }}.png" />
       </div>
       <div class="emoji-menu-item">
-        <img
-          class="hover-purple"
-          (click)="openMoreEmoji($event)"
-          src="assets/icon/add_reaction.svg"
-        />
+        <img class="hover-purple" (click)="openMoreEmoji($event)" src="assets/icon/add_reaction.svg" />
       </div>
       <div class="emoji-menu-item" *ngIf="inThreadView == false">
-        <img
-          class="hover-purple"
-          (click)="openThreadPanel()"
-          src="assets/icon/comment.svg"
-        />
+        <img class="hover-purple" (click)="openThreadPanel()" src="assets/icon/comment.svg" />
       </div>
     </div>
-    <div
-      class="small-emoji-menu"
-      *ngIf="smallEmojiMenu"
-      [class.reversed-s-e-m]="!currentUserText"
-    >
-      @for(emoji of emojiUnicodeMap;track emojiUnicodeMap){
-      <div class="emoji-menu-item" (click)="onEmojiToggle(emoji.name)">
+    <div class="small-emoji-menu" *ngIf="smallEmojiMenu" [class.reversed-s-e-m]="!currentUserText">
+      @for(emoji of sortedEmojis;track emojiList){
+      <div class="emoji-menu-item" (click)="onEmojiClick(emoji.name)">
         <img src="assets/emojis/{{ emoji.name }}.png" />
       </div>
       }
     </div>
-          <!-- <app-emoji-picker
+    <!-- <app-emoji-picker
         *ngIf="smallEmojiMenu"
         (emojiSelected)="onEmojiToggle(emoji.name)"
       ></app-emoji-picker> -->

@@ -1,63 +1,43 @@
-<section *ngIf="userProfileB">
-  <div
-    class="custom-backdrop"
-    [class.visible]="backdropVisible"
-    (click)="closeProfileCard()"
-  ></div>
+<section *ngIf="secondUser">
+  <div class="custom-backdrop" [class.visible]="backdropVisible" (click)="closeProfileCard()"></div>
   <app-user-card
-    *ngIf="profileOpen && userProfileB()"
-    [userProfileB]="userProfileB()"
+    *ngIf="profileOpen && secondUser"
+    [userProfileB]="secondUser"
     [profileOpen]="profileOpen"
     (closeProfile)="closeProfileCard()"
   ></app-user-card>
   <mat-drawer-container class="container" autosize>
-    <mat-drawer
-      #drawer
-      class="example-sidenav"
-      mode="side"
-      position="end"
-      [(opened)]="isThreadOpen"
-    >
+    <mat-drawer #drawer class="example-sidenav" mode="side" position="end" [(opened)]="isThreadOpen">
       <router-outlet></router-outlet>
       <!-- <app-thread-direct-message
         [isThreadOpen]="isThreadOpen"
         (close)="drawer.toggle()"
-     
-       
-        
       ></app-thread-direct-message> -->
     </mat-drawer>
     <div class="content" (click)="closeEmojiBox()">
       <header>
         <div class="dm-name">
           <div class="dm-img">
-            <img
-              class="message-to-img"
-              [src]="userB?.imgUrl"
-              alt="MessageTo-Image"
-            />
-            <img
-              class="status-img"
-              src="assets/icon/Online.png"
-              alt="Status Image"
-            />
+            <img class="message-to-img" [src]="secondUser.imgUrl" alt="MessageTo-Image" />
+            <img class="status-img" src="assets/icon/Online.png" alt="Status Image" />
           </div>
-          <p>{{ userB?.name }}</p>
+          <p>{{ secondUser.name }}</p>
         </div>
       </header>
       <main>
-        <div *ngIf="userProfileB" class="scroll-wrapper" #scrollContainer>
+        <!-- <div *ngIf="loading" class="laoding-spinner">
+          <mat-spinner></mat-spinner>
+        </div> -->
+        <div *ngIf="secondUser" class="scroll-wrapper" #scrollContainer>
           <div class="first-msg">
             <div class="dm-msg-name">
-              <img [src]="userB?.imgUrl" alt="" />
-              <p>{{ userB?.name }}</p>
+              <img [src]="secondUser.imgUrl" alt="" />
+              <p>{{ secondUser.name }}</p>
             </div>
             <div class="dm-msg-info">
               <p>
                 Diese Unterhaltung findet nur zwischen
-                <span (click)="openProfileView()" class="purple"
-                  >&#64;{{ userB?.name }}</span
-                >
+                <span (click)="openProfileView()" class="purple">&#64;{{ secondUser.name }}</span>
                 und dir statt.
               </p>
             </div>
@@ -73,10 +53,7 @@
             </div>
 
             <app-message-ticket
-              *ngFor="
-                let msg of groupMessagesByDate()[date];
-                trackBy: trackByMessageId
-              "
+              *ngFor="let msg of groupMessagesByDate()[date]; trackBy: trackByMessageId"
               [message]="msg"
               [channelId]="channelId"
               (openThread)="openThread($event)"
@@ -89,53 +66,63 @@
       <footer>
         <div class="text-area">
           <textarea
+            class="textarea"
             #input
             [(ngModel)]="content"
             name="chat_input"
             id="chat_input"
-            placeholder="Nachricht an @{{ userB?.name }}"
+            placeholder="Nachricht an @{{ secondUser.name }}"
+            (input)="onInputChange($event)"
           ></textarea>
         </div>
         <div class="input-buttons">
           <div class="icons">
-            <div
-              class="input-icon"
-              (click)="toggleSmallEmojiMenu()"
-              click-stop-propagation
-            >
+            <div class="input-icon" (click)="toggleSmallEmojiMenu()" click-stop-propagation>
               <img src="assets/icon/reaction.png" alt="" />
             </div>
             <div
               class="input-icon"
               click-stop-propagation
+              #mentionTrigger="matMenuTrigger"
               [matMenuTriggerFor]="tagBoxMenu"
               (click)="tagInputStart()"
             >
               <img src="assets/icon/tag_icon.png" alt="" />
+            </div>
+            <div
+              class="input-icon"
+              click-stop-propagation
+              [matMenuTriggerFor]="channelBoxMenu"
+              #channelTrigger="matMenuTrigger"
+              (click)="tagInputChannelStart()"
+            >
+              <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
             </div>
           </div>
           <div class="send-icon" (click)="addMessage()">
             <img src="assets/icon/send.png" alt="" />
           </div>
         </div>
-        <app-emoji-picker
-          *ngIf="smallEmojiMenu"
-          (emojiSelected)="addEmoji($event)"
-        ></app-emoji-picker>
+        <app-emoji-picker *ngIf="emojiService.smallEmojiMenu()" (emojiSelected)="addEmoji($event)"></app-emoji-picker>
 
-        <mat-menu #tagBoxMenu="matMenu" class="tag-box-menu">
+        <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu">
           <div class="tag-menu-wrap">
-            @for(user of getUserList();track user){
+            @for(user of userMentionService.filteredUserList();track user){
             <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
-              <img
-                class="tagbox-img"
-                [src]="user.imgUrl"
-                alt=""
-              />
-              <p>{{user.name}}</p>
+              <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+              <p>{{ user.name }}</p>
             </menu>
             }
-            
+          </div>
+        </mat-menu>
+        <mat-menu #channelBoxMenu="matMenu" class="channel-box-menu">
+          <div class="channel-menu-wrap">
+            @for(channel of userMentionService.filteredChannelList(); track channel) {
+            <menu mat-menu-item class="channel-menu-item" (click)="takeChannel(channel.name)">
+              <img src="assets/icon/tag_channel.png" alt="" />
+              <p>{{ channel.name }}</p>
+            </menu>
+            }
           </div>
         </mat-menu>
       </footer>

@@ -138,14 +138,17 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  > img {
+    width: 25px;
+    height: 25px;
+  }
 
   &:hover {
     background-color: #eceefe;
     border-radius: 100%;
 
     .hover-purple {
-      filter: brightness(0) saturate(100%) invert(43%) sepia(61%)
-        saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+      filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
     }
   }
 }
@@ -248,6 +251,33 @@
   left: 57%;
 }
 
+.reactionBox {
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+  align-items: center;
+  padding:13px;
+  position: absolute;
+  background-color: #444df2;
+  color: white;
+  width: 180px;
+  height: 130px;
+  border-radius: 30px;
+  border-bottom-left-radius: 0px;
+  bottom: 32px;
+  left: 25px;
+  font-size:17px;
+  > img {
+    width: 30px;
+    height: 30px;
+    margin-bottom:10px;
+  }
+  >span{
+    font-weight: 700;
+    text-align: center;
+  }
+}
+
 @media (max-width: 768px) {
   .ticket {
     padding: 20px 24px;
@@ -259,4 +289,9 @@
     width: 50px;
     height: 50px;
   }
+}
+
+.valami {
+  position: relative;
+  display: flex;
 }

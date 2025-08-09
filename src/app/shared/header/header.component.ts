@@ -49,9 +49,9 @@ export class HeaderComponent implements OnInit {
     if (this.menuTrigger?.menuOpen) {
       this.menuTrigger.closeMenu();
     }
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       this.backdropVisible = false;
-    }, 150);
+    });
   }
 
   showOverlay() {

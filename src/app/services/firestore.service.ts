@@ -19,7 +19,8 @@ export class FirestoreService implements OnDestroy {
   private firestore = inject(Firestore);
   private auth = inject(AuthService);
   private user$ = user(this.auth.firebaseAuth);
-  userList: UserProfileInterface[] = [];
+  // userList: UserProfileInterface[] = [];
+  userList: WritableSignal<UserProfileInterface[]> = signal([]);
   unsubUsers;
   userProfile: WritableSignal<UserProfileInterface | null> = signal(null);
   private unsubUserProfile?: () => void;
@@ -44,8 +45,8 @@ subUserList(callback?: (users: UserProfileInterface[]) => void) {
     list.forEach((element) => {
       userList.push(this.toUserProfile(element.data(), element.id));
     });
-    this.userList = userList;
-    callback?.(userList);
+      this.userList.set(userList);  // update the signal instead of plain array
+      callback?.(userList);
   });
   return unsub;
 }

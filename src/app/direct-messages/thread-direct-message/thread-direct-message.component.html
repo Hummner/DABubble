@@ -1,5 +1,5 @@
 <section>
-  <div class="content"  (click)="closeEmojiBox()">
+  <div class="content" (click)="closeEmojiBox()">
     <header>
       <div class="channel-name">
         <h2>Thread</h2>
@@ -9,12 +9,12 @@
       </div>
     </header>
     <main>
-      <div class="scroller-wrapper">
+      <div class="scroller-wrapper" #scrollContainerThread>
         <app-message-ticket
           *ngIf="message && channelId"
           [message]="message"
           [channelId]="channelId"
-          [inThreadView]="false"
+          [inThreadView]="true"
         ></app-message-ticket>
         <div *ngFor="let date of Object.keys(groupMessagesByDate())">
           <div class="date-separator">
@@ -39,9 +39,7 @@
           @if(message?.threadCount == 0){
           <div class="placeholder-date msg-answer">Keine Antwort</div>
           } @else {
-          <div class="placeholder-date msg-answer">
-            {{ message?.threadCount }} Antwort
-          </div>
+          <div class="placeholder-date msg-answer">{{ message?.threadCount }} Antwort</div>
           }
         </div>
       </div>
@@ -49,10 +47,12 @@
     <footer>
       <div class="text-area">
         <textarea
+          #input
           name="chat_input"
           id="chat_input"
           placeholder="Antworten..."
           [(ngModel)]="content"
+          (input)="onInputChange($event)"
         ></textarea>
       </div>
       <div class="input-buttons">
@@ -60,18 +60,50 @@
           <div class="input-icon" (click)="toggleSmallEmojiMenu()" click-stop-propagation>
             <img src="assets/icon/reaction.png" alt="" />
           </div>
-          <div class="input-icon">
+          <div
+            class="input-icon"
+            click-stop-propagation
+            #mentionTrigger="matMenuTrigger"
+            [matMenuTriggerFor]="tagBoxMenu"
+            (click)="tagInputStart()"
+          >
             <img src="assets/icon/tag_icon.png" alt="" />
+          </div>
+          <div
+            class="input-icon"
+            click-stop-propagation
+            [matMenuTriggerFor]="channelBoxMenu"
+            #channelTrigger="matMenuTrigger"
+            (click)="tagInputChannelStart()"
+          >
+            <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
           </div>
         </div>
         <div class="send-icon" (click)="addThreadMessage()">
           <img src="assets/icon/send.png" alt="" />
         </div>
       </div>
-      <app-emoji-picker
-        *ngIf="smallEmojiMenu"
-        (emojiSelected)="addEmoji($event)"
-      ></app-emoji-picker>
+      <app-emoji-picker *ngIf="emojiService.smallEmojiMenu()" (emojiSelected)="addEmoji($event)"></app-emoji-picker>
+      <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu">
+        <div class="tag-menu-wrap">
+          @for(user of userMentionService.filteredUserList();track user){
+          <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
+            <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+            <p>{{ user.name }}</p>
+          </menu>
+          }
+        </div>
+      </mat-menu>
+      <mat-menu #channelBoxMenu="matMenu" class="channel-box-menu">
+        <div class="channel-menu-wrap">
+          @for(channel of userMentionService.filteredChannelList(); track channel) {
+          <menu mat-menu-item class="channel-menu-item" (click)="takeChannel(channel.name)">
+            <img src="assets/icon/tag_channel.png" alt="" />
+            <p>{{ channel.name }}</p>
+          </menu>
+          }
+        </div>
+      </mat-menu>
     </footer>
   </div>
 </section>

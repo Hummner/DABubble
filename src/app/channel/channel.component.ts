@@ -18,6 +18,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Timestamp } from '@angular/fire/firestore';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EmojiArrayService } from '../services/emoji-array.service';
+import { AddMemberComponent } from '../channel/add-member/add-member.component';
+import { MatDialog } from '@angular/material/dialog';
+import { UserProfileInterface } from '../interfaces/user-profile.interface';
 
 
 @Component({
@@ -42,6 +45,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   firestoreService = inject(FirestoreService)
   private auth = inject(AuthService);
   emojiArray = inject(EmojiArrayService)
+  userProfile = this.firestoreService.userProfile;
+  user: UserProfileInterface | null = null;
   showMenu = false;
   menuOpen = false;
   editName = false;
@@ -62,7 +67,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -242,6 +248,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.editDisc = false;
       this.discInput.nativeElement.blur();
     }
+    this.channelsService.updateEditChannel(this.channelId, this.nameInput.nativeElement.value, this.discInput.nativeElement.value);
   }
 
   getChannelInfo() {
@@ -275,6 +282,18 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   }
 
+  addMemberDialog() {
+    this.dialog.open(AddMemberComponent, {
+      data: {
+        channelName: this.channel?.name,
+        channelId: this.channelId
+      }}
+    );
+  }
 
-
+  leaveChannel(userProfile: UserProfileInterface | null, editChannelMenuTrigger: MatMenuTrigger) {
+    let currentChannel = this.channelsService.getChannel(this.channelId)
+    this.channelsService.deleteMember(currentChannel, userProfile);
+    this.closeMenu(editChannelMenuTrigger);
+  }
 }

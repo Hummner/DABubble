@@ -45,7 +45,7 @@
                                 <span class="created-by-name">{{channel?.createdBy}}</span>
                             </div>
                             <div class="edit-channel-footer">
-                                <span class="primary-button">Channel verlassen</span>
+                                <span (click)="leaveChannel(this.userProfile(), editChannelTrigger)" class="primary-button">Channel verlassen</span>
                             </div>
                         </div>
                     </mat-menu>
@@ -58,7 +58,7 @@
                         }
                         <div class="member-img"><span>{{ channel?.members?.length }}</span></div>
                     </div>
-                    <div class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
+                    <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()" class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
                 </div>
                 <mat-menu (closed)="menuOpen = false" xPosition="before" #menu="matMenu" class="members-menu-container">
                     <div class="menu-container" (click)="$event.stopPropagation()">
@@ -79,7 +79,7 @@
                             </div>
                             }
                         </div>
-                        <div class="members-menu-add margin-16">
+                        <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()" class="members-menu-add margin-16">
                             <div class="add-member-icon">
                                 <img src="assets/icon/person_add.png">
                             </div>

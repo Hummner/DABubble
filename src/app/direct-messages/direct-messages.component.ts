@@ -1,14 +1,4 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  signal,
-  ViewChild,
-  ElementRef,
-  AfterViewInit,
-  AfterViewChecked,
-  NgModule,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NgIf, NgFor } from '@angular/common';
@@ -20,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { DirectMessageService } from '../services/direct-message.service';
 import { FirestoreService } from '../services/firestore.service';
 import { MessageService } from '../services/message.service';
-import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { Message } from '../interfaces/message.interface';
 import { UserCardComponent } from './user-card/user-card.component';
 import { MessageTicketComponent } from './message-ticket/message-ticket.component';
@@ -28,6 +17,11 @@ import { RouterOutlet } from '@angular/router';
 import { serverTimestamp } from '@angular/fire/firestore';
 import { ClickStopPropagation } from '../click-stop-propagation.directive';
 import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.component';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { UserMentionService } from '../services/user-channel-mention.service';
+import { NavbarService } from '../services/navbar.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { EmojiServiceService } from '../services/emoji.service';
 
 @Component({
   selector: 'app-direct-messages',
@@ -45,22 +39,22 @@ import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.compon
     RouterOutlet,
     ClickStopPropagation,
     EmojiPickerComponent,
+    MatMenuTrigger,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
 })
-export class DirectMessagesComponent
-  implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked
-{
+export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
   channelId!: string;
   userProfile = this.firestoreService.userProfile;
-  userProfileB = signal<UserProfileInterface | null>(null);
   profileOpen = false;
   backdropVisible = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   unsubSingleDM?: () => void;
   unsubUserList?: () => void;
   routeSub!: Subscription;
+  messageListSub!: Subscription;
+  routerEventsSub!: Subscription;
   unsubList?: () => void;
   content = '';
   senderId = '';
@@ -68,46 +62,109 @@ export class DirectMessagesComponent
   threadCount = 0;
   shouldScroll = false;
   messages: Message[] = [];
+  private previousMessageCount = 0;
+  private isInitialLoad = true;
   public Object = Object;
   isThreadOpen = false;
-  smallEmojiMenu = false;
   parentEmojiList: any;
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  channels = toSignal(inject(NavbarService).channelsObs$);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private directMessageService: DirectMessageService,
     private firestoreService: FirestoreService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    public userMentionService: UserMentionService,
+    public navbarService: NavbarService,
+    public emojiService: EmojiServiceService
   ) {}
+
+  ngOnInit(): void {
+    this.subThreadRoute();
+    this.subscribeToDmChannel();
+    this.subscribeToMsgList();
+  }
+
+  ngAfterViewChecked() {
+    if (this.shouldScroll && this.messages.length && this.scrollContainer?.nativeElement) {
+      setTimeout(() => {
+        this.scrollToBottomInstantly();
+        this.shouldScroll = false;
+      }, 100);
+    }
+    if (!this.isThreadOpen && this.input?.nativeElement) {
+      this.input.nativeElement.focus();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubSingleDM?.();
+    this.routeSub?.unsubscribe();
+    this.messageListSub?.unsubscribe();
+    this.routerEventsSub?.unsubscribe();
+    this.unsubUserList?.();
+    this.unsubList?.();
+  }
+
+  get currentUser() {
+    return this.directMessageService.currentUserProfile();
+  }
+
+  get secondUser() {
+    return this.directMessageService.secondUserProfile();
+  }
 
   updateEmojiList(emojis: any) {
     this.parentEmojiList = emojis;
   }
 
+  subscribeToDmChannel() {
+    this.routeSub = this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      if (id) {
+        this.channelId = id;
+        this.shouldScroll = true;
+        this.isInitialLoad = true;
+        this.waitForUserThenSubscribe(id);
+        this.unsubList = this.messageService.subList(this.channelId);
+      }
+    });
+  }
+
+  subscribeToMsgList() {
+    this.messageListSub = this.messageService.messageList$.subscribe((msgs) => {
+      const wasEmpty = this.messages.length === 0;
+      const hadNewMessage = msgs.length > this.previousMessageCount;
+      this.messages = msgs;
+      if (wasEmpty || (hadNewMessage && this.previousMessageCount > 0)) {
+        this.shouldScroll = true;
+      }
+      this.previousMessageCount = msgs.length;
+      this.isInitialLoad = false;
+    });
+  }
+
   subThreadRoute() {
-    this.router.events.subscribe((event) => {
+    this.routerEventsSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.isThreadOpen = this.router.url.includes('threadMessages');
       }
     });
   }
 
-  ngOnInit(): void {
-    this.subThreadRoute();
-    this.routeSub = this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      if (id) {
-        this.channelId = id;
-        this.waitForUserThenSubscribe(id);
-        this.unsubList = this.messageService.subList(this.channelId);
-        this.messageService.messageList$.subscribe((msgs) => {
-          this.messages = msgs;
-          this.shouldScroll = true;
-        });
-      }
-    });
+  scrollToBottomInstantly() {
+    if (this.scrollContainer?.nativeElement) {
+      const el = this.scrollContainer.nativeElement;
+      setTimeout(() => {
+        el.scrollTop = el.scrollHeight;
+      }, 0);
+    } else {
+      console.log('ScrollContainer not available');
+    }
   }
 
   waitForUserThenSubscribe(id: string) {
@@ -117,32 +174,10 @@ export class DirectMessagesComponent
         clearInterval(checkUserInterval);
         this.subscribeToDM(id);
         this.senderId = currentUser.uid;
+        this.previousMessageCount = 0;
+        this.isInitialLoad = true;
       }
     }, 100);
-  }
-
-  ngAfterViewInit() {
-    this.scrollToBottom();
-  }
-
-  ngAfterViewChecked() {
-    setTimeout(() => {
-      if (this.shouldScroll) {
-        this.scrollToBottom();
-        this.shouldScroll = false;
-      }
-    }, 500);
-  }
-
-  ngOnDestroy(): void {
-    this.unsubSingleDM?.();
-    this.routeSub?.unsubscribe();
-    this.unsubUserList?.();
-    this.unsubList?.();
-  }
-
-  get userB() {
-    return this.userProfileB();
   }
 
   openProfileView() {
@@ -156,23 +191,10 @@ export class DirectMessagesComponent
   }
 
   subscribeToDM(id: string) {
-    this.unsubSingleDM = this.directMessageService.subDMChannel(id, (data) => {
-      const users = data['users'] as string[];
-      const currentId = this.userProfile()?.uid;
-      const otherUserId = users.find((uid) => uid !== currentId);
-      if (otherUserId) {
-        this.getOtherUserProfile(otherUserId);
-      }
-    });
-  }
-
-  getOtherUserProfile(otherUserId: string) {
-    this.unsubUserList = this.firestoreService.subUserList((users) => {
-      const otherUser = users.find((user) => user.uid === otherUserId);
-      if (otherUser) {
-        this.userProfileB.set(otherUser);
-      }
-    });
+    const currentUserId = this.userProfile()?.uid;
+    if (!currentUserId) return;
+    this.unsubSingleDM?.();
+    this.unsubSingleDM = this.directMessageService.subDirectMessageChannel(id, currentUserId);
   }
 
   addMessage() {
@@ -185,19 +207,6 @@ export class DirectMessagesComponent
     };
     this.messageService.addMessage(message, this.channelId);
     this.content = '';
-  }
-
-  scrollToBottom(): void {
-    try {
-      if (this.scrollContainer) {
-        this.scrollContainer.nativeElement.scrollTo({
-          top: this.scrollContainer.nativeElement.scrollHeight,
-          behavior: 'smooth',
-        });
-      }
-    } catch (err) {
-      console.error('Failed to scroll:', err);
-    }
   }
 
   groupMessagesByDate(): { [date: string]: Message[] } {
@@ -214,49 +223,46 @@ export class DirectMessagesComponent
       return;
     }
     this.isThreadOpen = true;
-    this.router.navigate([
-      'directMessages',
-      this.channelId,
-      'threadMessages',
-      messageId,
-    ]);
+    this.router.navigate(['directMessages', this.channelId, 'threadMessages', messageId]);
   }
 
   toggleSmallEmojiMenu() {
-    if (this.smallEmojiMenu == false) {
-      this.smallEmojiMenu = true;
-    } else {
-      this.smallEmojiMenu = false;
-    }
+    return this.emojiService.toggleSmallEmojiMenu();
   }
 
   closeEmojiBox() {
-    this.smallEmojiMenu = false;
+    this.emojiService.closeEmojiBox();
   }
 
   addEmoji(emoji: any) {
-    console.log(emoji.name, 'added');
-    if (emoji) {
-      this.content += emoji;
-    }
+    this.content = this.emojiService.addEmojiToContent(emoji, this.content);
   }
 
   tagInputStart() {
-    setTimeout(() => {
-      if (!this.content.includes('@')) {
-        this.content += `@`;
-      }
-      this.input.nativeElement.focus();
-    }, 0);
+    this.content = this.userMentionService.tagInputStart(this.content, this.input);
   }
 
-  getUserList(): UserProfileInterface[] {
-    return this.firestoreService.userList.filter(
-      (user) => user.uid !== this.userProfile()?.uid && user.name !== 'Guest'
-    );
+  tagInputChannelStart() {
+    this.content = this.userMentionService.tagChannelInputStart(this.content, this.input);
+  }
+
+  updateFilteredUserList() {
+    this.userMentionService.updateFilteredUserList(this.content);
+  }
+
+  updateFilteredChannelList() {
+    this.userMentionService.updateFilteredChannelList(this.content);
   }
 
   takeUser(name: string) {
-    this.content += `${name} `;
+    this.content = this.userMentionService.takeUser(name, this.content);
+  }
+
+  takeChannel(name: string) {
+    this.content = this.userMentionService.takeChannel(name, this.content);
+  }
+
+  onInputChange(event: Event) {
+    this.userMentionService.onInputChange(this.content, this.mentionMenuTrigger, this.channelMenuTrigger, this.input);
   }
 }

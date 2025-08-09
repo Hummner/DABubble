@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  signal,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, signal, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MessageTicketComponent } from '../message-ticket/message-ticket.component';
 import { Message } from '../../interfaces/message.interface';
@@ -22,6 +15,10 @@ import { FormsModule } from '@angular/forms';
 import { ClickStopPropagation } from '../../click-stop-propagation.directive';
 import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
 import { serverTimestamp } from '@angular/fire/firestore';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { UserMentionService } from '../../services/user-channel-mention.service';
+import { EmojiServiceService } from '../../services/emoji.service';
 
 @Component({
   selector: 'app-thread-direct-message',
@@ -34,12 +31,12 @@ import { serverTimestamp } from '@angular/fire/firestore';
     FormsModule,
     EmojiPickerComponent,
     ClickStopPropagation,
+    MatMenuModule,
   ],
   templateUrl: './thread-direct-message.component.html',
   styleUrl: './thread-direct-message.component.scss',
 })
-
-export class ThreadDirectMessageComponent implements OnInit {
+export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   @Input() isThreadOpen!: boolean;
   @Output() close = new EventEmitter<void>();
   @Input() message: Message | null = null;
@@ -59,7 +56,16 @@ export class ThreadDirectMessageComponent implements OnInit {
   userProfileB = signal<UserProfileInterface | null>(null);
   content = '';
   senderId = '';
-  smallEmojiMenu = false;
+  shouldScroll = false;
+  private previousThreadMessageCount = 0;
+  private isInitialThreadLoad = true;
+  private previousMessageCount = 0;
+  private isInitialLoad = true;
+
+  @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('scrollContainerThread') scrollContainerThread!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -67,19 +73,43 @@ export class ThreadDirectMessageComponent implements OnInit {
     private directMessageService: DirectMessageService,
     private messageService: MessageService,
     private threadMessageService: ThreadDirectMessageService,
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    public userMentionService: UserMentionService,
+    public emojiService: EmojiServiceService
   ) {}
 
   ngOnInit(): void {
     this.handleRouteParams();
-    this.waitForUserThenSubscribe();
     if (this.channelId) {
       this.unsubList = this.messageService.subList(this.channelId);
     }
     this.messageService.messageList$.subscribe((msgs) => {
-      // console.log('Messages received:', msgs);
       this.messages = msgs;
+      this.isInitialLoad = false;
     });
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.shouldScroll && this.threadMessages.length) {
+      setTimeout(() => {
+        this.scrollToBottomInstantly();
+        this.shouldScroll = false;
+      }, 100);
+    }
+    if (this.input?.nativeElement) {
+      this.input.nativeElement.focus();
+    }
+  }
+
+  scrollToBottomInstantly() {
+    if (this.scrollContainerThread?.nativeElement) {
+      const el = this.scrollContainerThread.nativeElement;
+      setTimeout(() => {
+        el.scrollTop = el.scrollHeight;
+      }, 0);
+    } else {
+      console.log('ScrollContainer not available');
+    }
   }
 
   handleRouteParams() {
@@ -91,21 +121,27 @@ export class ThreadDirectMessageComponent implements OnInit {
           this.subscribeToParentMessage(this.channelId, this.messageId);
           this.subscribeToThreadMessages(this.channelId, this.messageId);
         }
+        this.waitForUserThenSubscribe();
       });
     });
   }
 
   waitForUserThenSubscribe() {
-    const checkUserInterval = setInterval(() => {
-      const currentUser = this.userProfile();
-      if (currentUser?.uid) {
-        clearInterval(checkUserInterval);
-        if (this.channelId) {
-          this.subscribeToDM(this.channelId);
-          this.senderId = currentUser.uid;
-        }
+    const currentUser = this.userProfile();
+    if (currentUser?.uid) {
+      this.senderId = currentUser.uid;
+      if (this.channelId) {
+        this.subscribeToDM(this.channelId);
+        this.previousThreadMessageCount = 0;
+        this.isInitialLoad = true;
       }
-    }, 100);
+    } else {
+      setTimeout(() => {
+        if (!this.senderId) {
+          this.waitForUserThenSubscribe();
+        }
+      }, 100);
+    }
   }
 
   groupMessagesByDate(): { [date: string]: Message[] } {
@@ -113,40 +149,30 @@ export class ThreadDirectMessageComponent implements OnInit {
   }
 
   subscribeToDM(id: string) {
-    this.unsubSingleDM = this.directMessageService.subDMChannel(id, (data) => {
-      const users = data['users'] as string[];
-      const currentId = this.userProfile()?.uid;
-      const otherUserId = users.find((uid) => uid !== currentId);
-      if (otherUserId) {
-        this.getOtherUserProfile(otherUserId);
-      }
-    });
-  }
-
-  getOtherUserProfile(otherUserId: string) {
-    this.unsubUserList = this.firestoreService.subUserList((users) => {
-      const otherUser = users.find((user) => user.uid === otherUserId);
-      if (otherUser) {
-        this.userProfileB.set(otherUser);
-      }
-    });
+    const currentUserId = this.userProfile()?.uid;
+    if (!currentUserId) return;
+    this.unsubSingleDM?.();
+    this.unsubSingleDM = this.directMessageService.subDirectMessageChannel(id, currentUserId);
+    this.userProfileB.set(this.directMessageService.secondUserProfile());
   }
 
   addThreadMessage() {
+    const currentUserId = this.senderId || this.userProfile()?.uid;
+    if (!currentUserId) {
+      console.error('Cannot send thread message: No user ID available');
+      return;
+    }
     const threadMessage = {
       createdAt: serverTimestamp(),
-      senderId: this.senderId,
+      senderId: currentUserId,
       content: this.content,
       hasThread: false,
       threadCount: 0,
     };
     if (this.channelId && this.message?.id) {
-      this.threadMessageService.addThreadMessage(
-        threadMessage,
-        this.channelId,
-        this.message?.id
-      );
+      this.threadMessageService.addThreadMessage(threadMessage, this.channelId, this.message?.id);
       this.updateParentMessageWithThreadInfo(this.message);
+      this.shouldScroll = true;
     }
     this.content = '';
   }
@@ -168,11 +194,18 @@ export class ThreadDirectMessageComponent implements OnInit {
 
   subscribeToThreadMessages(channelId: string, messageId: string) {
     this.threadMessageService.subThreadList(channelId, messageId);
-    this.threadMessagesSub =
-      this.threadMessageService.threadMessages$.subscribe((messages) => {
+    this.threadMessagesSub = this.threadMessageService.threadMessages$.subscribe((messages) => {
+      if (this.isInitialThreadLoad || messages.length > this.previousThreadMessageCount) {
+        const wasEmpty = this.messages.length === 0;
+        const hadNewMessage = messages.length > this.previousThreadMessageCount;
         this.threadMessages = messages;
-        // console.log('Updated thread messages:', this.threadMessages);
-      });
+        if (wasEmpty || (hadNewMessage && this.previousThreadMessageCount > 0)) {
+          this.shouldScroll = true;
+        }
+      }
+      this.previousThreadMessageCount = messages.length;
+      this.isInitialThreadLoad = false;
+    });
   }
 
   ngOnDestroy(): void {
@@ -185,45 +218,54 @@ export class ThreadDirectMessageComponent implements OnInit {
   }
 
   subscribeToParentMessage(channelId: string, messageId: string) {
-    const docRef = this.messageService.getSingleMessageRef(
-      channelId,
-      messageId
-    );
+    const docRef = this.messageService.getSingleMessageRef(channelId, messageId);
     this.parentMessageUnsub = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
-        this.message = this.messageService.setMessageObject(
-          docSnap.data(),
-          docSnap.id
-        );
-        // console.log('Live updated parent message:', this.message);
+        this.message = this.messageService.setMessageObject(docSnap.data(), docSnap.id);
       }
     });
   }
 
   closeThread() {
     this.close.emit();
-    this.router.navigate([
-      '/directMessages',
-      this.route.snapshot.parent?.paramMap.get('id'),
-    ]);
+    this.router.navigate(['/directMessages', this.route.snapshot.parent?.paramMap.get('id')]);
   }
 
   toggleSmallEmojiMenu() {
-    if (this.smallEmojiMenu == false) {
-      this.smallEmojiMenu = true;
-    } else {
-      this.smallEmojiMenu = false;
-    }
+    return this.emojiService.toggleSmallEmojiMenu();
   }
 
   closeEmojiBox() {
-    this.smallEmojiMenu = false;
+    this.emojiService.closeEmojiBox();
   }
 
   addEmoji(emoji: any) {
-    // console.log(emoji.name, 'added');
-    if (emoji) {
-      this.content += emoji;
-    }
+    this.content = this.emojiService.addEmojiToContent(emoji, this.content);
+  }
+
+  tagInputStart() {
+    this.content = this.userMentionService.tagInputStart(this.content, this.input);
+  }
+  tagInputChannelStart() {
+    this.content = this.userMentionService.tagChannelInputStart(this.content, this.input);
+  }
+
+  updateFilteredUserList() {
+    this.userMentionService.updateFilteredUserList(this.content);
+  }
+  updateFilteredChannelList() {
+    this.userMentionService.updateFilteredChannelList(this.content);
+  }
+
+  takeUser(name: string) {
+    this.content = this.userMentionService.takeUser(name, this.content);
+  }
+
+  takeChannel(name: string) {
+    this.content = this.userMentionService.takeChannel(name, this.content);
+  }
+
+  onInputChange(event: Event) {
+    this.userMentionService.onInputChange(this.content, this.mentionMenuTrigger, this.channelMenuTrigger, this.input);
   }
 }
