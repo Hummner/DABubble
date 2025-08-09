@@ -1,4 +1,4 @@
-import { AfterViewChecked, booleanAttribute, Component, ElementRef, inject, OnDestroy, OnInit, output, ViewChild } from '@angular/core';
+import { AfterViewChecked, booleanAttribute, Component, ElementRef, inject, OnDestroy, OnInit, output, ViewChild, NgZone } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
@@ -35,8 +35,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>;
   @ViewChild('discInput') discInput!: ElementRef<HTMLInputElement>;
   @ViewChild('chat') chatContainer!: ElementRef<HTMLInputElement>;
-
-
+  @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
 
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService)
@@ -66,9 +65,12 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
+    private ngZone: NgZone
   ) { }
 
   ngOnInit(): void {
+
+    this.focusTextarea();
 
     this.loading = true;
     console.log(this.loading);
@@ -95,7 +97,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     });
   }
-
+  
   ngAfterViewChecked() {
     if (!this.initialScrollDone && this.channel?.messages.length) {
       this.scrollToBottom();
@@ -286,5 +288,13 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     for (const channel of await allChannels) {
       channel.members = channel.members.filter((member: any) => member.id !== userProfile?.uid);
     }
+  }
+
+  focusTextarea() {
+    this.channelsService.focusRequest$.subscribe(() => {
+      this.ngZone.onStable.subscribe(() => {
+        this.chatInput.nativeElement.focus();
+      });
+    });
   }
 }

@@ -95,6 +95,7 @@ export class NavbarComponent {
       if (selectedChannel) {
         this.channelService.getChannel(selectedChannel.channelId);
         this.router.navigateByUrl(`channel/${selectedChannel.channelId}`);
+        this.focusOnChannelTextarea();
       } else {
         console.error('Channel not found:', channelId);
       }
@@ -107,5 +108,9 @@ export class NavbarComponent {
         return channel.members.some((member) => member.id === this.currentUserId());
       });
     });
+  }
+
+  focusOnChannelTextarea() {
+    this.channelService.requestFocus();
   }
 }
