@@ -2,7 +2,7 @@
     <div class="backdrop" *ngIf="menuOpen" (click)="menuOpen = false"></div>
     <mat-drawer-container class="container" autosize>
 
-        <mat-drawer #drawer class="example-sidenav" mode="side" position="end" [(opened)]="isThreadOpen">
+        <mat-drawer #drawer [mode]="drawerMode" class="example-sidenav" position="end" [(opened)]="isThreadOpen">
             <app-thread [currentThreadPath]="currentThreadPath" [isThreadOpen]="isThreadOpen"
                 [members]="channel?.members" [tickets]="channel?.messages" (close)="drawer.toggle()"></app-thread>
         </mat-drawer>

@@ -1,6 +1,6 @@
-import { AfterViewChecked, booleanAttribute, Component, ElementRef, inject, OnDestroy, OnInit, output, ViewChild } from '@angular/core';
+import { AfterViewChecked, booleanAttribute, Component, ElementRef, HostListener, inject, Input, OnDestroy, OnInit, output, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawer, MatDrawerMode, MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
@@ -35,6 +35,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 
 
+
+
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService)
   firestoreService = inject(FirestoreService)
@@ -56,6 +58,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   loading = false;
   isMessage = false;
   initialScrollDone = false;
+  drawerMode!: MatDrawerMode;
 
   constructor(
     private route: ActivatedRoute,
@@ -64,18 +67,15 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit(): void {
     this.loading = true;
-    console.log(this.loading);
-
     this.getActiveRoute();
+    console.log(window.innerWidth);
+    this.checkWindowWidth();
     this.channelSubscription = this.channelsService.channel$.subscribe(channel => {
       if (channel) {
         this.channel = channel;
         console.log('Channel empfangen:', this.channel);
         this.loading = false;
         this.initialScrollDone = false;
-        console.log(this.loading);
-
-
       }
     });
 
@@ -96,6 +96,19 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.scrollToBottom();
       this.initialScrollDone = true;
     }
+  }
+
+  checkWindowWidth() {
+    if (window.innerWidth > 1024) {
+      this.drawerMode = "side";
+    } else {
+      this.drawerMode = "over";
+    }
+  }
+
+  @HostListener('window:resize', ['$event.target.innerWidth'])
+  onResize(width: number) {
+    this.checkWindowWidth();
   }
 
   currentThreadPathRef(data: string) {
