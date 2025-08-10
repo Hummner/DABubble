@@ -16,7 +16,11 @@
              formControlName="channelName"
              placeholder="# z.B. Kooperationsprojekte"
              class="full-input"/>
-
+      <div class="error"
+          *ngIf="form.get('channelName')?.hasError('exists') 
+                  && form.get('channelName')?.dirty">
+        <p class="error-message">Channel name already exists</p>
+      </div>
       <p class="field-label" for="desc">
         Beschreibung <span class="optional-text">(optional)</span>
       </p>

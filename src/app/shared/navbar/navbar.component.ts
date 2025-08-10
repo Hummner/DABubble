@@ -54,6 +54,7 @@ export class NavbarComponent {
   isOpen = true;
   showChannel = true;
   showMessage = true;
+  filteredChannels: any[] = [];
 
   toggleDrawer() {
     this.isOpen = !this.isOpen;
@@ -72,7 +73,8 @@ export class NavbarComponent {
   }
 
   getOtherUserList(): UserProfileInterface[] {
-    const users = this.firestoreService.userList(); // call to get the current value
+    const users = this.firestoreService.userList();
+    this.hideChannelWithoutCurrentUser();
     return users.filter((user) => user.uid !== this.userProfile()?.uid);
   }
 
@@ -93,9 +95,22 @@ export class NavbarComponent {
       if (selectedChannel) {
         this.channelService.getChannel(selectedChannel.channelId);
         this.router.navigateByUrl(`channel/${selectedChannel.channelId}`);
+        this.focusOnChannelTextarea();
       } else {
         console.error('Channel not found:', channelId);
       }
     });
+  }
+
+  async hideChannelWithoutCurrentUser() {
+    this.channels$.subscribe((channels) => {
+      this.filteredChannels = channels.filter((channel) => {
+        return channel.members.some((member) => member.id === this.currentUserId());
+      });
+    });
+  }
+
+  focusOnChannelTextarea() {
+    this.channelService.requestFocus();
   }
 }

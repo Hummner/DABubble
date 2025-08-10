@@ -1,10 +1,10 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { doc, DocumentReference, Firestore, getCountFromServer, getDoc, serverTimestamp, Timestamp, updateDoc } from '@angular/fire/firestore';
+import { doc, DocumentReference, Firestore, getCountFromServer, getDoc, getDocs, serverTimestamp, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { collection, onSnapshot } from '@angular/fire/firestore';
 import { ChannelInterface } from '../interfaces/channel.interface';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { addDoc, DocumentData, query, orderBy } from '@angular/fire/firestore';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { user } from '@angular/fire/auth';
 
@@ -14,6 +14,8 @@ import { user } from '@angular/fire/auth';
 export class ChannelsService implements OnDestroy {
   private channelSubject = new BehaviorSubject<ChannelInterface | null>(null);
   private messagesSubject = new BehaviorSubject<TicketInterface[]>([]);
+  private focusRequest = new Subject<void>();
+  focusRequest$ = this.focusRequest.asObservable();
   messages$ = this.messagesSubject.asObservable();
   channel$ = this.channelSubject.asObservable();
   firestore = inject(Firestore);
@@ -33,8 +35,17 @@ export class ChannelsService implements OnDestroy {
     return channelId;
   }
 
-
-
+  async getAllChannels() {
+    const channelsCol = collection(this.firestore, 'channels');
+    const snapshot = await getDocs(channelsCol);
+    const channels = snapshot.docs.map(doc => ({
+      channelId: doc.id,
+      members: doc.data()['members'] || [],
+      ...doc.data()
+    }));
+    console.log('All channels:', channels);
+    return channels;
+  }
 
   async getChannelInfos(channelData?: DocumentData, channelId?: string) {
     if (channelData && channelId) {
@@ -205,5 +216,9 @@ export class ChannelsService implements OnDestroy {
         members: updatedMembers,
       });
     }
+  }
+
+  requestFocus() {
+    this.focusRequest.next();
   }
 }
