@@ -53,6 +53,7 @@ p {
 }
 
 .field-label {
+  margin-top: 24px;
   font-size: 20px;
   font-weight: bold;
 }
@@ -66,7 +67,6 @@ p {
   position: relative;
   width: 100%;
   padding: 16px;
-  margin-bottom: 24px;
   font: 16px 'Nunito', sans-serif;
   border: 1px solid #ccc;
   border-radius: 30px;
@@ -115,6 +115,15 @@ p {
     color: #fff;
     cursor: not-allowed;
     pointer-events: none;
+  }
+}
+
+.error {
+  font-size: 14px;
+
+  .error-message {
+    color: #ff0000;
+    margin: 0;
   }
 }
 
