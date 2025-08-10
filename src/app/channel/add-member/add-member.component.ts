@@ -122,7 +122,7 @@ export class AddMemberComponent {
       console.error('Error adding member to channel:', error);
     });
     this.closeDialog();
-    this.router.navigateByUrl('/channel/' + this.channelId);
+    this.router.navigate(['/channel', this.channelId]);
   }
 }
 
