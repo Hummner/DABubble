@@ -70,7 +70,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit(): void {
 
-    this.focusTextarea();
+    // this.focusTextarea();
 
     this.loading = true;
     console.log(this.loading);
