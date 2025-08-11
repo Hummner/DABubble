@@ -44,7 +44,14 @@
         </div>
       </div>
       <div *ngIf="inThreadView == false" class="answers" [ngClass]="{ reverse: currentUserText }">
-        <span class="thread-answers" (click)="openThreadPanel()">
+        <span
+          class="thread-answers"
+          style="color: #535af1; font-size: 18px"
+          (mouseenter)="isHovered = true"
+          (mouseleave)="isHovered = false"
+          [style.fontWeight]="isHovered ? 700 : 400"
+          (click)="openThreadPanel()"
+        >
           @if(message.threadCount == 0){ Keine Antwort } @else {
           {{ message.threadCount }} Antwort }
         </span>

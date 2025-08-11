@@ -54,7 +54,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   smallEmojiMenu = false;
   showEmojiMenu = false;
   // @Input() emojiChanged = false;
-
+  isHovered = false;
   private userMap = new Map<string, UserProfileInterface>();
   private nameToUidMap = new Map<string, string>();
   private channelMap = new Map<string, NavbarInterface>();
@@ -249,7 +249,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     if (userList.length > 1) {
       text = reactionList[0].name + ' und ' + reactionList[1]?.name;
       console.log(reactionList);
-    } else if(userList.length = 1){
+    } else if ((userList.length = 1)) {
       text = reactionList[0].name;
       console.log(reactionList);
     }
