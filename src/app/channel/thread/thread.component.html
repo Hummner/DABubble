@@ -8,7 +8,7 @@
         </header>
         <main>
             <div class="scroll-wrapper">
-                <div class="ticket">
+                <!-- <div class="ticket">
                     <div class="member-img-ticket">
                         <img src="assets/img/elias_neumann.svg" alt="">
                     </div>
@@ -21,7 +21,9 @@
                             <p>{{ticketText}}</p>
                         </div>
                     </div>
-                </div>
+                </div> -->
+                <app-thread-messages *ngIf="isThreadOpen" [members]="members" [message]="currentTicket"></app-thread-messages>
+
                 <div class="placeholder">
                     <div class="placeholder-date msg-answer">{{ messagesCount }}</div>
                 </div>
@@ -30,7 +32,7 @@
                     <div *ngIf="!isTheSameDate($index)" class="placeholder-thread">
                         <div class="placeholder-date-thread">{{ showPlaceholder($index)}}</div>
                     </div>
-                    <app-thread-messages [members]="members" [message]="message" [index]="$index"></app-thread-messages>
+                    <app-thread-messages [members]="members" [message]="message"></app-thread-messages>
                     }
                 </div>
             </div>

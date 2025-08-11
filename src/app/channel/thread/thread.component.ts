@@ -54,7 +54,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
     this.currentTicketSubscription = this.threadService.currentTicketSubscribe$.subscribe(ticket => {
       this.currentTicket = ticket
-      console.log(ticket);
+      console.log(this.currentTicket);
       this.createCurrentTicket();
     });
   }
