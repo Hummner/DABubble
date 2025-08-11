@@ -11,9 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { EmojiArrayService } from '../../../services/emoji-array.service';
 import { ChannelsService } from '../../../services/channels.service';
-import { doc, getDocs, updateDoc } from '@angular/fire/firestore';
+import { doc, getDocs, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { ThreadService } from '../../../services/thread.service';
-import { collection } from 'firebase/firestore';
 
 @Component({
   selector: 'app-thread-messages',
@@ -25,7 +24,6 @@ import { collection } from 'firebase/firestore';
 export class ThreadMessagesComponent implements OnInit, OnChanges {
 
   @Input() tickets!: TicketInterface[];
-  @Input() index!: number;
   @Input() message!: TicketInterface;
   @Input() members?: any[];
   userName!: string;
@@ -118,6 +116,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
   }
 
   isReaction() {
+
     if (this.message.reactions.length == 0) {
       return false;
     } else {
@@ -287,7 +286,9 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
   // }
 
   showTime(): string {
-    return this.message?.createdAt instanceof Date ? this.message.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
+    if (this.message?.createdAt instanceof Date) return this.message.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    if (this.message?.createdAt instanceof Timestamp) return this.convertToDate(this.message.createdAt);
+    return "No Time"
   }
 
   findUser(uId: string): number {
@@ -311,7 +312,16 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
 
   }
 
+  convertToDate(timestamp: Timestamp) {
+    const rawCreatedAt = timestamp
+    const createdAtDate = rawCreatedAt instanceof Timestamp ? rawCreatedAt.toDate() : null;
+    if (createdAtDate) return createdAtDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    return "-"
+  }
+
 
 
 
 }
+
+
