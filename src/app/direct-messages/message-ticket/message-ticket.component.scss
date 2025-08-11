@@ -278,6 +278,49 @@
   }
 }
 
+.message-edit {
+    background-color: white;
+    border: 1px solid #ADB0D9;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+
+.ticket-edit {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    padding: 20px 45px 20px 140px;
+    gap: 24px;
+    background-color: #ECEEFE;
+}
+
+.edit-textarea {
+
+    border: none;
+    width: 100%;
+    font-size: 18px;
+    color: #686868;
+    resize: none;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.button-container {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 @media (max-width: 768px) {
   .ticket {
     padding: 20px 24px;

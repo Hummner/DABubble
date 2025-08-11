@@ -9,6 +9,8 @@ import {
   OnInit,
   ChangeDetectorRef,
   inject,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { Message } from '../../interfaces/message.interface';
@@ -21,6 +23,11 @@ import { NavbarInterface } from '../../interfaces/navbar.interface';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarService } from '../../services/navbar.service';
 import { EmojiServiceService } from '../../services/emoji.service';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../services/auth.service';
+import { FormsModule } from '@angular/forms';
+import { MessageService } from '../../services/message.service';
 
 type MessageToken =
   | { type: 'text'; value: string }
@@ -30,7 +37,7 @@ type MessageToken =
 @Component({
   selector: 'app-message-ticket',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule, MatMenuModule, FormsModule],
   templateUrl: './message-ticket.component.html',
   styleUrl: './message-ticket.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,31 +50,37 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   @Input() threadId?: string;
   @Input() messageId!: string;
   @Input() inThreadView: boolean = false;
-  @Input() isParentInThread: boolean = false; // New input to indicate parent message in thread context
+  @Input() isParentInThread: boolean = false;
 
   @Output() openThread = new EventEmitter<string | undefined>();
   @Output() emojiListChange = new EventEmitter<{ name: string; code: string }[]>();
+  @Output() editViewChange = new EventEmitter<boolean>();
 
   senderId = '';
   user: UserProfileInterface | null = null;
   currentUserText = false;
   smallEmojiMenu = false;
   showEmojiMenu = false;
-  // @Input() emojiChanged = false;
+
   isHovered = false;
+  editView: boolean = false;
+  showMenu = false;
+  editMenuOpen = false;
+
   private userMap = new Map<string, UserProfileInterface>();
   private nameToUidMap = new Map<string, string>();
   private channelMap = new Map<string, NavbarInterface>();
   private channelNameToUidMap = new Map<string, string>();
   channels = toSignal(inject(NavbarService).channelsObs$);
-
   parsedMessageTokens: MessageToken[] = [];
-
   emojiList = this.emojiServise.emojiList;
   reactionList: any;
   showReactions = false;
   shownEmoji!: string;
   emojiIndex!: number;
+  editedText!: string;
+  private auth = inject(AuthService);
+  @ViewChild('editInput') editInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private firestore: FirestoreService,
@@ -75,7 +88,8 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     private route: ActivatedRoute,
     private directMessageService: DirectMessageService,
     private cdr: ChangeDetectorRef,
-    private emojiServise: EmojiServiceService
+    private emojiServise: EmojiServiceService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -254,5 +268,41 @@ export class MessageTicketComponent implements OnChanges, OnInit {
       console.log(reactionList);
     }
     return text;
+  }
+
+  onEditMenuOpened() {
+    this.editMenuOpen = true;
+    this.showMenu = true;
+  }
+
+  onEditMenuClosed() {
+    this.editMenuOpen = false;
+    this.showMenu = false;
+    this.editViewChange.emit(this.editView);
+  }
+
+  getCurrentUserId(): string | null {
+    return this.auth.firebaseAuth.currentUser?.uid ?? null;
+  }
+  isCurrentUser() {
+    return this.getCurrentUserId() === this.message.senderId;
+  }
+  openEditView() {
+    this.editView = true;
+    this.editedText = this.message.content;
+    this.editViewChange.emit(this.editView);
+    setTimeout(() => {
+      this.editInput.nativeElement.focus();
+    }, 0);
+  }
+
+  closeEditView() {
+    this.editView = false;
+    this.editViewChange.emit(this.editView);
+  }
+
+  editText() {
+    this.messageService.updateMessagePartial({ content: this.editedText }, this.message.id!, this.channelId);
+    this.editView = false;
   }
 }

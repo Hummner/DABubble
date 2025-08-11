@@ -1,4 +1,5 @@
 <div
+  *ngIf="!editView"
   class="ticket-container"
   (mouseenter)="showEmojiMenu = true"
   (mouseleave)="showEmojiMenu = false; smallEmojiMenu = false"
@@ -96,6 +97,18 @@
       <div class="emoji-menu-item" *ngIf="inThreadView == false">
         <img class="hover-purple" (click)="openThreadPanel()" src="assets/icon/comment.svg" />
       </div>
+      <div *ngIf="isCurrentUser()" class="emoji-menu-item">
+        <mat-icon
+          #menuTrigger="matMenuTrigger"
+          [matMenuTriggerFor]="editTicket"
+          (menuOpened)="onEditMenuOpened()"
+          (menuClosed)="onEditMenuClosed()"
+          >more_vert</mat-icon
+        >
+        <mat-menu #editTicket="matMenu" class="edit-menu">
+          <span (click)="openEditView()" mat-menu-item>Nachricht bearbeiten</span>
+        </mat-menu>
+      </div>
     </div>
     <div class="small-emoji-menu" *ngIf="smallEmojiMenu" [class.reversed-s-e-m]="!currentUserText">
       @for(emoji of sortedEmojis;track emojiList){
@@ -108,5 +121,22 @@
         *ngIf="smallEmojiMenu"
         (emojiSelected)="onEmojiToggle(emoji.name)"
       ></app-emoji-picker> -->
+  </div>
+</div>
+<div *ngIf="editView" class="ticket-edit">
+  <div class="message-edit">
+    <textarea #editInput class="edit-textarea" [(ngModel)]="editedText" name="edit-textarea" id="edit_textarea"></textarea>
+    <div class="button-container">
+      <div class="input-icon">
+        <img src="assets/icon/reaction.png" alt="" />
+      </div>
+      <div class="buttons">
+        <span class="secondary-button" (click)="closeEditView()">Abbrechen</span>
+        <span class="primary-button" (click)="editText()">Speichern</span>
+      </div>
+    </div>
+  </div>
+  <div class="member-img-ticket">
+    <img src="assets/img/elias_neumann.svg" alt="" />
   </div>
 </div>

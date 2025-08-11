@@ -58,6 +58,7 @@
               [channelId]="channelId"
               (openThread)="openThread($event)"
               [inThreadView]="false"
+              (editViewChange)="onEditViewChange($event)"
               (emojiListChange)="updateEmojiList($event)"
             ></app-message-ticket>
           </div>

@@ -1,4 +1,14 @@
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewChecked,
+  inject,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NgIf, NgFor } from '@angular/common';
@@ -71,6 +81,8 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   channels = toSignal(inject(NavbarService).channelsObs$);
+  // isInEditView!: boolean;
+  parentEditView = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -96,7 +108,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
         this.shouldScroll = false;
       }, 100);
     }
-    if (!this.isThreadOpen && this.input?.nativeElement) {
+    if (!this.isThreadOpen && this.input?.nativeElement && !this.parentEditView) {
       this.input.nativeElement.focus();
     }
   }
@@ -264,5 +276,9 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
 
   onInputChange(event: Event) {
     this.userMentionService.onInputChange(this.content, this.mentionMenuTrigger, this.channelMenuTrigger, this.input);
+  }
+
+  onEditViewChange(isOpen: boolean) {
+    this.parentEditView = isOpen;
   }
 }
