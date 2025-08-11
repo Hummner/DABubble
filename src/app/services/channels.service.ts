@@ -1,11 +1,12 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { CollectionReference, doc, DocumentReference, Firestore, getCountFromServer, getDoc, getDocs, serverTimestamp, Timestamp, updateDoc } from '@angular/fire/firestore';
+import { doc, DocumentReference, Firestore, getCountFromServer, getDoc, getDocs, serverTimestamp, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { collection, onSnapshot } from '@angular/fire/firestore';
 import { ChannelInterface } from '../interfaces/channel.interface';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { addDoc, DocumentData, query, orderBy } from '@angular/fire/firestore';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { user } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,8 @@ import { CommonModule } from '@angular/common';
 export class ChannelsService implements OnDestroy {
   private channelSubject = new BehaviorSubject<ChannelInterface | null>(null);
   private messagesSubject = new BehaviorSubject<TicketInterface[]>([]);
+  private focusRequest = new Subject<void>();
+  focusRequest$ = this.focusRequest.asObservable();
   messages$ = this.messagesSubject.asObservable();
   channel$ = this.channelSubject.asObservable();
   firestore = inject(Firestore);
@@ -29,11 +32,20 @@ export class ChannelsService implements OnDestroy {
 
   getChannel(channelId: string) {
     this.unsubChannel = this.subChannel(channelId);
-
+    return channelId;
   }
 
-
-
+  async getAllChannels() {
+    const channelsCol = collection(this.firestore, 'channels');
+    const snapshot = await getDocs(channelsCol);
+    const channels = snapshot.docs.map(doc => ({
+      channelId: doc.id,
+      members: doc.data()['members'] || [],
+      ...doc.data()
+    }));
+    console.log('All channels:', channels);
+    return channels;
+  }
 
   async getChannelInfos(channelData?: DocumentData, channelId?: string) {
     if (channelData && channelId) {
@@ -189,4 +201,24 @@ export class ChannelsService implements OnDestroy {
         console.log("Name: ", name, " Description: ", description);
       })
     }
+
+  async deleteMember(channelId: string, userProfile: any) {
+    const channelRef = doc(this.firestore, 'channels', channelId);
+    const docSnap = await getDoc(channelRef);
+
+    if (docSnap.exists()) {
+      const channelData = docSnap.data();
+      const updatedMembers = (channelData['members'] || []).filter(
+        (member: any) => member.id !== userProfile.uid
+      );
+
+      updateDoc(channelRef, {
+        members: updatedMembers,
+      });
+    }
+  }
+
+  requestFocus() {
+    this.focusRequest.next();
+  }
 }

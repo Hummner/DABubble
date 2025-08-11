@@ -1,6 +1,6 @@
-import { AfterViewChecked, booleanAttribute, Component, ElementRef, inject, OnDestroy, OnInit, output, ViewChild } from '@angular/core';
+import { AfterViewChecked, booleanAttribute, Component, ElementRef, HostListener, inject, Input, OnDestroy, OnInit, output, ViewChild, NgZone } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawer, MatDrawerMode, MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EmojiArrayService } from '../services/emoji-array.service';
 import { AddMemberComponent } from '../channel/add-member/add-member.component';
 import { MatDialog } from '@angular/material/dialog';
+import { UserProfileInterface } from '../interfaces/user-profile.interface';
 
 
 @Component({
@@ -34,14 +35,15 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>;
   @ViewChild('discInput') discInput!: ElementRef<HTMLInputElement>;
   @ViewChild('chat') chatContainer!: ElementRef<HTMLInputElement>;
-
-
+  @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
 
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService)
   firestoreService = inject(FirestoreService)
   private auth = inject(AuthService);
   emojiArray = inject(EmojiArrayService)
+  userProfile = this.firestoreService.userProfile;
+  user: UserProfileInterface | null = null;
   showMenu = false;
   menuOpen = false;
   editName = false;
@@ -58,27 +60,29 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   loading = false;
   isMessage = false;
   initialScrollDone = false;
+  drawerMode!: MatDrawerMode;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
+    private ngZone: NgZone
   ) { }
 
   ngOnInit(): void {
-    this.loading = true;
-    console.log(this.loading);
 
+    // this.focusTextarea();
+
+    this.loading = true;
     this.getActiveRoute();
+    console.log(window.innerWidth);
+    this.checkWindowWidth();
     this.channelSubscription = this.channelsService.channel$.subscribe(channel => {
       if (channel) {
         this.channel = channel;
         console.log('Channel empfangen:', this.channel);
         this.loading = false;
         this.initialScrollDone = false;
-        console.log(this.loading);
-
-
       }
     });
 
@@ -93,12 +97,25 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     });
   }
-
+  
   ngAfterViewChecked() {
     if (!this.initialScrollDone && this.channel?.messages.length) {
       this.scrollToBottom();
       this.initialScrollDone = true;
     }
+  }
+
+  checkWindowWidth() {
+    if (window.innerWidth > 1024) {
+      this.drawerMode = "side";
+    } else {
+      this.drawerMode = "over";
+    }
+  }
+
+  @HostListener('window:resize', ['$event.target.innerWidth'])
+  onResize(width: number) {
+    this.checkWindowWidth();
   }
 
   currentThreadPathRef(data: string) {
@@ -273,5 +290,24 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         channelId: this.channelId
       }}
     );
+  }
+
+  async leaveChannel(userProfile: UserProfileInterface | null, editChannelMenuTrigger: MatMenuTrigger) {
+    let currentChannel = this.channelsService.getChannel(this.channelId)
+    this.channelsService.deleteMember(currentChannel, userProfile);
+    this.closeMenu(editChannelMenuTrigger);
+    
+    let allChannels = this.channelsService.getAllChannels();
+    for (const channel of await allChannels) {
+      channel.members = channel.members.filter((member: any) => member.id !== userProfile?.uid);
+    }
+  }
+
+  focusTextarea() {
+    this.channelsService.focusRequest$.subscribe(() => {
+      this.ngZone.onStable.subscribe(() => {
+        this.chatInput.nativeElement.focus();
+      });
+    });
   }
 }

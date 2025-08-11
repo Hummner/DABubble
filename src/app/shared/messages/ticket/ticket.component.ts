@@ -35,7 +35,7 @@ export class TicketComponent implements OnInit, OnChanges {
   channelService = inject(ChannelsService);
   private auth = inject(AuthService);
   emojiArray = inject(EmojiArrayService);
-  showPopup = false;
+  showPopupIndexNumber!: number;
   showMenu = false;
   channelId!: string;
   editView: boolean = false;
@@ -112,6 +112,9 @@ export class TicketComponent implements OnInit, OnChanges {
 
   }
 
+  showPopupIndex(index: number) {
+    return this.showPopupIndexNumber = index
+  }
 
   openThreadPanel() {
     if (this.ticket.threads?.path) {
