@@ -252,23 +252,14 @@ export class MessageTicketComponent implements OnChanges, OnInit {
 
   formatNames(userList: any, reactionList: any) {
     let text = '';
-    // let currentUText = '';
-    // const currentUserName = reactionList.filter((user: any) => {
-    //   user.uid == this.userProfile?.uid;
-    //   return user.name;
-    // });
-
-    // let nameFirst = reactionList[0].name;
-    // let nameSecond = reactionList[1].name;
-    // if (userName == currentUserName) {
-    //   text = 'Du';
-    // }
     if (userList.length > 1) {
-      text = reactionList[0].name + ' und ' + reactionList[1]?.name;
-      console.log(reactionList);
+      let name1 = reactionList[0].name == this.firestore.userProfile()?.name ? 'Du' : reactionList[0].name;
+      let name2 = reactionList[1]?.name == this.firestore.userProfile()?.name ? 'Du' : reactionList[1]?.name;
+      text = name1 + ' und ' + name2 + ' haben reagiert';
     } else if ((userList.length = 1)) {
-      text = reactionList[0].name;
-      console.log(reactionList);
+      let name = reactionList[0].name == this.firestore.userProfile()?.name ? 'Du' : reactionList[0].name;
+      let extraText = reactionList[0].name == this.firestore.userProfile()?.name ? ' hast reagiert' : ' hat reagiert ';
+      text = name + extraText;
     }
     return text;
   }
