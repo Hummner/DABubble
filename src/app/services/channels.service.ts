@@ -41,6 +41,7 @@ export class ChannelsService implements OnDestroy {
     const channels = snapshot.docs.map(doc => ({
       channelId: doc.id,
       members: doc.data()['members'] || [],
+      name: doc.data()['name'],
       ...doc.data()
     }));
     console.log('All channels:', channels);

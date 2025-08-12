@@ -741,6 +741,12 @@ main {
     }
 }
 
+.error-message {
+    color: #ff0000;
+    margin: 0;
+    font-size: 14px;
+}
+
 
 @media(max-width: 768px) {
     .container {

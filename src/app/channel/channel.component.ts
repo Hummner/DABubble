@@ -61,6 +61,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   isMessage = false;
   initialScrollDone = false;
   drawerMode!: MatDrawerMode;
+  originalChannelName: string = "";
+  channelNameExists = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -70,7 +72,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   ) { }
 
   ngOnInit(): void {
-
     // this.focusTextarea();
 
     this.loading = true;
@@ -213,13 +214,13 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-
   closeMenu(trigger: MatMenuTrigger) {
     trigger.closeMenu();
   }
 
   editChannel(editField: string) {
     if (editField === "editName") {
+      this.originalChannelName = this.channel?.name || "";
       this.editName = true;
       this.nameInput.nativeElement.focus();
       this.focusAfterText(this.nameInput);
@@ -249,7 +250,11 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.editDisc = false;
       this.discInput.nativeElement.blur();
     }
-    this.channelsService.updateEditChannel(this.channelId, this.nameInput.nativeElement.value, this.discInput.nativeElement.value);
+    this.checkValidation().then(isValid => {
+      if (isValid) {
+        this.channelsService.updateEditChannel(this.channelId, this.nameInput.nativeElement.value, this.discInput.nativeElement.value);
+    }
+    })
   }
 
   getChannelInfo() {
@@ -309,5 +314,27 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.chatInput.nativeElement.focus();
       });
     });
+  }
+
+  async checkValidation() {
+    let channelName =  this.nameInput.nativeElement.value.trim();
+    let allChannels = await this.channelsService.getAllChannels();
+
+    const exists = allChannels.some(
+      channel => channel.name === channelName && channelName !== this.originalChannelName
+    );
+
+    this.channelNameExists = exists;
+    this.resetChannelName(this.channelNameExists)
+    return !exists;
+    }
+
+  resetChannelName(exists: boolean) {
+    if (exists) {
+      setTimeout(() => {
+        this.nameInput.nativeElement.value = this.originalChannelName;
+        this.channelNameExists = false;
+      }, 1000);
+    }
   }
 }
