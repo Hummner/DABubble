@@ -279,46 +279,53 @@
 }
 
 .message-edit {
-    background-color: white;
-    border: 1px solid #ADB0D9;
-    border-radius: 20px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
+  background-color: white;
+  border: 1px solid #adb0d9;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+::ng-deep .edit-menu {
+  border-radius: 0 30px 30px 30px !important;
+  margin-left: 15px;
+  margin-top: -15px;
+
+  span {
+    font-family: Nunito !important;
+  }
 }
 
-
 .ticket-edit {
-    display: flex;
-    width: 100%;
-    align-items: flex-start;
-    padding: 20px 45px 20px 140px;
-    gap: 24px;
-    background-color: #ECEEFE;
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  padding: 20px 45px 20px 140px;
+  gap: 24px;
+  background-color: #eceefe;
 }
 
 .edit-textarea {
+  border: none;
+  width: 100%;
+  font-size: 18px;
+  color: #686868;
+  resize: none;
 
-    border: none;
-    width: 100%;
-    font-size: 18px;
-    color: #686868;
-    resize: none;
-
-    &:focus {
-        outline: none;
-    }
+  &:focus {
+    outline: none;
+  }
 }
 
 .button-container {
-    height: 50px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 @media (max-width: 768px) {

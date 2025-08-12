@@ -28,6 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../services/message.service';
+import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
 
 type MessageToken =
   | { type: 'text'; value: string }
@@ -81,6 +82,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   editedText!: string;
   private auth = inject(AuthService);
   @ViewChild('editInput') editInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('editThreadInput') editThreadInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private firestore: FirestoreService,
@@ -89,7 +91,8 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     private directMessageService: DirectMessageService,
     private cdr: ChangeDetectorRef,
     private emojiServise: EmojiServiceService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private threadDMService: ThreadDirectMessageService
   ) {}
 
   ngOnInit(): void {
@@ -292,7 +295,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     this.editedText = this.message.content;
     this.editViewChange.emit(this.editView);
     setTimeout(() => {
-      this.editInput.nativeElement.focus();
+      this.editInput.nativeElement ? this.editInput.nativeElement.focus() : this.editThreadInput.nativeElement.focus();
     }, 0);
   }
 
@@ -300,9 +303,20 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     this.editView = false;
     this.editViewChange.emit(this.editView);
   }
-
   editText() {
-    this.messageService.updateMessagePartial({ content: this.editedText }, this.message.id!, this.channelId);
+    this.message.content = this.editedText;
+    if (this.threadId) {
+      console.log(this.message.content);
+      console.log(this.editedText);
+      // Thread message → full update
+      this.threadDMService.updateThreadPartial({ content: this.editedText }, this.messageId, this.channelId, this.threadId);
+      console.log(this.message.content);
+      console.log(this.editedText);
+    } else {
+      // Direct message → partial update
+      this.messageService.updateMessagePartial({ content: this.editedText }, this.message.id!, this.channelId);
+    }
+
     this.editView = false;
   }
 }

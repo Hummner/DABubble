@@ -78,6 +78,21 @@ export class ThreadDirectMessageService {
     }
   }
 
+    async updateThreadPartial(partialData: Partial<Message>, docId: string, channelId: string, threadId:string) {
+    if (!docId || !channelId) {
+      console.error('Missing docId or channelId:', { docId, channelId });
+      return;
+    }
+    const ref = this.getSingleThreadRef(channelId, docId ,threadId);
+    try {
+      await updateDoc(ref, partialData);
+    } catch (err) {
+      console.error('Partial update failed:', err);
+    }
+  }
+
+
+
   async getThreadMessageById(
     channelId: string,
     messageId: string,

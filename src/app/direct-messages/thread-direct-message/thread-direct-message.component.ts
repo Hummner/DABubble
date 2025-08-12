@@ -66,6 +66,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   @ViewChild('scrollContainerThread') scrollContainerThread!: ElementRef;
+  parentEditView = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -95,8 +96,9 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
         this.scrollToBottomInstantly();
         this.shouldScroll = false;
       }, 100);
+      this.parentEditView;
     }
-    if (this.input?.nativeElement) {
+    if (this.input?.nativeElement && !this.parentEditView) {
       this.input.nativeElement.focus();
     }
   }
@@ -193,8 +195,12 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   subscribeToThreadMessages(channelId: string, messageId: string) {
+    if (this.threadMessagesSub) {
+      this.threadMessagesSub.unsubscribe();
+    }
     this.threadMessageService.subThreadList(channelId, messageId);
     this.threadMessagesSub = this.threadMessageService.threadMessages$.subscribe((messages) => {
+      console.log('[ThreadMessages] Received from Firestore:', messages);
       if (this.isInitialThreadLoad || messages.length > this.previousThreadMessageCount) {
         const wasEmpty = this.messages.length === 0;
         const hadNewMessage = messages.length > this.previousThreadMessageCount;
@@ -202,6 +208,8 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
         if (wasEmpty || (hadNewMessage && this.previousThreadMessageCount > 0)) {
           this.shouldScroll = true;
         }
+      } else {
+        this.threadMessages = messages;
       }
       this.previousThreadMessageCount = messages.length;
       this.isInitialThreadLoad = false;
@@ -267,5 +275,9 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
 
   onInputChange(event: Event) {
     this.userMentionService.onInputChange(this.content, this.mentionMenuTrigger, this.channelMenuTrigger, this.input);
+  }
+
+  onEditViewChange(isOpen: boolean) {
+    this.parentEditView = isOpen;
   }
 }

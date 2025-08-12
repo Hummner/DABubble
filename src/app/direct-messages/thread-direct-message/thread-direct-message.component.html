@@ -32,6 +32,7 @@
               [message]="msg"
               [threadId]="msg.id"
               [messageId]="message.id!"
+              (editViewChange)="onEditViewChange($event)"
             ></app-message-ticket>
           </div>
         </div>
@@ -47,7 +48,7 @@
     <footer>
       <div class="text-area">
         <textarea
-          #input
+          #editThreadInput
           name="chat_input"
           id="chat_input"
           placeholder="Antworten..."

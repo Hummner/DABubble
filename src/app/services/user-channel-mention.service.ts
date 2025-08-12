@@ -24,8 +24,8 @@ export class UserMentionService {
     this.firestoreService.subUserList((users) => {
       this.updateFilteredUserList(newContent);
     });
-    // Use requestAnimationFrame for better performance
     requestAnimationFrame(() => {
+      if(input.nativeElement)
       input.nativeElement.focus();
     });
     return newContent;
@@ -37,8 +37,8 @@ export class UserMentionService {
   ): string {
     const newContent = content + '#';
     this.updateFilteredChannelList(newContent);
-    // Use requestAnimationFrame for better performance
     requestAnimationFrame(() => {
+      if(input.nativeElement)
       input.nativeElement.focus();
     });
     return newContent;
@@ -47,7 +47,6 @@ export class UserMentionService {
   updateFilteredUserList(content: string) {
     const uid = this.firestoreService.userProfile()?.uid;
     let list = this.firestoreService.userList();
-
     if (content.includes('@')) {
       const query = content.slice(1).toLowerCase();
       const querySecond = content.split('@').pop()?.toLowerCase();
@@ -137,7 +136,6 @@ export class UserMentionService {
   ) {
     channelTrig.closeMenu();
     menuTrig.openMenu();
-    // Use requestAnimationFrame for better performance
     requestAnimationFrame(() => {
       input.nativeElement.focus();
     });
@@ -150,7 +148,6 @@ export class UserMentionService {
   ) {
     menuTrig.closeMenu();
     channelTrig.openMenu();
-    // Use requestAnimationFrame for better performance
     requestAnimationFrame(() => {
       input.nativeElement.focus();
     });
