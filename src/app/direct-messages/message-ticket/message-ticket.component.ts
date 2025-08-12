@@ -29,6 +29,7 @@ import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../services/message.service';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
+import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
 
 type MessageToken =
   | { type: 'text'; value: string }
@@ -38,7 +39,7 @@ type MessageToken =
 @Component({
   selector: 'app-message-ticket',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatMenuModule, FormsModule],
+  imports: [MatMenuTrigger, CommonModule, MatIconModule, MatMenuModule, FormsModule, EmojiPickerComponent],
   templateUrl: './message-ticket.component.html',
   styleUrl: './message-ticket.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,6 +62,9 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   user: UserProfileInterface | null = null;
   currentUserText = false;
   smallEmojiMenu = false;
+  smallEmojiMenuEdit = false;
+  content = '';
+
   showEmojiMenu = false;
 
   isHovered = false;
@@ -92,7 +96,8 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     private cdr: ChangeDetectorRef,
     private emojiServise: EmojiServiceService,
     private messageService: MessageService,
-    private threadDMService: ThreadDirectMessageService
+    private threadDMService: ThreadDirectMessageService,
+    public emojiService: EmojiServiceService
   ) {}
 
   ngOnInit(): void {
@@ -186,12 +191,20 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   }
 
   openMoreEmoji(event: Event) {
-    this.smallEmojiMenu = !this.smallEmojiMenu;
+    if (this.editView) {
+      this.smallEmojiMenuEdit = !this.smallEmojiMenuEdit;
+    } else {
+      this.smallEmojiMenu = !this.smallEmojiMenu;
+    }
     event?.stopPropagation();
   }
 
   closeMoreEmoji(event: Event) {
-    this.smallEmojiMenu = false;
+    if (this.editView) {
+      this.smallEmojiMenuEdit = false;
+    } else {
+      this.smallEmojiMenu = false;
+    }
     event?.stopPropagation();
   }
 
@@ -278,9 +291,11 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   getCurrentUserId(): string | null {
     return this.auth.firebaseAuth.currentUser?.uid ?? null;
   }
+
   isCurrentUser() {
     return this.getCurrentUserId() === this.message.senderId;
   }
+
   openEditView() {
     this.editView = true;
     this.editedText = this.message.content;
@@ -294,20 +309,23 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     this.editView = false;
     this.editViewChange.emit(this.editView);
   }
+
   editText() {
     this.message.content = this.editedText;
     if (this.threadId) {
-      console.log(this.message.content);
-      console.log(this.editedText);
-      // Thread message → full update
       this.threadDMService.updateThreadPartial({ content: this.editedText }, this.messageId, this.channelId, this.threadId);
-      console.log(this.message.content);
-      console.log(this.editedText);
     } else {
-      // Direct message → partial update
       this.messageService.updateMessagePartial({ content: this.editedText }, this.message.id!, this.channelId);
     }
-
     this.editView = false;
+  }
+
+  toggleSmallEmojiMenu() {
+    return this.emojiService.toggleSmallEmojiMenu();
+  }
+
+  addEmoji(emoji: any) {
+    this.message.content = this.emojiService.addEmojiToContent(emoji, this.message.content);
+    this.editedText = this.message.content;
   }
 }

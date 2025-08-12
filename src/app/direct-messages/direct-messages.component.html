@@ -103,8 +103,8 @@
           <div class="send-icon" (click)="addMessage()">
             <img src="assets/icon/send.png" alt="" />
           </div>
+          <app-emoji-picker *ngIf="emojiService.smallEmojiMenu()" (emojiSelected)="addEmoji($event)"></app-emoji-picker>
         </div>
-        <app-emoji-picker *ngIf="emojiService.smallEmojiMenu()" (emojiSelected)="addEmoji($event)"></app-emoji-picker>
 
         <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu">
           <div class="tag-menu-wrap">

@@ -82,6 +82,13 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position:relative;
+}
+
+app-emoji-picker{
+  position:absolute;
+  bottom: 40px;
+  left:0;
 }
 
 .icons {

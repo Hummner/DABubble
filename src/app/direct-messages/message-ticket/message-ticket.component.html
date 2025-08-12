@@ -117,19 +117,22 @@
       </div>
       }
     </div>
-    <!-- <app-emoji-picker
-        *ngIf="smallEmojiMenu"
-        (emojiSelected)="onEmojiToggle(emoji.name)"
-      ></app-emoji-picker> -->
   </div>
 </div>
-<div *ngIf="editView" class="ticket-edit">
+<div *ngIf="editView" class="ticket-edit" (click)="closeMoreEmoji($event)">
   <div class="message-edit">
     <textarea #editInput class="edit-textarea" [(ngModel)]="editedText" name="edit-textarea" id="edit_textarea"></textarea>
     <div class="button-container">
-      <div class="input-icon">
+      <div class="input-icon" [matMenuTriggerFor]="reactMenu" #reactMenuTrigger="matMenuTrigger" (click)="openMoreEmoji($event)">
         <img src="assets/icon/reaction.png" alt="" />
       </div>
+      <mat-menu #reactMenu="matMenu" class="small-emoji-menu-edit" [class.reversed-s-e-m]="!currentUserText">
+        @for(emoji of sortedEmojis;track emojiList){
+        <div class="emoji-menu-item" (click)="addEmoji(emoji.code)">
+          <img src="assets/emojis/{{ emoji.name }}.png" />
+        </div>
+        }
+      </mat-menu>
       <div class="buttons">
         <span class="secondary-button" (click)="closeEditView()">Abbrechen</span>
         <span class="primary-button" (click)="editText()">Speichern</span>

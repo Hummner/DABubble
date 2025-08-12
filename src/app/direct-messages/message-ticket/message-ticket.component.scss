@@ -247,6 +247,27 @@
   }
 }
 
+::ng-deep .small-emoji-menu-edit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 150px;
+  width: 200px;
+  border-radius: 20px;
+  > .mat-mdc-menu-content {
+    background-color: white;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap !important;
+    > .emoji-menu-item {
+      > img {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
 .reversed-s-e-m {
   left: 57%;
 }
@@ -299,6 +320,20 @@
   }
 }
 
+.input-icon {
+  border-radius: 100%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background-color: #eceefe;
+    cursor: pointer;
+  }
+}
+
 .ticket-edit {
   display: flex;
   width: 100%;
@@ -326,6 +361,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
 @media (max-width: 768px) {

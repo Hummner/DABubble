@@ -1,7 +1,7 @@
 .small-emoji-menu {
-  position: absolute;
-  top: -40px;
-  left: 0%;
+  // position: absolute;
+  // top: -40px;
+  // left: 0%;
   border: 1px solid #adb0d9;
   border-radius: 20px;
   background-color: white;
@@ -10,9 +10,10 @@
   align-items: center;
   height: 120px;
   width: 200px;
-  gap:10px;
-  padding:10px;
+  gap: 10px;
+  padding: 10px;
   flex-wrap: wrap;
+  z-index: 99999;
 
   > .emoji-menu-item {
     cursor: pointer;
