@@ -9,6 +9,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-header',
@@ -23,6 +24,9 @@ export class HeaderComponent implements OnInit {
   authService = inject(AuthService);
   profileCardOpen = false;
   backdropVisible = false;
+  searchText = '';
+  filteredUsers: UserProfileInterface[] = [];
+  members: { id: string; role: string; name: string, imgUrl: string }[] = [];
   user: UserProfileInterface | null = null;
 
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
@@ -32,7 +36,10 @@ export class HeaderComponent implements OnInit {
       this.user = { ...user };
     }
   }
-  constructor(private firestoreService: FirestoreService) {}
+  constructor(
+    private firestoreService: FirestoreService,
+    public dialog: MatDialog,
+  ) {}
 
   openProfile() {
     this.profileCardOpen = true;
@@ -68,4 +75,21 @@ export class HeaderComponent implements OnInit {
     this.authService.logout();
     this.router.navigateByUrl('/');
   }
+
+  searchDevspace(event: Event) {
+    const value = (event.target as HTMLInputElement).value.trim();
+    this.searchText = value;
+
+    if (this.searchText !== '') {
+      this.filteredUsers = this.firestoreService.userList()
+        .filter(user =>
+          user.uid !== this.userProfile()?.uid &&
+          user.name.toLowerCase().includes(this.searchText.toLowerCase()) &&
+          !this.members.find(m => m.id === user.uid)
+        );
+    } else {
+      this.filteredUsers = [];
+    }
+  }
+
 }
