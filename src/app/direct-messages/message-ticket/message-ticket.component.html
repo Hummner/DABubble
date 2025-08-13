@@ -1,3 +1,12 @@
+<mat-menu #emojiMenu="matMenu" class="small-emoji-menu">
+  <div class="emoji-menu-panel">
+    @for(emoji of sortedEmojis;track emojiList){
+    <div class="emoji-menu-item" (click)="onEmojiClick(emoji.name)">
+      <img src="assets/emojis/{{ emoji.name }}.png" />
+    </div>
+    }
+  </div>
+</mat-menu>
 <div
   *ngIf="!editView"
   class="ticket-container"
@@ -85,48 +94,54 @@
         'emoji-menu-reverse': currentUserText
       }"
     >
-      <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[0].name)">
-        <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[0].name }}.png" />
-      </div>
-      <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[1].name)">
-        <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[1].name }}.png" />
-      </div>
-      <div class="emoji-menu-item">
-        <img class="hover-purple" (click)="openMoreEmoji($event)" src="assets/icon/add_reaction.svg" />
-      </div>
-      <div class="emoji-menu-item" *ngIf="inThreadView == false">
-        <img class="hover-purple" (click)="openThreadPanel()" src="assets/icon/comment.svg" />
-      </div>
-      <div *ngIf="isCurrentUser()" class="emoji-menu-item">
-        <mat-icon
-          #menuTrigger="matMenuTrigger"
-          [matMenuTriggerFor]="editTicket"
-          (menuOpened)="onEditMenuOpened()"
-          (menuClosed)="onEditMenuClosed()"
-          >more_vert</mat-icon
+      <div class="more-emoji">
+        <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[0].name)">
+          <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[0].name }}.png" />
+        </div>
+        <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[1].name)">
+          <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[1].name }}.png" />
+        </div>
+        <div
+          class="emoji-menu-item"
+          [matMenuTriggerFor]="emojiMenu"
+          #emojiEditTrigger="matMenuTrigger"
+          (click)="openMoreEmoji($event)"
         >
-        <mat-menu #editTicket="matMenu" class="edit-menu">
-          <span (click)="openEditView()" mat-menu-item>Nachricht bearbeiten</span>
-        </mat-menu>
+          <img class="hover-purple" src="assets/icon/add_reaction.svg" />
+        </div>
+        <div class="emoji-menu-item" *ngIf="inThreadView == false">
+          <img class="hover-purple" (click)="openThreadPanel()" src="assets/icon/comment.svg" />
+        </div>
+        <div *ngIf="isCurrentUser()" class="emoji-menu-item">
+          <mat-icon
+            #menuTrigger="matMenuTrigger"
+            [matMenuTriggerFor]="editTicket"
+            (menuOpened)="onEditMenuOpened()"
+            (menuClosed)="onEditMenuClosed()"
+            >more_vert</mat-icon
+          >
+          <mat-menu #editTicket="matMenu" class="edit-menu">
+            <span (click)="openEditView()" mat-menu-item>Nachricht bearbeiten</span>
+          </mat-menu>
+        </div>
       </div>
-    </div>
-    <div class="small-emoji-menu" *ngIf="smallEmojiMenu" [class.reversed-s-e-m]="!currentUserText">
-      @for(emoji of sortedEmojis;track emojiList){
-      <div class="emoji-menu-item" (click)="onEmojiClick(emoji.name)">
-        <img src="assets/emojis/{{ emoji.name }}.png" />
-      </div>
-      }
     </div>
   </div>
 </div>
+
 <div *ngIf="editView" class="ticket-edit" (click)="closeMoreEmoji($event)">
   <div class="message-edit">
     <textarea #editInput class="edit-textarea" [(ngModel)]="editedText" name="edit-textarea" id="edit_textarea"></textarea>
     <div class="button-container">
-      <div class="input-icon" [matMenuTriggerFor]="reactMenu" #reactMenuTrigger="matMenuTrigger" (click)="openMoreEmoji($event)">
+      <div
+        class="input-icon"
+        [matMenuTriggerFor]="emojiEditMenu"
+        #emojiEditMenuTrigger="matMenuTrigger"
+        (click)="openMoreEmoji($event)"
+      >
         <img src="assets/icon/reaction.png" alt="" />
       </div>
-      <mat-menu #reactMenu="matMenu" class="small-emoji-menu-edit" [class.reversed-s-e-m]="!currentUserText">
+      <mat-menu #emojiEditMenu="matMenu" class="small-emoji-menu-edit">
         @for(emoji of sortedEmojis;track emojiList){
         <div class="emoji-menu-item" (click)="addEmoji(emoji.code)">
           <img src="assets/emojis/{{ emoji.name }}.png" />
