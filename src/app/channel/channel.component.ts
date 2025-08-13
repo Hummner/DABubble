@@ -334,7 +334,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       setTimeout(() => {
         this.nameInput.nativeElement.value = this.originalChannelName;
         this.channelNameExists = false;
-      }, 1000);
+      }, 2000);
     }
   }
 }
