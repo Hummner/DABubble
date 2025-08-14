@@ -1,17 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  Output,
-  EventEmitter,
-  OnInit,
-  ChangeDetectorRef,
-  inject,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject, ViewChild, ElementRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { Message } from '../../interfaces/message.interface';
 import { CommonModule } from '@angular/common';
@@ -55,32 +43,28 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   @Output() openThread = new EventEmitter<string | undefined>();
   @Output() emojiListChange = new EventEmitter<{ name: string; code: string }[]>();
   @Output() editViewChange = new EventEmitter<boolean>();
-  senderId = '';
-  user: UserProfileInterface | null = null;
-  currentUserText = false;
-  smallEmojiMenu = false;
-  smallEmojiMenuEdit = false;
-  content = '';
-  showEmojiMenu = false;
-  isHovered = false;
-  editView: boolean = false;
-  showMenu = false;
-  editMenuOpen = false;
+  @ViewChild('editInput') editInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('editThreadInput') editThreadInput!: ElementRef<HTMLInputElement>;
   private userMap = new Map<string, UserProfileInterface>();
   private nameToUidMap = new Map<string, string>();
   private channelMap = new Map<string, NavbarInterface>();
   private channelNameToUidMap = new Map<string, string>();
+  senderId = '';
+  user: UserProfileInterface | null = null;
+  currentUserText = false;
+  content = '';
+  showFloatingMenu = false;
+  isHovered = false;
+  editView: boolean = false;
+  showMenu = false;
+  editMenuOpen = false;
   channels = toSignal(inject(NavbarService).channelsObs$);
   parsedMessageTokens: MessageToken[] = [];
-  emojiList = this.emojiServise.emojiList;
   reactionList: any;
   showReactions = false;
   shownEmoji!: string;
   emojiIndex!: number;
   editedText!: string;
-  private auth = inject(AuthService);
-  @ViewChild('editInput') editInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('editThreadInput') editThreadInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private firestore: FirestoreService,
@@ -91,13 +75,14 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     private emojiServise: EmojiServiceService,
     private messageService: MessageService,
     private threadDMService: ThreadDirectMessageService,
-    public emojiService: EmojiServiceService
+    public emojiService: EmojiServiceService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.createLookUpUser();
     this.createLookupChannel();
-    this.emojiListChange.emit(this.emojiList);
+    this.emojiListChange.emit(this.emojiService.emojiList);
   }
 
   createLookUpUser() {
@@ -180,26 +165,12 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     this.emojiServise.selectEmoji(emojiName);
   }
 
-  get sortedEmojis() {
-    return this.emojiServise.sortedEmojis;
-  }
-
   openMoreEmoji(event: Event) {
     if (this.editView) {
-      this.smallEmojiMenuEdit = !this.smallEmojiMenuEdit;
+      this.emojiService.toggleSmallEmojiEditMenu();
     } else {
-      this.smallEmojiMenu = !this.smallEmojiMenu;
+      this.emojiService.toggleSmallEmojiMenu();
     }
-    event?.stopPropagation();
-  }
-
-  closeMoreEmoji(event: Event) {
-    if (this.editView) {
-      this.smallEmojiMenuEdit = false;
-    } else {
-      this.smallEmojiMenu = false;
-    }
-    event?.stopPropagation();
   }
 
   openThreadPanel() {
@@ -283,7 +254,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   }
 
   getCurrentUserId(): string | null {
-    return this.auth.firebaseAuth.currentUser?.uid ?? null;
+    return this.authService.firebaseAuth.currentUser?.uid ?? null;
   }
 
   isCurrentUser() {
@@ -312,10 +283,6 @@ export class MessageTicketComponent implements OnChanges, OnInit {
       this.messageService.updateMessagePartial({ content: this.editedText }, this.message.id!, this.channelId);
     }
     this.editView = false;
-  }
-
-  toggleSmallEmojiMenu() {
-    return this.emojiService.toggleSmallEmojiMenu();
   }
 
   addEmoji(emoji: any) {

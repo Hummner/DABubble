@@ -1,5 +1,5 @@
 <section>
-  <div class="content" (click)="closeEmojiBox()">
+  <div class="content">
     <header>
       <div class="channel-name">
         <h2>Thread</h2>
@@ -91,7 +91,7 @@
       </div>
       <mat-menu #emojiMessageThreadMenu="matMenu" class="small-emoji-menu-message">
         <div class="emoji-menu-panel">
-          @for(emoji of sortedEmojis;track emojiService.emojiList){
+          @for(emoji of emojiService.sortedEmojis;track emojiService.emojiList){
           <div class="emoji-menu-item" (click)="onEmojiClick(emoji)">
             <img src="assets/emojis/{{ emoji.name }}.png" />
           </div>

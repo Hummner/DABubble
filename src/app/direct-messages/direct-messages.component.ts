@@ -1,14 +1,4 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  AfterViewChecked,
-  inject,
-  Output,
-  EventEmitter,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NgIf, NgFor } from '@angular/common';
@@ -53,35 +43,33 @@ import { EmojiServiceService } from '../services/emoji.service';
   styleUrls: ['./direct-messages.component.scss'],
 })
 export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
+  @ViewChild('input') input!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+  unsubSingleDM?: () => void;
+  unsubUserList?: () => void;
+  unsubList?: () => void;
+  private previousMessageCount = 0;
+  private isInitialLoad = true;
+  public Object = Object;
   channelId!: string;
   userProfile = this.firestoreService.userProfile;
   profileOpen = false;
   backdropVisible = false;
-  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
-  unsubSingleDM?: () => void;
-  unsubUserList?: () => void;
   routeSub!: Subscription;
   messageListSub!: Subscription;
   routerEventsSub!: Subscription;
-  unsubList?: () => void;
   content = '';
   senderId = '';
   hasThread = false;
   threadCount = 0;
   shouldScroll = false;
   messages: Message[] = [];
-  private previousMessageCount = 0;
-  private isInitialLoad = true;
-  public Object = Object;
   isThreadOpen = false;
   parentEmojiList: any;
-  @ViewChild('input') input!: ElementRef<HTMLTextAreaElement>;
-  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
-  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   channels = toSignal(inject(NavbarService).channelsObs$);
-  // isInEditView!: boolean;
   parentEditView = false;
-  smallEmojiMenuInput = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -246,14 +234,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     this.router.navigate(['directMessages', this.channelId, 'threadMessages', messageId]);
   }
 
-  toggleSmallEmojiMenu() {
-    return this.emojiService.toggleSmallEmojiMenu();
-  }
-
-  closeEmojiBox() {
-    this.emojiService.closeEmojiBox();
-  }
-
   addEmoji(emoji: any) {
     this.content = this.emojiService.addEmojiToContent(emoji, this.content);
   }
@@ -295,17 +275,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     this.emojiService.selectEmoji(emoji.name);
   }
 
-  get sortedEmojis() {
-    return this.emojiService.sortedEmojis;
-  }
-
   openMoreEmoji(event: Event) {
-    this.smallEmojiMenuInput = !this.smallEmojiMenuInput;
-    event?.stopPropagation();
-  }
-
-  closeMoreEmoji(event: Event) {
-    this.smallEmojiMenuInput = false;
-    event?.stopPropagation();
+    this.emojiService.toggleSmallEmojiInputMenu();
   }
 }

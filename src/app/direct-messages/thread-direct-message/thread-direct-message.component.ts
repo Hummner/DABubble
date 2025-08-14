@@ -57,7 +57,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   @ViewChild('scrollContainerThread') scrollContainerThread!: ElementRef;
   parentEditView = false;
-  smallEmojiMenuThreadInput = false;
+  // smallEmojiMenuThreadInput = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -80,7 +80,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       this.isInitialLoad = false;
     });
   }
-
 
   ngAfterViewChecked(): void {
     if (this.shouldScroll && this.threadMessages.length) {
@@ -229,21 +228,23 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     this.router.navigate(['/directMessages', this.route.snapshot.parent?.paramMap.get('id')]);
   }
 
-  toggleSmallEmojiMenu() {
-    return this.emojiService.toggleSmallEmojiMenu();
-  }
-
-  closeEmojiBox() {
-    this.emojiService.closeEmojiBox();
-  }
-
   addEmoji(emoji: any) {
     this.content = this.emojiService.addEmojiToContent(emoji, this.content);
+  }
+
+  onEmojiClick(emoji: any) {
+    this.addEmoji(emoji.code);
+    this.emojiService.selectEmoji(emoji.name);
+  }
+
+  openMoreEmoji(event: Event) {
+    this.emojiService.toggleSmallEmojiThreadInputMenu();
   }
 
   tagInputStart() {
     this.content = this.userMentionService.tagInputStart(this.content, this.threadInput);
   }
+
   tagInputChannelStart() {
     this.content = this.userMentionService.tagChannelInputStart(this.content, this.threadInput);
   }
@@ -251,6 +252,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   updateFilteredUserList() {
     this.userMentionService.updateFilteredUserList(this.content);
   }
+
   updateFilteredChannelList() {
     this.userMentionService.updateFilteredChannelList(this.content);
   }
@@ -269,23 +271,5 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
 
   onEditViewChange(isOpen: boolean) {
     this.parentEditView = isOpen;
-  }
-  onEmojiClick(emoji: any) {
-    this.addEmoji(emoji.code);
-    this.emojiService.selectEmoji(emoji.name);
-  }
-
-  get sortedEmojis() {
-    return this.emojiService.sortedEmojis;
-  }
-
-  openMoreEmoji(event: Event) {
-    this.smallEmojiMenuThreadInput = !this.smallEmojiMenuThreadInput;
-    event?.stopPropagation();
-  }
-
-  closeMoreEmoji(event: Event) {
-    this.smallEmojiMenuThreadInput = false;
-    event?.stopPropagation();
   }
 }

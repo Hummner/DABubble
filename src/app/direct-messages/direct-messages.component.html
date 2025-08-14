@@ -10,7 +10,7 @@
     <mat-drawer #drawer class="example-sidenav" mode="side" position="end" [(opened)]="isThreadOpen">
       <router-outlet></router-outlet>
     </mat-drawer>
-    <div class="content" (click)="closeEmojiBox()">
+    <div class="content">
       <header>
         <div class="dm-name">
           <div class="dm-img">
@@ -106,7 +106,7 @@
           </div>
           <mat-menu #emojiMessageMenu="matMenu" class="small-emoji-menu-message">
             <div class="emoji-menu-panel">
-              @for(emoji of sortedEmojis;track emojiService.emojiList){
+              @for(emoji of emojiService.sortedEmojis;track emojiService.emojiList){
               <div class="emoji-menu-item" (click)="onEmojiClick(emoji)">
                 <img src="assets/emojis/{{ emoji.name }}.png" />
               </div>

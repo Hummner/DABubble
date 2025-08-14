@@ -1,19 +1,13 @@
 <mat-menu #emojiMenu="matMenu" class="small-emoji-menu">
   <div class="emoji-menu-panel">
-    @for(emoji of sortedEmojis;track emojiList){
+    @for(emoji of emojiService.sortedEmojis;track emojiService.emojiList){
     <div class="emoji-menu-item" (click)="onEmojiClick(emoji.name)">
       <img src="assets/emojis/{{ emoji.name }}.png" />
     </div>
     }
   </div>
 </mat-menu>
-<div
-  *ngIf="!editView"
-  class="ticket-container"
-  (mouseenter)="showEmojiMenu = true"
-  (mouseleave)="showEmojiMenu = false; smallEmojiMenu = false"
-  (click)="closeMoreEmoji($event)"
->
+<div *ngIf="!editView" class="ticket-container" (mouseenter)="showFloatingMenu = true" (mouseleave)="showFloatingMenu = false">
   <div class="ticket" [ngClass]="{ 'reverse reverse-hover': currentUserText }">
     <div class="member-img-ticket">
       <img src="assets/img/elias_neumann.svg" alt="" />
@@ -89,17 +83,17 @@
     <div
       class="emoji-menu"
       [ngClass]="{
-        visible: showEmojiMenu,
-        hidden: !showEmojiMenu,
+        visible: showFloatingMenu,
+        hidden: !showFloatingMenu,
         'emoji-menu-reverse': currentUserText
       }"
     >
       <div class="more-emoji">
-        <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[0].name)">
-          <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[0].name }}.png" />
+        <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(emojiService.sortedEmojis[0].name)">
+          <img class="emoji-img" src="assets/emojis/{{ emojiService.sortedEmojis[0].name }}.png" />
         </div>
-        <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(sortedEmojis[1].name)">
-          <img class="emoji-img" src="assets/emojis/{{ sortedEmojis[1].name }}.png" />
+        <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(emojiService.sortedEmojis[1].name)">
+          <img class="emoji-img" src="assets/emojis/{{ emojiService.sortedEmojis[1].name }}.png" />
         </div>
         <div
           class="emoji-menu-item"
@@ -129,7 +123,7 @@
   </div>
 </div>
 
-<div *ngIf="editView" class="ticket-edit" (click)="closeMoreEmoji($event)">
+<div *ngIf="editView" class="ticket-edit">
   <div class="message-edit">
     <textarea #editInput class="edit-textarea" [(ngModel)]="editedText" name="edit-textarea" id="edit_textarea"></textarea>
     <div class="button-container">
@@ -142,7 +136,7 @@
         <img src="assets/icon/reaction.png" alt="" />
       </div>
       <mat-menu #emojiEditMenu="matMenu" class="small-emoji-menu-edit">
-        @for(emoji of sortedEmojis;track emojiList){
+        @for(emoji of emojiService.sortedEmojis;track emojiService.emojiList){
         <div class="emoji-menu-item" (click)="addEmoji(emoji.code)">
           <img src="assets/emojis/{{ emoji.name }}.png" />
         </div>
