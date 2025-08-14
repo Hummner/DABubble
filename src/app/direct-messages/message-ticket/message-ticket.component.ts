@@ -29,7 +29,6 @@ import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../services/message.service';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
-import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
 
 type MessageToken =
   | { type: 'text'; value: string }
@@ -39,7 +38,7 @@ type MessageToken =
 @Component({
   selector: 'app-message-ticket',
   standalone: true,
-  imports: [MatMenuTrigger, CommonModule, MatIconModule, MatMenuModule, FormsModule, EmojiPickerComponent],
+  imports: [MatMenuTrigger, CommonModule, MatIconModule, MatMenuModule, FormsModule],
   templateUrl: './message-ticket.component.html',
   styleUrl: './message-ticket.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -82,14 +82,14 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position:relative;
+  position: relative;
 }
 
-app-emoji-picker{
-  position:absolute;
-  bottom: 40px;
-  left:0;
-}
+// app-emoji-picker{
+//   position:absolute;
+//   bottom: 40px;
+//   left:0;
+// }
 
 .icons {
   display: flex;
@@ -111,8 +111,7 @@ app-emoji-picker{
   }
 
   &:hover img {
-    filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%)
-      hue-rotate(228deg) brightness(96%) contrast(97%);
+    filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
   }
 
   > img {
@@ -198,6 +197,40 @@ main {
 .dm-msg-info {
   > p {
     font-size: 18px;
+  }
+}
+::ng-deep .small-emoji-menu-message {
+  padding: 12px;
+  border-radius: 20px 20px 20px 20px !important;
+  border: 1px solid #adb0d9;
+  margin-right: 15px;
+  margin-left: 15px;
+  margin-top: -15px;
+}
+
+::ng-deep .emoji-menu-panel {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  width: 200px;
+  // gap: 15px;
+  flex-wrap: wrap !important;
+  > .emoji-menu-item {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > img {
+      width: 25px;
+      height: 25px;
+    }
+    &:hover {
+      cursor: pointer;
+      background-color: #eceefe;
+    }
   }
 }
 

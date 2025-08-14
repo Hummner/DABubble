@@ -26,7 +26,6 @@ import { MessageTicketComponent } from './message-ticket/message-ticket.componen
 import { RouterOutlet } from '@angular/router';
 import { serverTimestamp } from '@angular/fire/firestore';
 import { ClickStopPropagation } from '../click-stop-propagation.directive';
-import { EmojiPickerComponent } from '../shared/emoji-picker/emoji-picker.component';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { UserMentionService } from '../services/user-channel-mention.service';
 import { NavbarService } from '../services/navbar.service';
@@ -48,7 +47,6 @@ import { EmojiServiceService } from '../services/emoji.service';
     NgFor,
     RouterOutlet,
     ClickStopPropagation,
-    EmojiPickerComponent,
     MatMenuTrigger,
   ],
   templateUrl: './direct-messages.component.html',
@@ -83,6 +81,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   channels = toSignal(inject(NavbarService).channelsObs$);
   // isInEditView!: boolean;
   parentEditView = false;
+  smallEmojiMenuInput = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -280,5 +279,24 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
 
   onEditViewChange(isOpen: boolean) {
     this.parentEditView = isOpen;
+  }
+
+  onEmojiClick(emoji: any) {
+    this.addEmoji(emoji.code);
+    this.emojiService.selectEmoji(emoji.name);
+  }
+
+  get sortedEmojis() {
+    return this.emojiService.sortedEmojis;
+  }
+
+  openMoreEmoji(event: Event) {
+    this.smallEmojiMenuInput = !this.smallEmojiMenuInput;
+    event?.stopPropagation();
+  }
+
+  closeMoreEmoji(event: Event) {
+    this.smallEmojiMenuInput = false;
+    event?.stopPropagation();
   }
 }

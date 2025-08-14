@@ -13,7 +13,6 @@ import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { FirestoreService } from '../../services/firestore.service';
 import { FormsModule } from '@angular/forms';
 import { ClickStopPropagation } from '../../click-stop-propagation.directive';
-import { EmojiPickerComponent } from '../../shared/emoji-picker/emoji-picker.component';
 import { serverTimestamp } from '@angular/fire/firestore';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -29,7 +28,7 @@ import { EmojiServiceService } from '../../services/emoji.service';
     CommonModule,
     MessageTicketComponent,
     FormsModule,
-    EmojiPickerComponent,
+
     ClickStopPropagation,
     MatMenuModule,
   ],
@@ -67,6 +66,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   @ViewChild('scrollContainerThread') scrollContainerThread!: ElementRef;
   parentEditView = false;
+  smallEmojiMenuThreadInput= false;
 
   constructor(
     private route: ActivatedRoute,
@@ -279,5 +279,23 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
 
   onEditViewChange(isOpen: boolean) {
     this.parentEditView = isOpen;
+  }
+  onEmojiClick(emoji: any) {
+    this.addEmoji(emoji.code);
+    this.emojiService.selectEmoji(emoji.name);
+  }
+
+  get sortedEmojis() {
+    return this.emojiService.sortedEmojis;
+  }
+
+  openMoreEmoji(event: Event) {
+    this.smallEmojiMenuThreadInput = !this.smallEmojiMenuThreadInput;
+    event?.stopPropagation();
+  }
+
+  closeMoreEmoji(event: Event) {
+    this.smallEmojiMenuThreadInput = false;
+    event?.stopPropagation();
   }
 }

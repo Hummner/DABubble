@@ -58,7 +58,12 @@
       </div>
       <div class="input-buttons">
         <div class="icons">
-          <div class="input-icon" (click)="toggleSmallEmojiMenu()" click-stop-propagation>
+          <div
+            class="input-icon"
+            [matMenuTriggerFor]="emojiMessageThreadMenu"
+            #emojiMessageThreadMenuTrigger="matMenuTrigger"
+            (click)="openMoreEmoji($event)"
+          >
             <img src="assets/icon/reaction.png" alt="" />
           </div>
           <div
@@ -84,7 +89,16 @@
           <img src="assets/icon/send.png" alt="" />
         </div>
       </div>
-      <app-emoji-picker *ngIf="emojiService.smallEmojiMenu()" (emojiSelected)="addEmoji($event)"></app-emoji-picker>
+      <mat-menu #emojiMessageThreadMenu="matMenu" class="small-emoji-menu-message">
+        <div class="emoji-menu-panel">
+          @for(emoji of sortedEmojis;track emojiService.emojiList){
+          <div class="emoji-menu-item" (click)="onEmojiClick(emoji)">
+            <img src="assets/emojis/{{ emoji.name }}.png" />
+          </div>
+          }
+        </div>
+      </mat-menu>
+      <!-- <app-emoji-picker *ngIf="emojiService.smallEmojiMenu()" (emojiSelected)="addEmoji($event)"></app-emoji-picker> -->
       <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu">
         <div class="tag-menu-wrap">
           @for(user of userMentionService.filteredUserList();track user){
