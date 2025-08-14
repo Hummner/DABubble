@@ -52,25 +52,20 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   @Input() messageId!: string;
   @Input() inThreadView: boolean = false;
   @Input() isParentInThread: boolean = false;
-
   @Output() openThread = new EventEmitter<string | undefined>();
   @Output() emojiListChange = new EventEmitter<{ name: string; code: string }[]>();
   @Output() editViewChange = new EventEmitter<boolean>();
-
   senderId = '';
   user: UserProfileInterface | null = null;
   currentUserText = false;
   smallEmojiMenu = false;
   smallEmojiMenuEdit = false;
   content = '';
-
   showEmojiMenu = false;
-
   isHovered = false;
   editView: boolean = false;
   showMenu = false;
   editMenuOpen = false;
-
   private userMap = new Map<string, UserProfileInterface>();
   private nameToUidMap = new Map<string, string>();
   private channelMap = new Map<string, NavbarInterface>();

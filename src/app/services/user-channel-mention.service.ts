@@ -19,27 +19,22 @@ export class UserMentionService {
 
   constructor(private firestoreService: FirestoreService) {}
 
-  tagInputStart(content: string, input: ElementRef<HTMLInputElement>): string {
+  tagInputStart(content: string, input: ElementRef<HTMLInputElement | HTMLTextAreaElement>): string {
     const newContent = content + '@';
     this.firestoreService.subUserList((users) => {
       this.updateFilteredUserList(newContent);
     });
     requestAnimationFrame(() => {
-      if(input.nativeElement)
-      input.nativeElement.focus();
+      if (input && input.nativeElement) input.nativeElement.focus();
     });
     return newContent;
   }
 
-  tagChannelInputStart(
-    content: string,
-    input: ElementRef<HTMLInputElement>
-  ): string {
+  tagChannelInputStart(content: string, input: ElementRef<HTMLInputElement | HTMLTextAreaElement>): string {
     const newContent = content + '#';
     this.updateFilteredChannelList(newContent);
     requestAnimationFrame(() => {
-      if(input.nativeElement)
-      input.nativeElement.focus();
+      if (input && input.nativeElement) input.nativeElement.focus();
     });
     return newContent;
   }
@@ -54,13 +49,10 @@ export class UserMentionService {
         (user) =>
           user.uid !== uid &&
           user.name !== 'Guest' &&
-          (user.name.toLowerCase().includes(query) ||
-            user.name.toLowerCase().includes(querySecond!))
+          (user.name.toLowerCase().includes(query) || user.name.toLowerCase().includes(querySecond!))
       );
     } else if (content.endsWith('@')) {
-      list = this.firestoreService
-        .userList()
-        .filter((user) => user.uid !== uid && user.name !== 'Guest');
+      list = this.firestoreService.userList().filter((user) => user.uid !== uid && user.name !== 'Guest');
     }
     this.filteredUserList.set(list);
   }
@@ -71,9 +63,7 @@ export class UserMentionService {
       const query = content.slice(1).toLowerCase();
       const querySecond = content.split('#').pop()?.toLowerCase();
       list = this.channels().filter(
-        (channel) =>
-          channel.name.toLowerCase().includes(query) ||
-          channel.name.toLowerCase().includes(querySecond!)
+        (channel) => channel.name.toLowerCase().includes(query) || channel.name.toLowerCase().includes(querySecond!)
       );
     } else if (content.endsWith('#')) {
       list = this.channels();
@@ -109,47 +99,35 @@ export class UserMentionService {
     content: string,
     mentionMenuTrigger: MatMenuTrigger,
     channelMenuTrigger: MatMenuTrigger,
-    input: ElementRef<HTMLInputElement>
+    input: ElementRef<HTMLInputElement | HTMLTextAreaElement>
   ) {
     this.onEmptyInput(mentionMenuTrigger, channelMenuTrigger, content);
     const lastChar = content[content.length - 1];
     const hasAt = content.includes('@') || lastChar === '@';
     const hasHash = content.includes('#') || lastChar === '#';
     if (hasAt) {
-      this.firestoreService.subUserList(() =>
-        this.updateFilteredUserList(content)
-      );
-      if (lastChar === '@')
-        this.onTypeEt(channelMenuTrigger, mentionMenuTrigger, input);
+      this.firestoreService.subUserList(() => this.updateFilteredUserList(content));
+      if (lastChar === '@') this.onTypeEt(channelMenuTrigger, mentionMenuTrigger, input);
     }
     if (hasHash) {
       this.updateFilteredChannelList(content);
-      if (lastChar === '#')
-        this.onTypeHashtag(channelMenuTrigger, mentionMenuTrigger, input);
+      if (lastChar === '#') this.onTypeHashtag(channelMenuTrigger, mentionMenuTrigger, input);
     }
   }
 
-  onTypeEt(
-    channelTrig: MatMenuTrigger,
-    menuTrig: MatMenuTrigger,
-    input: ElementRef
-  ) {
+  onTypeEt(channelTrig: MatMenuTrigger, menuTrig: MatMenuTrigger, input: ElementRef) {
     channelTrig.closeMenu();
     menuTrig.openMenu();
     requestAnimationFrame(() => {
-      input.nativeElement.focus();
+      if (input.nativeElement) input.nativeElement.focus();
     });
   }
 
-  onTypeHashtag(
-    channelTrig: MatMenuTrigger,
-    menuTrig: MatMenuTrigger,
-    input: ElementRef
-  ) {
+  onTypeHashtag(channelTrig: MatMenuTrigger, menuTrig: MatMenuTrigger, input: ElementRef) {
     menuTrig.closeMenu();
     channelTrig.openMenu();
     requestAnimationFrame(() => {
-      input.nativeElement.focus();
+      if (input.nativeElement) input.nativeElement.focus();
     });
   }
 

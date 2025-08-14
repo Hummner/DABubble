@@ -75,7 +75,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   public Object = Object;
   isThreadOpen = false;
   parentEmojiList: any;
-  @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+  @ViewChild('input') input!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   channels = toSignal(inject(NavbarService).channelsObs$);
@@ -98,6 +98,15 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     this.subThreadRoute();
     this.subscribeToDmChannel();
     this.subscribeToMsgList();
+    setTimeout(() => {
+      const url = this.router.url;
+      if (url.includes('threadMessages') && !this.isThreadOpen) {
+        const channelId = this.route.snapshot.paramMap.get('id');
+        if (channelId) {
+          this.router.navigate(['/directMessages', channelId]);
+        }
+      }
+    }, 0);
   }
 
   ngAfterViewChecked() {

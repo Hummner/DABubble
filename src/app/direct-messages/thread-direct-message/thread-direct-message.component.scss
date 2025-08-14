@@ -66,8 +66,7 @@ section {
     background-color: #eceefe;
 
     .icon {
-      filter: brightness(0) saturate(100%) invert(43%) sepia(61%)
-        saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+      filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
       transform: scale(1.1);
     }
   }
@@ -129,7 +128,6 @@ section {
 }
 
 main {
-  //   padding: 25px 45px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -204,10 +202,8 @@ footer {
   }
 
   &:hover img {
-    filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%)
-      hue-rotate(228deg) brightness(96%) contrast(97%);
+    filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
   }
-
   > img {
     width: 24px;
     height: 24px;
@@ -271,24 +267,27 @@ footer {
   background-color: #adb0d9;
 }
 
-::ng-deep .tag-box-menu {
+::ng-deep .tag-box-menu-thread,
+::ng-deep .channel-box-menu-thread {
   border-bottom-left-radius: 0px !important;
   border-bottom-right-radius: 30px !important;
   border-top-left-radius: 30px !important;
   border-top-right-radius: 30px !important;
   padding: 20px !important;
   max-height: 500px !important;
-  position: absolute !important;
-  bottom: 180px !important;
+  max-width: 300px !important;
 }
-::ng-deep .tag-menu-item {
+::ng-deep .tag-menu-item,
+::ng-deep .channel-menu-item {
   > .mat-mdc-menu-item-text {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
+    height: 40px;
     > p {
       margin: 0;
+      text-align: right;
     }
   }
 }

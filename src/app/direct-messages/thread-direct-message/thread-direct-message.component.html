@@ -48,7 +48,7 @@
     <footer>
       <div class="text-area">
         <textarea
-          #editThreadInput
+          #threadInput
           name="chat_input"
           id="chat_input"
           placeholder="Antworten..."
@@ -99,7 +99,7 @@
         </div>
       </mat-menu>
       <!-- <app-emoji-picker *ngIf="emojiService.smallEmojiMenu()" (emojiSelected)="addEmoji($event)"></app-emoji-picker> -->
-      <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu">
+      <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu-thread" yPosition="above" xPosition="after">
         <div class="tag-menu-wrap">
           @for(user of userMentionService.filteredUserList();track user){
           <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
@@ -109,7 +109,7 @@
           }
         </div>
       </mat-menu>
-      <mat-menu #channelBoxMenu="matMenu" class="channel-box-menu">
+      <mat-menu #channelBoxMenu="matMenu" class="channel-box-menu-thread" yPosition="above" xPosition="after">
         <div class="channel-menu-wrap">
           @for(channel of userMentionService.filteredChannelList(); track channel) {
           <menu mat-menu-item class="channel-menu-item" (click)="takeChannel(channel.name)">

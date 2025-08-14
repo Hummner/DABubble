@@ -9,10 +9,6 @@
   <mat-drawer-container class="container" autosize>
     <mat-drawer #drawer class="example-sidenav" mode="side" position="end" [(opened)]="isThreadOpen">
       <router-outlet></router-outlet>
-      <!-- <app-thread-direct-message
-        [isThreadOpen]="isThreadOpen"
-        (close)="drawer.toggle()"
-      ></app-thread-direct-message> -->
     </mat-drawer>
     <div class="content" (click)="closeEmojiBox()">
       <header>
@@ -120,7 +116,7 @@
           <!-- <app-emoji-picker *ngIf="emojiService.smallEmojiMenu()" (emojiSelected)="addEmoji($event)"></app-emoji-picker> -->
         </div>
 
-        <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu">
+        <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu" yPosition="above">
           <div class="tag-menu-wrap">
             @for(user of userMentionService.filteredUserList();track user){
             <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
@@ -130,7 +126,7 @@
             }
           </div>
         </mat-menu>
-        <mat-menu #channelBoxMenu="matMenu" class="channel-box-menu">
+        <mat-menu #channelBoxMenu="matMenu" class="channel-box-menu" yPosition="above">
           <div class="channel-menu-wrap">
             @for(channel of userMentionService.filteredChannelList(); track channel) {
             <menu mat-menu-item class="channel-menu-item" (click)="takeChannel(channel.name)">

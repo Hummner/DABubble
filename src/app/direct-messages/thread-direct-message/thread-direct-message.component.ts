@@ -22,16 +22,7 @@ import { EmojiServiceService } from '../../services/emoji.service';
 @Component({
   selector: 'app-thread-direct-message',
   standalone: true,
-  imports: [
-    MatIconModule,
-    NgIf,
-    CommonModule,
-    MessageTicketComponent,
-    FormsModule,
-
-    ClickStopPropagation,
-    MatMenuModule,
-  ],
+  imports: [MatIconModule, NgIf, CommonModule, MessageTicketComponent, FormsModule, ClickStopPropagation, MatMenuModule],
   templateUrl: './thread-direct-message.component.html',
   styleUrl: './thread-direct-message.component.scss',
 })
@@ -61,12 +52,12 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   private previousMessageCount = 0;
   private isInitialLoad = true;
 
-  @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+  @ViewChild('threadInput') threadInput!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   @ViewChild('scrollContainerThread') scrollContainerThread!: ElementRef;
   parentEditView = false;
-  smallEmojiMenuThreadInput= false;
+  smallEmojiMenuThreadInput = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -90,16 +81,15 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     });
   }
 
+
   ngAfterViewChecked(): void {
     if (this.shouldScroll && this.threadMessages.length) {
       setTimeout(() => {
         this.scrollToBottomInstantly();
         this.shouldScroll = false;
+        if (this.threadInput && this.threadInput.nativeElement) this.threadInput.nativeElement.focus();
       }, 100);
       this.parentEditView;
-    }
-    if (this.input?.nativeElement && !this.parentEditView) {
-      this.input.nativeElement.focus();
     }
   }
 
@@ -252,10 +242,10 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   tagInputStart() {
-    this.content = this.userMentionService.tagInputStart(this.content, this.input);
+    this.content = this.userMentionService.tagInputStart(this.content, this.threadInput);
   }
   tagInputChannelStart() {
-    this.content = this.userMentionService.tagChannelInputStart(this.content, this.input);
+    this.content = this.userMentionService.tagChannelInputStart(this.content, this.threadInput);
   }
 
   updateFilteredUserList() {
@@ -274,7 +264,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   onInputChange(event: Event) {
-    this.userMentionService.onInputChange(this.content, this.mentionMenuTrigger, this.channelMenuTrigger, this.input);
+    this.userMentionService.onInputChange(this.content, this.mentionMenuTrigger, this.channelMenuTrigger, this.threadInput);
   }
 
   onEditViewChange(isOpen: boolean) {

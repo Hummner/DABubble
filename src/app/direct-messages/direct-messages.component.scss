@@ -85,12 +85,6 @@ footer {
   position: relative;
 }
 
-// app-emoji-picker{
-//   position:absolute;
-//   bottom: 40px;
-//   left:0;
-// }
-
 .icons {
   display: flex;
   align-items: center;
@@ -312,8 +306,7 @@ app-user-card {
   border-top-right-radius: 30px !important;
   padding: 20px !important;
   max-height: 500px !important;
-  position: absolute !important;
-  bottom: 180px !important;
+  min-width: 400px !important;
 }
 ::ng-deep .tag-menu-item,
 ::ng-deep .channel-menu-item {
