@@ -8,24 +8,74 @@
       <main></main>
       <footer>
         <div class="text-area">
-          <textarea class="textarea" #input name="chat_input" id="chat_input" placeholder="Nachricht an @"></textarea>
+          <textarea
+            [(ngModel)]="content"
+            class="textarea"
+            #inputNew
+            name="chat_input"
+            id="chat_input"
+            placeholder="Starte eine neue Nachricht"
+            (input)="onInputChange($event)"
+          ></textarea>
         </div>
         <div class="input-buttons">
           <div class="icons">
-            <div class="input-icon">
+            <div class="input-icon" [matMenuTriggerFor]="emojiNewMessageMenu" #emojiNewMessageMenuTrigger="matMenuTrigger">
               <img src="assets/icon/reaction.png" alt="" />
             </div>
-            <div class="input-icon" click-stop-propagation>
+            <div
+              class="input-icon"
+              click-stop-propagation
+              #mentionTriggerNew="matMenuTrigger"
+              [matMenuTriggerFor]="tagBoxMenuNew"
+              (click)="tagInputStart()"
+            >
               <img src="assets/icon/tag_icon.png" alt="" />
             </div>
-            <div class="input-icon">
+            <div
+              class="input-icon"
+              click-stop-propagation
+              [matMenuTriggerFor]="channelBoxMenuNew"
+              #channelTriggerNew="matMenuTrigger"
+              (click)="tagInputChannelStart()"
+            >
               <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
             </div>
           </div>
           <div class="send-icon">
             <img src="assets/icon/send.png" alt="" />
           </div>
+          <mat-menu #emojiNewMessageMenu="matMenu" class="small-emoji-menu-message">
+            <div class="emoji-menu-panel">
+              @for(emoji of emojiService.sortedEmojis;track emojiService.emojiList){
+              <div class="emoji-menu-item" (click)="onEmojiClick(emoji)">
+                <img src="assets/emojis/{{ emoji.name }}.png" />
+              </div>
+              }
+            </div>
+          </mat-menu>
         </div>
+
+        <mat-menu autoFocus="false" #tagBoxMenuNew="matMenu" class="tag-box-menu" yPosition="above">
+          <div class="tag-menu-wrap">
+            @for(user of userMentionService.filteredUserList();track user){
+            <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
+              <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+              <p>{{ user.name }}</p>
+            </menu>
+            }
+          </div>
+        </mat-menu>
+        <mat-menu #channelBoxMenuNew="matMenu" class="channel-box-menu" yPosition="above">
+          <div class="channel-menu-wrap">
+            @for(channel of userMentionService.filteredChannelList(); track channel) {
+            <menu mat-menu-item class="channel-menu-item" (click)="takeChannel(channel.name)">
+              <img src="assets/icon/tag_channel.png" alt="" />
+              <p>{{ channel.name }}</p>
+            </menu>
+            }
+          </div>
+        </mat-menu>
       </footer>
     </div>
   </mat-drawer-container>
