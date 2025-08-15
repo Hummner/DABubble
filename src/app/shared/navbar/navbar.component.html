@@ -16,7 +16,7 @@
   <mat-drawer #drawer [(opened)]="isOpen" class="sidenav-container" mode="side">
     <div class="navbar-header">
       <img src="assets/icon/devspace.png" alt="devspace">
-      <span class="material-symbols-outlined edit-icon">edit_square</span>
+      <span class="material-symbols-outlined edit-icon" (click)="toNewMessage()">edit_square</span>
     </div>
     <div class="navbar-menu">
       <div class="navbar-channels">

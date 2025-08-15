@@ -1,0 +1,32 @@
+<section>
+  <mat-drawer-container class="container" autosize>
+    <div class="content">
+      <header>
+        <h1>Neue Nachricht</h1>
+        <input class="input-address" type="text" placeholder="An: #channel, oder @jemand oder E-Mail Adresse" />
+      </header>
+      <main></main>
+      <footer>
+        <div class="text-area">
+          <textarea class="textarea" #input name="chat_input" id="chat_input" placeholder="Nachricht an @"></textarea>
+        </div>
+        <div class="input-buttons">
+          <div class="icons">
+            <div class="input-icon">
+              <img src="assets/icon/reaction.png" alt="" />
+            </div>
+            <div class="input-icon" click-stop-propagation>
+              <img src="assets/icon/tag_icon.png" alt="" />
+            </div>
+            <div class="input-icon">
+              <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
+            </div>
+          </div>
+          <div class="send-icon">
+            <img src="assets/icon/send.png" alt="" />
+          </div>
+        </div>
+      </footer>
+    </div>
+  </mat-drawer-container>
+</section>

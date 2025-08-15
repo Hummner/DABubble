@@ -1,4 +1,15 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  inject,
+  ViewChild,
+  ElementRef,
+  HostListener,
+} from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { Message } from '../../interfaces/message.interface';
@@ -31,7 +42,7 @@ type MessageToken =
   styleUrl: './message-ticket.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MessageTicketComponent implements OnChanges, OnInit {
+export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   @Input() userProfileB!: UserProfileInterface | null;
   @Input() userProfile!: UserProfileInterface | null;
   @Input() message!: Message;
@@ -83,6 +94,16 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     this.createLookUpUser();
     this.createLookupChannel();
     this.emojiListChange.emit(this.emojiService.emojiList);
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup if needed
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    // Trigger change detection when window is resized to update emoji limits
+    this.cdr.detectChanges();
   }
 
   createLookUpUser() {
@@ -290,20 +311,36 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     this.editedText = this.message.content;
   }
 
+  get isMobileDevice(): boolean {
+    return window.innerWidth <= 768;
+  }
+
+  get emojiLimit(): number {
+    if (this.inThreadView) {
+      return 7;
+    }
+    return this.isMobileDevice ? 7 : 20;
+  }
+
   get reactionsAll() {
-    let limitedReactions:{ emojiName: string; users: string[] }[] = [];
+    let limitedReactions: { emojiName: string; users: string[] }[] = [];
     if (this.message.reactions) {
-      if (this.message.reactions && this.message.reactions.length > 20) {
-        limitedReactions = this.message.reactions.slice(0, 19);
+      const limit = this.emojiLimit;
+      if (this.message.reactions && this.message.reactions.length > limit) {
+        limitedReactions = this.message.reactions.slice(0, limit - 1);
       } else {
         limitedReactions = this.message.reactions;
       }
     }
     return limitedReactions;
   }
- get restOfReactions(){
-  console.log(this.message.reactions?.slice(20))
-  return this.message.reactions?.slice(20)
- }
 
+  get restOfReactions() {
+    const limit = this.emojiLimit;
+    return this.message.reactions?.slice(limit);
+  }
+
+  get hasMoreReactions(): boolean {
+    return this.message.reactions ? this.message.reactions.length > this.emojiLimit : false;
+  }
 }

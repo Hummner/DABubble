@@ -83,18 +83,11 @@
             <div class="reactionBox" *ngIf="showReactions && emojiIndex === i">
               <img src="assets/emojis/{{ shownEmoji }}.png" alt="" />
               <span>{{ formatNames(emoji.users, reactionList) }}</span>
-              <!-- <p>hat reagiert</p> -->
             </div>
           </div>
         </div>
-        <div
-
-          [matMenuTriggerFor]="restEmoji"
-          #menuTrigger="matMenuTrigger"
-          class="restEmoji"
-          *ngIf="message.reactions.length > 20"
-        >
-          {{ message.reactions.slice(20).length }} weitere ...
+        <div [matMenuTriggerFor]="restEmoji" #menuTrigger="matMenuTrigger" class="restEmoji" *ngIf="hasMoreReactions">
+          {{ restOfReactions?.length }} weitere ...
         </div>
       </div>
     </div>

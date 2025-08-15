@@ -113,4 +113,8 @@ export class NavbarComponent {
   focusOnChannelTextarea() {
     this.channelService.requestFocus();
   }
+
+  toNewMessage(){
+    this.router.navigateByUrl(`newMessage`);
+  }
 }
