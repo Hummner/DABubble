@@ -289,4 +289,21 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     this.message.content = this.emojiService.addEmojiToContent(emoji, this.message.content);
     this.editedText = this.message.content;
   }
+
+  get reactionsAll() {
+    let limitedReactions:{ emojiName: string; users: string[] }[] = [];
+    if (this.message.reactions) {
+      if (this.message.reactions && this.message.reactions.length > 20) {
+        limitedReactions = this.message.reactions.slice(0, 19);
+      } else {
+        limitedReactions = this.message.reactions;
+      }
+    }
+    return limitedReactions;
+  }
+ get restOfReactions(){
+  console.log(this.message.reactions?.slice(20))
+  return this.message.reactions?.slice(20)
+ }
+
 }

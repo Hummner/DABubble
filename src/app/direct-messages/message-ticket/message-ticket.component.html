@@ -7,6 +7,15 @@
     }
   </div>
 </mat-menu>
+<mat-menu #restEmoji="matMenu" class="rest-emoji-menu">
+  <div class="rest-emoji-menu-panel">
+    @for(emoji of restOfReactions;track emoji){
+    <div class="rest-emoji-menu-item">
+      <img src="assets/emojis/{{ emoji.emojiName }}.png" />
+    </div>
+    }
+  </div>
+</mat-menu>
 <div *ngIf="!editView" class="ticket-container" (mouseenter)="showFloatingMenu = true" (mouseleave)="showFloatingMenu = false">
   <div class="ticket" [ngClass]="{ 'reverse reverse-hover': currentUserText }">
     <div class="member-img-ticket">
@@ -61,7 +70,7 @@
         </span>
       </div>
       <div class="emoji-container" [ngClass]="{ reverse: currentUserText }" *ngIf="message.reactions">
-        <div *ngFor="let emoji of message.reactions; let i = index" class="emoji-wrapper">
+        <div *ngFor="let emoji of reactionsAll; let i = index" class="emoji-wrapper">
           <div
             *ngIf="emoji.users && emoji.users.length > 0"
             class="checked emoji"
@@ -77,6 +86,15 @@
               <!-- <p>hat reagiert</p> -->
             </div>
           </div>
+        </div>
+        <div
+
+          [matMenuTriggerFor]="restEmoji"
+          #menuTrigger="matMenuTrigger"
+          class="restEmoji"
+          *ngIf="message.reactions.length > 20"
+        >
+          {{ message.reactions.slice(20).length }} weitere ...
         </div>
       </div>
     </div>

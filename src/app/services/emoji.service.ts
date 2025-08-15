@@ -36,6 +36,24 @@ export class EmojiServiceService {
     { name: 'heart', code: '❤️' },
     { name: 'cool', code: '😎' },
     { name: 'angry', code: '😠' },
+    { name: 'fires', code: '🔥' },
+    { name: 'smile', code: '☺️' },
+    { name: 'laughing', code: '😆' },
+    { name: 'pray', code: '🙏' },
+    { name: 'sleeping', code: '😴' },
+    { name: 'halo', code: '😇' },
+    { name: 'monkey-see-no', code: '🙈' },
+    { name: 'monkey-say-no', code: '🙊' },
+    { name: 'monkey-hear-no', code: '🙉' },
+    { name: 'poop', code: '💩' },
+    { name: 'sad-cry', code: '😢' },
+    { name: 'vomit', code: '🤮' },
+    { name: 'fear', code: '😨' },
+    { name: 'shocked', code: '😱' },
+    { name: 'confetty', code: '🎉' },
+    { name: 'cry', code: '😭' },
+    { name: 'kiss', code: '😘' },
+    { name: 'devil', code: '😈' },
   ];
 
   emojiHistory: typeof this.emojiList = [];
@@ -74,10 +92,18 @@ export class EmojiServiceService {
     const reaction = updatedReactions.find((r) => r.emojiName === emojiName);
     if (reaction) {
       this.toggleUserReaction(reaction.users, userId);
+      if(reaction.users.length === 0){
+        this.removeEmoji(updatedReactions, reaction);
+      }
     } else {
       updatedReactions.push({ emojiName, users: [userId] });
     }
     return updatedReactions;
+  }
+
+  removeEmoji(  reactions: { emojiName: string; users: string[] }[],
+  reaction: { emojiName: string; users: string[] }){
+    return reactions.splice(reactions.indexOf(reaction), 1);
   }
 
   private toggleUserReaction(users: string[], userId: string): void {
