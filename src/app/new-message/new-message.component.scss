@@ -50,6 +50,77 @@ header {
   position: relative;
 }
 
+.address-display {
+  border-radius: 30px;
+  min-height: 55px;
+  border: 1px solid #adb0d9;
+  padding: 10px 30px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  cursor: text;
+  background-color: white;
+  &:hover {
+    border-color: #797ef3;
+  }
+  &:focus-within {
+    border-color: #797ef3;
+    box-shadow: 0 0 0 2px rgba(121, 126, 243, 0.2);
+  }
+}
+
+.address-tag {
+  background-color: #797ef3;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  .remove-tag {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 1;
+    opacity: 0.8;
+    &:hover {
+      opacity: 1;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.inline-input-address {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  min-width: 200px;
+  font-size: 16px;
+  padding: 8px 0;
+
+  &::placeholder {
+    color: #adb0d9;
+  }
+}
+
+.placeholder-text {
+  color: #adb0d9;
+  font-size: 16px;
+  flex: 1;
+}
+
 .input-address {
   border-radius: 30px;
   height: 55px;

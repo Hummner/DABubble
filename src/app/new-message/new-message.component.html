@@ -4,20 +4,31 @@
       <header>
         <h1>Neue Nachricht</h1>
         <div class="input-address-container">
-          <input
-            #inputAddress
-            (input)="onInputChangeAddress($event)"
-            [(ngModel)]="address"
-            class="input-address"
-            type="text"
-            placeholder="An: #channel, oder @jemand oder E-Mail Adresse"
-          />
+          <div class="address-display" (click)="startEditingAddress()">
+            @if (selectedAddresses.length > 0) { @for (selectedAddress of selectedAddresses; track selectedAddress) {
+            <span class="address-tag">
+              {{ selectedAddress }}
+              <span class="remove-tag" (click)="removeAddress(selectedAddress); $event.stopPropagation()">×</span>
+            </span>
+            } } @if (isEditingAddress) {
+            <input
+              #inputAddress
+              (input)="onInputChangeAddress($event)"
+              [(ngModel)]="address"
+              class="inline-input-address"
+              type="text"
+              placeholder="Tippe einen Namen oder Kanal..."
+            />
+            } @if (selectedAddresses.length === 0 && !isEditingAddress) {
+            <span class="placeholder-text">An: #channel, oder &#64;jemand oder E-Mail Adresse</span>
+            }
+          </div>
           <div #mentionTriggerAddress="matMenuTrigger" [matMenuTriggerFor]="tagBoxMenuAddress" class="invisible-trigger"></div>
           <div
             #channelTriggerAddress="matMenuTrigger"
             [matMenuTriggerFor]="channelBoxMenuAddress"
             class="invisible-trigger"
-          ></div> 
+          ></div>
         </div>
         <mat-menu autoFocus="false" #tagBoxMenuAddress="matMenu" class="tag-box-menu" yPosition="below">
           <div class="tag-menu-wrap">

@@ -31,6 +31,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 export class NewMessageComponent {
   content = '';
   address = '';
+  selectedAddresses: string[] = [];
+  isEditingAddress = false;
   @ViewChild('inputNew') inputNew!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('mentionTriggerNew') mentionMenuTriggerNew!: MatMenuTrigger;
   @ViewChild('channelTriggerNew') channelMenuTriggerNew!: MatMenuTrigger;
@@ -56,13 +58,32 @@ export class NewMessageComponent {
   }
 
   takeUserAddress(name: string) {
-    this.address = this.userMentionService.takeUser(name, this.address);
+    if (!this.selectedAddresses.includes(`@${name}`)) {
+      this.selectedAddresses.push(`@${name}`);
+    }
+    this.address = '';
+    this.isEditingAddress = false;
   }
 
   takeChannelAddress(name: string) {
-    this.address = this.userMentionService.takeChannel(name, this.address);
+    if (!this.selectedAddresses.includes(`#${name}`)) {
+      this.selectedAddresses.push(`#${name}`);
+    }
+    this.address = '';
+    this.isEditingAddress = false;
   }
-  
+
+  removeAddress(addressToRemove: string) {
+    this.selectedAddresses = this.selectedAddresses.filter((address) => address !== addressToRemove);
+  }
+
+  startEditingAddress() {
+    this.isEditingAddress = true;
+    setTimeout(() => {
+      this.inputAddress?.nativeElement.focus();
+    }, 0);
+  }
+
   tagInputStart() {
     this.content = this.userMentionService.tagInputStart(this.content, this.inputNew);
   }
@@ -76,11 +97,13 @@ export class NewMessageComponent {
   }
 
   onInputChangeAddress(event: Event) {
-    this.userMentionService.onInputChange(
-      this.address,
-      this.mentionMenuTriggerAddress,
-      this.channelMenuTriggerAddress,
-      this.inputAddress
-    );
+    if (this.isEditingAddress) {
+      this.userMentionService.onInputChange(
+        this.address,
+        this.mentionMenuTriggerAddress,
+        this.channelMenuTriggerAddress,
+        this.inputAddress
+      );
+    }
   }
 }
