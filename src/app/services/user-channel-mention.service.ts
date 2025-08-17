@@ -58,17 +58,23 @@ export class UserMentionService {
   }
 
   updateFilteredChannelList(content: string) {
-    let list = this.channels();
+    let list = this.getChannelWithUserMemmership();
     if (content.includes('#')) {
       const query = content.slice(1).toLowerCase();
       const querySecond = content.split('#').pop()?.toLowerCase();
-      list = this.channels().filter(
+      list = this.getChannelWithUserMemmership().filter(
         (channel) => channel.name.toLowerCase().includes(query) || channel.name.toLowerCase().includes(querySecond!)
       );
     } else if (content.endsWith('#')) {
-      list = this.channels();
+      list = this.getChannelWithUserMemmership();
     }
     this.filteredChannelList.set(list!);
+  }
+
+  getChannelWithUserMemmership() {
+    const uid = this.firestoreService.userProfile()?.uid;
+    let list = this.channels().filter((channel) => channel.members.some((member) => member.id == uid));
+    return list;
   }
 
   takeUser(name: string, content: string): string {

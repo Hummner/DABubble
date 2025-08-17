@@ -3,7 +3,42 @@
     <div class="content">
       <header>
         <h1>Neue Nachricht</h1>
-        <input class="input-address" type="text" placeholder="An: #channel, oder @jemand oder E-Mail Adresse" />
+        <div class="input-address-container">
+          <input
+            #inputAddress
+            (input)="onInputChangeAddress($event)"
+            [(ngModel)]="address"
+            class="input-address"
+            type="text"
+            placeholder="An: #channel, oder @jemand oder E-Mail Adresse"
+          />
+          <div #mentionTriggerAddress="matMenuTrigger" [matMenuTriggerFor]="tagBoxMenuAddress" class="invisible-trigger"></div>
+          <div
+            #channelTriggerAddress="matMenuTrigger"
+            [matMenuTriggerFor]="channelBoxMenuAddress"
+            class="invisible-trigger"
+          ></div> 
+        </div>
+        <mat-menu autoFocus="false" #tagBoxMenuAddress="matMenu" class="tag-box-menu" yPosition="below">
+          <div class="tag-menu-wrap">
+            @for(user of userMentionService.filteredUserList();track user){
+            <menu mat-menu-item class="tag-menu-item" (click)="takeUserAddress(user.name)">
+              <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+              <p>{{ user.name }}</p>
+            </menu>
+            }
+          </div>
+        </mat-menu>
+        <mat-menu #channelBoxMenuAddress="matMenu" class="channel-box-menu" yPosition="below">
+          <div class="channel-menu-wrap">
+            @for(channel of userMentionService.filteredChannelList(); track channel) {
+            <menu mat-menu-item class="channel-menu-item" (click)="takeChannelAddress(channel.name)">
+              <img src="assets/icon/tag_channel.png" alt="" />
+              <p>{{ channel.name }}</p>
+            </menu>
+            }
+          </div>
+        </mat-menu>
       </header>
       <main></main>
       <footer>
