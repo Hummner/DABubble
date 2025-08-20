@@ -115,10 +115,17 @@ header {
   }
 }
 
+.input-wrapper {
+  flex: 1;
+  position: relative;
+  min-width: 200px;
+}
+
 .placeholder-text {
   color: #adb0d9;
   font-size: 16px;
   flex: 1;
+  position: absolute;
 }
 
 .input-address {
@@ -157,12 +164,14 @@ footer {
   align-items: center;
   justify-content: space-between;
   position: relative;
+  z-index: 1;
 }
 
 .icons {
   display: flex;
   align-items: center;
   gap: 24px;
+  position: relative;
 }
 
 .input-icon {
@@ -228,6 +237,7 @@ footer {
   margin-right: 15px;
   margin-left: 15px;
   margin-top: -15px;
+  transform-origin: center bottom !important;
 }
 
 ::ng-deep .emoji-menu-panel {
@@ -264,6 +274,7 @@ footer {
   padding: 20px !important;
   max-height: 500px !important;
   min-width: 400px !important;
+  transform-origin: left bottom !important;
 }
 ::ng-deep .tag-menu-item,
 ::ng-deep .channel-menu-item {
@@ -286,4 +297,162 @@ footer {
 
 .channel-icon {
   filter: invert(30%);
+}
+
+.tag-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.channel-tag-icon {
+  width: 24px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+::ng-deep .mat-mdc-autocomplete-panel {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #e0e0e0 !important;
+  transform-origin: left top !important;
+}
+
+::ng-deep .mat-mdc-autocomplete-trigger {
+  width: 100% !important;
+}
+
+::ng-deep .input-address-container {
+  position: relative;
+
+  .cdk-overlay-pane:has(.mat-mdc-autocomplete-panel) {
+    left: 0 !important;
+    min-width: 400px !important;
+    max-width: 500px !important;
+  }
+}
+
+::ng-deep .cdk-overlay-connected-position-bounding-box:has(.mat-mdc-autocomplete-panel) {
+  left: 0 !important;
+  .mat-mdc-autocomplete-panel {
+    width: 400px !important;
+    max-width: 500px !important;
+    left: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+::ng-deep .cdk-global-overlay-wrapper {
+  .cdk-overlay-pane {
+    &[dir] .mat-mdc-autocomplete-panel {
+      left: 0 !important;
+      transform-origin: left top !important;
+    }
+  }
+}
+
+// Remove global left positioning that interferes with menu positioning
+::ng-deep .cdk-overlay-connected-position-bounding-box[style*="left"]:has(.mat-mdc-autocomplete-panel) {
+  left: 0 !important;
+}
+
+::ng-deep .mat-mdc-optgroup {
+  .mat-mdc-optgroup-label {
+    font-weight: 600 !important;
+    color: #797ef3 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 12px 16px 8px !important;
+  }
+}
+
+::ng-deep .mat-mdc-option {
+  padding: 12px 16px !important;
+  min-height: 56px !important;
+
+  &:hover {
+    background-color: #f5f5f5 !important;
+  }
+
+  &.mat-mdc-option-active {
+    background-color: #eceefe !important;
+  }
+}
+
+.option-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  .option-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .channel-icon {
+    width: 32px;
+    height: 32px;
+    background-color: #797ef3;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  span {
+    font-size: 16px;
+    color: #333;
+  }
+}
+
+::ng-deep footer .cdk-overlay-pane:has(.small-emoji-menu-message) {
+  .mat-mdc-menu-panel {
+    transform-origin: center bottom !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+::ng-deep footer .cdk-overlay-pane:has(.tag-box-menu) {
+  .mat-mdc-menu-panel {
+    transform-origin: left bottom !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+::ng-deep footer .cdk-overlay-pane:has(.channel-box-menu) {
+  .mat-mdc-menu-panel {
+    transform-origin: left bottom !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+::ng-deep body .cdk-overlay-container .cdk-overlay-pane .mat-mdc-autocomplete-panel {
+  min-width: 400px !important;
+  max-width: 500px !important;
+}
+
+::ng-deep .cdk-overlay-pane:has(.mat-mdc-autocomplete-panel) {
+  transform-origin: left top !important;
+}
+
+::ng-deep .cdk-overlay-container {
+  .cdk-overlay-pane[style*="transform"]:has(.mat-mdc-autocomplete-panel) {
+    .mat-mdc-autocomplete-panel {
+      left: 0 !important;
+      right: auto !important;
+      width: 400px !important;
+      margin-left: 0 !important;
+    }
+  }
 }

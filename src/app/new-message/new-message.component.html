@@ -3,53 +3,59 @@
     <div class="content">
       <header>
         <h1>Neue Nachricht</h1>
-        <div class="input-address-container">
-          <div class="address-display" (click)="startEditingAddress()">
-            @if (selectedAddresses.length > 0) { @for (selectedAddress of selectedAddresses; track selectedAddress) {
-            <span class="address-tag">
-              {{ selectedAddress }}
-              <span class="remove-tag" (click)="removeAddress(selectedAddress); $event.stopPropagation()">×</span>
+        <div class="input-address-container" #addressContainer>
+          <div class="address-display" (click)="focusInput()">
+            <div *ngFor="let tag of selectedTags(); let i = index" class="address-tag">
+              <img *ngIf="tag.imgUrl" [src]="tag.imgUrl" alt="" class="tag-avatar" />
+              <div *ngIf="!tag.imgUrl && tag.type === 'channel'" class="channel-tag-icon">#</div>
+              <span>{{ getTagDisplayName(tag) }}</span>
+              <span class="remove-tag" (click)="removeTag(i)">×</span>
+            </div>
+            <div class="input-wrapper">
+              <input
+                #addressInput
+                class="inline-input-address"
+                [formControl]="addressControl"
+                [matAutocomplete]="auto"
+                (input)="onInputChange($event)"
+                (focus)="onFocus()"
+                (blur)="onBlur()"
+              />
+            </div>
+            <span
+              *ngIf="selectedTags().length === 0 && (!addressControl.value || addressControl.value.length === 0)"
+              class="placeholder-text"
+            >
+              An #channel, oder &#64;jemand oder E-Mail-Adresse...
             </span>
-            } } @if (isEditingAddress) {
-            <input
-              #inputAddress
-              (input)="onInputChangeAddress($event)"
-              [(ngModel)]="address"
-              class="inline-input-address"
-              type="text"
-              placeholder="Tippe einen Namen oder Kanal..."
-            />
-            } @if (selectedAddresses.length === 0 && !isEditingAddress) {
-            <span class="placeholder-text">An: #channel, oder &#64;jemand oder E-Mail Adresse</span>
-            }
           </div>
-          <div #mentionTriggerAddress="matMenuTrigger" [matMenuTriggerFor]="tagBoxMenuAddress" class="invisible-trigger"></div>
-          <div
-            #channelTriggerAddress="matMenuTrigger"
-            [matMenuTriggerFor]="channelBoxMenuAddress"
-            class="invisible-trigger"
-          ></div>
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            [displayWith]="displayFn"
+            (optionSelected)="selectOption($event.option.value)"
+          >
+            <mat-optgroup label="Benutzer" *ngIf="filteredUsers().length > 0">
+              <mat-option *ngFor="let user of filteredUsers()" [value]="{ type: 'user', data: user }" class="user-option">
+                <div class="option-content">
+                  <img [src]="user.imgUrl" alt="" class="option-avatar" />
+                  <span>&#64;{{ user.name }}</span>
+                </div>
+              </mat-option>
+            </mat-optgroup>
+            <mat-optgroup label="Kanäle" *ngIf="filteredChannels().length > 0">
+              <mat-option
+                *ngFor="let channel of filteredChannels()"
+                [value]="{ type: 'channel', data: channel }"
+                class="channel-option"
+              >
+                <div class="option-content">
+                  <div class="channel-icon">#</div>
+                  <span>#{{ channel.name }}</span>
+                </div>
+              </mat-option>
+            </mat-optgroup>
+          </mat-autocomplete>
         </div>
-        <mat-menu autoFocus="false" #tagBoxMenuAddress="matMenu" class="tag-box-menu" yPosition="below">
-          <div class="tag-menu-wrap">
-            @for(user of userMentionService.filteredUserList();track user){
-            <menu mat-menu-item class="tag-menu-item" (click)="takeUserAddress(user.name)">
-              <img class="tagbox-img" [src]="user.imgUrl" alt="" />
-              <p>{{ user.name }}</p>
-            </menu>
-            }
-          </div>
-        </mat-menu>
-        <mat-menu #channelBoxMenuAddress="matMenu" class="channel-box-menu" yPosition="below">
-          <div class="channel-menu-wrap">
-            @for(channel of userMentionService.filteredChannelList(); track channel) {
-            <menu mat-menu-item class="channel-menu-item" (click)="takeChannelAddress(channel.name)">
-              <img src="assets/icon/tag_channel.png" alt="" />
-              <p>{{ channel.name }}</p>
-            </menu>
-            }
-          </div>
-        </mat-menu>
       </header>
       <main></main>
       <footer>

@@ -17,7 +17,17 @@ export class UserMentionService {
     initialValue: [] as NavbarInterface[],
   });
 
-  constructor(private firestoreService: FirestoreService) {}
+  constructor(private firestoreService: FirestoreService) {
+    // Initialize filtered lists
+    this.firestoreService.subUserList((users) => {
+      this.filteredUserList.set(
+        users.filter((user) => user.uid !== this.firestoreService.userProfile()?.uid && user.name !== 'Guest')
+      );
+    });
+
+    // Initialize channel list when channels are loaded
+    this.filteredChannelList.set(this.getChannelWithUserMemmership());
+  }
 
   tagInputStart(content: string, input: ElementRef<HTMLInputElement | HTMLTextAreaElement>): string {
     const newContent = content + '@';
