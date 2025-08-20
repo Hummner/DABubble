@@ -51,6 +51,7 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   @Input() messageId!: string;
   @Input() inThreadView: boolean = false;
   @Input() isParentInThread: boolean = false;
+  @Input() disableFloatingMenu: boolean = false;
   @Output() openThread = new EventEmitter<string | undefined>();
   @Output() emojiListChange = new EventEmitter<{ name: string; code: string }[]>();
   @Output() editViewChange = new EventEmitter<boolean>();

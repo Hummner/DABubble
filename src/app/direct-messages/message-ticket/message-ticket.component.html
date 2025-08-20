@@ -16,7 +16,12 @@
     }
   </div>
 </mat-menu>
-<div *ngIf="!editView" class="ticket-container" (mouseenter)="showFloatingMenu = true" (mouseleave)="showFloatingMenu = false">
+<div
+  *ngIf="!editView"
+  class="ticket-container"
+  (mouseenter)="!disableFloatingMenu && (showFloatingMenu = true)"
+  (mouseleave)="!disableFloatingMenu && (showFloatingMenu = false)"
+>
   <div class="ticket" [ngClass]="{ 'reverse reverse-hover': currentUserText }">
     <div class="member-img-ticket">
       <img src="assets/img/elias_neumann.svg" alt="" />
@@ -94,8 +99,8 @@
     <div
       class="emoji-menu"
       [ngClass]="{
-        visible: showFloatingMenu,
-        hidden: !showFloatingMenu,
+        visible: showFloatingMenu && !disableFloatingMenu,
+        hidden: !showFloatingMenu || disableFloatingMenu,
         'emoji-menu-reverse': currentUserText
       }"
     >

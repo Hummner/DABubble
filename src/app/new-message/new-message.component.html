@@ -57,7 +57,41 @@
           </mat-autocomplete>
         </div>
       </header>
-      <main></main>
+
+      <!-- Success message -->
+      <div *ngIf="lastSentMessage()" class="success-message">
+        <span>{{ lastSentMessage() }}</span>
+      </div>
+
+      <main>
+        <div class="scroll-wrapper" #scrollContainer>
+          <!-- <div class="first-msg"> -->
+          <!-- <div class="dm-msg-name">
+              <img [src]="secondUser.imgUrl" alt="" />
+              <p>{{ secondUser.name }}</p>
+            </div> -->
+          <!-- <div class="dm-msg-info">
+              <p>
+                Diese Unterhaltung findet nur zwischen
+                <span (click)="openProfileView()" class="purple">&#64;{{ secondUser.name }}</span>
+                und dir statt.
+              </p>
+            </div> -->
+          <!-- </div> -->
+
+          <!-- <div *ngFor="let date of Object.keys(groupMessagesByDate())">
+            <div class="date-separator">
+              <div class="separator"></div>
+              <div class="date-container">
+                <h3 class="date">{{ date }}</h3>
+              </div>
+              <div class="separator"></div>
+            </div> -->
+
+          <app-message-ticket *ngFor="let msg of localMessages" [message]="msg" [disableFloatingMenu]="true">
+          </app-message-ticket>
+        </div>
+      </main>
       <footer>
         <div class="text-area">
           <textarea
@@ -68,6 +102,7 @@
             id="chat_input"
             placeholder="Starte eine neue Nachricht"
             (input)="onInputChange($event)"
+            (keydown)="onKeyDown($event)"
           ></textarea>
         </div>
         <div class="input-buttons">
@@ -94,8 +129,15 @@
               <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
             </div>
           </div>
-          <div class="send-icon">
-            <img src="assets/icon/send.png" alt="" />
+          <div
+            class="send-icon"
+            (click)="addLocalMessage()"
+            [class.sending]="isSending()"
+            [class.disabled]="!canSendMessage()"
+            [attr.disabled]="!canSendMessage()"
+          >
+            <img *ngIf="!isSending()" src="assets/icon/send.png" alt="" />
+            <div *ngIf="isSending()" class="sending-spinner">⏳</div>
           </div>
           <mat-menu #emojiNewMessageMenu="matMenu" class="small-emoji-menu-message">
             <div class="emoji-menu-panel">
