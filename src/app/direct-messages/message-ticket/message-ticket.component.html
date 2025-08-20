@@ -94,6 +94,14 @@
         <div [matMenuTriggerFor]="restEmoji" #menuTrigger="matMenuTrigger" class="restEmoji" *ngIf="hasMoreReactions">
           {{ restOfReactions?.length }} weitere ...
         </div>
+        <div
+          class="emoji-menu-item"
+          [matMenuTriggerFor]="emojiMenu"
+          #emojiEditTrigger="matMenuTrigger"
+          (click)="openMoreEmoji($event)"
+        >
+          <img class="hover-purple" src="assets/icon/add_reaction.svg" />
+        </div>
       </div>
     </div>
     <div

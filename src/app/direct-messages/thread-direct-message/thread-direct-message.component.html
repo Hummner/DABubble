@@ -24,7 +24,7 @@
             </div>
             <div class="separator"></div>
           </div>
-          <div *ngFor="let msg of groupMessagesByDate()[date]">
+          <div *ngFor="let msg of groupMessagesByDate()[date]; trackBy: trackByMessageId">
             <app-message-ticket
               *ngIf="message && channelId"
               [channelId]="channelId"

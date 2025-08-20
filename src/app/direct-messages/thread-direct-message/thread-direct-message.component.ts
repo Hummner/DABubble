@@ -134,6 +134,9 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       }, 100);
     }
   }
+  trackByMessageId(index: number, message: Message) {
+    return message.id || index;
+  }
 
   groupMessagesByDate(): { [date: string]: Message[] } {
     return this.messageService.getMessagesGroupedByDate(this.threadMessages);

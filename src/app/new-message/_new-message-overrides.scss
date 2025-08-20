@@ -1,0 +1,168 @@
+::ng-deep .small-emoji-menu-message {
+  padding: 12px;
+  border-radius: 20px 20px 20px 20px !important;
+  border: 1px solid #adb0d9;
+  margin-right: 15px;
+  margin-left: 15px;
+  margin-top: -15px;
+  transform-origin: center bottom !important;
+}
+
+::ng-deep .emoji-menu-panel {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  width: 200px;
+  flex-wrap: wrap !important;
+  > .emoji-menu-item {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > img {
+      width: 25px;
+      height: 25px;
+    }
+    &:hover {
+      cursor: pointer;
+      background-color: #eceefe;
+    }
+  }
+}
+
+::ng-deep .tag-box-menu,
+::ng-deep .channel-box-menu {
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 30px !important;
+  border-top-left-radius: 30px !important;
+  border-top-right-radius: 30px !important;
+  padding: 20px !important;
+  max-height: 500px !important;
+  min-width: 400px !important;
+  transform-origin: left bottom !important;
+}
+
+::ng-deep .tag-menu-item,
+::ng-deep .channel-menu-item {
+  > .mat-mdc-menu-item-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    > p {
+      margin: 0;
+    }
+  }
+}
+
+::ng-deep .mat-mdc-autocomplete-panel {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #e0e0e0 !important;
+  transform-origin: left top !important;
+}
+
+::ng-deep .mat-mdc-autocomplete-trigger {
+  width: 100% !important;
+}
+
+::ng-deep .input-address-container {
+  position: relative;
+
+  .cdk-overlay-pane:has(.mat-mdc-autocomplete-panel) {
+    left: 0 !important;
+    min-width: 400px !important;
+    max-width: 500px !important;
+  }
+}
+
+::ng-deep .cdk-overlay-connected-position-bounding-box:has(.mat-mdc-autocomplete-panel) {
+  left: 0 !important;
+  .mat-mdc-autocomplete-panel {
+    width: 400px !important;
+    max-width: 500px !important;
+    left: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+::ng-deep .cdk-global-overlay-wrapper {
+  .cdk-overlay-pane {
+    &[dir] .mat-mdc-autocomplete-panel {
+      left: 0 !important;
+      transform-origin: left top !important;
+    }
+  }
+}
+
+::ng-deep .cdk-overlay-connected-position-bounding-box[style*="left"]:has(.mat-mdc-autocomplete-panel) {
+  left: 0 !important;
+}
+
+::ng-deep .mat-mdc-optgroup {
+  .mat-mdc-optgroup-label {
+    font-weight: 600 !important;
+    color: #797ef3 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 12px 16px 8px !important;
+  }
+}
+
+::ng-deep .mat-mdc-option {
+  padding: 12px 16px !important;
+  min-height: 56px !important;
+
+  &:hover {
+    background-color: #f5f5f5 !important;
+  }
+
+  &.mat-mdc-option-active {
+    background-color: #eceefe !important;
+  }
+}
+
+::ng-deep footer .cdk-overlay-pane:has(.small-emoji-menu-message) {
+  .mat-mdc-menu-panel {
+    transform-origin: center bottom !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+::ng-deep footer .cdk-overlay-pane:has(.tag-box-menu) {
+  .mat-mdc-menu-panel {
+    transform-origin: left bottom !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+::ng-deep footer .cdk-overlay-pane:has(.channel-box-menu) {
+  .mat-mdc-menu-panel {
+    transform-origin: left bottom !important;
+    margin-bottom: 10px !important;
+  }
+}
+
+::ng-deep body .cdk-overlay-container .cdk-overlay-pane .mat-mdc-autocomplete-panel {
+  min-width: 400px !important;
+  max-width: 500px !important;
+}
+
+::ng-deep .cdk-overlay-pane:has(.mat-mdc-autocomplete-panel) {
+  transform-origin: left top !important;
+}
+
+::ng-deep .cdk-overlay-container {
+  .cdk-overlay-pane[style*="transform"]:has(.mat-mdc-autocomplete-panel) {
+    .mat-mdc-autocomplete-panel {
+      left: 0 !important;
+      right: auto !important;
+      width: 400px !important;
+      margin-left: 0 !important;
+    }
+  }
+}
