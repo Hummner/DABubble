@@ -4,18 +4,12 @@
     <div class="content">
       <div class="avatar-dialog">
         <div class="title-section">
-          <a [routerLink]="['/signup']">
-            <img src="assets/icon/arrow_back.svg" alt=""
-          /></a>
+          <a [routerLink]="['/signup']"> <img src="assets/icon/arrow_back.svg" alt="" /></a>
           <h1 class="blue">Wähle deinen Avatar</h1>
         </div>
         <div class="current-profile">
           @if(profileImageChosen){
-          <img
-            class="chosenImg"
-            [src]="currentProfilImageUrl"
-            alt="Profile Picture"
-          />
+          <img class="chosenImg" [src]="currentProfilImageUrl" alt="Profile Picture" />
           } @if(!profileImageChosen){
           <img src="assets/img/profile.png" alt="Profile Picture" />
           }
@@ -37,4 +31,5 @@
     </div>
   </div>
   <!-- <app-footer></app-footer> -->
+  <app-log-message #log message="Konto erfolgreich erstellt!"></app-log-message>
 </div>

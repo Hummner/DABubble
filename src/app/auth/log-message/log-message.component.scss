@@ -1,0 +1,39 @@
+.log-message {
+  position: fixed;
+  top: 60%;
+  right: 30px;
+  transform: translateX(140%);
+  width: 450px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #444df2;
+  border-radius: 30px;
+  border-bottom-right-radius: 0;
+  z-index: 1000;
+  animation: slideInOut 3s ease-in-out forwards;
+  > p {
+    text-align: center;
+    line-height: 35px;
+    font-size: 29px;
+    font-weight: 800px;
+    color: white;
+    font-family: "Nunito", sans-serif;
+  }
+}
+
+@keyframes slideInOut {
+  0% {
+    transform: translateX(140%);
+  }
+  15% {
+    transform: translateX(0);
+  }
+  70% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(140%);
+  }
+}

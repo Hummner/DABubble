@@ -1,21 +1,16 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActionCodeURL, getAuth } from '@angular/fire/auth';
 import { FooterComponent } from '../../shared/footer/footer.component';
 import { Header2Component } from '../../shared/header-2/header-2.component';
-
+import { LogMessageComponent } from '../log-message/log-message.component';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, FooterComponent, Header2Component],
+  imports: [LogMessageComponent,RouterLink, ReactiveFormsModule, FooterComponent, Header2Component],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
 })
@@ -28,6 +23,8 @@ export class ResetPasswordComponent {
   resetPasswordForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
   });
+
+   @ViewChild('log') log!: LogMessageComponent;
 
   get resetPasswordFormControl() {
     return this.resetPasswordForm.controls;
@@ -45,22 +42,26 @@ export class ResetPasswordComponent {
     }
     const rawForm = this.resetPasswordForm.getRawValue();
     this.authService
-      .sendPasswordResetEmail(
-        this.auth,
-        rawForm.email!,
-        'http://localhost:4200/resetPassword/newPassword'
-      )
+      .sendPasswordResetEmail(this.auth, rawForm.email!, 'http://localhost:4200/resetPassword/newPassword')
       .subscribe({
         next: () => {
-          console.log('good');
+          this.onSuccessfulSignup();
         },
         error: (err) => {
           if (err.code === 'auth/invalid-email') {
-            this.resetPasswordForm
-              .get('email')
-              ?.setErrors({ invalidEmail: true });
+            this.resetPasswordForm.get('email')?.setErrors({ invalidEmail: true });
           }
         },
       });
+  }
+  showLog() {
+    this.log.show(2000);
+  }
+
+  onSuccessfulSignup() {
+    this.showLog();
+    setTimeout(() => {
+      this.router.navigateByUrl('/');
+    }, 2300);
   }
 }

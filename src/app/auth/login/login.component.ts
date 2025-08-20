@@ -1,16 +1,5 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  inject,
-  ViewChild,
-} from '@angular/core';
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-  FormBuilder,
-} from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -36,14 +25,12 @@ export class LoginComponent implements AfterViewInit {
   fireStore = inject(FirestoreService);
 
   loginForm = new FormGroup({
-    email: this.fb.nonNullable.control('', [
-      Validators.required,
-      Validators.email,
-    ]),
+    email: this.fb.nonNullable.control('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required),
   });
 
   errorMessage: string | null = null;
+  emailFocused = false;
 
   constructor(private fb: FormBuilder) {}
 
@@ -52,6 +39,9 @@ export class LoginComponent implements AfterViewInit {
   }
   onSubmit() {
     this.submitted = true;
+    if (this.loginForm.invalid) {
+      return;
+    }
     const rawForm = this.loginForm.getRawValue();
     this.authService.login(rawForm.email!, rawForm.password!).subscribe({
       next: () => {
@@ -59,7 +49,9 @@ export class LoginComponent implements AfterViewInit {
       },
       error: (err) => {
         if (err.code === 'auth/invalid-email') {
-          this.loginForm.get('email')?.setErrors({ invalidEmail: true });
+          const control = this.loginForm.get('email');
+          const existing = control?.errors || {};
+          control?.setErrors({ ...existing, invalidEmail: true });
         } else if (err.code === 'auth/wrong-password') {
           this.loginForm.get('password')?.setErrors({ incorrect: true });
         } else if (err.code === 'auth/invalid-credential') {

@@ -2,17 +2,8 @@
   <div #greeting class="greeting">
     <div #greetingContainer class="greeting-container">
       <div class="whole-img" #wholeLogo>
-        <img
-          #greetingLogo
-          src="assets/img/Logo-intro.png"
-          class="greeting-logo"
-        />
-        <img
-        #greetingName
-          class="greeting-name"
-          src="assets/img/Logo-intro-name.png"
-          alt="greeting-logo-name"
-        />
+        <img #greetingLogo src="assets/img/Logo-intro.png" class="greeting-logo" />
+        <img #greetingName class="greeting-name" src="assets/img/Logo-intro-name.png" alt="greeting-logo-name" />
       </div>
     </div>
   </div>
@@ -24,12 +15,8 @@
         <form [formGroup]="loginForm" class="form" (ngSubmit)="onSubmit()">
           <div class="title-section">
             <h1 class="blue">Anmeldung</h1>
-            <p>
-              Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der
-              Arbeit verwendest.
-            </p>
-            @if((loginFormControl.password.touched || submitted)&&
-            loginFormControl.password.errors?.['invalid']){
+            <p>Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit verwendest.</p>
+            @if((loginFormControl.password.touched || submitted)&& loginFormControl.password.errors?.['invalid']){
             <div class="error">Email or password is incorrect</div>
             }
           </div>
@@ -41,37 +28,28 @@
                 formControlName="email"
                 required
                 placeholder="beispielname@email.com"
+                (focus)="emailFocused = true"
+                (blur)="emailFocused = false"
               />
               <img class="ph-img" src="assets/icon/mail.png" alt="" />
-              @if((loginFormControl.email.touched || submitted )&&
-              loginFormControl.email.errors?.['required']){
+              @if(!emailFocused && (loginFormControl.email.touched || submitted )&& loginFormControl.email.errors?.['required']){
               <span class="error">Email is required</span>
-              } @if((loginFormControl.email.touched ||submitted) &&
-              loginFormControl.email.errors?.['invalidEmail']){
+              } @if(!emailFocused && (loginFormControl.email.touched || submitted) && !loginFormControl.email.errors?.['required']
+              && (loginFormControl.email.errors?.['invalidEmail'] || loginFormControl.email.errors?.['email'])){
               <span class="error">Invalid Email</span>
               }
             </div>
             <div class="input-password">
-              <input
-                class="fs-18"
-                type="password"
-                formControlName="password"
-                required
-                placeholder="Passwort"
-              />
+              <input class="fs-18" type="password" formControlName="password" required placeholder="Passwort" />
               <img class="ph-img" src="assets/icon/lock.png" alt="" />
-              @if((loginFormControl.password.touched || submitted)&&
-              loginFormControl.password.errors?.['required']){
-              <span class="error">Password is required</span>}
-              @if((loginFormControl.password.touched || submitted)&&
+              @if((loginFormControl.password.touched || submitted)&& loginFormControl.password.errors?.['required']){
+              <span class="error">Password is required</span>} @if((loginFormControl.password.touched || submitted)&&
               loginFormControl.password.errors?.['incorrect']){
               <span class="error">Incorrect Password</span>
               }
             </div>
 
-            <a [routerLink]="['/resetPassword']"
-              ><p class="fs-18 blue">Passwort vergessen?</p></a
-            >
+            <a [routerLink]="['/resetPassword']"><p class="fs-18 blue">Passwort vergessen?</p></a>
           </div>
           <div class="separator-section">
             <div class="separator"></div>
@@ -81,9 +59,7 @@
           <p class="fs-18">Anmelden mit Google</p>
           <div class="btn-section">
             <button type="submit" class="fs-18">Anmelden</button
-            ><button type="button" (click)="guestLogin()" class="fs-18 blue">
-              Gäste-Login
-            </button>
+            ><button type="button" (click)="guestLogin()" class="fs-18 blue">Gäste-Login</button>
           </div>
         </form>
       </div>

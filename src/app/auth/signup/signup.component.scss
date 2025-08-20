@@ -3,6 +3,8 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: #eceefe;
+  position: relative;
+  overflow-x: hidden;
 }
 
 .section {
@@ -95,7 +97,7 @@
 }
 .error-pw-list {
   font-size: 13px;
-  padding:10px;
+  padding: 10px;
 }
 
 .ok {
@@ -181,4 +183,5 @@
 }
 
 
-@import "./responsive.signup"
+
+@import "./responsive.signup";

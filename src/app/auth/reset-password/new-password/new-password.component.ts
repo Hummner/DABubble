@@ -1,27 +1,19 @@
 import { confirmPasswordValidator } from './confirm-password.validator';
 import { AuthService } from '../../../services/auth.service';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { StrongPasswordRegx } from '../../signup/strong-password.pattern';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-  getAuth,
-  verifyPasswordResetCode,
-  confirmPasswordReset,
-} from '@angular/fire/auth';
+import { getAuth, verifyPasswordResetCode, confirmPasswordReset } from '@angular/fire/auth';
 import { FooterComponent } from '../../../shared/footer/footer.component';
 import { Header2Component } from '../../../shared/header-2/header-2.component';
 import { NgIf } from '@angular/common';
+import { LogMessageComponent } from '../../log-message/log-message.component';
 
 @Component({
   selector: 'app-new-password',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, FooterComponent, Header2Component, NgIf],
+  imports: [LogMessageComponent, ReactiveFormsModule, FooterComponent, Header2Component, NgIf],
   templateUrl: './new-password.component.html',
   styleUrl: './new-password.component.scss',
 })
@@ -38,11 +30,13 @@ export class NewPasswordComponent implements OnInit {
 
   newPasswordForm = new FormGroup(
     {
-      password_1: new FormControl('', [Validators.required,Validators.pattern(StrongPasswordRegx)]),
-      password_2: new FormControl('', [Validators.required,Validators.pattern(StrongPasswordRegx)]),
+      password_1: new FormControl('', [Validators.required, Validators.pattern(StrongPasswordRegx)]),
+      password_2: new FormControl('', [Validators.required, Validators.pattern(StrongPasswordRegx)]),
     },
     { validators: confirmPasswordValidator }
   );
+
+  @ViewChild('log') log!: LogMessageComponent;
 
   get isFormEmpty() {
     const { password_1, password_2 } = this.newPasswordForm.value;
@@ -51,7 +45,6 @@ export class NewPasswordComponent implements OnInit {
 
   ngOnInit() {
     this.oobCode = this.route.snapshot.queryParamMap.get('oobCode') || '';
-
     if (!this.oobCode) {
       this.errorMessage = 'Invalid or missing reset code.';
       return;
@@ -68,18 +61,30 @@ export class NewPasswordComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
-
     if (this.newPasswordForm.invalid || !this.oobCode) {
       return;
     }
 
     const newPassword = this.newPasswordForm.value.password_1!;
     confirmPasswordReset(this.auth, this.oobCode, newPassword)
-      .then(() => this.router.navigate(['/']))
+      .then(() => {
+        console.log('success');
+        this.onSuccessfulSignup();
+      })
       .catch((err) => {
         if (err.code === 'auth/weak-password') {
           this.newPasswordForm.get('password_1')?.setErrors({ weak: true });
         }
       });
+  }
+  showLog() {
+    this.log.show(2000);
+  }
+
+  onSuccessfulSignup() {
+    this.showLog();
+    setTimeout(() => {
+      this.router.navigateByUrl('/');
+    }, 2300);
   }
 }
