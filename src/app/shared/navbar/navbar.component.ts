@@ -13,21 +13,12 @@ import { FirestoreService } from '../../services/firestore.service';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { DirectMessageService } from '../../services/direct-message.service';
 import { ChannelsService } from '../../services/channels.service';
+import { ClickStopPropagation } from "../../click-stop-propagation.directive";
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [
-    MatSidenavModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatDialogModule,
-    NgFor,
-    NgIf,
-    AsyncPipe,
-    RouterModule,
-    NgClass,
-  ],
+  imports: [MatSidenavModule, MatIconModule, MatToolbarModule, MatDialogModule, NgFor, NgIf, AsyncPipe, RouterModule, NgClass, ClickStopPropagation],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
@@ -55,6 +46,7 @@ export class NavbarComponent {
   showChannel = true;
   showMessage = true;
   filteredChannels: any[] = [];
+  newMessageOpen = false;
 
   toggleDrawer() {
     this.isOpen = !this.isOpen;
@@ -79,19 +71,14 @@ export class NavbarComponent {
   }
 
   async findOrCreateDMchannel(currentUserId: string, clickedUserId: string) {
-    const channelId = await this.directMessageService.getDMChannel(
-      currentUserId,
-      clickedUserId
-    );
+    const channelId = await this.directMessageService.getDMChannel(currentUserId, clickedUserId);
     this.router.navigateByUrl(`directMessages/${channelId}`);
     this.directMessageService.subDirectMessageChannel(channelId, currentUserId);
   }
 
   selectChannel(channelId: string) {
     this.channels$.subscribe((channels) => {
-      const selectedChannel = channels.find(
-        (channel) => channel.channelId === channelId
-      );
+      const selectedChannel = channels.find((channel) => channel.channelId === channelId);
       if (selectedChannel) {
         this.channelService.getChannel(selectedChannel.channelId);
         this.router.navigateByUrl(`channel/${selectedChannel.channelId}`);
@@ -116,7 +103,8 @@ export class NavbarComponent {
     this.channelService.requestFocus();
   }
 
-  toNewMessage(){
+  toNewMessage() {
     this.router.navigateByUrl(`newMessage`);
+    // this.newMessageOpen = true;
   }
 }
