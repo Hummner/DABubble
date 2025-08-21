@@ -1,21 +1,22 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { FirestoreService } from '../../services/firestore.service';
-import { NgIf } from '@angular/common';
+import { NgIf, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../services/auth.service';
 import { UserProfileComponent } from './user-profile/user-profile.component';
-import { ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ChannelsService } from '../../services/channels.service';
+import { Firestore, collection, getDocs, query, orderBy, limit } from '@angular/fire/firestore';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatIconModule, NgIf, MatMenuModule, UserProfileComponent],
+  imports: [MatIconModule, NgIf, MatMenuModule, UserProfileComponent, DatePipe],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -23,6 +24,8 @@ export class HeaderComponent implements OnInit {
   userProfile = this.firestoreService.userProfile;
   router = inject(Router);
   authService = inject(AuthService);
+  firestore = inject(Firestore);
+  searchService = inject(SearchService);
   profileCardOpen = false;
   backdropVisible = false;
   searchText = '';
@@ -30,8 +33,10 @@ export class HeaderComponent implements OnInit {
   channelService = inject(ChannelsService);
   filteredChannels: any[] = [];
   filteredMessages: any[] = [];
+  highlightedMessages: any[] = [];
   members: { id: string; role: string; name: string, imgUrl: string }[] = [];
   user: UserProfileInterface | null = null;
+  noResultsMessage: string = '';
 
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
   ngOnInit(): void {
@@ -80,46 +85,15 @@ export class HeaderComponent implements OnInit {
     this.router.navigateByUrl('/');
   }
 
-  async searchDevspace(event: Event) {
-    const value = (event.target as HTMLInputElement).value.trim();
+  async onSearch(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
     this.searchText = value;
-    const channels = await this.channelService.getAllChannels()
-    
 
-    if (this.searchText !== '') {
-      if (this.searchText.startsWith('@')) {
-        this.searchForUsers();
-      } else if (this.searchText.startsWith('#')) {
-        this.searchForChannels(channels);
-      } else {
-        this.searchForMessages(channels);
-      }
-    } 
-    else {
-      this.filteredUsers = [];
-      this.filteredChannels = [];
-    }
-  }
+    const result = await this.searchService.search(this.searchText, this.members);
 
-  searchForUsers() {
-    this.searchText = this.searchText.slice(1);
-    this.filteredUsers = this.firestoreService.userList()
-      .filter(user =>
-      user.name.toLowerCase().includes(this.searchText.toLowerCase()) &&
-      !this.members.find(m => m.id === user.uid)
-    );
-  }
-
-  searchForChannels(channels: any[]) {
-    this.searchText = this.searchText.slice(1);
-    this.filteredChannels = channels.filter(channel =>
-      channel.name.toLowerCase().includes(this.searchText.toLowerCase())
-    );
-  }
-
-  async searchForMessages(channels: any[]) {
-    this.searchText = this.searchText.toLowerCase();
-    
-
+    this.filteredUsers = result.users;
+    this.filteredChannels = result.channels;
+    this.highlightedMessages = result.messages;
+    this.noResultsMessage = result.noResultsMessage;
   }
 }

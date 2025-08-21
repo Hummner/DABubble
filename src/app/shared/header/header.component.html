@@ -1,7 +1,7 @@
 <header class="header">
   <img src="assets/icon/dabubble_header.png" alt="header_logo" />
   <div class="search-container">
-    <input id="search" type="search" placeholder="Devspace durchsuchen" (input)="searchDevspace($event)" />
+    <input id="search" type="search" placeholder="Devspace durchsuchen" (input)="onSearch($event)" />
     <mat-icon class="search-icon">search</mat-icon>
     @if (searchText != '') {
     <div class="search-results-container">
@@ -20,10 +20,20 @@
             </li>
           }
 
-          @for (channel of filteredMessages; track channel) {
-            <li class="search-result-item">
-              <p>{{ channel.meassages }}</p>
+          @for (message of highlightedMessages; track $index) {
+            <li class="search-result-messages">
+              <div class="user-profile">
+                <p class="user-name">{{ message.userName }}</p>
+                <small class="timestamp">{{ message.timestamp | date:'dd.MM.yyyy, HH:mm' }}</small>
+              </div>
+              <p class="message-text">{{ message.text }}</p>
+              <div class="divider"></div>
             </li>
+          }
+          @if (noResultsMessage != '') {
+            <div class="no-results">
+              {{ noResultsMessage }}
+            </div> 
           }
         </ul>
     </div>

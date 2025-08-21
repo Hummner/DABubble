@@ -67,6 +67,8 @@ input[type="search"]::-webkit-search-cancel-button {
     width: 300px;
     height: 400px;
     border: 1px solid #000000;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .search-result-list {
@@ -78,36 +80,71 @@ input[type="search"]::-webkit-search-cancel-button {
   margin-top: 8px;
   padding-left: 8px;
   margin-right: 16px;
+}
 
-    .search-result-item {
-      display: flex;
-      align-items: center;
-      border-radius: 50px;
-      padding-left: 16px;
-      padding-top: 8px;
-      padding-right: 16px;
-      padding-bottom: 8px;
+.search-result-item {
+  display: flex;
+  align-items: center;
+  border-radius: 50px;
+  padding-left: 16px;
+  padding-top: 8px;
+  padding-right: 16px;
+  padding-bottom: 8px;
 
-      .avatar {
-        flex-shrink: 0;
-        margin-right: 16px;
 
-        img {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-        }
-      }
+  .avatar {
+    flex-shrink: 0;
+    margin-right: 16px;
 
-      >p {
-        font-size: 18px;
-        margin: 0;
-      }
+    img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+  }
+  >p {
+    font-size: 18px;
+    margin: 0;
+    }
+      
+  &:hover {
+    cursor: pointer;
+    background-color: #eceefe;
+  }
+}
 
-      &:hover {
-        cursor: pointer;
-        background-color: #eceefe;
-      }
+.search-result-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .user-profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .user-name {
+      font-weight: bold;
+      font-size: 14px;
+      margin: 0;
+    }
+    
+    .timestamp {
+      font-size: 10px;
+      color: #999;
+      margin: 0;
+    }
+
+    .message-text {
+      font-size: 18px;
+    }
+  }
+
+  .divider {
+    margin-bottom: 8px;
+    width: 100%;
+    height: 1px;
+    background-color: #999;
   }
 }
 
@@ -209,6 +246,12 @@ app-user-profile {
   position: absolute;
   top: 90px;
   right: 50px;
+}
+
+.no-results{
+  text-align: center;
+  font-size: 18px;
+  margin: 0;
 }
 
 
