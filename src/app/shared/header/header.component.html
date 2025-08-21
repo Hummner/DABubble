@@ -1,5 +1,6 @@
 <header class="header">
   <img src="assets/icon/dabubble_header.png" alt="header_logo" />
+  <img src="assets/icon/devspace.png" *ngIf="isNavbarClosed" (click)="onMenuClick()" alt="" />
 
   <div class="search-container">
     <input type="search" placeholder="Devspace durchsuchen" />
@@ -29,23 +30,12 @@
       (menuClosed)="onMenuClosed()"
     >
       <div class="profile-menu-wrap">
-        <button class="mat-menu-item-btn" mat-menu-item (click)="openProfile()">
-          Profil
-        </button>
-        <button class="mat-menu-item-btn" mat-menu-item (click)="logOut()">
-          Log Out
-        </button>
+        <button class="mat-menu-item-btn" mat-menu-item (click)="openProfile()">Profil</button>
+        <button class="mat-menu-item-btn" mat-menu-item (click)="logOut()">Log Out</button>
       </div>
     </mat-menu>
   </div>
 </header>
-<div
-  class="custom-backdrop"
-  [class.visible]="backdropVisible"
-  (click)="closeAll()"
-></div>
+<div class="custom-backdrop" [class.visible]="backdropVisible" (click)="closeAll()"></div>
 
-<app-user-profile
-  *ngIf="profileCardOpen"
-  (close)="closeProfile()"
-></app-user-profile>
+<app-user-profile *ngIf="profileCardOpen" (close)="closeProfile()"></app-user-profile>
