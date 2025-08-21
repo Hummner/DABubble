@@ -5,18 +5,27 @@
     <mat-icon class="search-icon">search</mat-icon>
     @if (searchText != '') {
     <div class="search-results-container">
-      <div class="member-box">
-        <ul class="direct-messages-list">
+        <ul class="search-result-list">
           @for (user of filteredUsers; track user) {
-            <li class="direct-messages-item">
+            <li class="search-result-item">
               <div class="avatar">
                 <img [src]="user.imgUrl" alt="User avatar" />
               </div>
               <p>{{ user.name }}</p>
             </li>
           }
+          @for (channel of filteredChannels; track channel) {
+            <li class="search-result-item">
+              <p>{{ channel.name }}</p>
+            </li>
+          }
+
+          @for (channel of filteredMessages; track channel) {
+            <li class="search-result-item">
+              <p>{{ channel.meassages }}</p>
+            </li>
+          }
         </ul>
-      </div>
     </div>
   }
   </div>
