@@ -30,6 +30,7 @@
                                     <input #nameInput [readonly]="!editName" [ngClass]="{'border-on-focus': editName}"
                                         type="text" class="channel-name-input no-border" value="{{ channel?.name }}">
                                 </div>
+                                <span *ngIf="channelNameExists" class="error-message">Channel-Name already exists</span>
                             </div>
                             <div class="channel-name-menu-container" [ngClass]="{'no-border-edit' : editDisc}">
                                 <div class="channel-name-menu-header">

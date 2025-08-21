@@ -9,6 +9,8 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
+import { MatDialog } from '@angular/material/dialog';
+import { ChannelsService } from '../../services/channels.service';
 
 @Component({
   selector: 'app-header',
@@ -23,6 +25,12 @@ export class HeaderComponent implements OnInit {
   authService = inject(AuthService);
   profileCardOpen = false;
   backdropVisible = false;
+  searchText = '';
+  filteredUsers: UserProfileInterface[] = [];
+  channelService = inject(ChannelsService);
+  filteredChannels: any[] = [];
+  filteredMessages: any[] = [];
+  members: { id: string; role: string; name: string, imgUrl: string }[] = [];
   user: UserProfileInterface | null = null;
 
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
@@ -32,7 +40,10 @@ export class HeaderComponent implements OnInit {
       this.user = { ...user };
     }
   }
-  constructor(private firestoreService: FirestoreService) {}
+  constructor(
+    private firestoreService: FirestoreService,
+    public dialog: MatDialog,
+  ) {}
 
   openProfile() {
     this.profileCardOpen = true;
@@ -67,5 +78,48 @@ export class HeaderComponent implements OnInit {
   logOut() {
     this.authService.logout();
     this.router.navigateByUrl('/');
+  }
+
+  async searchDevspace(event: Event) {
+    const value = (event.target as HTMLInputElement).value.trim();
+    this.searchText = value;
+    const channels = await this.channelService.getAllChannels()
+    
+
+    if (this.searchText !== '') {
+      if (this.searchText.startsWith('@')) {
+        this.searchForUsers();
+      } else if (this.searchText.startsWith('#')) {
+        this.searchForChannels(channels);
+      } else {
+        this.searchForMessages(channels);
+      }
+    } 
+    else {
+      this.filteredUsers = [];
+      this.filteredChannels = [];
+    }
+  }
+
+  searchForUsers() {
+    this.searchText = this.searchText.slice(1);
+    this.filteredUsers = this.firestoreService.userList()
+      .filter(user =>
+      user.name.toLowerCase().includes(this.searchText.toLowerCase()) &&
+      !this.members.find(m => m.id === user.uid)
+    );
+  }
+
+  searchForChannels(channels: any[]) {
+    this.searchText = this.searchText.slice(1);
+    this.filteredChannels = channels.filter(channel =>
+      channel.name.toLowerCase().includes(this.searchText.toLowerCase())
+    );
+  }
+
+  async searchForMessages(channels: any[]) {
+    this.searchText = this.searchText.toLowerCase();
+    
+
   }
 }
