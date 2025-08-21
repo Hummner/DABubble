@@ -58,6 +58,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   @ViewChild('scrollContainerThread') scrollContainerThread!: ElementRef;
   parentEditView = false;
   // smallEmojiMenuThreadInput = false;
+  isSending = signal(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -169,6 +170,10 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       this.shouldScroll = true;
     }
     this.content = '';
+  }
+
+  canSendMessage(): boolean {
+    return this.content.trim().length > 0 && !this.isSending();
   }
 
   updateParentMessageWithThreadInfo(message: Message) {
