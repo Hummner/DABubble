@@ -21,6 +21,7 @@ import { UserMentionService } from '../services/user-channel-mention.service';
 import { NavbarService } from '../services/navbar.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EmojiServiceService } from '../services/emoji.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-direct-messages',
@@ -38,6 +39,7 @@ import { EmojiServiceService } from '../services/emoji.service';
     RouterOutlet,
     ClickStopPropagation,
     MatMenuTrigger,
+    MatProgressSpinnerModule
   ],
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
@@ -71,6 +73,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   channels = toSignal(inject(NavbarService).channelsObs$);
   parentEditView = false;
   isSending = signal(false);
+  loading=false;
 
   constructor(
     private route: ActivatedRoute,

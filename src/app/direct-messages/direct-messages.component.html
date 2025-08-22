@@ -21,10 +21,10 @@
         </div>
       </header>
       <main>
-        <!-- <div *ngIf="loading" class="laoding-spinner">
+        <div *ngIf="loading" class="laoding-spinner">
           <mat-spinner></mat-spinner>
-        </div> -->
-        <div *ngIf="secondUser" class="scroll-wrapper" #scrollContainer>
+        </div>
+        <div *ngIf="secondUser && !loading" class="scroll-wrapper" #scrollContainer>
           <div class="first-msg">
             <div class="dm-msg-name">
               <img [src]="secondUser.imgUrl" alt="" />

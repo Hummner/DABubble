@@ -45,7 +45,7 @@ export class LoginComponent implements AfterViewInit {
     const rawForm = this.loginForm.getRawValue();
     this.authService.login(rawForm.email!, rawForm.password!).subscribe({
       next: () => {
-        this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
+        this.router.navigateByUrl('/dashboard');
       },
       error: (err) => {
         if (err.code === 'auth/invalid-email') {
