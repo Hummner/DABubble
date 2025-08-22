@@ -45,7 +45,7 @@ export class LoginComponent implements AfterViewInit {
     const rawForm = this.loginForm.getRawValue();
     this.authService.login(rawForm.email!, rawForm.password!).subscribe({
       next: () => {
-        this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
+        this.router.navigateByUrl('/dashboard');
       },
       error: (err) => {
         if (err.code === 'auth/invalid-email') {
@@ -81,7 +81,7 @@ export class LoginComponent implements AfterViewInit {
     this.authService.signInAnonymously().subscribe({
       next: () => {
         console.log('Anonymous login successful');
-        this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
+        this.router.navigateByUrl('/dashboard');
         const uid = this.auth.currentUser?.uid;
         if (uid) {
           this.fireStore.getGuestLoginData(uid);
