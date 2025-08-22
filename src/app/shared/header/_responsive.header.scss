@@ -4,6 +4,13 @@
   .search-container {
     display: none;
   }
+
+  .resp-navi-back {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
 }
 
 @include respond-to(md) {

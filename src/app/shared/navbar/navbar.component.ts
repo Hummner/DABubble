@@ -91,11 +91,11 @@ export class NavbarComponent {
 
   async hideChannelWithoutCurrentUser() {
     this.channels$.subscribe((channels) => {
-      setTimeout(() => {
+      // setTimeout(() => {
         this.filteredChannels = channels.filter((channel) => {
         return channel.members.some((member) => member.id === this.currentUserId());
       });
-      });
+      // });
     });
   }
 

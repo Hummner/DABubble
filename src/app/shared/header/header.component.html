@@ -1,35 +1,35 @@
 <header class="header">
-  <img src="assets/icon/dabubble_header.png" alt="header_logo" />
-  <img src="assets/icon/devspace.png" *ngIf="isNavbarClosed" (click)="onMenuClick()" alt="" />
+  <img src="assets/icon/dabubble_header.png" *ngIf="!isNavbarClosed" alt="header_logo" />
+  <div class="resp-navi-back" *ngIf="isNavbarClosed">
+    <img src="assets/icon/arrow_back_2.svg" alt="" />
+    <img src="assets/icon/devspace.png" (click)="onMenuClick()" alt="" />
+  </div>
 
   <div class="search-container">
     <input id="search" type="search" placeholder="Devspace durchsuchen" (input)="searchDevspace($event)" />
     <mat-icon class="search-icon">search</mat-icon>
     @if (searchText != '') {
     <div class="search-results-container">
-        <ul class="search-result-list">
-          @for (user of filteredUsers; track user) {
-            <li class="search-result-item">
-              <div class="avatar">
-                <img [src]="user.imgUrl" alt="User avatar" />
-              </div>
-              <p>{{ user.name }}</p>
-            </li>
-          }
-          @for (channel of filteredChannels; track channel) {
-            <li class="search-result-item">
-              <p>{{ channel.name }}</p>
-            </li>
-          }
-
-          @for (channel of filteredMessages; track channel) {
-            <li class="search-result-item">
-              <p>{{ channel.meassages }}</p>
-            </li>
-          }
-        </ul>
+      <ul class="search-result-list">
+        @for (user of filteredUsers; track user) {
+        <li class="search-result-item">
+          <div class="avatar">
+            <img [src]="user.imgUrl" alt="User avatar" />
+          </div>
+          <p>{{ user.name }}</p>
+        </li>
+        } @for (channel of filteredChannels; track channel) {
+        <li class="search-result-item">
+          <p>{{ channel.name }}</p>
+        </li>
+        } @for (channel of filteredMessages; track channel) {
+        <li class="search-result-item">
+          <p>{{ channel.meassages }}</p>
+        </li>
+        }
+      </ul>
     </div>
-  }
+    }
   </div>
 
   <div
