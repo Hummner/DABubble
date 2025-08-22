@@ -131,6 +131,4 @@ export class HeaderComponent implements OnInit {
   onMenuClick() {
     this.toggleNavbar.emit();
   }
-
-
 }
