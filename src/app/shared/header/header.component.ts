@@ -37,7 +37,6 @@ export class HeaderComponent implements OnInit {
   @Output() toggleNavbar = new EventEmitter<void>();
 
 
-
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
   ngOnInit(): void {
     const user = this.userProfile();
