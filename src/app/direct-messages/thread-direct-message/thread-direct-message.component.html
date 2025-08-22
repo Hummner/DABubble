@@ -85,13 +85,7 @@
             <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
           </div>
         </div>
-        <div
-          class="send-icon"
-          (click)="addThreadMessage()"
-          [class.sending]="isSending()"
-          [class.disabled]="!canSendMessage()"
-          [attr.disabled]="!canSendMessage()"
-        >
+        <div class="send-icon" (click)="addThreadMessage()">
           <img src="assets/icon/send.png" alt="" />
         </div>
       </div>

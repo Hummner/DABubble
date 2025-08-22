@@ -1,4 +1,4 @@
-import { Component, signal,OnDestroy, OnInit, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NgIf, NgFor } from '@angular/common';
@@ -70,7 +70,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   parentEmojiList: any;
   channels = toSignal(inject(NavbarService).channelsObs$);
   parentEditView = false;
-  isSending = signal(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -216,10 +215,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     };
     this.messageService.addMessage(message, this.channelId);
     this.content = '';
-  }
-
-    canSendMessage(): boolean {
-    return this.content.trim().length > 0 && !this.isSending();
   }
 
   groupMessagesByDate(): { [date: string]: Message[] } {
