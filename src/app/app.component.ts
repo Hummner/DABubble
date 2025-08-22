@@ -1,11 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 
 import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { Router, NavigationEnd } from '@angular/router';
-
 
 @Component({
   selector: 'app-root',
@@ -18,7 +17,8 @@ export class AppComponent {
   title = 'dabubble';
   router = inject(Router);
   isAuthLayout = false;
-    isNavbarClosed = false;
+  isNavbarClosed = false;
+  windowWidth = window.innerWidth;
   constructor() {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {

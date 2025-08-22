@@ -2,5 +2,5 @@
 
 <section [ngClass]="{ 'main-layout': !isAuthLayout, 'auth-layout': isAuthLayout }">
   <app-navbar *ngIf="!isAuthLayout && !isNavbarClosed"></app-navbar>
-  <router-outlet *ngIf="!isAuthLayout && (isNavbarClosed || windowWidth >= 992)"></router-outlet>
+<router-outlet *ngIf="isAuthLayout || (!isAuthLayout && (isNavbarClosed || windowWidth >= 992))"></router-outlet>
 </section>
