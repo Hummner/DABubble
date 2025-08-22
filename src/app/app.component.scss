@@ -1,5 +1,3 @@
-@import "../mixins";
-
 :host {
   display: block;
   height: 100%;
@@ -13,12 +11,9 @@ section {
 .main-layout {
   height: calc(100vh - 100px);
   display: flex;
+
 }
 
 .auth-layout {
-  height: 100%;
+  height: 100%; 
 }
-
-@import "_responsive.app.scss"
-
-

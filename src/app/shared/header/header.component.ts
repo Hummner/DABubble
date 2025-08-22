@@ -1,5 +1,4 @@
 import { Component, inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Component, inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { FirestoreService } from '../../services/firestore.service';
 import { NgIf } from '@angular/common';
@@ -37,8 +36,7 @@ export class HeaderComponent implements OnInit {
   @Input() isNavbarClosed!: boolean;
   @Output() toggleNavbar = new EventEmitter<void>();
 
-  @Input() isNavbarClosed!: boolean;
-  @Output() toggleNavbar = new EventEmitter<void>();
+
 
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
   ngOnInit(): void {
@@ -128,9 +126,5 @@ export class HeaderComponent implements OnInit {
     this.searchText = this.searchText.toLowerCase();
     
 
-  }
-
-  onMenuClick() {
-    this.toggleNavbar.emit();
   }
 }
