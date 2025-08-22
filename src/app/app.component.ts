@@ -13,6 +13,7 @@ import { Router, NavigationEnd } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
+
 export class AppComponent {
   title = 'dabubble';
   router = inject(Router);
@@ -27,22 +28,45 @@ export class AppComponent {
           url === '/' ||
           ['/resetPassword', '/signup', '/avatarSelection', '/resetPassword/newPassword'].some((path) => url.startsWith(path));
         const hideNavbarRoutes = ['/channel/', '/directMessages/', '/newMessage'];
-        this.isNavbarClosed = hideNavbarRoutes.some((path) => url.startsWith(path)) && this.windowWidth < 992;
-
-        console.log('URL:', url, 'Navbar closed:', this.isNavbarClosed, 'Width:', this.windowWidth);
+        const shouldCloseNavbar = hideNavbarRoutes.some((path) => url.startsWith(path)) && this.windowWidth < 992;
+        if (this.windowWidth < 992) {
+          if (shouldCloseNavbar) {
+            this.isNavbarClosed = true;
+          } else {
+            this.isNavbarClosed = false;
+          }
+        } else {
+          this.isNavbarClosed = false;
+        }
       }
     });
   }
+
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
     this.windowWidth = (event.target as Window).innerWidth;
     const url = this.router.url;
     const hideNavbarRoutes = ['/channel/', '/directMessages/', '/newMessage'];
-    this.isNavbarClosed = hideNavbarRoutes.some((path) => url.startsWith(path)) && this.windowWidth < 992;
+    if (this.windowWidth < 992) {
+      const shouldCloseNavbar = hideNavbarRoutes.some((path) => url.startsWith(path));
+      if (shouldCloseNavbar) {
+        this.isNavbarClosed = true;
+      }
+    } else {
+      this.isNavbarClosed = false;
+    }
   }
 
   onToggleNavbar() {
     this.isNavbarClosed = false;
-    this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
+    if (this.windowWidth >= 992) {
+      this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
+    } else {
+      this.router.navigateByUrl('/dashboard');
+    }
+  }
+
+  closeNavbar() {
+    this.isNavbarClosed = true;
   }
 }

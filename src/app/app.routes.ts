@@ -8,8 +8,10 @@ import { NewPasswordComponent } from './auth/reset-password/new-password/new-pas
 import { DirectMessagesComponent } from './direct-messages/direct-messages.component';
 import { ThreadDirectMessageComponent } from './direct-messages/thread-direct-message/thread-direct-message.component';
 import { NewMessageComponent } from './new-message/new-message.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 export const routes: Routes = [
+  { path: 'dashboard', component: DashboardComponent },
   { path: 'channel/:ChannelId', component: ChannelComponent },
   { path: '', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
