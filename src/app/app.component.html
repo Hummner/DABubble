@@ -1,6 +1,6 @@
 <app-header *ngIf="!isAuthLayout" [isNavbarClosed]="isNavbarClosed" (toggleNavbar)="onToggleNavbar()"></app-header>
 
 <section [ngClass]="{ 'main-layout': !isAuthLayout, 'auth-layout': isAuthLayout }">
-  <app-navbar *ngIf="!isAuthLayout && !isNavbarClosed"></app-navbar>
-  <router-outlet *ngIf="!isAuthLayout && (isNavbarClosed || windowWidth >= 992)"></router-outlet>
+  <app-navbar *ngIf="!isAuthLayout && !isNavbarClosed" (closeNavbar)="closeNavbar()"></app-navbar>
+  <router-outlet *ngIf="isAuthLayout || (!isAuthLayout && (windowWidth >= 992 || isNavbarClosed))"></router-outlet>
 </section>
