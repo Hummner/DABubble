@@ -17,6 +17,12 @@ header {
   height: 100%;
   width: 485px;
 }
+
+@media (max-width:1400px){
+  .content {
+    width:100%;
+  }
+}
 .scroller-wrapper {
   overflow-y: auto;
   overflow-x: hidden;

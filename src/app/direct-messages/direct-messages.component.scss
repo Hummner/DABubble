@@ -366,3 +366,29 @@ app-user-card {
     transform: rotate(360deg);
   }
 }
+
+
+.hidden-dm {
+  visibility: hidden;
+  // > .mat-drawer-content {
+  //   margin: 0 !important;
+  // }
+}
+
+@media (max-width: 1400px) {
+  ::ng-deep .container {
+
+    > .mat-drawer-content {
+      margin: 0 !important;
+    }
+  }
+}
+
+.margin-30 {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.example-sidenav-100 {
+  width: 100%;
+}
