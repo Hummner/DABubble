@@ -21,6 +21,7 @@ import { EmojiArrayService } from '../services/emoji-array.service';
 import { AddMemberComponent } from '../channel/add-member/add-member.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
+import { UserMentionService } from '../services/user-channel-mention.service';
 
 
 @Component({
@@ -36,6 +37,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('discInput') discInput!: ElementRef<HTMLInputElement>;
   @ViewChild('chat') chatContainer!: ElementRef<HTMLInputElement>;
   @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
 
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService)
@@ -63,12 +66,14 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   drawerMode!: MatDrawerMode;
   originalChannelName: string = "";
   channelNameExists = false;
+  content: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    public userMentionService: UserMentionService,
   ) { }
 
   ngOnInit(): void {
@@ -98,7 +103,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     });
   }
-  
+
   ngAfterViewChecked() {
     if (!this.initialScrollDone && this.channel?.messages.length) {
       this.scrollToBottom();
@@ -234,8 +239,9 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  focusAfterText(inputRef: ElementRef<HTMLInputElement>) {
+  focusAfterText(inputRef: ElementRef<HTMLInputElement> | ElementRef<HTMLTextAreaElement>) {
     let input = inputRef.nativeElement;
+    debugger
     let length = input.value.length;
     input.setSelectionRange(length, length);
 
@@ -253,7 +259,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.checkValidation().then(isValid => {
       if (isValid) {
         this.channelsService.updateEditChannel(this.channelId, this.nameInput.nativeElement.value, this.discInput.nativeElement.value);
-    }
+      }
     })
   }
 
@@ -293,7 +299,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       data: {
         channelName: this.channel?.name,
         channelId: this.channelId
-      }}
+      }
+    }
     );
   }
 
@@ -301,7 +308,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     let currentChannel = this.channelsService.getChannel(this.channelId)
     this.channelsService.deleteMember(currentChannel, userProfile);
     this.closeMenu(editChannelMenuTrigger);
-    
+
     let allChannels = this.channelsService.getAllChannels();
     for (const channel of await allChannels) {
       channel.members = channel.members.filter((member: any) => member.id !== userProfile?.uid);
@@ -317,7 +324,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   async checkValidation() {
-    let channelName =  this.nameInput.nativeElement.value.trim();
+    let channelName = this.nameInput.nativeElement.value.trim();
     let allChannels = await this.channelsService.getAllChannels();
 
     const exists = allChannels.some(
@@ -327,7 +334,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.channelNameExists = exists;
     this.resetChannelName(this.channelNameExists)
     return !exists;
-    }
+  }
 
   resetChannelName(exists: boolean) {
     if (exists) {
@@ -337,4 +344,27 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       }, 2000);
     }
   }
+
+  takeUser(name: string) {
+    this.textInput = this.userMentionService.takeUser(name, this.textInput);
+
+    this.focusAfterTag(this.textInput);
+  }
+
+  focusAfterTag(input: string) {
+    
+    let length = input.length;
+    this.chatInput.nativeElement.setSelectionRange(length, length);
+
+  }
+
+  tagInputStart() {
+    this.textInput = this.userMentionService.tagInputStart(this.textInput, this.chatInput);
+  }
+
+  onInputChange(event: Event) {
+    this.userMentionService.onInputChange(this.textInput, this.mentionMenuTrigger, this.channelMenuTrigger, this.chatInput);
+  }
+
 }
+

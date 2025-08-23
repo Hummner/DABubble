@@ -12,7 +12,8 @@
                     #editChannelTrigger="matMenuTrigger">
                     <h2># {{ channel?.name}}</h2>
                     <mat-icon>keyboard_arrow_down</mat-icon>
-                    <mat-menu #editChannelMenu="matMenu" (closed)="menuOpen = false" class="edit-channel-menu-container">
+                    <mat-menu #editChannelMenu="matMenu" (closed)="menuOpen = false"
+                        class="edit-channel-menu-container">
                         <div class="edit-channel-menu" (click)="$event.stopPropagation()">
                             <div class="edit-channel-header">
                                 <h2># {{ channel?.name}}</h2>
@@ -46,7 +47,8 @@
                                 <span class="created-by-name">{{channel?.createdBy}}</span>
                             </div>
                             <div class="edit-channel-footer">
-                                <span (click)="leaveChannel(this.userProfile(), editChannelTrigger)" class="primary-button">Channel verlassen</span>
+                                <span (click)="leaveChannel(this.userProfile(), editChannelTrigger)"
+                                    class="primary-button">Channel verlassen</span>
                             </div>
                         </div>
                     </mat-menu>
@@ -59,7 +61,8 @@
                         }
                         <div class="member-img"><span>{{ channel?.members?.length }}</span></div>
                     </div>
-                    <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()" class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
+                    <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
+                        class="add-member-icon"><img src="assets/icon/person_add.png" alt=""></div>
                 </div>
                 <mat-menu (closed)="menuOpen = false" xPosition="before" #menu="matMenu" class="members-menu-container">
                     <div class="menu-container" (click)="$event.stopPropagation()">
@@ -80,7 +83,8 @@
                             </div>
                             }
                         </div>
-                        <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()" class="members-menu-add margin-16">
+                        <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
+                            class="members-menu-add margin-16">
                             <div class="add-member-icon">
                                 <img src="assets/icon/person_add.png">
                             </div>
@@ -117,8 +121,8 @@
             </main>
             <footer>
                 <div class="text-area">
-                    <textarea [disabled]="loading" (keyup)="checkTheKey($event)" [(ngModel)]="textInput"
-                        #chat_input name="chat_input" id="chat_input" placeholder="Nachricht an #Entwicklerteam"></textarea>
+                    <textarea [disabled]="loading" (keyup)="checkTheKey($event)" [(ngModel)]="textInput" #chat_input
+                        name="chat_input" id="chat_input" placeholder="Nachricht an #Entwicklerteam" (input)="onInputChange($event)"></textarea>
                 </div>
                 <div class="input-buttons">
                     <div class="icons">
@@ -128,13 +132,25 @@
                             <mat-menu #reactMenu="matMenu" class="emoji-menu-small">
                                 <div class="emoji-menu-container">
                                     @for (emoji of sortedEmoji; track $index) {
-                                    <span class="emoji-in-popup" (click)="selectEmoji(emoji)">{{emoji}}</span>
+                                    <span class="emoji-in-popup" (click)="selectEmoji(emoji); $event.stopPropagation()">{{emoji}}</span>
                                     }
                                 </div>
                             </mat-menu>
                         </div>
-                        <div class="input-icon">
+                        <div class="input-icon" #mentionTrigger="matMenuTrigger"
+                            [matMenuTriggerFor]="tagBoxMenu" (click)="tagInputStart(); $event.stopPropagation()">
                             <img src="assets/icon/tag_icon.png" alt="">
+
+                            <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu" yPosition="above">
+                                <div class="tag-menu-wrap">
+                                    @for(user of userMentionService.filteredUserList();track user){
+                                    <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
+                                        <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+                                        <p>{{ user.name }}</p>
+                                    </menu>
+                                    }
+                                </div>
+                            </mat-menu>
                         </div>
                     </div>
                     <div class="send-icon" (click)="addTicket()">
