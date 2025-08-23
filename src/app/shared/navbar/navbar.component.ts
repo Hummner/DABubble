@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -8,11 +8,12 @@ import { AddChannelMemberComponent } from './add-channel-member/add-channel-memb
 import { NavbarService } from '../../services/navbar.service';
 import { AsyncPipe, NgFor, NgIf, NgClass } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FirestoreService } from '../../services/firestore.service';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { DirectMessageService } from '../../services/direct-message.service';
 import { ChannelsService } from '../../services/channels.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -23,8 +24,8 @@ import { ChannelsService } from '../../services/channels.service';
     MatToolbarModule,
     MatDialogModule,
     NgFor,
-    NgIf,
     AsyncPipe,
+    NgIf,
     RouterModule,
     NgClass,
   ],
@@ -54,7 +55,6 @@ export class NavbarComponent {
   isOpen = true;
   showChannel = true;
   showMessage = true;
-  filteredChannels: any[] = [];
 
   toggleDrawer() {
     this.isOpen = !this.isOpen;
@@ -74,7 +74,6 @@ export class NavbarComponent {
 
   getOtherUserList(): UserProfileInterface[] {
     const users = this.firestoreService.userList();
-    this.hideChannelWithoutCurrentUser();
     return users.filter((user) => user.uid !== this.userProfile()?.uid);
   }
 
@@ -102,14 +101,15 @@ export class NavbarComponent {
     });
   }
 
-  async hideChannelWithoutCurrentUser() {
-    this.channels$.subscribe((channels) => {
-      setTimeout(() => {
-        this.filteredChannels = channels.filter((channel) => {
-        return channel.members.some((member) => member.id === this.currentUserId());
-      });
-      });
-    });
+  hideChannelWithoutCurrentUser() {
+    const filteredChannels$ = this.channels$.pipe(
+      map(channels =>
+        channels.filter(channel =>
+          channel.members.some(member => member.id === this.currentUserId())
+        )
+      )
+    );
+    return filteredChannels$
   }
 
   focusOnChannelTextarea() {
