@@ -105,7 +105,9 @@ export class NavbarComponent {
     const filteredChannels$ = this.channels$.pipe(
       map(channels =>
         channels.filter(channel =>
-          channel.members.some(member => member.id === this.currentUserId())
+          (channel.members ?? []).some(
+            member => member.id === this.currentUserId()
+          )
         )
       )
     );
