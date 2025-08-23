@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
+import { Component, signal, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewChecked, inject, NgZone, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { NgIf, NgFor } from '@angular/common';
+import { NgIf, NgFor, NgClass } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -21,6 +21,8 @@ import { UserMentionService } from '../services/user-channel-mention.service';
 import { NavbarService } from '../services/navbar.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EmojiServiceService } from '../services/emoji.service';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-direct-messages',
@@ -38,6 +40,7 @@ import { EmojiServiceService } from '../services/emoji.service';
     RouterOutlet,
     ClickStopPropagation,
     MatMenuTrigger,
+    NgClass,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
@@ -70,6 +73,10 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   parentEmojiList: any;
   channels = toSignal(inject(NavbarService).channelsObs$);
   parentEditView = false;
+  isSending = signal(false);
+  windowWidth = window.innerWidth;
+  private resizeSubject = new Subject<void>();
+  private ngZone = inject(NgZone);
 
   constructor(
     private route: ActivatedRoute,
@@ -95,7 +102,28 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
         }
       }
     }, 0);
+    this.setupResizeHandler();
   }
+
+  private setupResizeHandler() {
+    this.resizeSubject.pipe(debounceTime(150)).subscribe(() => {
+      this.ngZone.runOutsideAngular(() => {
+        const newWidth = window.innerWidth;
+        if (this.windowWidth !== newWidth) {
+          this.ngZone.run(() => {
+            this.windowWidth = newWidth;
+          });
+        }
+      });
+    });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.resizeSubject.next();
+  }
+
+
 
   ngAfterViewChecked() {
     if (this.shouldScroll && this.messages.length && this.scrollContainer?.nativeElement) {
@@ -110,6 +138,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   }
 
   ngOnDestroy(): void {
+    this.resizeSubject.complete();
     this.unsubSingleDM?.();
     this.routeSub?.unsubscribe();
     this.messageListSub?.unsubscribe();
@@ -215,6 +244,10 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     };
     this.messageService.addMessage(message, this.channelId);
     this.content = '';
+  }
+
+  canSendMessage(): boolean {
+    return this.content.trim().length > 0 && !this.isSending();
   }
 
   groupMessagesByDate(): { [date: string]: Message[] } {

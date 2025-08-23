@@ -6,8 +6,20 @@
     [profileOpen]="profileOpen"
     (closeProfile)="closeProfileCard()"
   ></app-user-card>
-  <mat-drawer-container class="container" autosize>
-    <mat-drawer #drawer class="example-sidenav" mode="side" position="end" [(opened)]="isThreadOpen">
+  <mat-drawer-container
+    class="container"
+    autosize
+    [class.hidden-dm]="isThreadOpen && windowWidth < 1400"
+    [class.margin-30]="isThreadOpen && windowWidth < 1400"
+  >
+    <mat-drawer
+      #drawer
+      class="example-sidenav"
+      [class.example-sidenav-100]="isThreadOpen && windowWidth < 1400"
+      mode="side"
+      position="end"
+      [(opened)]="isThreadOpen"
+    >
       <router-outlet></router-outlet>
     </mat-drawer>
     <div class="content">
