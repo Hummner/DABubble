@@ -34,6 +34,7 @@ import { EmojiArrayService } from '../services/emoji-array.service';
 import { AddMemberComponent } from '../channel/add-member/add-member.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
+import { UserMentionService } from '../services/user-channel-mention.service';
 
 
 @Component({
@@ -57,6 +58,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('discInput') discInput!: ElementRef<HTMLInputElement>;
   @ViewChild('chat') chatContainer!: ElementRef<HTMLInputElement>;
   @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
 
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService);
@@ -84,11 +87,13 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   drawerMode!: MatDrawerMode;
   originalChannelName: string = '';
   channelNameExists = false;
+  content: string = '';
 
   windowWidth = window.innerWidth;
 
 
-  constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, private ngZone: NgZone) {}
+  constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, private ngZone: NgZone,
+    public userMentionService: UserMentionService,) {}
 
   ngOnInit(): void {
     // this.focusTextarea();
@@ -258,8 +263,9 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  focusAfterText(inputRef: ElementRef<HTMLInputElement>) {
+  focusAfterText(inputRef: ElementRef<HTMLInputElement> | ElementRef<HTMLTextAreaElement>) {
     let input = inputRef.nativeElement;
+    debugger
     let length = input.value.length;
     input.setSelectionRange(length, length);
   }
@@ -360,4 +366,27 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       }, 2000);
     }
   }
+
+  takeUser(name: string) {
+    this.textInput = this.userMentionService.takeUser(name, this.textInput);
+
+    this.focusAfterTag(this.textInput);
+  }
+
+  focusAfterTag(input: string) {
+    
+    let length = input.length;
+    this.chatInput.nativeElement.setSelectionRange(length, length);
+
+  }
+
+  tagInputStart() {
+    this.textInput = this.userMentionService.tagInputStart(this.textInput, this.chatInput);
+  }
+
+  onInputChange(event: Event) {
+    this.userMentionService.onInputChange(this.textInput, this.mentionMenuTrigger, this.channelMenuTrigger, this.chatInput);
+  }
+
 }
+

@@ -722,11 +722,42 @@ main {
       filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
     }
 
-    .add-member-icon img {
-      filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
-      transform: scale(1.1);
+        .add-member-icon img {
+            filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+            transform: scale(1.1);
+        }
     }
-  }
+}
+
+::ng-deep .tag-box-menu,
+::ng-deep .channel-box-menu {
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 30px !important;
+    border-top-left-radius: 30px !important;
+    border-top-right-radius: 30px !important;
+    padding: 20px !important;
+    max-height: 500px !important;
+    min-width: 400px !important;
+}
+
+::ng-deep .tag-menu-item,
+::ng-deep .channel-menu-item {
+    >.mat-mdc-menu-item-text {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+
+        >p {
+            margin: 0;
+        }
+    }
+}
+
+.tagbox-img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
 }
 
 .hide-content {
