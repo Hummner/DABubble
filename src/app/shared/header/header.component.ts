@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { FirestoreService } from '../../services/firestore.service';
 import { NgIf, DatePipe } from '@angular/common';
@@ -37,6 +37,10 @@ export class HeaderComponent implements OnInit {
   members: { id: string; role: string; name: string, imgUrl: string }[] = [];
   user: UserProfileInterface | null = null;
   noResultsMessage: string = '';
+
+  @Input() isNavbarClosed!: boolean;
+  @Output() toggleNavbar = new EventEmitter<void>();
+
 
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
   ngOnInit(): void {
