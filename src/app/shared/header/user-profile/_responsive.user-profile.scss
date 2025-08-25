@@ -1,0 +1,93 @@
+@import "../../../../mixins";
+
+@include respond-to(md) {
+  .user-card {
+    width: 450px;
+  }
+  .profile-name {
+    flex-direction: column;
+  }
+}
+
+@include respond-to(sm) {
+  .user-card {
+    width: 380px;
+    height: 550px;
+  }
+
+  .img-section {
+    > img {
+      width: 160px;
+      height: 160px;
+    }
+  }
+  .img-list {
+    flex-wrap: wrap;
+  }
+  .edit {
+    gap: 20px;
+  }
+
+  .input-name {
+    font-size: 15px;
+    height: 40px;
+  }
+  form{
+    gap:30px;
+  }
+}
+
+@include respond-to(ssm) {
+  .user-card {
+    height: 500px;
+    width: 300px;
+  }
+
+  .card-content {
+    gap: 10px;
+  }
+
+  .profile-name {
+    > h1 {
+      font-size: 28px;
+    }
+  }
+
+  .img-section {
+    > img {
+      width: 140px;
+      height: 140px;
+    }
+  }
+
+  .profile-name {
+    > h1 {
+      margin: 0;
+    }
+  }
+
+  .label-edit {
+    font-size: 17px;
+  }
+
+  .input-label {
+    > img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .btn-section {
+    > button {
+      font-size: 16px;
+      height: 40px;
+    }
+  }
+}
+
+@include respond-to(sssm) {
+  .user-card {
+    width: 280px;
+    height: 480px;
+  }
+}
