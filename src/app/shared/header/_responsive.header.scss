@@ -11,6 +11,16 @@
     gap: 10px;
     cursor: pointer;
   }
+
+.mat-menu-profile {
+  width: 100vw !important;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 30px !important;
+  border-top-right-radius: 0 !important;
+}
 }
 
 @include respond-to(md) {

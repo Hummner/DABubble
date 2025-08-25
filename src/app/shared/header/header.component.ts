@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { FirestoreService } from '../../services/firestore.service';
 import { NgIf, DatePipe } from '@angular/common';
@@ -10,6 +10,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ChannelsService } from '../../services/channels.service';
+import { OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { Firestore, collection, getDocs, query, orderBy, limit } from '@angular/fire/firestore';
 import { SearchService } from '../../services/search.service';
 
@@ -34,15 +35,17 @@ export class HeaderComponent implements OnInit {
   filteredChannels: any[] = [];
   filteredMessages: any[] = [];
   highlightedMessages: any[] = [];
-  members: { id: string; role: string; name: string, imgUrl: string }[] = [];
+  members: { id: string; role: string; name: string; imgUrl: string }[] = [];
   user: UserProfileInterface | null = null;
   noResultsMessage: string = '';
 
   @Input() isNavbarClosed!: boolean;
   @Output() toggleNavbar = new EventEmitter<void>();
+  isMobileView = false;
 
 
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
+
   ngOnInit(): void {
     const user = this.userProfile();
     if (user) {
@@ -52,7 +55,48 @@ export class HeaderComponent implements OnInit {
   constructor(
     private firestoreService: FirestoreService,
     public dialog: MatDialog,
+    private overlayPositionBuilder: OverlayPositionBuilder
   ) {}
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenWidth();
+  }
+
+  checkScreenWidth() {
+    this.isMobileView = window.innerWidth < 992;
+  }
+
+  showOverlay() {
+    this.menuTrigger.openMenu();
+
+    if (this.isMobileView) {
+      const overlayRef = this.menuTrigger['_overlayRef'];
+      const positionStrategy = this.overlayPositionBuilder.global().bottom('0px').left('0px').width('100%');
+      overlayRef.updatePositionStrategy(positionStrategy);
+      overlayRef.updatePosition();
+
+      overlayRef.overlayElement.classList.add('slide-in');
+      this.backdropVisible = true;
+    } else {
+      this.backdropVisible = true;
+    }
+  }
+
+  onMenuClosed() {
+    if (!this.profileCardOpen) {
+      this.backdropVisible = false;
+    }
+    if (this.isMobileView) {
+      const overlayRef = this.menuTrigger['_overlayRef'];
+      overlayRef.overlayElement.classList.remove('slide-in');
+      overlayRef.overlayElement.classList.add('slide-out');
+
+      setTimeout(() => {
+        overlayRef.overlayElement.classList.remove('slide-out');
+      }, 300);
+    }
+  }
 
   openProfile() {
     this.profileCardOpen = true;
@@ -74,15 +118,15 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  showOverlay() {
-    this.backdropVisible = true;
-  }
+  // showOverlay() {
+  //   this.backdropVisible = true;
+  // }
 
-  onMenuClosed() {
-    if (!this.profileCardOpen) {
-      this.backdropVisible = false;
-    }
-  }
+  // onMenuClosed() {
+  //   if (!this.profileCardOpen) {
+  //     this.backdropVisible = false;
+  //   }
+  // }
 
   logOut() {
     this.authService.logout();

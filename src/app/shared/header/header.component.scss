@@ -106,7 +106,7 @@ input[type="search"]::-webkit-search-cancel-button {
     font-size: 18px;
     margin: 0;
     }
-      
+
   &:hover {
     cursor: pointer;
     background-color: #eceefe;
@@ -122,13 +122,13 @@ input[type="search"]::-webkit-search-cancel-button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     .user-name {
       font-weight: bold;
       font-size: 14px;
       margin: 0;
     }
-    
+
     .timestamp {
       font-size: 10px;
       color: #999;
@@ -246,6 +246,45 @@ app-user-profile {
   position: absolute;
   top: 90px;
   right: 50px;
+}
+
+::ng-deep .mat-menu-profile {
+  border-radius: 0;
+  max-height: 50vh;
+}
+
+::ng-deep .slide-in {
+  transform: translateY(100%);
+  animation: slideIn 0.3s forwards;
+}
+
+::ng-deep .slide-out {
+  animation: slideOut 0.3s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+.mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
 }
 
 .no-results{

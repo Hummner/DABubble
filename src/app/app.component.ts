@@ -1,8 +1,6 @@
-import { Component, inject, HostListener, NgZone } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
 
 import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -17,13 +15,10 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 export class AppComponent {
   title = 'dabubble';
   router = inject(Router);
-  private ngZone = inject(NgZone);
 
   isAuthLayout = false;
   isNavbarClosed = false;
   windowWidth = window.innerWidth;
-
-  private resizeSubject = new Subject<void>();
 
   constructor() {
     this.router.events.subscribe((event) => {
@@ -31,36 +26,26 @@ export class AppComponent {
         this.updateLayoutForRoute(event.urlAfterRedirects);
       }
     });
-    this.resizeSubject.pipe(debounceTime(150)).subscribe(() => {
-      this.ngZone.runOutsideAngular(() => {
-        const newWidth = window.innerWidth;
-        const url = this.router.url;
-        const hideNavbarRoutes = ['/channel/', '/directMessages/', '/newMessage'];
-        const shouldCloseNavbar = newWidth < 992 && hideNavbarRoutes.some(path => url.startsWith(path));
-        if (this.windowWidth !== newWidth || this.isNavbarClosed !== shouldCloseNavbar) {
-          this.ngZone.run(() => {
-            this.windowWidth = newWidth;
-            this.isNavbarClosed = shouldCloseNavbar;
-          });
-        }
-      });
-    });
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.resizeSubject.next();
+  @HostListener('window:resize', ['$event.target.innerWidth'])
+  onResize(width: number) {
+    this.windowWidth = width;
+    this.updateNavbarVisibility();
+  }
+
+  private updateNavbarVisibility() {
+    const url = this.router.url;
+    const hideNavbarRoutes = ['/channel/', '/directMessages/', '/newMessage'];
+    const shouldCloseNavbar = this.windowWidth < 992 && hideNavbarRoutes.some((path) => url.startsWith(path));
+    this.isNavbarClosed = shouldCloseNavbar;
   }
 
   private updateLayoutForRoute(url: string) {
     this.isAuthLayout =
       url === '/' ||
-      ['/resetPassword', '/signup', '/avatarSelection', '/resetPassword/newPassword'].some(path =>
-        url.startsWith(path)
-      );
-    const hideNavbarRoutes = ['/channel/', '/directMessages/', '/newMessage'];
-    const shouldCloseNavbar = hideNavbarRoutes.some(path => url.startsWith(path)) && this.windowWidth < 992;
-    this.isNavbarClosed = this.windowWidth < 992 ? shouldCloseNavbar : false;
+      ['/resetPassword', '/signup', '/avatarSelection', '/resetPassword/newPassword'].some((path) => url.startsWith(path));
+    this.updateNavbarVisibility();
   }
 
   onToggleNavbar() {
@@ -68,4 +53,3 @@ export class AppComponent {
     this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
   }
 }
-
