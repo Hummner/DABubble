@@ -16,7 +16,7 @@ import { Message } from '../../interfaces/message.interface';
 import { CommonModule } from '@angular/common';
 import { Timestamp } from '@angular/fire/firestore';
 import { FirestoreService } from '../../services/firestore.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { DirectMessageService } from '../../services/direct-message.service';
 import { NavbarInterface } from '../../interfaces/navbar.interface';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -52,6 +52,7 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   @Input() inThreadView: boolean = false;
   @Input() isParentInThread: boolean = false;
   @Input() disableFloatingMenu: boolean = false;
+  @Input() isMobileScreen: boolean = false;
   @Output() openThread = new EventEmitter<string | undefined>();
   @Output() emojiListChange = new EventEmitter<{ name: string; code: string }[]>();
   @Output() editViewChange = new EventEmitter<boolean>();
@@ -81,7 +82,6 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   constructor(
     private firestore: FirestoreService,
     private router: Router,
-    private route: ActivatedRoute,
     private directMessageService: DirectMessageService,
     private cdr: ChangeDetectorRef,
     private emojiServise: EmojiServiceService,
@@ -99,12 +99,6 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // Cleanup if needed
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    // Trigger change detection when window is resized to update emoji limits
-    this.cdr.detectChanges();
   }
 
   createLookUpUser() {
@@ -197,9 +191,6 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
 
   openThreadPanel() {
     this.openThread.emit(this.message.id);
-    this.router.navigate(['threadMessages', this.message.id], {
-      relativeTo: this.route,
-    });
   }
 
   getUser(name: string): string | null {
@@ -313,7 +304,7 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   get isMobileDevice(): boolean {
-    return window.innerWidth <= 768;
+    return this.isMobileScreen;
   }
 
   get emojiLimit(): number {

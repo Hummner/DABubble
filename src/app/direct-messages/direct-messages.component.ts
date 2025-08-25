@@ -1,7 +1,19 @@
-import { Component, signal, OnDestroy, OnInit, ViewChild, ElementRef, AfterViewChecked, inject, NgZone, HostListener } from '@angular/core';
+import {
+  Component,
+  signal,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewChecked,
+  inject,
+  HostListener,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { NgIf, NgFor, NgClass } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -21,8 +33,6 @@ import { UserMentionService } from '../services/user-channel-mention.service';
 import { NavbarService } from '../services/navbar.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EmojiServiceService } from '../services/emoji.service';
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-direct-messages',
@@ -40,10 +50,10 @@ import { debounceTime } from 'rxjs/operators';
     RouterOutlet,
     ClickStopPropagation,
     MatMenuTrigger,
-    NgClass,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('input') input!: ElementRef<HTMLTextAreaElement>;
@@ -75,8 +85,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   parentEditView = false;
   isSending = signal(false);
   windowWidth = window.innerWidth;
-  private resizeSubject = new Subject<void>();
-  private ngZone = inject(NgZone);
 
   constructor(
     private route: ActivatedRoute,
@@ -84,6 +92,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     private directMessageService: DirectMessageService,
     private firestoreService: FirestoreService,
     private messageService: MessageService,
+    private cdr: ChangeDetectorRef,
     public userMentionService: UserMentionService,
     public navbarService: NavbarService,
     public emojiService: EmojiServiceService
@@ -102,35 +111,29 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
         }
       }
     }, 0);
-    this.setupResizeHandler();
+    this.checkWindowWidth();
   }
 
-  private setupResizeHandler() {
-    this.resizeSubject.pipe(debounceTime(150)).subscribe(() => {
-      this.ngZone.runOutsideAngular(() => {
-        const newWidth = window.innerWidth;
-        if (this.windowWidth !== newWidth) {
-          this.ngZone.run(() => {
-            this.windowWidth = newWidth;
-          });
-        }
-      });
-    });
+  checkWindowWidth() {
+    this.windowWidth = window.innerWidth;
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.resizeSubject.next();
+  get isMobileScreen(): boolean {
+    return this.windowWidth <= 768;
   }
 
-
+  @HostListener('window:resize', ['$event.target.innerWidth'])
+  onResize(width: number) {
+    this.windowWidth = width;
+    this.cdr.markForCheck();
+  }
 
   ngAfterViewChecked() {
     if (this.shouldScroll && this.messages.length && this.scrollContainer?.nativeElement) {
       setTimeout(() => {
         this.scrollToBottomInstantly();
         this.shouldScroll = false;
-      }, 100);
+      }, 0);
     }
     if (!this.isThreadOpen && this.input?.nativeElement && !this.parentEditView) {
       this.input.nativeElement.focus();
@@ -138,7 +141,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   }
 
   ngOnDestroy(): void {
-    this.resizeSubject.complete();
     this.unsubSingleDM?.();
     this.routeSub?.unsubscribe();
     this.messageListSub?.unsubscribe();
