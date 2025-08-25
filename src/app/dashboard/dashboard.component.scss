@@ -1,18 +1,18 @@
-      .dashboard-container {
-        padding: 2rem;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+.dashboard-container {
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-      .welcome-message {
-        text-align: center;
-        color: var(--text-color, #333);
-      }
+.welcome-message {
+  text-align: center;
+  color: var(--text-color, #333);
+}
 
-      @media (max-width: 991px) {
-        .dashboard-container {
-          display: none; 
-        }
-      }
+@media (max-width: 993px) {
+  .dashboard-container {
+    display: none;
+  }
+}

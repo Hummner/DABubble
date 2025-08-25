@@ -37,6 +37,7 @@ export class HeaderComponent implements OnInit {
   @Input() isNavbarClosed!: boolean;
   @Output() toggleNavbar = new EventEmitter<void>();
   isMobileView = false;
+  private previousIsMobileView = false;
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
 
   ngOnInit(): void {
@@ -44,6 +45,7 @@ export class HeaderComponent implements OnInit {
     if (user) {
       this.user = { ...user };
     }
+    this.checkScreenWidth();
   }
   constructor(
     private firestoreService: FirestoreService,
@@ -54,24 +56,68 @@ export class HeaderComponent implements OnInit {
   @HostListener('window:resize')
   onResize() {
     this.checkScreenWidth();
+    if (this.previousIsMobileView !== this.isMobileView) {
+      this.adjustMenuPosition();
+      this.previousIsMobileView = this.isMobileView;
+    } else if (this.menuTrigger?.menuOpen) {
+      this.adjustMenuPosition();
+    }
   }
 
   checkScreenWidth() {
     this.isMobileView = window.innerWidth < 992;
   }
 
+  /**
+   * Adjust overlay position strategy depending on current viewport width.
+   * Uses global full-width bottom strategy on mobile, reverts to a connected strategy on desktop.
+   */
+  private adjustMenuPosition() {
+    // Only attempt reposition when the menu is currently open, otherwise
+    // the internal overlay reference might be absent or in a disposed state.
+    if (!this.menuTrigger?.menuOpen) return;
+    const overlayRef: any = (this.menuTrigger as any)['_overlayRef'];
+    if (!overlayRef || !overlayRef.overlayElement) return;
+
+    if (this.isMobileView) {
+      const mobileStrategy = this.overlayPositionBuilder.global().bottom('0px').left('0px').width('100%');
+      overlayRef.updatePositionStrategy(mobileStrategy);
+      overlayRef.updatePosition();
+    } else {
+      // Recreate a connected strategy similar to MatMenu default (attach below trigger, aligned end)
+      const triggerElement: any = (this.menuTrigger as any)['_element'];
+      if (triggerElement) {
+        const desktopStrategy = this.overlayPositionBuilder
+          .flexibleConnectedTo(triggerElement)
+          .withPositions([
+            { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' },
+            { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+          ])
+          .withPush(false);
+        overlayRef.updatePositionStrategy(desktopStrategy);
+        overlayRef.updatePosition();
+      }
+      const el: HTMLElement | null = overlayRef.overlayElement as HTMLElement;
+      if (el) {
+        el.classList.remove('slide-in', 'slide-out');
+        // Remove any width enforced by previous global strategy
+        el.style.width = '';
+      }
+    }
+  }
+
   showOverlay() {
     this.menuTrigger.openMenu();
-
     if (this.isMobileView) {
       const overlayRef = this.menuTrigger['_overlayRef'];
       const positionStrategy = this.overlayPositionBuilder.global().bottom('0px').left('0px').width('100%');
       overlayRef.updatePositionStrategy(positionStrategy);
       overlayRef.updatePosition();
-
       overlayRef.overlayElement.classList.add('slide-in');
       this.backdropVisible = true;
     } else {
+      // ensure desktop position if previously mobile
+      this.adjustMenuPosition();
       this.backdropVisible = true;
     }
   }

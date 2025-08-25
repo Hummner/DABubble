@@ -54,8 +54,15 @@
       (menuClosed)="onMenuClosed()"
     >
       <div class="profile-menu-wrap">
-        <button class="mat-menu-item-btn" mat-menu-item (click)="openProfile()">Profil</button>
-        <button class="mat-menu-item-btn" mat-menu-item (click)="logOut()">Log Out</button>
+        <div class="menu-resp"></div>
+        <button class="mat-menu-item-btn" mat-menu-item (click)="openProfile()">
+          <img class="menu-resp" src="assets/icon/account_circle.svg" alt="" />
+          <p>Profil</p>
+        </button>
+        <button class="mat-menu-item-btn" mat-menu-item (click)="logOut()">
+          <img class="menu-resp" src="assets/icon/logout.svg" alt="" />
+          <p>Log Out</p>
+        </button>
       </div>
     </mat-menu>
   </div>
