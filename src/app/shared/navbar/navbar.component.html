@@ -51,7 +51,7 @@
         </div>
 
         <ul *ngIf="showChannel" class="channel-list">
-          <li *ngFor="let ch of hideChannelWithoutCurrentUser() | async; let i = index" class="channel-item" (click)="selectChannel(ch.channelId)">
+          <li *ngFor="let ch of this.navbarService.hideChannelWithoutCurrentUser() | async; let i = index" class="channel-item" (click)="this.navbarService.selectChannel(ch.channelId)">
             <span class="material-symbols-outlined edit-icon">tag</span>
             <p>{{ ch.name }}</p>
           </li>
@@ -107,9 +107,9 @@
             </div>
             <p>{{ userA.name }} (Du)</p>
           </li>
-          @for(userB of getOtherUserList(); track userB){
-          <a (click)="findOrCreateDMchannel(userA.uid,userB.uid)" 
-            ><li class="direct-messages-item" [ngClass]="{'selected':userB.uid === selectedUserId()}">
+          @for(userB of this.navbarService.getOtherUserList(); track userB){
+          <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)" 
+            ><li class="direct-messages-item" [ngClass]="{'selected':userB.uid === this.navbarService.selectedUserId()}">
               <div class="avatar">
                 <img [src]="userB.imgUrl" alt="Elise Roth" />
               </div>

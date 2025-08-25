@@ -1,17 +1,19 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, getDocs, query, orderBy, limit } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs, query, orderBy } from '@angular/fire/firestore';
 import { FirestoreService } from './firestore.service';
 import { ChannelsService } from './channels.service';
-import { UserProfileInterface } from '../interfaces/user-profile.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
+
+  searchText = '';
   private firestore = inject(Firestore);
   private firestoreService = inject(FirestoreService);
   private channelService = inject(ChannelsService);
 
+  constructor () { }
   async search(searchText: string, members: { id: string }[]) {
     const searchTextTrimmed = searchText.trim();
     if (!searchTextTrimmed && searchTextTrimmed === '') {
@@ -64,8 +66,7 @@ export class SearchService {
     for (const channel of channels) {
       const q = query(
         collection(this.firestore, 'channels', channel.channelId, 'messages'),
-        orderBy('createdAt', 'desc'),
-        limit(50)
+        orderBy('createdAt', 'desc')
       );
       const snapshot = await getDocs(q);
 

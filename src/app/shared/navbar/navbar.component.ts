@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject} from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -10,10 +10,7 @@ import { AsyncPipe, NgFor, NgIf, NgClass } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../services/firestore.service';
-import { UserProfileInterface } from '../../interfaces/user-profile.interface';
-import { DirectMessageService } from '../../services/direct-message.service';
 import { ChannelsService } from '../../services/channels.service';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -34,21 +31,12 @@ import { map } from 'rxjs/operators';
 })
 export class NavbarComponent {
   userProfile = this.firestoreService.userProfile;
-  channels$ = inject(NavbarService).channelsObs$;
+  navbarService = inject(NavbarService);
   channelService = inject(ChannelsService);
-  readonly channelUsers = this.directMessageService.userIds;
-  readonly currentUserId = computed(() => this.userProfile()?.uid);
-  readonly selectedUserId = computed(() => {
-    const users = this.channelUsers();
-    const current = this.currentUserId();
-    if (!users || !current) return null;
-    return users.find((uid) => uid !== current) ?? null;
-  });
 
   constructor(
     public dialog: MatDialog,
     private firestoreService: FirestoreService,
-    private directMessageService: DirectMessageService,
     private router: Router
   ) {}
 
@@ -70,52 +58,6 @@ export class NavbarComponent {
           data: { channelName },
         });
       });
-  }
-
-  getOtherUserList(): UserProfileInterface[] {
-    const users = this.firestoreService.userList();
-    return users.filter((user) => user.uid !== this.userProfile()?.uid);
-  }
-
-  async findOrCreateDMchannel(currentUserId: string, clickedUserId: string) {
-    const channelId = await this.directMessageService.getDMChannel(
-      currentUserId,
-      clickedUserId
-    );
-    this.router.navigateByUrl(`directMessages/${channelId}`);
-    this.directMessageService.subDirectMessageChannel(channelId, currentUserId);
-  }
-
-  selectChannel(channelId: string) {
-    this.channels$.subscribe((channels) => {
-      const selectedChannel = channels.find(
-        (channel) => channel.channelId === channelId
-      );
-      if (selectedChannel) {
-        this.channelService.getChannel(selectedChannel.channelId);
-        this.router.navigateByUrl(`channel/${selectedChannel.channelId}`);
-        this.focusOnChannelTextarea();
-      } else {
-        console.error('Channel not found:', channelId);
-      }
-    });
-  }
-
-  hideChannelWithoutCurrentUser() {
-    const filteredChannels$ = this.channels$.pipe(
-      map(channels =>
-        channels.filter(channel =>
-          (channel.members ?? []).some(
-            member => member.id === this.currentUserId()
-          )
-        )
-      )
-    );
-    return filteredChannels$
-  }
-
-  focusOnChannelTextarea() {
-    this.channelService.requestFocus();
   }
 
   toNewMessage(){

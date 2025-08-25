@@ -3,19 +3,19 @@
   <div class="search-container">
     <input id="search" type="search" placeholder="Devspace durchsuchen" (input)="onSearch($event)" />
     <mat-icon class="search-icon">search</mat-icon>
-    @if (searchText != '') {
+    @if (this.searchService.searchText != '') {
     <div class="search-results-container">
         <ul class="search-result-list">
           @for (user of filteredUsers; track user) {
-            <li class="search-result-item">
+            <li class="search-result-item" (click)="this.navbar.findOrCreateDMchannel(user.uid,user.uid)">
               <div class="avatar">
                 <img [src]="user.imgUrl" alt="User avatar" />
               </div>
               <p>{{ user.name }}</p>
             </li>
           }
-          @for (channel of filteredChannels; track channel) {
-            <li class="search-result-item">
+          @for (channel of this.navbar.hideChannelWithoutCurrentUser() | async; track channel) {
+            <li class="search-result-item" (click)="this.navbar.selectChannel(channel.channelId)">
               <p>{{ channel.name }}</p>
             </li>
           }
