@@ -70,9 +70,12 @@ export class LoginComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.greetingContainer.nativeElement.classList.add('slide');
-      this.greetingName.nativeElement.classList.add('changeColor');
-    }, 2500);
+    }, 2200);
     setTimeout(() => {
+      this.greetingName.nativeElement.classList.add('slide-name');
+    }, 1000);
+    setTimeout(() => {
+      this.greetingName.nativeElement.classList.add('changeColor');
       this.greeting.nativeElement.classList.add('hide');
     }, 3000);
   }

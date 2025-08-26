@@ -130,10 +130,10 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
 
   ngAfterViewChecked() {
     if (this.shouldScroll && this.messages.length && this.scrollContainer?.nativeElement) {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.scrollToBottomInstantly();
         this.shouldScroll = false;
-      }, 0);
+      });
     }
     if (!this.isThreadOpen && this.input?.nativeElement && !this.parentEditView) {
       this.input.nativeElement.focus();
@@ -198,9 +198,9 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   scrollToBottomInstantly() {
     if (this.scrollContainer?.nativeElement) {
       const el = this.scrollContainer.nativeElement;
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.scrollTop = el.scrollHeight;
-      }, 0);
+      });
     } else {
       console.log('ScrollContainer not available');
     }
@@ -265,8 +265,12 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
       console.warn('No message id');
       return;
     }
-    this.isThreadOpen = true;
-    this.router.navigate(['directMessages', this.channelId, 'threadMessages', messageId]);
+    
+    requestAnimationFrame(() => {
+      this.isThreadOpen = true;
+      this.cdr.markForCheck();
+      this.router.navigate(['directMessages', this.channelId, 'threadMessages', messageId]);
+    });
   }
 
   addEmoji(emoji: any) {

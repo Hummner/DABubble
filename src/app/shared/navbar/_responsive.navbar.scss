@@ -52,6 +52,9 @@
   }
 
   .float-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     bottom: 30px;
     right: 30px;
@@ -69,5 +72,16 @@
 
   .hidden {
     display: none;
+  }
+}
+
+@include respond-to(ssm) {
+  .float-btn {
+    width: 65px;
+    height: 65px;
+    > img {
+      width: 35px;
+      height: 35px;
+    }
   }
 }

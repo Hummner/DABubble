@@ -99,6 +99,10 @@ app-new-password {
   width: 100%;
 }
 
+app-dashboard {
+  width: 100%;
+}
+
 $breakpoint-sm: 576px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
@@ -119,6 +123,4 @@ $breakpoint-lg: 992px;
   }
 }
 
-@import "_responsive.styles.scss"
-
-
+@import "_responsive.styles.scss";
