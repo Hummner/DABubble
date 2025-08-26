@@ -1,0 +1,11 @@
+@import "../../mixins";
+
+@include respond-to(ssm) {
+  section {
+    padding-bottom: 0;
+  }
+  .container {
+    padding: 0;
+    margin:0;
+  }
+}

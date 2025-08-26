@@ -45,7 +45,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 32px;
-    
+
     .navbar-channels-content,
     .navbar-direct-messages-content {
         display: flex;
@@ -166,15 +166,15 @@
 }
 
 .toggle-navbar {
-    position: absolute;
-    top: 850px;
-    left: 0px;
-    transform: rotate(-90deg); 
-    transform-origin: left top;
-    z-index: 20;
-    box-shadow: -10px 10px 10px 0px rgba(0, 0, 0, 0.2);
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+  position: absolute;
+  top: 90%;
+  left: 0px;
+  transform: rotate(-90deg);
+  transform-origin: left top;
+  z-index: 20;
+  box-shadow: -10px 10px 10px 0px rgba(0, 0, 0, 0.2);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 
     &:hover {
         transform: scale(1.05) rotate(-90deg);
@@ -206,7 +206,7 @@
         border: none;
         background-color: white;
         cursor: pointer;
-        
+
         >span {
             font-size: 24px;
             margin-left: 8px;

@@ -8,7 +8,13 @@
 
 .welcome-message {
   text-align: center;
-  color: var(--text-color, #333);
+  color: black;
+  > h2 {
+    font-size: 30px;
+  }
+  > p {
+    font-size: 20px;
+  }
 }
 
 @media (max-width: 993px) {

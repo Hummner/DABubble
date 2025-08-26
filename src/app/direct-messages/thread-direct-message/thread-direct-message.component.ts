@@ -1,4 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output, signal, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  signal,
+  ViewChild,
+  ElementRef,
+  AfterViewChecked,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MessageTicketComponent } from '../message-ticket/message-ticket.component';
 import { Message } from '../../interfaces/message.interface';
@@ -25,6 +37,7 @@ import { EmojiServiceService } from '../../services/emoji.service';
   imports: [MatIconModule, NgIf, CommonModule, MessageTicketComponent, FormsModule, ClickStopPropagation, MatMenuModule],
   templateUrl: './thread-direct-message.component.html',
   styleUrl: './thread-direct-message.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   @Input() isThreadOpen!: boolean;
@@ -67,7 +80,8 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     private threadMessageService: ThreadDirectMessageService,
     private firestoreService: FirestoreService,
     public userMentionService: UserMentionService,
-    public emojiService: EmojiServiceService
+    public emojiService: EmojiServiceService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -78,26 +92,26 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     this.messageService.messageList$.subscribe((msgs) => {
       this.messages = msgs;
       this.isInitialLoad = false;
+      this.cdr.markForCheck();
     });
   }
 
   ngAfterViewChecked(): void {
     if (this.shouldScroll && this.threadMessages.length) {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.scrollToBottomInstantly();
         this.shouldScroll = false;
         if (this.threadInput && this.threadInput.nativeElement) this.threadInput.nativeElement.focus();
-      }, 100);
-      this.parentEditView;
+      });
     }
   }
 
   scrollToBottomInstantly() {
     if (this.scrollContainerThread?.nativeElement) {
       const el = this.scrollContainerThread.nativeElement;
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.scrollTop = el.scrollHeight;
-      }, 0);
+      });
     } else {
       console.log('ScrollContainer not available');
     }
@@ -205,6 +219,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       }
       this.previousThreadMessageCount = messages.length;
       this.isInitialThreadLoad = false;
+      this.cdr.markForCheck();
     });
   }
 
