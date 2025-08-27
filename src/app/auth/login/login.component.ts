@@ -16,7 +16,7 @@ import { FooterComponent } from '../../shared/footer/footer.component';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent implements AfterViewInit {
+export class LoginComponent {
   authService = inject(AuthService);
   router = inject(Router);
   auth = getAuth();
@@ -62,23 +62,23 @@ export class LoginComponent implements AfterViewInit {
       },
     });
   }
-  @ViewChild('greetingContainer') greetingContainer!: ElementRef;
-  @ViewChild('greetingName') greetingName!: ElementRef;
-  @ViewChild('greeting') greeting!: ElementRef;
-  @ViewChild('wholeLogo') wholeLogo!: ElementRef;
+  // @ViewChild('greetingContainer') greetingContainer!: ElementRef;
+  // @ViewChild('greetingName') greetingName!: ElementRef;
+  // @ViewChild('greeting') greeting!: ElementRef;
+  // @ViewChild('wholeLogo') wholeLogo!: ElementRef;
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.greetingContainer.nativeElement.classList.add('slide');
-    }, 2200);
-    setTimeout(() => {
-      this.greetingName.nativeElement.classList.add('slide-name');
-    }, 1000);
-    setTimeout(() => {
-      this.greetingName.nativeElement.classList.add('changeColor');
-      this.greeting.nativeElement.classList.add('hide');
-    }, 3000);
-  }
+  // ngAfterViewInit(): void {
+  //   setTimeout(() => {
+  //     this.greetingContainer.nativeElement.classList.add('slide');
+  //   }, 2200);
+  //   setTimeout(() => {
+  //     this.greetingName.nativeElement.classList.add('slide-name');
+  //   }, 1000);
+  //   setTimeout(() => {
+  //     this.greetingName.nativeElement.classList.add('changeColor');
+  //     this.greeting.nativeElement.classList.add('hide');
+  //   }, 3000);
+  // }
 
   guestLogin() {
     this.authService.signInAnonymously().subscribe({
