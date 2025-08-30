@@ -6,6 +6,21 @@
   }
   .container {
     padding: 0;
-    margin:0;
+    margin: 0;
+  }
+  .icons {
+    gap: 15px;
+  }
+  .content {
+    border-radius: 0px;
+  }
+}
+
+@include respond-to(ssm) {
+  ::ng-deep .tag-box-menu,
+  ::ng-deep .channel-box-menu {
+    width: 300px !important;
+    min-width: 300px !important;
+    padding: 10px !important;
   }
 }

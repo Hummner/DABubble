@@ -2,14 +2,14 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FirestoreService } from '../../../services/firestore.service';
-import { NgIf } from '@angular/common';
+import { NgIf, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [MatCardModule, MatDialogModule, NgIf, FormsModule],
+  imports: [MatCardModule, MatDialogModule, NgIf, FormsModule, NgClass],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss',
 })

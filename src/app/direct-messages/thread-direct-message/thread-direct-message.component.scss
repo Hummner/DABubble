@@ -1,3 +1,5 @@
+@import "../../../mixins";
+
 header {
   height: 96px;
   box-shadow: 0px 2px 10px 0px #00000014;
@@ -349,4 +351,14 @@ footer {
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.05);
+}
+
+@include respond-to(ssm) {
+  .container {
+    padding: 0;
+  }
+
+  .icons{
+    gap:15px;
+  }
 }
