@@ -180,12 +180,11 @@ export class HeaderComponent implements OnInit {
   async onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchText = value;
-
-    const result = await this.searchService.search(this.searchText, this.members);
+        const result = await this.searchService.search(this.searchText, this.members);
 
     this.filteredUsers = result.users;
     this.filteredChannels = result.channels;
     this.highlightedMessages = result.messages;
     this.noResultsMessage = result.noResultsMessage;
-  }
+}
 }
