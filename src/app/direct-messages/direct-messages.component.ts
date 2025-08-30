@@ -88,6 +88,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   isSending = signal(false);
   windowWidth = window.innerWidth;
   loading = false;
+  private didFocusInput = false; // Track if textarea has been focused
 
   constructor(
     private route: ActivatedRoute,
@@ -139,8 +140,9 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
         this.shouldScroll = false;
       });
     }
-    if (!this.isThreadOpen && this.input?.nativeElement && !this.parentEditView) {
+    if (!this.isThreadOpen && this.input?.nativeElement && !this.parentEditView && !this.didFocusInput) {
       this.input.nativeElement.focus();
+      this.didFocusInput = true;
     }
   }
 
@@ -172,6 +174,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
         this.channelId = id;
         this.shouldScroll = true;
         this.isInitialLoad = true;
+        this.didFocusInput = false;
         this.waitForUserThenSubscribe(id);
         this.unsubList = this.messageService.subList(this.channelId);
       }

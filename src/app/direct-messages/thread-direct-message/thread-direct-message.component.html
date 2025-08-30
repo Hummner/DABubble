@@ -9,10 +9,10 @@
       </div>
     </header>
     <main>
-              <div *ngIf="loading" class="loading-spinner">
-          <mat-spinner></mat-spinner>
-        </div>
-      <div class="scroller-wrapper" #scrollContainerThread *ngIf = "!loading">
+      <div *ngIf="loading" class="loading-spinner">
+        <mat-spinner></mat-spinner>
+      </div>
+      <div class="scroller-wrapper" #scrollContainerThread *ngIf="!loading">
         <app-message-ticket
           *ngIf="message && channelId"
           [message]="message"
@@ -88,7 +88,13 @@
             <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
           </div>
         </div>
-        <div class="send-icon" (click)="addThreadMessage()">
+        <div
+          class="send-icon"
+          (click)="addThreadMessage()"
+          [class.sending]="isSending()"
+          [class.disabled]="!canSendMessage()"
+          [attr.disabled]="!canSendMessage()"
+        >
           <img src="assets/icon/send.png" alt="" />
         </div>
       </div>

@@ -177,6 +177,10 @@ export class HeaderComponent implements OnInit {
     this.router.navigateByUrl('/');
   }
 
+    onMenuClick() {
+    this.toggleNavbar.emit();
+  }
+
   async onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchText = value;

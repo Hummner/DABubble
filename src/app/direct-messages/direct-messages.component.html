@@ -76,6 +76,7 @@
       <footer>
         <div class="text-area">
           <textarea
+            autofocus
             class="textarea"
             #input
             [(ngModel)]="content"
@@ -114,7 +115,13 @@
               <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
             </div>
           </div>
-          <div class="send-icon" (click)="addMessage()">
+          <div
+            class="send-icon"
+            (click)="addMessage()"
+            [class.sending]="isSending()"
+            [class.disabled]="!canSendMessage()"
+            [attr.disabled]="!canSendMessage()"
+          >
             <img src="assets/icon/send.png" alt="" />
           </div>
           <mat-menu #emojiMessageMenu="matMenu" class="small-emoji-menu-message">

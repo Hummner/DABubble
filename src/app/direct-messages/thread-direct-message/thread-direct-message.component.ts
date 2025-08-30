@@ -202,6 +202,10 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     this.content = '';
   }
 
+  canSendMessage(): boolean {
+    return this.content.trim().length > 0 && !this.isSending();
+  }
+
   updateParentMessageWithThreadInfo(message: Message) {
     let hasThread = message.hasThread;
     let threadCount = message.threadCount;

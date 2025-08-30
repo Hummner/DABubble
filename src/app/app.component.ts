@@ -50,6 +50,14 @@ export class AppComponent {
 
   onToggleNavbar() {
     this.isNavbarClosed = false;
-    this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
+    if (this.windowWidth >= 992) {
+      this.router.navigateByUrl('/channel/1aJzYjqviVDIhmPzxmtc');
+    } else {
+      this.router.navigateByUrl('/dashboard');
+    }
+  }
+
+  closeNavbar() {
+    this.isNavbarClosed = true;
   }
 }
