@@ -73,13 +73,8 @@ export class HeaderComponent implements OnInit {
     this.isMobileView = window.innerWidth < 992;
   }
 
-  /**
-   * Adjust overlay position strategy depending on current viewport width.
-   * Uses global full-width bottom strategy on mobile, reverts to a connected strategy on desktop.
-   */
+
   private adjustMenuPosition() {
-    // Only attempt reposition when the menu is currently open, otherwise
-    // the internal overlay reference might be absent or in a disposed state.
     if (!this.menuTrigger?.menuOpen) return;
     const overlayRef: any = (this.menuTrigger as any)['_overlayRef'];
     if (!overlayRef || !overlayRef.overlayElement) return;
@@ -89,7 +84,6 @@ export class HeaderComponent implements OnInit {
       overlayRef.updatePositionStrategy(mobileStrategy);
       overlayRef.updatePosition();
     } else {
-      // Recreate a connected strategy similar to MatMenu default (attach below trigger, aligned end)
       const triggerElement: any = (this.menuTrigger as any)['_element'];
       if (triggerElement) {
         const desktopStrategy = this.overlayPositionBuilder
@@ -105,7 +99,6 @@ export class HeaderComponent implements OnInit {
       const el: HTMLElement | null = overlayRef.overlayElement as HTMLElement;
       if (el) {
         el.classList.remove('slide-in', 'slide-out');
-        // Remove any width enforced by previous global strategy
         el.style.width = '';
       }
     }
@@ -121,7 +114,6 @@ export class HeaderComponent implements OnInit {
       overlayRef.overlayElement.classList.add('slide-in');
       this.backdropVisible = true;
     } else {
-      // ensure desktop position if previously mobile
       this.adjustMenuPosition();
       this.backdropVisible = true;
     }
@@ -162,15 +154,6 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  // showOverlay() {
-  //   this.backdropVisible = true;
-  // }
-
-  // onMenuClosed() {
-  //   if (!this.profileCardOpen) {
-  //     this.backdropVisible = false;
-  //   }
-  // }
 
   logOut() {
     this.authService.logout();
