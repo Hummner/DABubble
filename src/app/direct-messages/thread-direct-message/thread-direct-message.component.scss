@@ -260,16 +260,17 @@ footer {
     border: 1px solid #adb0d9;
     border-radius: 30px;
     padding: 5px;
-    > h3 {
+    > p {
       font-family: "Nunito";
-      font-size: 20px;
+      font-size: 17px;
       margin: 0;
       color: #34343a;
+      text-align: center;
     }
   }
 }
 .separator {
-  width: 40%;
+  width: 35%;
   height: 1px;
   background-color: #adb0d9;
 }
@@ -303,4 +304,49 @@ footer {
   width: 45px;
   height: 45px;
   border-radius: 50%;
+}
+
+.send-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.sending {
+    cursor: wait;
+
+    .sending-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      font-size: 16px;
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
 }

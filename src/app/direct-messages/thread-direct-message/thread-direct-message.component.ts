@@ -30,11 +30,21 @@ import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { UserMentionService } from '../../services/user-channel-mention.service';
 import { EmojiServiceService } from '../../services/emoji.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-thread-direct-message',
   standalone: true,
-  imports: [MatIconModule, NgIf, CommonModule, MessageTicketComponent, FormsModule, ClickStopPropagation, MatMenuModule],
+  imports: [
+    MatIconModule,
+    NgIf,
+    CommonModule,
+    MessageTicketComponent,
+    FormsModule,
+    ClickStopPropagation,
+    MatMenuModule,
+    MatProgressSpinner,
+  ],
   templateUrl: './thread-direct-message.component.html',
   styleUrl: './thread-direct-message.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,7 +80,8 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   @ViewChild('scrollContainerThread') scrollContainerThread!: ElementRef;
   parentEditView = false;
-  // smallEmojiMenuThreadInput = false;
+  isSending = signal(false);
+  loading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -85,6 +96,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit(): void {
+    this.loading = true;
     this.handleRouteParams();
     if (this.channelId) {
       this.unsubList = this.messageService.subList(this.channelId);
@@ -92,7 +104,11 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     this.messageService.messageList$.subscribe((msgs) => {
       this.messages = msgs;
       this.isInitialLoad = false;
-      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.loading = false;
+        this.cdr.markForCheck();
+        this.scrollToBottomInstantly();
+      }, 1000);
     });
   }
 
@@ -148,6 +164,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       }, 100);
     }
   }
+
   trackByMessageId(index: number, message: Message) {
     return message.id || index;
   }

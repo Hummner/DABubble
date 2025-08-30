@@ -33,10 +33,10 @@
         </div>
       </header>
       <main>
-        <!-- <div *ngIf="loading" class="laoding-spinner">
+        <div *ngIf="loading" class="loading-spinner">
           <mat-spinner></mat-spinner>
-        </div> -->
-        <div *ngIf="secondUser" class="scroll-wrapper" #scrollContainer>
+        </div>
+        <div *ngIf="secondUser && !loading" class="scroll-wrapper" #scrollContainer>
           <div class="first-msg">
             <div class="dm-msg-name">
               <img [src]="secondUser.imgUrl" alt="" />
@@ -55,7 +55,7 @@
             <div class="date-separator">
               <div class="separator"></div>
               <div class="date-container">
-                <h3 class="date">{{ date }}</h3>
+                <p class="date">{{ date }}</p>
               </div>
               <div class="separator"></div>
             </div>
