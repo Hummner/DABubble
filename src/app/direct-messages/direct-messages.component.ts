@@ -33,6 +33,7 @@ import { UserMentionService } from '../services/user-channel-mention.service';
 import { NavbarService } from '../services/navbar.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EmojiServiceService } from '../services/emoji.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-direct-messages',
@@ -50,6 +51,7 @@ import { EmojiServiceService } from '../services/emoji.service';
     RouterOutlet,
     ClickStopPropagation,
     MatMenuTrigger,
+    MatProgressSpinner,
   ],
   templateUrl: './direct-messages.component.html',
   styleUrls: ['./direct-messages.component.scss'],
@@ -85,6 +87,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   parentEditView = false;
   isSending = signal(false);
   windowWidth = window.innerWidth;
+  loading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -99,6 +102,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   ) {}
 
   ngOnInit(): void {
+    this.loading = true;
     this.subThreadRoute();
     this.subscribeToDmChannel();
     this.subscribeToMsgList();
@@ -179,6 +183,10 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
       const wasEmpty = this.messages.length === 0;
       const hadNewMessage = msgs.length > this.previousMessageCount;
       this.messages = msgs;
+      setTimeout(() => {
+        this.loading = false;
+        this.cdr.markForCheck();
+      }, 1000);
       if (wasEmpty || (hadNewMessage && this.previousMessageCount > 0)) {
         this.shouldScroll = true;
       }
@@ -190,6 +198,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   subThreadRoute() {
     this.routerEventsSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
+        // this.loading = true;
         this.isThreadOpen = this.router.url.includes('threadMessages');
       }
     });
@@ -265,7 +274,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
       console.warn('No message id');
       return;
     }
-    
+
     requestAnimationFrame(() => {
       this.isThreadOpen = true;
       this.cdr.markForCheck();

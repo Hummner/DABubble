@@ -260,16 +260,17 @@ footer {
     border: 1px solid #adb0d9;
     border-radius: 30px;
     padding: 5px;
-    > h3 {
+    > p {
       font-family: "Nunito";
-      font-size: 20px;
+      font-size: 17px;
       margin: 0;
       color: #34343a;
+      text-align: center;
     }
   }
 }
 .separator {
-  width: 40%;
+  width: 35%;
   height: 1px;
   background-color: #adb0d9;
 }
@@ -339,4 +340,13 @@ footer {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.loading-spinner {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
 }
