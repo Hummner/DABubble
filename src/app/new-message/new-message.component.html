@@ -26,7 +26,7 @@
               *ngIf="selectedTags().length === 0 && (!addressControl.value || addressControl.value.length === 0)"
               class="placeholder-text"
             >
-              An #channel, oder &#64;jemand oder E-Mail-Adresse...
+              An #channel, oder &#64;jemand...
             </span>
           </div>
           <mat-autocomplete
@@ -58,36 +58,12 @@
         </div>
       </header>
 
-      <!-- Success message -->
       <div *ngIf="lastSentMessage()" class="success-message">
         <span>{{ lastSentMessage() }}</span>
       </div>
 
       <main>
         <div class="scroll-wrapper" #scrollContainer>
-          <!-- <div class="first-msg"> -->
-          <!-- <div class="dm-msg-name">
-              <img [src]="secondUser.imgUrl" alt="" />
-              <p>{{ secondUser.name }}</p>
-            </div> -->
-          <!-- <div class="dm-msg-info">
-              <p>
-                Diese Unterhaltung findet nur zwischen
-                <span (click)="openProfileView()" class="purple">&#64;{{ secondUser.name }}</span>
-                und dir statt.
-              </p>
-            </div> -->
-          <!-- </div> -->
-
-          <!-- <div *ngFor="let date of Object.keys(groupMessagesByDate())">
-            <div class="date-separator">
-              <div class="separator"></div>
-              <div class="date-container">
-                <h3 class="date">{{ date }}</h3>
-              </div>
-              <div class="separator"></div>
-            </div> -->
-
           <app-message-ticket *ngFor="let msg of localMessages" [message]="msg" [disableFloatingMenu]="true">
           </app-message-ticket>
         </div>

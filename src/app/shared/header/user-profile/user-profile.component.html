@@ -2,19 +2,10 @@
   <mat-card *ngIf="!edit && !editImg" class="user-card">
     <mat-card-content class="card-header">
       <p>Profil</p>
-      <img
-        (click)="closeProfileCard($event)"
-        src="assets/icon/close.png"
-        alt="Close Icon"
-      />
+      <img (click)="closeProfileCard($event)" src="assets/icon/close.png" alt="Close Icon" />
     </mat-card-content>
     <div class="img-section">
-      <img
-        class="profile-img"
-        mat-card-image
-        [src]="user.imgUrl"
-        alt="Profile Image"
-      />
+      <img class="profile-img" mat-card-image [src]="user.imgUrl" alt="Profile Image" />
     </div>
     <mat-card-content class="card-content">
       <div class="profile-name">
@@ -38,17 +29,17 @@
   <mat-card *ngIf="edit" class="user-card edit">
     <mat-card-content class="card-header">
       <p>Dein Profil bearbeiten</p>
-      <img
-        (click)="closeProfileCard($event)"
-        src="assets/icon/close.png"
-        alt="Close Icon"
-      />
+      <img (click)="closeProfileCard($event)" src="assets/icon/close.png" alt="Close Icon" />
     </mat-card-content>
     <div class="img-section" tabindex="0" (click)="openEditProfileImg()">
-      <img class="profile-img-edit" [src]="user.imgUrl" alt="Profile Image" (mouseenter)="showTooltip = true" (mouseleave)="showTooltip = false" />
-      <div class="custom-tooltip" *ngIf="showTooltip">
-        Click to change avatar
-      </div>
+      <img
+        class="profile-img-edit"
+        [src]="user.imgUrl"
+        alt="Profile Image"
+        (mouseenter)="showTooltip = true"
+        (mouseleave)="showTooltip = false"
+      />
+      <div class="custom-tooltip" *ngIf="showTooltip">Click to change avatar</div>
     </div>
 
     <mat-card-content class="card-content edit-content">
@@ -57,13 +48,7 @@
           <img src="assets/icon/account_circle.png" alt="Account Image" />
           <p class="label label-edit">Vollständiger Name</p>
         </div>
-        <input
-          [(ngModel)]="editableUser.name"
-          class="input-name"
-          type="text"
-          placeholder="{{ user.name }}"
-          name="name"
-        />
+        <input [(ngModel)]="editableUser.name" class="input-name" type="text" placeholder="{{ user.name }}" name="name" />
         <div class="btn-section">
           <button (click)="cancelEdit()">Abbrechen</button>
           <button type="button" (click)="closeEdit()">Speichern</button>
@@ -74,33 +59,24 @@
   <mat-card *ngIf="editImg && !edit" class="user-card edit">
     <mat-card-content class="card-header">
       <p>Neue Avatar auswählen</p>
-      <img
-        (click)="closeProfileCard($event)"
-        src="assets/icon/close.png"
-        alt="Close Icon"
-      />
+      <img (click)="closeProfileCard($event)" src="assets/icon/close.png" alt="Close Icon" />
     </mat-card-content>
     <div class="img-section">
       @if(profileImageChosen){
-      <img
-        class="chosenImg"
-        [src]="currentProfilImageUrl"
-        alt="Profile Picture"
-      />
+      <img class="chosenImg" [src]="currentProfilImageUrl" alt="Profile Picture" />
       } @if(!profileImageChosen){
-      <img
-        (click)="openEditProfileImg()"
-        class="profile-img"
-        mat-card-image
-        [src]="user.imgUrl"
-        alt="Profile Image"
-      />
+      <img (click)="openEditProfileImg()" class="profile-img" mat-card-image [src]="user.imgUrl" alt="Profile Image" />
       }
     </div>
     <mat-card-content class="card-content edit-content">
       <div class="img-list">
         @for(imgUrl of profileImageUrls; track imgUrl; let index = $index){
-        <img [src]="imgUrl" (click)="changeProfilImg(imgUrl)" alt="" />
+        <img
+          [src]="imgUrl"
+          (click)="changeProfilImg(imgUrl)"
+          [ngClass]="{ 'selected-img': currentProfilImageUrl === imgUrl }"
+          alt=""
+        />
         }
       </div>
       <div class="btn-section">

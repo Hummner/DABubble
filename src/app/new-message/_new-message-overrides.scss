@@ -1,3 +1,5 @@
+@import "../../mixins";
+
 ::ng-deep .small-emoji-menu-message {
   padding: 12px;
   border-radius: 20px 20px 20px 20px !important;
@@ -164,5 +166,18 @@
       width: 400px !important;
       margin-left: 0 !important;
     }
+  }
+}
+
+@include respond-to(ssm) {
+  .container {
+    padding: 0;
+  }
+
+  .icons {
+    gap: 15px;
+  }
+  .content {
+    border-radius: 0px;
   }
 }

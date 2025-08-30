@@ -314,8 +314,9 @@ app-user-card {
   border-top-right-radius: 30px !important;
   padding: 20px !important;
   max-height: 500px !important;
-  min-width: 400px !important;
+  min-width: 250px !important;
 }
+
 ::ng-deep .tag-menu-item,
 ::ng-deep .channel-menu-item {
   > .mat-mdc-menu-item-text {
@@ -325,6 +326,7 @@ app-user-card {
     gap: 20px;
     > p {
       margin: 0;
+      text-align: end;
     }
   }
 }
