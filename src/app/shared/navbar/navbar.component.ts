@@ -6,11 +6,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NewChannelComponent } from './new-channel/new-channel.component';
 import { AddChannelMemberComponent } from './add-channel-member/add-channel-member.component';
 import { NavbarService } from '../../services/navbar.service';
-import { AsyncPipe, NgFor, NgIf, NgClass } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf, NgClass, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../../services/firestore.service';
 import { ChannelsService } from '../../services/channels.service';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-navbar',
@@ -25,6 +26,7 @@ import { ChannelsService } from '../../services/channels.service';
     NgIf,
     RouterModule,
     NgClass,
+    DatePipe
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
@@ -32,6 +34,7 @@ import { ChannelsService } from '../../services/channels.service';
 export class NavbarComponent {
   userProfile = this.firestoreService.userProfile;
   navbarService = inject(NavbarService);
+  searchService = inject(SearchService);
   channelService = inject(ChannelsService);
 
   constructor(

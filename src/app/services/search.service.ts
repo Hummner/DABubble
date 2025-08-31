@@ -2,18 +2,36 @@ import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, getDocs, query, orderBy } from '@angular/fire/firestore';
 import { FirestoreService } from './firestore.service';
 import { ChannelsService } from './channels.service';
+import { UserProfileInterface } from '../interfaces/user-profile.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
 
+  filteredChannels: any[] = [];
+  highlightedMessages: any[] = [];
+  noResultsMessage: string = '';
+  filteredUsers: UserProfileInterface[] = [];
+  members: { id: string; role: string; name: string; imgUrl: string }[] = [];
   searchText = '';
   private firestore = inject(Firestore);
   private firestoreService = inject(FirestoreService);
   private channelService = inject(ChannelsService);
 
   constructor () { }
+
+  async onSearch(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchText = value;
+
+    const result = await this.search(this.searchText, this.members);
+
+    this.filteredUsers = result.users;
+    this.filteredChannels = result.channels;
+    this.highlightedMessages = result.messages;
+    this.noResultsMessage = result.noResultsMessage;
+  }
   async search(searchText: string, members: { id: string }[]) {
     const searchTextTrimmed = searchText.trim();
     if (!searchTextTrimmed && searchTextTrimmed === '') {

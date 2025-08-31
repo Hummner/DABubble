@@ -6,12 +6,12 @@
   </div>
 
   <div class="search-container">
-    <input id="search" type="search" placeholder="Devspace durchsuchen" (input)="onSearch($event)" />
+    <input id="search" type="search" placeholder="Devspace durchsuchen" (input)="this.searchService.onSearch($event)" />
     <mat-icon class="search-icon">search</mat-icon>
     @if (this.searchService.searchText != '') {
     <div class="search-results-container">
         <ul *ngIf="userProfile() as userA" class="search-result-list">
-          @for (userB of filteredUsers; track userB) {
+          @for (userB of this.searchService.filteredUsers; track userB) {
             <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)" >
               <li class="search-result-item" [ngClass]="{'selected':userB.uid === this.navbarService.selectedUserId()}">
                 <div class="avatar">
@@ -28,7 +28,7 @@
               </li>
             }
           }
-          @for (message of highlightedMessages; track $index) {
+          @for (message of this.searchService.highlightedMessages; track $index) {
             <li class="search-result-messages">
               <div class="user-profile">
                 <p class="user-name">{{ message.userName }}</p>
@@ -38,9 +38,9 @@
               <div class="divider"></div>
             </li>
           }
-          @if (noResultsMessage != '') {
+          @if (this.searchService.noResultsMessage != '') {
             <div class="no-results">
-              {{ noResultsMessage }}
+              {{ this.searchService.noResultsMessage }}
             </div>
           }
         </ul>

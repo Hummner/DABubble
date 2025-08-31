@@ -11,7 +11,6 @@ import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ChannelsService } from '../../services/channels.service';
 import { OverlayPositionBuilder } from '@angular/cdk/overlay';
-import { Firestore, collection, getDocs, query, orderBy, limit } from '@angular/fire/firestore';
 import { SearchService } from '../../services/search.service';
 import { NavbarService } from '../../services/navbar.service';
 
@@ -26,20 +25,13 @@ export class HeaderComponent implements OnInit {
   userProfile = this.firestoreService.userProfile;
   router = inject(Router);
   authService = inject(AuthService);
-  firestore = inject(Firestore);
   searchService = inject(SearchService);
   navbarService = inject(NavbarService);
   profileCardOpen = false;
   backdropVisible = false;
-  filteredUsers: UserProfileInterface[] = [];
   channelService = inject(ChannelsService);
-  filteredChannels: any[] = [];
-  filteredMessages: any[] = [];
-  highlightedMessages: any[] = [];
-  members: { id: string; role: string; name: string; imgUrl: string }[] = [];
   user: UserProfileInterface | null = null;
-  noResultsMessage: string = '';
-
+  
   @Input() isNavbarClosed!: boolean;
   @Output() toggleNavbar = new EventEmitter<void>();
   isMobileView = false;
@@ -164,16 +156,4 @@ export class HeaderComponent implements OnInit {
     onMenuClick() {
     this.toggleNavbar.emit();
   }
-
-  async onSearch(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchService.searchText = value;
-
-    const result = await this.searchService.search(this.searchService.searchText, this.members);
-
-    this.filteredUsers = result.users;
-    this.filteredChannels = result.channels;
-    this.highlightedMessages = result.messages;
-    this.noResultsMessage = result.noResultsMessage;
-}
 }

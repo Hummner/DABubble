@@ -15,10 +15,46 @@
     </div>
 
     <div class="search-container">
-      <input type="search" placeholder="Gehe zu..." />
-      <button type="button">
-        <mat-icon>search</mat-icon>
-      </button>
+      <input id="search" type="search" placeholder="Gehe zu..." (input)="this.searchService.onSearch($event)" />
+      <mat-icon class="search-icon">search</mat-icon>
+      @if (this.searchService.searchText != '') {
+      <div class="search-results-container">
+          <ul *ngIf="userProfile() as userA" class="search-result-list">
+            @for (userB of this.searchService.filteredUsers; track userB) {
+              <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)" >
+                <li class="search-result-item" [ngClass]="{'selected':userB.uid === this.navbarService.selectedUserId()}">
+                  <div class="avatar">
+                    <img [src]="userB.imgUrl" alt="User avatar" />
+                  </div>
+                  <p>{{ userB.name }}</p>
+                </li>
+              </a>
+            }
+            @if (this.searchService.searchText[0] == '#') {
+              @for (channel of this.navbarService.hideChannelWithoutCurrentUser() | async; track channel) {
+                <li class="search-result-item" (click)="this.navbarService.selectChannel(channel.channelId)">
+                  <p>{{ channel.name }}</p>
+                </li>
+              }
+            }
+            @for (message of this.searchService.highlightedMessages; track $index) {
+              <li class="search-result-messages">
+                <div class="user-profile">
+                  <p class="user-name">{{ message.userName }}</p>
+                  <small class="timestamp">{{ message.timestamp | date:'dd.MM.yyyy, HH:mm' }}</small>
+                </div>
+                <p class="message-text">{{ message.text }}</p>
+                <div class="divider"></div>
+              </li>
+            }
+            @if (this.searchService.noResultsMessage != '') {
+              <div class="no-results">
+                {{ this.searchService.noResultsMessage }}
+              </div>
+            }
+          </ul>
+      </div>
+      }
     </div>
     
     <div class="navbar-menu">
