@@ -59,20 +59,16 @@
         <span class="material-symbols-outlined edit-icon" (click)="openDialog()">add</span>
       </div>
 
-      <ul *ngIf="showChannel" class="channel-list">
-        <li
-          *ngFor="let ch of hideChannelWithoutCurrentUser() | async; let i = index"
-          class="channel-item"
-          (click)="selectChannel(ch.channelId)"
-        >
-          <span class="material-symbols-outlined edit-icon">tag</span>
-          <p>{{ ch.name }}</p>
-        </li>
-        <li class="channel-item" (click)="openDialog()">
-          <span class="material-symbols-outlined edit-icon">add_circle</span>
-          <p>Channel hinzufügen</p>
-        </li>
-      </ul>
+        <ul *ngIf="showChannel" class="channel-list">
+          <li *ngFor="let ch of this.navbarService.hideChannelWithoutCurrentUser() | async; let i = index" class="channel-item" (click)="this.navbarService.selectChannel(ch.channelId)">
+            <span class="material-symbols-outlined edit-icon">tag</span>
+            <p>{{ ch.name }}</p>
+          </li>
+          <li class="channel-item" (click)="openDialog()">
+            <span class="material-symbols-outlined edit-icon">add_circle</span>
+            <p>Channel hinzufügen</p>
+          </li>
+        </ul>
 
       <div class="navbar-direct-messages">
         <div class="navbar-direct-messages-content">
@@ -105,26 +101,26 @@
         </div>
       </div>
 
-      @if (showMessage) {
-      <ul *ngIf="userProfile() as userA" class="direct-messages-list">
-        <li class="direct-messages-item">
-          <div class="avatar">
-            <img [src]="userA.imgUrl" alt="Elias Neumann" />
-          </div>
-          <p>{{ userA.name }} (Du)</p>
-        </li>
-        @for(userB of getOtherUserList(); track userB){
-        <a (click)="findOrCreateDMchannel(userA.uid, userB.uid)"
-          ><li class="direct-messages-item" [ngClass]="{ selected: userB.uid === selectedUserId() }">
+        @if (showMessage) {
+        <ul  *ngIf="userProfile() as userA" class="direct-messages-list">
+          <li class="direct-messages-item">
             <div class="avatar">
-              <img [src]="userB.imgUrl" alt="Elise Roth" />
+              <img [src]="userA.imgUrl" alt="Elias Neumann" />
             </div>
-            <p>{{ userB.name }}</p>
+            <p>{{ userA.name }} (Du)</p>
           </li>
-        </a>
+          @for(userB of this.navbarService.getOtherUserList(); track userB){
+          <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)" 
+            ><li class="direct-messages-item" [ngClass]="{'selected':userB.uid === this.navbarService.selectedUserId()}">
+              <div class="avatar">
+                <img [src]="userB.imgUrl" alt="Elise Roth" />
+              </div>
+              <p>{{ userB.name }}</p>
+            </li>
+          </a>
+          }
+        </ul>
         }
-      </ul>
-      }
     </div>
   </mat-drawer>
 </mat-drawer-container>

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { FirestoreService } from '../../services/firestore.service';
-import { NgIf, DatePipe } from '@angular/common';
+import { NgIf, DatePipe, AsyncPipe, NgClass } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../services/auth.service';
@@ -13,11 +13,12 @@ import { ChannelsService } from '../../services/channels.service';
 import { OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { Firestore, collection, getDocs, query, orderBy, limit } from '@angular/fire/firestore';
 import { SearchService } from '../../services/search.service';
+import { NavbarService } from '../../services/navbar.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatIconModule, NgIf, MatMenuModule, UserProfileComponent, DatePipe],
+  imports: [MatIconModule, NgIf, MatMenuModule, UserProfileComponent, DatePipe, AsyncPipe, NgClass],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -27,9 +28,9 @@ export class HeaderComponent implements OnInit {
   authService = inject(AuthService);
   firestore = inject(Firestore);
   searchService = inject(SearchService);
+  navbarService = inject(NavbarService);
   profileCardOpen = false;
   backdropVisible = false;
-  searchText = '';
   filteredUsers: UserProfileInterface[] = [];
   channelService = inject(ChannelsService);
   filteredChannels: any[] = [];
@@ -166,8 +167,9 @@ export class HeaderComponent implements OnInit {
 
   async onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    this.searchText = value;
-        const result = await this.searchService.search(this.searchText, this.members);
+    this.searchService.searchText = value;
+
+    const result = await this.searchService.search(this.searchService.searchText, this.members);
 
     this.filteredUsers = result.users;
     this.filteredChannels = result.channels;
