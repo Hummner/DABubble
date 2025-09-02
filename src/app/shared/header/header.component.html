@@ -21,15 +21,17 @@
               </li>
             </a>
           }
-          @for (channel of this.navbarService.hideChannelWithoutCurrentUser() | async; track channel) {
-            @if (channel.name.toLowerCase().includes(this.searchService.searchText.slice(1))) {
-              <li class="search-result-item" (click)="this.navbarService.selectChannel(channel.channelId)">
-                  <p>{{ channel.name }}</p>
-              </li>
+          @if (this.searchService.searchText[0] == '#') {
+            @for (channel of this.navbarService.hideChannelWithoutCurrentUser() | async; track channel) {
+              @if (channel.name.toLowerCase().includes(this.searchService.searchText.slice(1))) {
+                <li class="search-result-item" (click)="this.navbarService.selectChannel(channel.channelId)">
+                    <p>{{ channel.name }}</p>
+                </li>
+              }
             }
           }
           @for (message of this.searchService.filteredMessages; track $index) {
-            <li class="search-result-messages" >
+            <li class="search-result-messages" (click)="this.searchService.selectMessage(this.searchService.filteredMessages, message.id)">
               <div class="user-profile">
                 <p class="user-name">{{ message.userName }}</p>
                 <small class="timestamp">{{ message.timestamp | date:'dd.MM.yyyy, HH:mm' }}</small>
