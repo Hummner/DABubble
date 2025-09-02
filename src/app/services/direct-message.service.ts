@@ -89,4 +89,16 @@ export class DirectMessageService {
   getSingleDirectMessageChannelRef(colId: string, docId: string) {
     return doc(collection(this.firestore, colId), docId);
   }
+
+  async getAllDirectMessages() {
+    const directMessagesCol = collection(this.firestore, 'directMessages');
+    const snapshot = await getDocs(directMessagesCol);
+    const directMessages = snapshot.docs.map(doc => ({
+      directMessagesId: doc.id,
+      users: doc.data()['users'] || [],      
+      ...doc.data()
+    }));
+    console.log('All directMessages:', directMessages);
+    return directMessages;
+  }
 }

@@ -28,7 +28,7 @@
               </li>
             }
           }
-          @for (message of this.searchService.highlightedMessages; track $index) {
+          @for (message of this.searchService.filteredMessages; track $index) {
             <li class="search-result-messages">
               <div class="user-profile">
                 <p class="user-name">{{ message.userName }}</p>

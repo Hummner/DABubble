@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, getDocs, query, orderBy } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs, query, orderBy, CollectionReference } from '@angular/fire/firestore';
 import { FirestoreService } from './firestore.service';
 import { ChannelsService } from './channels.service';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
+import { AuthService } from './auth.service';
+import { DirectMessageService } from './direct-message.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,7 @@ import { UserProfileInterface } from '../interfaces/user-profile.interface';
 export class SearchService {
 
   filteredChannels: any[] = [];
-  highlightedMessages: any[] = [];
+  filteredMessages: any[] = [];
   noResultsMessage: string = '';
   filteredUsers: UserProfileInterface[] = [];
   members: { id: string; role: string; name: string; imgUrl: string }[] = [];
@@ -18,6 +20,8 @@ export class SearchService {
   private firestore = inject(Firestore);
   private firestoreService = inject(FirestoreService);
   private channelService = inject(ChannelsService);
+  private directMessageService = inject(DirectMessageService);
+  private auth = inject(AuthService);
 
   constructor () { }
 
@@ -29,7 +33,7 @@ export class SearchService {
 
     this.filteredUsers = result.users;
     this.filteredChannels = result.channels;
-    this.highlightedMessages = result.messages;
+    this.filteredMessages = result.messages;
     this.noResultsMessage = result.noResultsMessage;
   }
   async search(searchText: string, members: { id: string }[]) {
@@ -39,19 +43,20 @@ export class SearchService {
     }
 
     const channels = await this.channelService.getAllChannels();
+    const directMessages = await this.directMessageService.getAllDirectMessages();
 
     if (searchTextTrimmed.startsWith('@')) {
       return this.searchForUsers(searchTextTrimmed.slice(1), members);
     } else if (searchTextTrimmed.startsWith('#')) {
       return this.searchForChannels(searchTextTrimmed.slice(1), channels);
     } else if (searchTextTrimmed.length > 2) {
-      return this.searchForMessages(searchTextTrimmed.toLowerCase(), channels);
+      return this.searchForMessages(searchTextTrimmed.toLowerCase(), channels, directMessages);
     }
 
     return { users: [], channels: [], messages: [], noResultsMessage: '' };
   }
 
-  private searchForUsers(searchText: string, members: { id: string }[]) {
+  searchForUsers(searchText: string, members: { id: string }[]) {
     const users = this.firestoreService.userList()
       .filter(user =>
         user.name.toLowerCase().includes(searchText.toLowerCase()) &&
@@ -65,7 +70,7 @@ export class SearchService {
     };
   }
 
-  private searchForChannels(searchText: string, channels: any[]) {
+  searchForChannels(searchText: string, channels: any[]) {
     const filtered = channels.filter(channel =>
       channel.name.toLowerCase().includes(searchText.toLowerCase())
     );
@@ -77,46 +82,120 @@ export class SearchService {
     };
   }
 
-  private async searchForMessages(searchText: string, channels: any[]) {
-    let highlightedMessages: any[] = [];
-    const allUsers = this.firestoreService.userList();
+  async searchForMessages(searchText: string, channels: any[], directMessages: any[]) {
+    const currentUserId = this.auth.firebaseAuth.currentUser?.uid ?? null;
 
-    for (const channel of channels) {
-      const q = query(
-        collection(this.firestore, 'channels', channel.channelId, 'messages'),
-        orderBy('createdAt', 'desc')
+    const userChannels = channels.filter(channel =>
+      channel.members.some((member: any) => member.id === currentUserId)
+    );
+
+    const userDMs = directMessages.filter((dm: any) =>
+      dm.users.includes(currentUserId)
+    );
+
+    const channelMessagesPromises = userChannels.map(channel =>
+      this.getChannelMessages(channel.channelId).then(messages => ({
+        channelId: channel.channelId,
+        messages
+      }))
+    );
+    const channelMessagesResults = await Promise.all(channelMessagesPromises);
+
+    const dmMessagesPromises = userDMs.map(dm =>
+      this.getDirectMessages(dm.directMessagesId).then(messages => ({
+        directMessagesId: dm.directMessagesId,
+        messages
+      }))
+    );
+    const dmMessagesResults = await Promise.all(dmMessagesPromises);
+
+    let filteredMessages: any[] = [];
+
+    for (const { directMessagesId, messages } of dmMessagesResults) {
+      const filtered = messages.filter(m =>
+        m.text.toLowerCase().includes(searchText.toLowerCase())
       );
-      const snapshot = await getDocs(q);
+      filteredMessages.push(...filtered);
 
-      const messages: any[] = snapshot.docs.map(doc => {
-        const createdAt = doc.data()['createdAt']?.toDate();
-        return {
-          id: doc.id,
-          text: doc.data()['text'],
-          userId: doc.data()['senderId'],
-          timestamp: createdAt ? createdAt.getTime() : 0
-        };
-      });
+      const threadPromises = messages.map(msg =>
+        this.getThreadDMessages(directMessagesId, msg.id)
+      );
+      const threadResults = await Promise.all(threadPromises);
 
-      const filtered = messages
-        .filter(m => m.text.toLowerCase().includes(searchText))
-        .map(m => ({
-          ...m,
-          userName: allUsers.find(u => u.uid === m.userId)?.name || 'Unknown'
-        }));
-
-      highlightedMessages.push(...filtered);
+      for (const threadMsgs of threadResults) {
+        const filteredThreads = threadMsgs.filter(m =>
+          m.text.toLowerCase().includes(searchText.toLowerCase())
+        );
+        filteredMessages.push(...filteredThreads);
+      }
     }
 
-    highlightedMessages = this.removeDuplicates(highlightedMessages);
-    this.sortMessagesByTimestamp(highlightedMessages);
+    for (const { channelId, messages } of channelMessagesResults) {
+      const filtered = messages.filter(m =>
+        m.text.toLowerCase().includes(searchText.toLowerCase())
+      );
+      filteredMessages.push(...filtered);
+
+      const threadPromises = messages.map(msg =>
+        this.getThreadMessages(channelId, msg.id)
+      );
+      const threadResults = await Promise.all(threadPromises);
+
+      for (const threadMsgs of threadResults) {
+        const filteredThreads = threadMsgs.filter(m =>
+          m.text.toLowerCase().includes(searchText.toLowerCase())
+        );
+        filteredMessages.push(...filteredThreads);
+      }
+    }
+
+    filteredMessages = this.removeDuplicates(filteredMessages);
+    this.sortMessagesByTimestamp(filteredMessages);
 
     return {
       users: [],
       channels: [],
-      messages: highlightedMessages,
-      noResultsMessage: highlightedMessages.length === 0 ? 'Keine Nachrichten gefunden.' : ''
+      messages: filteredMessages,
+      noResultsMessage:
+        filteredMessages.length === 0 ? 'Keine Nachrichten gefunden.' : ''
     };
+  }
+
+  private async getMessagesFromCollection(colRef: CollectionReference): Promise<any[]> {
+    const q = query(colRef, orderBy('createdAt', 'desc'));
+    const allUsers = this.firestoreService.userList();
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map(doc => {
+      const createdAt = doc.data()['createdAt']?.toDate();
+      return {
+        id: doc.id,
+        text: doc.data()['text'] || doc.data()['content'] || '',
+        userId: doc.data()['senderId'],
+        timestamp: createdAt ? createdAt.getTime() : 0,
+        userName: allUsers.find(u => u.uid === doc.data()['senderId'])?.name || 'Unknown'
+      };
+    });
+  }
+
+  getChannelMessages(channelId: string): Promise<any[]> {
+    const colRef = collection(this.firestore, 'channels', channelId, 'messages');
+    return this.getMessagesFromCollection(colRef);
+  }
+
+  getThreadMessages(channelId: string, messageId: string): Promise<any[]> {
+    const colRef = collection(this.firestore, 'channels', channelId, 'messages', messageId, 'threads');
+    return this.getMessagesFromCollection(colRef);
+  }
+
+  getDirectMessages(directMessageId: string): Promise<any[]> {
+    const colref = collection(this.firestore, 'directMessages', directMessageId, 'messages');
+    return this.getMessagesFromCollection(colref);
+  }
+
+  getThreadDMessages(directMessageId: string, messageId: string): Promise<any[]> {
+    const colref = collection(this.firestore, 'directMessages', directMessageId, 'messages', messageId, 'threadMessages');
+    return this.getMessagesFromCollection(colref);
   }
 
   removeDuplicates(messages: any[]) {

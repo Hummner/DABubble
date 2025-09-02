@@ -22,13 +22,8 @@ export class ChannelsService implements OnDestroy {
   channelURL!: string;
   unsubChannel?: () => void;
   unsubMessages?: () => void;
-  // channelId = "KRIw2GN8Ym9EQmijM84l";
 
-
-
-  constructor() {
-
-  }
+  constructor() {}
 
   getChannel(channelId: string) {
     this.unsubChannel = this.subChannel(channelId);
