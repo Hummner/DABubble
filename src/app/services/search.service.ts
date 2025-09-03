@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, getDocs, query, orderBy, CollectionReference } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs, query, orderBy, CollectionReference, doc, getDoc } from '@angular/fire/firestore';
 import { FirestoreService } from './firestore.service';
 import { ChannelsService } from './channels.service';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { AuthService } from './auth.service';
 import { DirectMessageService } from './direct-message.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class SearchService {
   private channelService = inject(ChannelsService);
   private directMessageService = inject(DirectMessageService);
   private auth = inject(AuthService);
+  private router = inject(Router);
 
   constructor () { }
 
@@ -161,7 +163,7 @@ export class SearchService {
     };
   }
 
-  private async getMessagesFromCollection(colRef: CollectionReference): Promise<any[]> {
+  async getMessagesFromCollection(colRef: CollectionReference): Promise<any[]> {
     const q = query(colRef, orderBy('createdAt', 'desc'));
     const allUsers = this.firestoreService.userList();
     const snapshot = await getDocs(q);
@@ -206,5 +208,109 @@ export class SearchService {
 
   sortMessagesByTimestamp(messages: any[]) {
     return messages.sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  async selectMessage(messageId: string) {
+    const allChannels = await this.channelService.getAllChannels();
+    const allDirectMessages = await this.directMessageService.getAllDirectMessages();
+
+    const foundInChannel = await this.findMessageInChannels(allChannels, messageId);
+    if (foundInChannel) {
+      this.searchText = '';
+      return;
+    }
+
+    const foundInDM = await this.findMessageInDirectMessages(allDirectMessages, messageId);
+    if (foundInDM) {
+      this.searchText = '';
+      return;
+    }
+
+    console.warn('Message not found in channels or DMs:', messageId);
+  }
+
+
+  async findMessageInChannels(channels: any[], messageId: string): Promise<boolean> {
+    for (const channel of channels) {
+      if (await this.navigateIfChannelMessageExists(channel.channelId, messageId)) {
+        return true;
+      }
+
+      if (await this.navigateIfChannelThreadExists(channel.channelId, messageId)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  async findMessageInDirectMessages(dms: any[], messageId: string): Promise<boolean> {
+    for (const dm of dms) {
+      if (await this.navigateIfDirectMessageExists(dm.directMessagesId, messageId)) {
+        return true;
+      }
+
+      if (await this.navigateIfDirectThreadExists(dm.directMessagesId, messageId)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  async navigateIfChannelMessageExists(channelId: string, messageId: string): Promise<boolean> {
+    const ref = doc(this.firestore, `channels/${channelId}/messages/${messageId}`);
+    const snap = await getDoc(ref);
+
+    if (snap.exists()) {
+      this.router.navigate(['channel', channelId], { queryParams: { messageId } });
+      return true;
+    }
+    return false;
+  }
+
+  async navigateIfChannelThreadExists(channelId: string, messageId: string): Promise<boolean> {
+    const messagesRef = collection(this.firestore, 'channels', channelId, 'messages');
+    const snapshot = await getDocs(messagesRef);
+
+    for (const msg of snapshot.docs) {
+      const ref = doc(this.firestore, `channels/${channelId}/messages/${msg.id}/threads/${messageId}`);
+      const snap = await getDoc(ref);
+
+      if (snap.exists()) {
+        this.router.navigate(['channel', channelId], {
+          queryParams: { messages: msg.id, threads: messageId }
+        });
+        return true;
+      }
+    }
+    return false;
+  }
+
+  async navigateIfDirectMessageExists(dmId: string, messageId: string): Promise<boolean> {
+    const ref = doc(this.firestore, `directMessages/${dmId}/messages/${messageId}`);
+    const snap = await getDoc(ref);
+
+    if (snap.exists()) {
+      this.router.navigate(['directMessages', dmId], { queryParams: { messageId } });
+      return true;
+    }
+    return false;
+}
+
+  async navigateIfDirectThreadExists(dmId: string, messageId: string): Promise<boolean> {
+    const messagesRef = collection(this.firestore, 'directMessages', dmId, 'messages');
+    const snapshot = await getDocs(messagesRef);
+
+    for (const msg of snapshot.docs) {
+      const ref = doc(this.firestore, `directMessages/${dmId}/messages/${msg.id}/threadMessages/${messageId}`);
+      const snap = await getDoc(ref);
+
+      if (snap.exists()) {
+        this.router.navigate(['directMessages', dmId], {
+          queryParams: { message: msg.id, threadMessages: messageId }
+        });
+        return true;
+      }
+    }
+    return false;
   }
 }

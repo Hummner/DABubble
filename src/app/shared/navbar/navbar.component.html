@@ -40,7 +40,7 @@
               }
             }
             @for (message of this.searchService.filteredMessages; track $index) {
-              <li class="search-result-messages">
+              <li class="search-result-messages" (click)="this.searchService.selectMessage(message.id)">
                 <div class="user-profile">
                   <p class="user-name">{{ message.userName }}</p>
                   <small class="timestamp">{{ message.timestamp | date:'dd.MM.yyyy, HH:mm' }}</small>
