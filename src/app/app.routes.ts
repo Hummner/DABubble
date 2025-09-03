@@ -10,6 +10,7 @@ import { ThreadDirectMessageComponent } from './direct-messages/thread-direct-me
 import { NewMessageComponent } from './new-message/new-message.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ImpressumComponent } from './impressum/impressum.component';
+import { DatenschutzComponent } from './datenschutz/datenschutz.component';
 
 export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
@@ -26,4 +27,5 @@ export const routes: Routes = [
   },
   { path: 'newMessage', component: NewMessageComponent },
   { path: 'impressum', component: ImpressumComponent },
+  { path: 'privacy-policy', component: DatenschutzComponent },
 ];

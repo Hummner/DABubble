@@ -1,0 +1,136 @@
+@import "../../mixins";
+
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #eceefe;
+}
+
+.section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: 30px;
+  text-wrap-mode: wrap;
+}
+
+// .wrap {
+//   text-wrap-mode: nowrap;
+// }
+
+.pp-dialog {
+  background-color: #fdfdfd;
+  width: 800px;
+  height: 500px;
+  padding: 60px;
+  border-radius: 30px;
+  box-shadow: 0 2px 10px #00000014;
+  display: flex;
+  flex-direction: column;
+}
+
+.title-section {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  > h1 {
+    font-family: "Nunito", sans-serif;
+    color: #444df2;
+    font-size: 46px;
+    font-weight: 700;
+    margin: 0;
+  }
+  margin-bottom: 30px;
+}
+
+.go-back-arrow {
+  width: 25px;
+  height: 25px;
+}
+
+.content-section {
+  overflow-y: auto;
+}
+
+h2,
+h1 {
+  font-family: "Nunito", sans-serif;
+}
+
+@media (max-width: 850px) {
+  .pp-dialog {
+    width: 700px;
+    height: 450px;
+  }
+}
+
+@include respond-to(md) {
+  .pp-dialog {
+    width: 570px;
+    height: 450px;
+    padding: 40px;
+  }
+  .title-section {
+    > h1 {
+      font-size: 33px;
+    }
+  }
+}
+
+@media (max-width: 650px) {
+  .title-section {
+    > h1 {
+      font-size: 28px;
+    }
+  }
+  .pp-dialog {
+    width: 470px;
+    height: 450px;
+  }
+}
+
+@include respond-to(sm) {
+  .pp-dialog {
+    width: 400px;
+    height: 450px;
+  }
+}
+
+@include respond-to(ssm) {
+  .pp-dialog {
+    width: 320px;
+    height: 400px;
+    padding: 30px;
+  }
+
+  .go-back-arrow {
+    width: 15px;
+    height: 15px;
+  }
+  .title-section {
+    flex-direction: column;
+    gap: 0;
+    > h1 {
+      font-size: 18px;
+    }
+  }
+}
+
+@include respond-to(sssm) {
+  .pp-dialog {
+    width: 280px;
+    height: 400px;
+  }
+  h2 {
+    font-size: 17px;
+  }
+}
