@@ -68,7 +68,7 @@ export class NewPasswordComponent implements OnInit {
     const newPassword = this.newPasswordForm.value.password_1!;
     confirmPasswordReset(this.auth, this.oobCode, newPassword)
       .then(() => {
-        console.log('success');
+ 
         this.onSuccessfulSignup();
       })
       .catch((err) => {

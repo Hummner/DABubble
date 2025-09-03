@@ -88,7 +88,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   isSending = signal(false);
   windowWidth = window.innerWidth;
   loading = false;
-  private didFocusInput = false; // Track if textarea has been focused
+  private didFocusInput = false; 
 
   constructor(
     private route: ActivatedRoute,

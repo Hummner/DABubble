@@ -62,28 +62,10 @@ export class LoginComponent {
       },
     });
   }
-  // @ViewChild('greetingContainer') greetingContainer!: ElementRef;
-  // @ViewChild('greetingName') greetingName!: ElementRef;
-  // @ViewChild('greeting') greeting!: ElementRef;
-  // @ViewChild('wholeLogo') wholeLogo!: ElementRef;
-
-  // ngAfterViewInit(): void {
-  //   setTimeout(() => {
-  //     this.greetingContainer.nativeElement.classList.add('slide');
-  //   }, 2200);
-  //   setTimeout(() => {
-  //     this.greetingName.nativeElement.classList.add('slide-name');
-  //   }, 1000);
-  //   setTimeout(() => {
-  //     this.greetingName.nativeElement.classList.add('changeColor');
-  //     this.greeting.nativeElement.classList.add('hide');
-  //   }, 3000);
-  // }
 
   guestLogin() {
     this.authService.signInAnonymously().subscribe({
       next: () => {
-        console.log('Anonymous login successful');
         this.router.navigateByUrl('/dashboard');
         const uid = this.auth.currentUser?.uid;
         if (uid) {

@@ -1,5 +1,11 @@
 @import "../../mixins";
 
+@include respond-to(md) {
+  .container {
+    padding: 0;
+  }
+}
+
 @include respond-to(ssm) {
   section {
     padding-bottom: 0;

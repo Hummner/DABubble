@@ -33,7 +33,7 @@ export class AuthService {
       email,
       password
     ).then(() => {
-      console.log(this.firebaseAuth.currentUser);
+      // console.log(this.firebaseAuth.currentUser);
     });
     return from(promise);
   }
@@ -69,7 +69,7 @@ export class AuthService {
       email,
       actionCodeSettings
     ).then(() => {
-      console.log('Password reset sent');
+      // console.log('Password reset sent');
     });
     return from(promise);
   }

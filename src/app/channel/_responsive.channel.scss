@@ -1,0 +1,45 @@
+@import "../../mixins";
+
+@media (max-width: 1400px) {
+  ::ng-deep .container {
+    > .mat-drawer-content {
+      margin: 0 !important;
+    }
+  }
+  .example-sidenav.example-sidenav-100 {
+    transition: none !important;
+  }
+  .example-sidenav {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0;
+  }
+
+  .members-container {
+    display: none;
+  }
+
+  header {
+    padding: 24px 24px;
+  }
+
+  .placeholder {
+    margin: 24px 24px;
+    width: calc(100% - 48px);
+  }
+
+  footer {
+    margin: 24px 24px;
+  }
+}
+
+@include respond-to(ssm) {
+  .content {
+    border-radius: unset;
+  }
+}
