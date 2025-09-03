@@ -22,6 +22,7 @@
   }
 
   .current-profile {
+    gap: 10px;
     > img {
       width: 130px;
       height: 130px;
@@ -49,9 +50,9 @@
       margin: 0;
     }
   }
-  .current-profile {
-    gap: 0;
-  }
+  // .current-profile {
+  //   gap: 0;
+  // }
 }
 
 @include respond-to(ssm) {
@@ -80,6 +81,10 @@
 
   .btn-section {
     width: 100%;
+  }
+
+  .current-profile {
+    gap: 10px;
   }
 }
 

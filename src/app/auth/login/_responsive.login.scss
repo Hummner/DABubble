@@ -1,9 +1,6 @@
 @import "../../../mixins";
 
-@include respond-to(md) {
-  .login-dialog {
-    width: 500px;
-  }
+@include respond-to(lg) {
   .resp-footer {
     display: flex;
     flex-direction: column;
@@ -19,6 +16,12 @@
     padding-left: 10px;
     padding-right: 10px;
     font-weight: 700;
+  }
+}
+
+@include respond-to(md) {
+  .login-dialog {
+    width: 500px;
   }
 }
 
