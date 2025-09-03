@@ -9,6 +9,7 @@ import { DirectMessagesComponent } from './direct-messages/direct-messages.compo
 import { ThreadDirectMessageComponent } from './direct-messages/thread-direct-message/thread-direct-message.component';
 import { NewMessageComponent } from './new-message/new-message.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ImpressumComponent } from './impressum/impressum.component';
 
 export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
@@ -24,4 +25,5 @@ export const routes: Routes = [
     children: [{ path: 'threadMessages/:messageId', component: ThreadDirectMessageComponent }],
   },
   { path: 'newMessage', component: NewMessageComponent },
+  { path: 'impressum', component: ImpressumComponent },
 ];

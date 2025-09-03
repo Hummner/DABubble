@@ -1,6 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 
-
 html,
 body {
   height: 100%;
@@ -45,26 +44,24 @@ a {
   padding: 12px 25px;
   background-color: white;
   border-radius: 25px;
-  border: 1px solid #444DF2;
-  color: #444DF2;
+  border: 1px solid #444df2;
+  color: #444df2;
   cursor: pointer;
 
   &:hover {
-    background-color: #535AF1;
+    background-color: #535af1;
     color: white;
   }
 
   &:active {
-    background-color: #444DF2;
+    background-color: #444df2;
   }
 
   &:disabled {
     color: #686868;
     cursor: none;
   }
-
 }
-
 
 @font-face {
   font-family: Nunito;
@@ -98,7 +95,8 @@ app-login,
 app-signup,
 app-avatar-selection,
 app-reset-password,
-app-new-password {
+app-new-password,
+app-impressum {
   width: 100%;
 }
 
@@ -125,5 +123,3 @@ $breakpoint-lg: 992px;
     }
   }
 }
-
-

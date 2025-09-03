@@ -44,7 +44,9 @@ export class AppComponent {
   private updateLayoutForRoute(url: string) {
     this.isAuthLayout =
       url === '/' ||
-      ['/resetPassword', '/signup', '/avatarSelection', '/resetPassword/newPassword'].some((path) => url.startsWith(path));
+      ['/resetPassword', '/signup', '/avatarSelection', '/resetPassword/newPassword', '/impressum'].some((path) =>
+        url.startsWith(path)
+      );
     this.updateNavbarVisibility();
   }
 
