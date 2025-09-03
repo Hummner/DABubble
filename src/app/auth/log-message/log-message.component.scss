@@ -14,6 +14,7 @@
   z-index: 1000;
   animation: slideInOut 3s ease-in-out forwards;
   > p {
+    margin:0;
     text-align: center;
     line-height: 35px;
     font-size: 29px;
@@ -37,3 +38,5 @@
     transform: translateX(140%);
   }
 }
+
+@import "_responsive.log-message.scss";

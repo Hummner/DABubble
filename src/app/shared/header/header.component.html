@@ -1,8 +1,8 @@
 <header class="header">
   <img src="assets/icon/dabubble_header.png" *ngIf="!isNavbarClosed" alt="header_logo" />
-  <div class="resp-navi-back" *ngIf="isNavbarClosed">
+  <div class="resp-navi-back" *ngIf="isNavbarClosed" (click)="onMenuClick()">
     <img src="assets/icon/arrow_back_2.svg" alt="" />
-    <img src="assets/icon/devspace.png" (click)="onMenuClick()" alt="" />
+    <img src="assets/icon/devspace.png" alt="" />
   </div>
 
   <div class="search-container">
@@ -10,40 +10,36 @@
     <mat-icon class="search-icon">search</mat-icon>
     @if (this.searchService.searchText != '') {
     <div class="search-results-container">
-        <ul *ngIf="userProfile() as userA" class="search-result-list">
-          @for (userB of this.searchService.filteredUsers; track userB) {
-            <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)" >
-              <li class="search-result-item" [ngClass]="{'selected':userB.uid === this.navbarService.selectedUserId()}">
-                <div class="avatar">
-                  <img [src]="userB.imgUrl" alt="User avatar" />
-                </div>
-                <p>{{ userB.name }}</p>
-              </li>
-            </a>
-          }
-          @for (channel of this.navbarService.hideChannelWithoutCurrentUser() | async; track channel) {
-            @if (channel.name.toLowerCase().includes(this.searchService.searchText.slice(1))) {
-              <li class="search-result-item" (click)="this.navbarService.selectChannel(channel.channelId)">
-                  <p>{{ channel.name }}</p>
-              </li>
-            }
-          }
-          @for (message of this.searchService.filteredMessages; track $index) {
-            <li class="search-result-messages" >
-              <div class="user-profile">
-                <p class="user-name">{{ message.userName }}</p>
-                <small class="timestamp">{{ message.timestamp | date:'dd.MM.yyyy, HH:mm' }}</small>
-              </div>
-              <p class="message-text">{{ message.text }}</p>
-              <div class="divider"></div>
-            </li>
-          }
-          @if (this.searchService.noResultsMessage != '') {
-            <div class="no-results">
-              {{ this.searchService.noResultsMessage }}
+      <ul *ngIf="userProfile() as userA" class="search-result-list">
+        @for (userB of this.searchService.filteredUsers; track userB) {
+        <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid, userB.uid)">
+          <li class="search-result-item" [ngClass]="{ selected: userB.uid === this.navbarService.selectedUserId() }">
+            <div class="avatar">
+              <img [src]="userB.imgUrl" alt="User avatar" />
             </div>
-          }
-        </ul>
+            <p>{{ userB.name }}</p>
+          </li>
+        </a>
+        } @for (channel of this.navbarService.hideChannelWithoutCurrentUser() | async; track channel) { @if
+        (channel.name.toLowerCase().includes(this.searchService.searchText.slice(1))) {
+        <li class="search-result-item" (click)="this.navbarService.selectChannel(channel.channelId)">
+          <p>{{ channel.name }}</p>
+        </li>
+        } } @for (message of this.searchService.filteredMessages; track $index) {
+        <li class="search-result-messages">
+          <div class="user-profile">
+            <p class="user-name">{{ message.userName }}</p>
+            <small class="timestamp">{{ message.timestamp | date : "dd.MM.yyyy, HH:mm" }}</small>
+          </div>
+          <p class="message-text">{{ message.text }}</p>
+          <div class="divider"></div>
+        </li>
+        } @if (this.searchService.noResultsMessage != '') {
+        <div class="no-results">
+          {{ this.searchService.noResultsMessage }}
+        </div>
+        }
+      </ul>
     </div>
     }
   </div>
@@ -83,13 +79,6 @@
     </mat-menu>
   </div>
 </header>
-<div
-  class="custom-backdrop"
-  [class.visible]="backdropVisible"
-  (click)="closeAll()"
-></div>
+<div class="custom-backdrop" [class.visible]="backdropVisible" (click)="closeAll()"></div>
 
-<app-user-profile
-  *ngIf="profileCardOpen"
-  (close)="closeProfile()"
-></app-user-profile>
+<app-user-profile *ngIf="profileCardOpen" (close)="closeProfile()"></app-user-profile>
