@@ -36,10 +36,47 @@
   footer {
     margin: 24px 24px;
   }
+
+  ::ng-deep .edit-channel-menu-container {
+    max-width: 552px !important;
+    min-width: 420px !important;
+  }
 }
 
 @include respond-to(ssm) {
   .content {
     border-radius: unset;
+  }
+  ::ng-deep .edit-channel-menu-container {
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+    max-height: 100vh !important;
+    min-height: 100vh !important;
+    border-radius: 0px !important;
+  }
+
+  .edit-menu-channel {
+    padding: 24px;
+  }
+
+  .edit-channel-header {
+    > h2 {
+      font-size: 20px;
+    }
+  }
+
+  .channel-name-menu-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .created-by-name {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  ::ng-deep #cdk-overlay-0 {
+    top: 0 !important;
+    left: 0 !important;
   }
 }
