@@ -10,36 +10,42 @@
     <mat-icon class="search-icon">search</mat-icon>
     @if (this.searchService.searchText != '') {
     <div class="search-results-container">
-      <ul *ngIf="userProfile() as userA" class="search-result-list">
-        @for (userB of this.searchService.filteredUsers; track userB) {
-        <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid, userB.uid)">
-          <li class="search-result-item" [ngClass]="{ selected: userB.uid === this.navbarService.selectedUserId() }">
-            <div class="avatar">
-              <img [src]="userB.imgUrl" alt="User avatar" />
+        <ul *ngIf="userProfile() as userA" class="search-result-list">
+          @for (userB of this.searchService.filteredUsers; track userB) {
+            <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)" >
+              <li class="search-result-item" [ngClass]="{'selected':userB.uid === this.navbarService.selectedUserId()}">
+                <div class="avatar">
+                  <img [src]="userB.imgUrl" alt="User avatar" />
+                </div>
+                <p>{{ userB.name }}</p>
+              </li>
+            </a>
+          }
+          @if (this.searchService.searchText[0] == '#') {
+            @for (channel of this.navbarService.hideChannelWithoutCurrentUser() | async; track channel) {
+              @if (channel.name.toLowerCase().includes(this.searchService.searchText.slice(1))) {
+                <li class="search-result-item" (click)="this.navbarService.selectChannel(channel.channelId)">
+                    <p>{{ channel.name }}</p>
+                </li>
+              }
+            }
+          }
+          @for (message of this.searchService.filteredMessages; track $index) {
+            <li class="search-result-messages" (click)="this.searchService.selectMessage(message.id)">
+              <div class="user-profile">
+                <p class="user-name">{{ message.userName }}</p>
+                <small class="timestamp">{{ message.timestamp | date:'dd.MM.yyyy, HH:mm' }}</small>
+              </div>
+              <p class="message-text">{{ message.text }}</p>
+              <div class="divider"></div>
+            </li>
+          }
+          @if (this.searchService.noResultsMessage != '') {
+            <div class="no-results">
+              {{ this.searchService.noResultsMessage }}
             </div>
-            <p>{{ userB.name }}</p>
-          </li>
-        </a>
-        } @for (channel of this.navbarService.hideChannelWithoutCurrentUser() | async; track channel) { @if
-        (channel.name.toLowerCase().includes(this.searchService.searchText.slice(1))) {
-        <li class="search-result-item" (click)="this.navbarService.selectChannel(channel.channelId)">
-          <p>{{ channel.name }}</p>
-        </li>
-        } } @for (message of this.searchService.filteredMessages; track $index) {
-        <li class="search-result-messages">
-          <div class="user-profile">
-            <p class="user-name">{{ message.userName }}</p>
-            <small class="timestamp">{{ message.timestamp | date : "dd.MM.yyyy, HH:mm" }}</small>
-          </div>
-          <p class="message-text">{{ message.text }}</p>
-          <div class="divider"></div>
-        </li>
-        } @if (this.searchService.noResultsMessage != '') {
-        <div class="no-results">
-          {{ this.searchService.noResultsMessage }}
-        </div>
-        }
-      </ul>
+          }
+        </ul>
     </div>
     }
   </div>
