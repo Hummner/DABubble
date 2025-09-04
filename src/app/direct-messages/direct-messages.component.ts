@@ -107,16 +107,10 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     this.subThreadRoute();
     this.subscribeToDmChannel();
     this.subscribeToMsgList();
-    setTimeout(() => {
-      const url = this.router.url;
-      // If we land directly on a thread route ensure drawer state reflects it
-      if (url.includes('/messages/') && !this.isThreadOpen) {
-        const channelId = this.route.snapshot.paramMap.get('id');
-        if (channelId) {
-          this.router.navigate(['/directMessages', channelId]);
-        }
-      }
-    }, 0);
+    console.log(this.router.url)
+    if (this.router.url.includes('/messages/')) {
+      this.isThreadOpen = true;
+    }
     this.checkWindowWidth();
   }
 
@@ -202,7 +196,8 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   subThreadRoute() {
     this.routerEventsSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.isThreadOpen = this.router.url.includes('/messages/');
+        console.log(this.router.url)
+        this.isThreadOpen = this.router.url.includes('/messages/') || this.router.url.includes('/threadMessages/') ;
       }
     });
   }

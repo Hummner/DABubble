@@ -102,6 +102,9 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.loading = false;
         this.initialScrollDone = false;
       }
+      if (this.router.url.includes('/messages/')) {
+        this.isThreadOpen = true;
+      }
     });
 
     this.getChannelInfo();

@@ -133,19 +133,23 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  handleRouteParams() {
+
+    handleRouteParams() {
     this.route.paramMap.subscribe((params) => {
       this.messageId = params.get('messageId');
-      this.route.parent?.paramMap.subscribe((parentParams) => {
-        this.channelId = parentParams.get('id');
-        if (this.channelId && this.messageId) {
-          this.subscribeToParentMessage(this.channelId, this.messageId);
-          this.subscribeToThreadMessages(this.channelId, this.messageId);
-        }
-        this.waitForUserThenSubscribe();
+      this.route.queryParamMap.subscribe((qp) => {
+        this.route.parent?.paramMap.subscribe((parentParams) => {
+          this.channelId = parentParams.get('id');
+          if (this.channelId && this.messageId) {
+            this.subscribeToParentMessage(this.channelId, this.messageId);
+            this.subscribeToThreadMessages(this.channelId, this.messageId);
+          }
+          this.waitForUserThenSubscribe();
+        });
       });
     });
   }
+
 
   waitForUserThenSubscribe() {
     const currentUser = this.userProfile();
