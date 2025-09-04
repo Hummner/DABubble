@@ -70,6 +70,32 @@
                 <h3>Erstellt von</h3>
                 <span class="created-by-name">{{ channel?.createdBy }}</span>
               </div>
+              <div class="menu-container-resp" (click)="$event.stopPropagation()">
+                <div class="members-menu-header">
+                  <h2 class="no-margin">Mitglieder</h2>
+                  <!-- <div class="close-dialog" (click)="closeMenu(menuTrigger)"><mat-icon class="icon">close</mat-icon></div> -->
+                </div>
+                <div class="members-menu-list">
+                  @for (member of channel?.members; track $index) {
+                  <div class="members-menu-listelement">
+                    <div class="member-img margin-16">
+                      <img [src]="member?.imgUrl" alt="" />
+                    </div>
+                    <div class="member-menu-name">{{ member?.name }}</div>
+                  </div>
+                  }
+                </div>
+                <div
+                  *ngIf="channel?.createdBy === userProfile()?.name"
+                  (click)="addMemberDialog()"
+                  class="members-menu-add margin-16"
+                >
+                  <div class="add-member-icon">
+                    <img src="assets/icon/person_add.png" />
+                  </div>
+                  <span>Mitglieder hinzufügen</span>
+                </div>
+              </div>
               <div class="edit-channel-footer">
                 <span (click)="leaveChannel(this.userProfile(), editChannelTrigger)" class="primary-button"
                   >Channel verlassen</span

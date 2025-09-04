@@ -1,58 +1,45 @@
 <div class="add-member-overlay" (click)="closeDialog()">
-  <div class="add-member-box" (click)="$event.stopPropagation()">
+  <div #sheetBox class="add-member-box" [ngClass]="{ 'mobile-sheet': isMobileView }" (click)="$event.stopPropagation()">
     <form #memberForm="ngForm" (ngSubmit)="addNewMemberToChannel()">
-        <div class="add-members-header">
-            <h2>Leute hinzufügen</h2>
-            <span class="close-icon material-symbols-outlined" (click)="closeDialog()">close</span>
-        </div>
-        <div class="channel-name">
-            <span class="material-symbols-outlined edit-icon">tag</span>
-            <span class="channel-text">{{ channelName }}</span>
-        </div>
-        <ul class="member-list" >
-            @for(member of this.members; track member){
-                <li class="member-item">
-                  <div class="avatar">
-                    <img [src]="member.imgUrl" alt="Elise Roth" />
-                  </div>
-                  <p>{{ member.name }}</p>
-                  <span 
-                    (click)="deleteMember(member.id)" 
-                    class="material-symbols-outlined">
-                    close
-                  </span>
-                </li>
-            }
-        </ul>
-        <div class="search-wrapper">
-          <input
-            type="text"
-            name="search"
-            [(ngModel)]="searchText"
-            placeholder="Name eingeben"
-            class="full-input" 
-            />
+      <div class="add-members-header">
+        <h2>Leute hinzufügen</h2>
+        <span class="close-icon material-symbols-outlined" (click)="closeDialog()">close</span>
+      </div>
+      <div class="channel-name">
+        <span class="material-symbols-outlined edit-icon">tag</span>
+        <span class="channel-text">{{ channelName }}</span>
+      </div>
+      <ul class="member-list">
+        @for(member of this.members; track member){
+        <li class="member-item">
+          <div class="avatar">
+            <img [src]="member.imgUrl" alt="Elise Roth" />
+          </div>
+          <p>{{ member.name }}</p>
+          <span (click)="deleteMember(member.id)" class="material-symbols-outlined"> close </span>
+        </li>
+        }
+      </ul>
+      <div class="search-wrapper">
+        <input type="text" name="search" [(ngModel)]="searchText" placeholder="Name eingeben" class="full-input" />
 
-            @if (searchText != '') {
-              <div class="member-box">
-                <ul class="direct-messages-list" >
-                  @for(user of getOtherUserList(); track user){
-                    <li class="direct-messages-item" (click)="addMember(user.uid)" >
-                      <div class="avatar">
-                        <img [src]="user.imgUrl" alt="Elise Roth" />
-                      </div>
-                      <p>{{ user.name }}</p>
-                  </li>
-                  }
-                </ul>
+        @if (searchText != '') {
+        <div class="member-box">
+          <ul class="direct-messages-list">
+            @for(user of getOtherUserList(); track user){
+            <li class="direct-messages-item" (click)="addMember(user.uid)">
+              <div class="avatar">
+                <img [src]="user.imgUrl" alt="Elise Roth" />
               </div>
+              <p>{{ user.name }}</p>
+            </li>
             }
+          </ul>
         </div>
-        <div class="actions">
-        <button
-          type="submit"
-          [disabled]="isDisabled()"
-          [ngClass]="isDisabled() ? 'btn-disabled' : 'btn-active'">
+        }
+      </div>
+      <div class="actions">
+        <button type="submit" [disabled]="isDisabled()" [ngClass]="isDisabled() ? 'btn-disabled' : 'btn-active'">
           Hinzufügen
         </button>
       </div>

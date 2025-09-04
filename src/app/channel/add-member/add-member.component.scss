@@ -1,3 +1,5 @@
+@import "../../../mixins";
+
 .add-member-overlay {
   position: fixed;
   inset: 0;
@@ -19,8 +21,57 @@
   max-height: 400px;
   padding: 32px;
   border-radius: 30px;
-  border-top-right-radius: 0px; 
+  border-top-right-radius: 0px;
   box-sizing: border-box;
+  will-change: transform, opacity;
+}
+
+
+.mobile-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  width: 100vw;
+  max-width: none;
+  height: auto;
+  max-height: 80vh;
+  border-radius: 24px 24px 0 0;
+  padding: 24px 24px 96px;
+  transform: translateY(100%);
+  opacity: 0;
+  background: #fff;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  animation-fill-mode: forwards;
+}
+
+.mobile-sheet.slide-in {
+  animation: sheetIn 0.3s ease-out forwards;
+}
+.mobile-sheet.slide-out {
+  animation: sheetOut 0.28s ease-in forwards;
+}
+
+@keyframes sheetIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes sheetOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
 }
 
 form {
@@ -64,14 +115,14 @@ form {
 }
 
 .search-wrapper {
-    position: relative;
+  position: relative;
 }
 
 .full-input {
   width: 100%;
   padding: 16px;
   margin-bottom: 24px;
-  font: 16px 'Nunito', sans-serif;
+  font: 16px "Nunito", sans-serif;
   border: 1px solid #ccc;
   border-radius: 30px;
   box-sizing: border-box;
@@ -96,35 +147,35 @@ form {
   padding-left: 8px;
   margin-right: 16px;
 
-    .direct-messages-item {
-      display: flex;
-      align-items: center;
-      border-radius: 50px;
-      padding-left: 16px;
-      padding-top: 8px;
-      padding-right: 16px;
-      padding-bottom: 8px;
+  .direct-messages-item {
+    display: flex;
+    align-items: center;
+    border-radius: 50px;
+    padding-left: 16px;
+    padding-top: 8px;
+    padding-right: 16px;
+    padding-bottom: 8px;
 
-      .avatar {
-        flex-shrink: 0;
-        margin-right: 16px;
+    .avatar {
+      flex-shrink: 0;
+      margin-right: 16px;
 
-        img {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-        }
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
       }
+    }
 
-      >p {
-        font-size: 18px;
-        margin: 0;
-      }
+    > p {
+      font-size: 18px;
+      margin: 0;
+    }
 
-      &:hover {
-        cursor: pointer;
-        background-color: #eceefe;
-      }
+    &:hover {
+      cursor: pointer;
+      background-color: #eceefe;
+    }
   }
 }
 
@@ -137,7 +188,7 @@ form {
     padding: 12px 24px;
     border: none;
     border-radius: 30px;
-    font: 16px 'Nunito', sans-serif;
+    font: 16px "Nunito", sans-serif;
     font-weight: bold;
     transition: background 0.2s;
   }
@@ -146,7 +197,9 @@ form {
     background: #535af1;
     color: #fff;
     cursor: pointer;
-    &:hover { background: #9498f5; }
+    &:hover {
+      background: #9498f5;
+    }
   }
 
   .btn-disabled {
@@ -179,65 +232,64 @@ form {
 
     &:hover {
       background: #eceefe;
-      color: red; 
+      color: red;
     }
-
   }
 
-    .member-item {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      border-radius: 50px;
-      padding-left: 8px;
-      padding-top: 4px;
-      padding-right: 8px;
-      padding-bottom: 0px;
-      background-color: #eceefe;
+  .member-item {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    border-radius: 50px;
+    padding-left: 8px;
+    padding-top: 4px;
+    padding-right: 8px;
+    padding-bottom: 0px;
+    background-color: #eceefe;
 
-      .avatar {
-        flex-shrink: 0;
-        margin-right: 6px;
+    .avatar {
+      flex-shrink: 0;
+      margin-right: 6px;
 
-        img {
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-        }
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
       }
+    }
 
-      .material-symbols-outlined {
-        cursor: pointer;
-        transition: color 0.2s ease;
+    .material-symbols-outlined {
+      cursor: pointer;
+      transition: color 0.2s ease;
 
-        &:hover {
-          color: red; 
-          background-color: #eceefe;
-        }
+      &:hover {
+        color: red;
+        background-color: #eceefe;
       }
+    }
 
-      >p {
-        font-size: 12px;
-        margin: 0;
-      }
+    > p {
+      font-size: 12px;
+      margin: 0;
+    }
   }
 }
 
 .member-box {
-    position: absolute;
-    background: white;
-    top: 50px;
-    left: 20px;
-    z-index: 1000;
-    width: 100%;
-    max-width: 250px;
-    height: 160px;
-    overflow-y: auto;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-top-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+  position: absolute;
+  background: white;
+  top: 50px;
+  left: 20px;
+  z-index: 1000;
+  width: 100%;
+  max-width: 250px;
+  height: 160px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
 .member-list {
@@ -260,46 +312,55 @@ form {
 
     &:hover {
       background: #eceefe;
-      color: red; 
+      color: red;
     }
-
   }
 
-    .member-item {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      border-radius: 50px;
-      padding-left: 8px;
-      padding-top: 4px;
-      padding-right: 8px;
-      padding-bottom: 0px;
-      background-color: #eceefe;
+  .member-item {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    border-radius: 50px;
+    padding-left: 8px;
+    padding-top: 4px;
+    padding-right: 8px;
+    padding-bottom: 0px;
+    background-color: #eceefe;
 
-      .avatar {
-        flex-shrink: 0;
-        margin-right: 6px;
+    .avatar {
+      flex-shrink: 0;
+      margin-right: 6px;
 
-        img {
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-        }
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
       }
+    }
 
-      .material-symbols-outlined {
-        cursor: pointer;
-        transition: color 0.2s ease;
+    .material-symbols-outlined {
+      cursor: pointer;
+      transition: color 0.2s ease;
 
-        &:hover {
-          color: red; 
-          background-color: #eceefe;
-        }
+      &:hover {
+        color: red;
+        background-color: #eceefe;
       }
+    }
 
-      >p {
-        font-size: 12px;
-        margin: 0;
-      }
+    > p {
+      font-size: 12px;
+      margin: 0;
+    }
+  }
+}
+
+
+
+@include respond-to(md) {
+  .add-member-box.mobile-sheet {
+    width: 100vw;
+    max-width: 100vw;
+    left: 0;
   }
 }

@@ -35,6 +35,7 @@ import { AddMemberComponent } from '../channel/add-member/add-member.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
 
+
 @Component({
   selector: 'app-channel',
   standalone: true,
@@ -86,6 +87,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   windowWidth = window.innerWidth;
 
+
   constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, private ngZone: NgZone) {}
 
   ngOnInit(): void {
@@ -124,6 +126,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.initialScrollDone = true;
     }
   }
+
+
 
   checkWindowWidth() {
     if (window.innerWidth > 1024) {

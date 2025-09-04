@@ -16,6 +16,10 @@
 }
 
 @media (max-width: 768px) {
+  .menu-container-resp {
+    display: flex;
+    flex-direction: column;
+  }
   .container {
     padding: 0;
   }
@@ -43,7 +47,7 @@
   }
 }
 
-@include respond-to(ssm) {
+@include respond-to(md) {
   .content {
     border-radius: unset;
   }
@@ -71,7 +75,7 @@
   }
 
   .created-by-name {
-    margin: 0;
+    // margin: 0;
     font-size: 20px;
   }
 
@@ -80,3 +84,13 @@
     left: 0 !important;
   }
 }
+
+
+
+// @include respond-to(ssm) {
+//   ::ng-deep .add-member-box {
+//     top: 0 !important;
+//     right: 0 !important;
+//     width:100vw !important;
+//   }
+// }

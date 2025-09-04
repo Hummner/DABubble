@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef, HostListener, OnInit, AfterViewInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { FirestoreService } from '../../services/firestore.service';
@@ -9,28 +9,27 @@ import { CommonModule, NgClass } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 
+
 @Component({
   selector: 'app-add-member',
   standalone: true,
-  imports: [ 
-    FormsModule, 
-    NgClass, 
-    CommonModule, 
-    RouterModule 
-  ],
+  imports: [FormsModule, NgClass, CommonModule, RouterModule],
   templateUrl: './add-member.component.html',
-  styleUrl: './add-member.component.scss'
+  styleUrl: './add-member.component.scss',
 })
-export class AddMemberComponent {
-
+export class AddMemberComponent implements OnInit, AfterViewInit {
   userProfile = this.firestoreService.userProfile;
   user: UserProfileInterface | null = null;
-  navbar: Partial<NavbarInterface> = {}
+  navbar: Partial<NavbarInterface> = {};
   channelName = '';
   channelId = '';
-  searchText  = '';
-  members: { id: string; role: string; name: string, imgUrl: string }[] = [];
+  searchText = '';
+  members: { id: string; role: string; name: string; imgUrl: string }[] = [];
   allUsers: UserProfileInterface[] = [];
+
+  @ViewChild('sheetBox') sheetBox!: ElementRef<HTMLElement>;
+  isMobileView = false;
+  private closing = false;
 
   constructor(
     private addMemberRef: MatDialogRef<AddMemberComponent>,
@@ -38,21 +37,57 @@ export class AddMemberComponent {
     private firestoreService: FirestoreService,
     private route: ActivatedRoute,
     private router: Router,
-    
-    @Inject(MAT_DIALOG_DATA) data: { channelName: string, channelId: string },
+
+    @Inject(MAT_DIALOG_DATA) data: { channelName: string; channelId: string }
   ) {
-        this.channelName = data?.channelName ?? '';
-        this.channelId = data?.channelId ?? '';
+    this.channelName = data?.channelName ?? '';
+    this.channelId = data?.channelId ?? '';
+  }
+
+  ngOnInit(): void {
+    this.updateViewportFlag();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.isMobileView) {
+      requestAnimationFrame(() => this.sheetBox?.nativeElement.classList.add('slide-in'));
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    const wasMobile = this.isMobileView;
+    this.updateViewportFlag();
+    if (wasMobile !== this.isMobileView && this.sheetBox) {
+      const el = this.sheetBox.nativeElement;
+      el.classList.remove('slide-in', 'slide-out');
+      if (this.isMobileView) requestAnimationFrame(() => el.classList.add('slide-in'));
+    }
+  }
+
+  private updateViewportFlag() {
+    this.isMobileView = window.innerWidth < 992;
   }
 
   closeDialog() {
-    this.addMemberRef.close();
+    if (!this.isMobileView) {
+      this.addMemberRef.close();
+      return;
+    }
+    if (this.closing) return;
+    this.closing = true;
+    const el = this.sheetBox?.nativeElement;
+    if (!el) {
+      this.addMemberRef.close();
+      return;
+    }
+    el.classList.remove('slide-in');
+    el.classList.add('slide-out');
+    setTimeout(() => this.addMemberRef.close(), 300);
   }
 
   getOtherUserList() {
-    this.allUsers = this.firestoreService.userList().filter(
-      (user) => user.uid !== this.userProfile()?.uid
-    );
+    this.allUsers = this.firestoreService.userList().filter((user) => user.uid !== this.userProfile()?.uid);
     this.searchUser();
     return this.allUsers;
   }
@@ -71,10 +106,10 @@ export class AddMemberComponent {
       id: data.uid,
       role: data.uid === this.userProfile()?.uid ? 'admin' : 'member',
       name: data.name,
-      imgUrl: data.imgUrl
+      imgUrl: data.imgUrl,
     };
 
-    if (!this.members.find(m => m.id === newMember.id)) {
+    if (!this.members.find((m) => m.id === newMember.id)) {
       this.members.push(newMember);
     }
 
@@ -99,11 +134,12 @@ export class AddMemberComponent {
   searchUser() {
     this.searchText = this.searchText.trim();
     if (this.searchText !== '') {
-      this.allUsers = this.firestoreService.userList().filter(
-        (user) =>
-          user.name.toLowerCase().includes(this.searchText.toLowerCase()) 
-          && !this.members.find(m => m.id === user.uid)
-      );
+      this.allUsers = this.firestoreService
+        .userList()
+        .filter(
+          (user) =>
+            user.name.toLowerCase().includes(this.searchText.toLowerCase()) && !this.members.find((m) => m.id === user.uid)
+        );
     }
   }
 
@@ -112,18 +148,18 @@ export class AddMemberComponent {
   }
 
   updateChannel() {
-    const channelRef = doc(this.firestore, 'channels', this.channelId);     
+    const channelRef = doc(this.firestore, 'channels', this.channelId);
     updateDoc(channelRef, {
       members: arrayUnion(...(this.navbar.members || [])),
-      channelId: this.channelId
-    }).then(() => {
-      console.log('Member added successfully');
-    }).catch((error) => {
-      console.error('Error adding member to channel:', error);
-    });
+      channelId: this.channelId,
+    })
+      .then(() => {
+        console.log('Member added successfully');
+      })
+      .catch((error) => {
+        console.error('Error adding member to channel:', error);
+      });
     this.closeDialog();
     this.router.navigate(['/channel', this.channelId]);
   }
 }
-
-

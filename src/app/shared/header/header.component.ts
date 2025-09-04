@@ -10,7 +10,8 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ChannelsService } from '../../services/channels.service';
-import { OverlayPositionBuilder } from '@angular/cdk/overlay';
+
+import { ResponsiveMenuOverlayService } from '../../services/responsive-menu-overlay.service';
 import { SearchService } from '../../services/search.service';
 import { NavbarService } from '../../services/navbar.service';
 
@@ -31,7 +32,7 @@ export class HeaderComponent implements OnInit {
   backdropVisible = false;
   channelService = inject(ChannelsService);
   user: UserProfileInterface | null = null;
-  
+
   @Input() isNavbarClosed!: boolean;
   @Output() toggleNavbar = new EventEmitter<void>();
   isMobileView = false;
@@ -48,7 +49,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private firestoreService: FirestoreService,
     public dialog: MatDialog,
-    private overlayPositionBuilder: OverlayPositionBuilder
+    private menuOverlay: ResponsiveMenuOverlayService
   ) {}
 
   @HostListener('window:resize')
@@ -66,65 +67,18 @@ export class HeaderComponent implements OnInit {
     this.isMobileView = window.innerWidth < 992;
   }
 
-
   private adjustMenuPosition() {
-    if (!this.menuTrigger?.menuOpen) return;
-    const overlayRef: any = (this.menuTrigger as any)['_overlayRef'];
-    if (!overlayRef || !overlayRef.overlayElement) return;
-
-    if (this.isMobileView) {
-      const mobileStrategy = this.overlayPositionBuilder.global().bottom('0px').left('0px').width('100%');
-      overlayRef.updatePositionStrategy(mobileStrategy);
-      overlayRef.updatePosition();
-    } else {
-      const triggerElement: any = (this.menuTrigger as any)['_element'];
-      if (triggerElement) {
-        const desktopStrategy = this.overlayPositionBuilder
-          .flexibleConnectedTo(triggerElement)
-          .withPositions([
-            { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' },
-            { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
-          ])
-          .withPush(false);
-        overlayRef.updatePositionStrategy(desktopStrategy);
-        overlayRef.updatePosition();
-      }
-      const el: HTMLElement | null = overlayRef.overlayElement as HTMLElement;
-      if (el) {
-        el.classList.remove('slide-in', 'slide-out');
-        el.style.width = '';
-      }
-    }
+    this.menuOverlay.reposition(this.menuTrigger, this.isMobileView);
   }
 
   showOverlay() {
-    this.menuTrigger.openMenu();
-    if (this.isMobileView) {
-      const overlayRef = this.menuTrigger['_overlayRef'];
-      const positionStrategy = this.overlayPositionBuilder.global().bottom('0px').left('0px').width('100%');
-      overlayRef.updatePositionStrategy(positionStrategy);
-      overlayRef.updatePosition();
-      overlayRef.overlayElement.classList.add('slide-in');
-      this.backdropVisible = true;
-    } else {
-      this.adjustMenuPosition();
-      this.backdropVisible = true;
-    }
+    this.menuOverlay.open(this.menuTrigger, this.isMobileView);
+    this.backdropVisible = true;
   }
 
   onMenuClosed() {
-    if (!this.profileCardOpen) {
-      this.backdropVisible = false;
-    }
-    if (this.isMobileView) {
-      const overlayRef = this.menuTrigger['_overlayRef'];
-      overlayRef.overlayElement.classList.remove('slide-in');
-      overlayRef.overlayElement.classList.add('slide-out');
-
-      setTimeout(() => {
-        overlayRef.overlayElement.classList.remove('slide-out');
-      }, 300);
-    }
+    if (!this.profileCardOpen) this.backdropVisible = false;
+    this.menuOverlay.handleMenuClosed(this.menuTrigger, this.isMobileView);
   }
 
   openProfile() {
@@ -147,13 +101,12 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-
   logOut() {
     this.authService.logout();
     this.router.navigateByUrl('/');
   }
 
-    onMenuClick() {
+  onMenuClick() {
     this.toggleNavbar.emit();
   }
 }
