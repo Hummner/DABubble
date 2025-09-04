@@ -23,7 +23,7 @@ export const routes: Routes = [
   {
     path: 'directMessages/:id',
     component: DirectMessagesComponent,
-    children: [{ path: 'threadMessages/:messageId', component: ThreadDirectMessageComponent }],
+    children: [{ path: 'messages/:messageId', component: ThreadDirectMessageComponent }],
   },
   { path: 'newMessage', component: NewMessageComponent },
   { path: 'impressum', component: ImpressumComponent },

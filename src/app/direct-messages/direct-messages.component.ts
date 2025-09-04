@@ -88,7 +88,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   isSending = signal(false);
   windowWidth = window.innerWidth;
   loading = false;
-  private didFocusInput = false; 
+  private didFocusInput = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -109,7 +109,8 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     this.subscribeToMsgList();
     setTimeout(() => {
       const url = this.router.url;
-      if (url.includes('threadMessages') && !this.isThreadOpen) {
+      // If we land directly on a thread route ensure drawer state reflects it
+      if (url.includes('/messages/') && !this.isThreadOpen) {
         const channelId = this.route.snapshot.paramMap.get('id');
         if (channelId) {
           this.router.navigate(['/directMessages', channelId]);
@@ -201,8 +202,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   subThreadRoute() {
     this.routerEventsSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        // this.loading = true;
-        this.isThreadOpen = this.router.url.includes('threadMessages');
+        this.isThreadOpen = this.router.url.includes('/messages/');
       }
     });
   }
@@ -281,7 +281,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     requestAnimationFrame(() => {
       this.isThreadOpen = true;
       this.cdr.markForCheck();
-      this.router.navigate(['directMessages', this.channelId, 'threadMessages', messageId]);
+      this.router.navigate(['directMessages', this.channelId, 'messages', messageId]);
     });
   }
 
