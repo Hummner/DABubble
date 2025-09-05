@@ -30,6 +30,10 @@
   .user-name {
     display: none;
   }
+  app-user-profile{
+    top:0;
+    right:0;
+  }
 }
 
 @include respond-to(sm) {

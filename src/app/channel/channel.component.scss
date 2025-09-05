@@ -742,10 +742,12 @@ main {
   margin-right: 30px;
 }
 
-.menu-container-resp{
-  display:none;
+.menu-container-resp {
+  display: none;
 }
 
-
+.add-member-icon-resp {
+  display: none;
+}
 
 @import "_responsive.channel.scss";

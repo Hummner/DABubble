@@ -19,6 +19,9 @@
   .menu-container-resp {
     display: flex;
     flex-direction: column;
+    border-radius: 20px;
+    border: 1px solid #adb0d9;
+    padding: 10px;
   }
   .container {
     padding: 0;
@@ -83,9 +86,66 @@
     top: 0 !important;
     left: 0 !important;
   }
+  ::ng-deep #cdk-overlay-5 {
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  .add-member-icon-resp {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    background-color: #eceefe;
+    border-radius: 100%;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .add-member-icon-resp:hover img {
+    filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+    transform: scale(1.1);
+  }
+
+  .am-icon {
+    display: none;
+  }
+  .channel-name {
+    > h2 {
+      font-size: 21px;
+    }
+  }
+
+  .first-message-title {
+    h2 {
+      font-size: 21px;
+    }
+  }
+  .first-message-text {
+    > p {
+      font-size: 18px;
+    }
+  }
 }
 
+@include respond-to(sm) {
+  .channel-name {
+    > h2 {
+      font-size: 19px;
+    }
+  }
 
+  .first-message-title {
+    h2 {
+      font-size: 19px;
+    }
+  }
+  .first-message-text {
+    > p {
+      font-size: 16px;
+    }
+  }
+}
 
 // @include respond-to(ssm) {
 //   ::ng-deep .add-member-box {

@@ -11,8 +11,9 @@
 
 @include respond-to(sm) {
   .user-card {
-    width: 380px;
-    height: 550px;
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: unset;
   }
 
   .img-section {
@@ -32,8 +33,8 @@
     font-size: 15px;
     height: 40px;
   }
-  form{
-    gap:30px;
+  form {
+    gap: 30px;
   }
 }
 

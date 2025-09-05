@@ -59,8 +59,8 @@ form {
     cursor: pointer;
 
     input[type='radio'] {
-      --size: 20px;            
-      appearance: none;             
+      --size: 20px;
+      appearance: none;
       width: var(--size);
       height: var(--size);
       border-radius: 50%;
@@ -74,7 +74,7 @@ form {
     input[type='radio']:checked::after {
       content: '';
       position: absolute;
-      inset: 4px;                
+      inset: 4px;
       border-radius: 50%;
       background: #535af1;
     }
@@ -224,7 +224,7 @@ form {
 
     &:hover {
       background: #eceefe;
-      color: red; 
+      color: red;
     }
 
   }
@@ -256,7 +256,7 @@ form {
         transition: color 0.2s ease;
 
         &:hover {
-          color: red; 
+          color: red;
           background-color: #eceefe;
         }
       }
@@ -267,3 +267,6 @@ form {
       }
   }
 }
+
+
+@import './responsive.add-channel-member'

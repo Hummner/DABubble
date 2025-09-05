@@ -357,10 +357,3 @@ form {
 
 
 
-@include respond-to(md) {
-  .add-member-box.mobile-sheet {
-    width: 100vw;
-    max-width: 100vw;
-    left: 0;
-  }
-}
