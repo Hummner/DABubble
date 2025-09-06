@@ -88,6 +88,7 @@ export class UserMentionService {
   }
 
   takeUser(name: string, content: string): string {
+    debugger
     const lastAtIndex = content.lastIndexOf('@');
     if (lastAtIndex !== -1) {
       const before = content.slice(0, lastAtIndex);
@@ -100,6 +101,7 @@ export class UserMentionService {
   }
 
   takeChannel(name: string, content: string): string {
+    debugger
     const lastAtIndex = content.lastIndexOf('#');
     if (lastAtIndex !== -1) {
       const before = content.slice(0, lastAtIndex);
@@ -117,6 +119,7 @@ export class UserMentionService {
     channelMenuTrigger: MatMenuTrigger,
     input: ElementRef<HTMLInputElement | HTMLTextAreaElement>
   ) {
+    debugger
     this.onEmptyInput(mentionMenuTrigger, channelMenuTrigger, content);
     const lastChar = content[content.length - 1];
     const hasAt = content.includes('@') || lastChar === '@';

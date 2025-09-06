@@ -93,7 +93,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 
   constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, private ngZone: NgZone,
-    public userMentionService: UserMentionService,) {}
+    public userMentionService: UserMentionService,) { }
 
   ngOnInit(): void {
     // this.focusTextarea();
@@ -310,7 +310,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   scrollToBottom(): void {
     try {
       this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
-    } catch (err) {}
+    } catch (err) { }
   }
 
   ngOnDestroy(): void {
@@ -374,7 +374,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   focusAfterTag(input: string) {
-    
+
     let length = input.length;
     this.chatInput.nativeElement.setSelectionRange(length, length);
 
@@ -383,6 +383,15 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   tagInputStart() {
     this.textInput = this.userMentionService.tagInputStart(this.textInput, this.chatInput);
   }
+
+  tagInputChannelStart() {
+    this.textInput = this.userMentionService.tagChannelInputStart(this.textInput, this.chatInput);
+  }
+
+  takeChannel(name: string) {
+    this.textInput = this.userMentionService.takeChannel(name, this.textInput);
+  }
+
 
   onInputChange(event: Event) {
     this.userMentionService.onInputChange(this.textInput, this.mentionMenuTrigger, this.channelMenuTrigger, this.chatInput);
