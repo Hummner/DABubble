@@ -103,6 +103,10 @@ export class ChannelsService implements OnDestroy {
     }
   }
 
+  createText(text: string) {
+    
+  }
+
 
   putMessagesInArray(channelId: string) {
     const q = query(this.getMessagesSubCollRef(channelId), orderBy('createdAt'))

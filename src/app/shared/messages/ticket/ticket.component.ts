@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketInterface } from '../../../interfaces/ticket.interface';
 import { addDoc, arrayUnion, collection, doc, getDocs, Timestamp, updateDoc } from '@angular/fire/firestore';
@@ -20,13 +20,14 @@ import { EmojiArrayService } from '../../../services/emoji-array.service';
   templateUrl: './ticket.component.html',
   styleUrl: './ticket.component.scss'
 })
-export class TicketComponent implements OnInit, OnChanges {
+export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Output() openThread = new EventEmitter<void>();
   @Output() currentPath = new EventEmitter<string>();
   @Input() index!: number;
   @Input() ticket!: TicketInterface;
   @Input() members?: any[];
+  @ViewChild('text') textRef!: ElementRef<HTMLDivElement>;
   userName!: string;
   time!: string;
   answers!: string;
@@ -42,6 +43,7 @@ export class TicketComponent implements OnInit, OnChanges {
   editMenuOpen = false;
   editedText!: string;
   emojiMenuOpen = false;
+  text!: any;
 
   constructor(private route: ActivatedRoute) { }
 
@@ -50,14 +52,25 @@ export class TicketComponent implements OnInit, OnChanges {
       this.showName();
       this.time = this.showTime();
       this.getChannelId();
+      
     }
 
+
+
+
   }
+
+  ngAfterViewInit() {
+    console.log(this.textRef);
+    this.text = this.showText();
+  }
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['ticket']) {
       this.answers = this.showAnswer();
       this.time = this.showTime();
+
     }
 
   }
@@ -286,6 +299,18 @@ export class TicketComponent implements OnInit, OnChanges {
 
   showTime(): string {
     return this.ticket?.createdAt instanceof Date ? this.ticket.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
+  }
+
+  showText() {
+    let text = this.ticket.text
+
+    text = text.replace(/@([\wäöüßÄÖÜ]+(?: [\wäöüßÄÖÜ]+)*)/g,
+      '<a class="text-link" href="#" onclick="openChat(\'$1\')">@$1</a>');
+
+    let para = document.createElement('p');
+    para.innerHTML = text;
+
+    this.textRef.nativeElement.appendChild(para)
   }
 
 
