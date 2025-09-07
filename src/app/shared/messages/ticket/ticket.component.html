@@ -19,8 +19,8 @@
                 <span class="msg-date">{{ time }} Uhr</span>
             </div>
             <div class="message-wrapper" [ngClass]="{'reverse' : isCurrentUser()}">
-                <div class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}">
-                    <p>{{ ticket.text}}</p>
+                <div #text class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}">
+                    
                 </div>
             </div>
 

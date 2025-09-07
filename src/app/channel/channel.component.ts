@@ -88,6 +88,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   originalChannelName: string = '';
   channelNameExists = false;
   content: string = '';
+  taggedNames: string[] = [];
 
   windowWidth = window.innerWidth;
 
@@ -369,8 +370,36 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   takeUser(name: string) {
     this.textInput = this.userMentionService.takeUser(name, this.textInput);
+    this.taggedNames.push(name);
+    console.log(this.taggedNames);
+    
 
     this.focusAfterTag(this.textInput);
+  }
+
+
+  findTaggedNames() {
+
+    let newText = "";
+    let names = this.taggedNames.forEach( name => {
+      let taggedName = `@${name}`;
+      newText =  this.textInput.replace(taggedName, `<a href='#'>${taggedName}</a>"`)
+
+      let div = document.createElement('div');
+      let a = document.createElement('a');
+
+      a.setAttribute('href', '#');
+      a.innerText = taggedName;
+
+      div.appendChild(a)
+
+      console.log(div);
+      
+
+    })
+
+
+    
   }
 
   focusAfterTag(input: string) {
