@@ -10,15 +10,15 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ChannelsService } from '../../services/channels.service';
-
 import { ResponsiveMenuOverlayService } from '../../services/responsive-menu-overlay.service';
 import { SearchService } from '../../services/search.service';
 import { NavbarService } from '../../services/navbar.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatIconModule, NgIf, MatMenuModule, UserProfileComponent, DatePipe, AsyncPipe, NgClass],
+  imports: [MatIconModule, NgIf, MatMenuModule, UserProfileComponent, DatePipe, AsyncPipe, NgClass, MatProgressSpinnerModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

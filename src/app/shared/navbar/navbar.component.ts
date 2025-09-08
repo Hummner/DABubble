@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { FirestoreService } from '../../services/firestore.service';
 import { ChannelsService } from '../../services/channels.service';
 import { SearchService } from '../../services/search.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-navbar',
@@ -26,7 +27,8 @@ import { SearchService } from '../../services/search.service';
     NgIf,
     RouterModule,
     NgClass,
-    DatePipe
+    DatePipe,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',

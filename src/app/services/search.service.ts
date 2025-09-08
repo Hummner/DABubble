@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class SearchService {
+  isLoading = false;
   filteredChannels: any[] = [];
   filteredMessages: any[] = [];
   noResultsMessage: string = '';
@@ -189,22 +190,30 @@ export class SearchService {
   }
 
   async selectMessage(messageId: string) {
-    const allChannels = await this.channelService.getAllChannels();
-    const allDirectMessages = await this.directMessageService.getAllDirectMessages();
+    this.isLoading = true;
 
-    const foundInChannel = await this.findMessageInChannels(allChannels, messageId);
-    if (foundInChannel) {
-      this.searchText = '';
-      return;
+    try {
+      const allChannels = await this.channelService.getAllChannels();
+      const allDirectMessages = await this.directMessageService.getAllDirectMessages();
+
+      const foundInChannel = await this.findMessageInChannels(allChannels, messageId);
+      if (foundInChannel) {
+        this.searchText = '';
+        return;
+      }
+
+      const foundInDM = await this.findMessageInDirectMessages(allDirectMessages, messageId);
+      if (foundInDM) {
+        this.searchText = '';
+        return;
+      }
+
+      console.warn('Message not found in channels or DMs:', messageId);
+    } catch (error) {
+      console.error('Error selecting message:', error);
+    } finally {
+      this.isLoading = false;
     }
-
-    const foundInDM = await this.findMessageInDirectMessages(allDirectMessages, messageId);
-    if (foundInDM) {
-      this.searchText = '';
-      return;
-    }
-
-    console.warn('Message not found in channels or DMs:', messageId);
   }
 
   async findMessageInChannels(channels: any[], messageId: string): Promise<boolean> {

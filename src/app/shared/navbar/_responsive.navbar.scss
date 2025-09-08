@@ -104,7 +104,14 @@
   .search-container input {
     font-size: 18px;
   }
+
   .search-container input::placeholder {
     font-size: 18px;
+  }
+
+  .search-results-container {
+    left: 10px;
+    width: 275px;
+    max-height: 275px;
   }
 }

@@ -39,20 +39,25 @@
                 }
               }
             }
-            @for (message of this.searchService.filteredMessages; track $index) {
-              <li class="search-result-messages" (click)="this.searchService.selectMessage(message.id)">
-                <div class="user-profile">
-                  <p class="user-name">{{ message.userName }}</p>
-                  <small class="timestamp">{{ message.timestamp | date:'dd.MM.yyyy, HH:mm' }}</small>
+            @if (this.searchService.isLoading) {
+              <p>Loading...</p>
+              <mat-spinner diameter="30"></mat-spinner>
+            } @else {
+              @for (message of this.searchService.filteredMessages; track $index) {
+                <li class="search-result-messages" (click)="this.searchService.selectMessage(message.id)">
+                  <div class="user-profile">
+                    <p class="user-name">{{ message.userName }}</p>
+                    <small class="timestamp">{{ message.timestamp | date:'dd.MM.yyyy, HH:mm' }}</small>
+                  </div>
+                  <p class="message-text">{{ message.text }}</p>
+                  <div class="divider"></div>
+                </li>
+              }
+              @if (this.searchService.noResultsMessage != '') {
+                <div class="no-results">
+                  {{ this.searchService.noResultsMessage }}
                 </div>
-                <p class="message-text">{{ message.text }}</p>
-                <div class="divider"></div>
-              </li>
-            }
-            @if (this.searchService.noResultsMessage != '') {
-              <div class="no-results">
-                {{ this.searchService.noResultsMessage }}
-              </div>
+              }
             }
           </ul>
       </div>
