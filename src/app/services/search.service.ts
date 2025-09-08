@@ -192,61 +192,53 @@ export class SearchService {
   async selectMessage(messageId: string) {
     this.isLoading = true;
 
-    try {
-      const allChannels = await this.channelService.getAllChannels();
-      const allDirectMessages = await this.directMessageService.getAllDirectMessages();
+    const allChannels = await this.channelService.getAllChannels();
+    const allDirectMessages = await this.directMessageService.getAllDirectMessages();
 
-      const foundInChannel = await this.findMessageInChannels(allChannels, messageId);
-      if (foundInChannel) {
-        this.searchText = '';
-        return;
-      }
-
-      const foundInDM = await this.findMessageInDirectMessages(allDirectMessages, messageId);
-      if (foundInDM) {
-        this.searchText = '';
-        return;
-      }
-
-      console.warn('Message not found in channels or DMs:', messageId);
-    } catch (error) {
-      console.error('Error selecting message:', error);
-    } finally {
-      this.isLoading = false;
+    const foundInChannel = await this.findMessageInChannels(allChannels, messageId);
+    if (foundInChannel) {
+      return;
     }
+
+    const foundInDM = await this.findMessageInDirectMessages(allDirectMessages, messageId);
+    if (foundInDM) {
+      return;
+    }
+    console.warn('Message not found in channels or DMs:', messageId);
   }
 
   async findMessageInChannels(channels: any[], messageId: string): Promise<boolean> {
-    for (const channel of channels) {
-      if (await this.navigateIfChannelMessageExists(channel.channelId, messageId)) {
-        return true;
-      }
+    const checks = channels.map(c => this.checkChannel(c.channelId, messageId));
+    return (await Promise.all(checks)).some(found => found);
+  }
 
-      if (await this.navigateIfChannelThreadExists(channel.channelId, messageId)) {
-        return true;
-      }
+  async checkChannel(channelId: string, messageId: string): Promise<boolean> {
+    if (await this.navigateIfChannelMessageExists(channelId, messageId)) {
+      return true;
     }
-    return false;
+    return this.navigateIfChannelThreadExists(channelId, messageId) 
   }
 
   async findMessageInDirectMessages(dms: any[], messageId: string): Promise<boolean> {
-    for (const dm of dms) {
-      if (await this.navigateIfDirectMessageExists(dm.directMessagesId, messageId)) {
-        return true;
-      }
-
-      if (await this.navigateIfDirectThreadExists(dm.directMessagesId, messageId)) {
-        return true;
-      }
-    }
-    return false;
+    const checks = dms.map(dm => this.checkDirectMessage(dm.directMessagesId, messageId));
+    return (await Promise.all(checks)).some(found => found);
   }
+
+  async checkDirectMessage(dmId: string, messageId: string): Promise<boolean> {
+    if (await this.navigateIfDirectMessageExists(dmId, messageId)) {
+      return true;
+    }
+    return this.navigateIfDirectThreadExists(dmId, messageId);
+  }
+  
 
   async navigateIfChannelMessageExists(channelId: string, messageId: string): Promise<boolean> {
     const ref = doc(this.firestore, `channels/${channelId}/messages/${messageId}`);
     const snap = await getDoc(ref);
 
     if (snap.exists()) {
+      this.isLoading = false;
+      this.searchText = '';
       this.router.navigate(['channel', channelId]);
       return true;
     }
@@ -262,6 +254,8 @@ export class SearchService {
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
+        this.isLoading = false;
+        this.searchText = '';
         this.router.navigate(['channel', channelId], {
           queryParams: { threadMessageId: messageId },
         });
@@ -276,6 +270,8 @@ export class SearchService {
     const snap = await getDoc(ref);
 
     if (snap.exists()) {
+      this.isLoading = false;
+      this.searchText = '';
       this.router.navigate(['directMessages', dmId, 'messages', messageId]);
       return true;
     }
@@ -291,6 +287,8 @@ export class SearchService {
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
+        this.isLoading = false;
+        this.searchText = '';
         this.router.navigate(['directMessages', dmId, 'messages', msg.id], {
           queryParams: { threadMessageId: messageId },
         });
