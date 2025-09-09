@@ -153,6 +153,17 @@ header {
   }
 }
 
+.loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+  p {
+    margin: 0;
+    font-size: 24px;
+  }
+}
+
 .logged-user {
   display: flex;
   align-items: center;

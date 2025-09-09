@@ -40,8 +40,10 @@
               }
             }
             @if (this.searchService.isLoading) {
+            <div class="loading-section">
               <p>Loading...</p>
-              <mat-spinner diameter="30"></mat-spinner>
+              <mat-spinner diameter="100"></mat-spinner>
+            </div>
             } @else {
               @for (message of this.searchService.filteredMessages; track $index) {
                 <li class="search-result-messages" (click)="this.searchService.selectMessage(message.id)">
