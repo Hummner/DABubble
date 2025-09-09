@@ -53,6 +53,7 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   editedText!: string;
   emojiMenuOpen = false;
   text!: any;
+  lastThreadTime!: string;
 
   constructor(private route: ActivatedRoute) { }
 
@@ -79,6 +80,7 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     if (changes['ticket']) {
       this.answers = this.showAnswer();
       this.time = this.showTime();
+      this.lastThreadTime = this.showLastThreadTime()
 
     }
 
@@ -140,42 +142,46 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   showReactName(users: string[]) {
     let name = "Guest";
-
+    let allUserCount = users.length - 1;
     let nameArray: string[] = [];
-
     let isCurrentUserReacted = false;
 
     users.forEach(user => {
+      let userIndex = this.findUser(user);
       if (user == this.getCurrentUserId()) {
         isCurrentUserReacted = true;
       }
-
-      let userIndex = this.findUser(user);
 
       if (userIndex >= 0 && this.members) {
         let userName = this.members[userIndex]['name'];
         if (user !== this.getCurrentUserId()) {
           nameArray.push(userName)
         }
-
       }
-
-
-
-
-
     })
+    name = this.renderPopUpText(isCurrentUserReacted, nameArray, allUserCount)
+    return name
+  }
 
-    if (isCurrentUserReacted && nameArray.length > 0) {
+  renderPopUpText(isCurrentUserReacted: boolean, nameArray: string[], allUserCount: number) {
+    let name = "Guest"
+    if (isCurrentUserReacted && nameArray.length == 1) {
       let lastName = nameArray[nameArray.length - 1];
       name = `${lastName} und Du`;
+    } else if(isCurrentUserReacted && nameArray.length  > 1) {
+      name = `Du und +${allUserCount}`
+    } else if (isCurrentUserReacted && nameArray.length == 0 && allUserCount == 0) {
+      name = "Du"
+    } 
+    else if (!isCurrentUserReacted && nameArray.length == 1) {
+      name = nameArray[0];
+    } else if (!isCurrentUserReacted && nameArray.length > 1) {
+      let firsName = nameArray[0];
+      name = `${firsName} und +${allUserCount}`
+    } else if (allUserCount > 0) {
+      name = `Guest und +${allUserCount}`
     }
-    console.log(nameArray);
-
-
     return name
-
-
   }
 
   openThreadPanel() {
@@ -352,43 +358,62 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     return this.ticket?.createdAt instanceof Date ? this.ticket.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
   }
 
-  async showText() {
-    let text = this.ticket.text
+  showLastThreadTime() {
+    return this.ticket?.lastThread instanceof Date ? this.ticket.lastThread.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
+  }
+
+
+
+  showText() {
+    let container = document.createElement('p');
+    container.classList.add('text-link')
+    let text = this.ticket.text;
     let taggedUsers = this.getUserList(text);
-    let dmChannels = await this.getDmChannel();
+    let lastIndex = 0;
+    if (taggedUsers.length == 0) return this.createText(container, text);
+
     taggedUsers.forEach(user => {
-      let dmId = this.serachDirectMsg(user.uid, dmChannels)
-      text = text.replace(`@${user.name}`,
-        `<a href="/directMessages/${dmId}">@${user.name}</a>`);
+      let tag = `@${user.name}`
+      let idx = text.indexOf(tag, lastIndex)
+
+      if (idx !== -1) {
+        const before = text.substring(lastIndex, idx);
+        if (before) container.appendChild(document.createTextNode(before))
+        const a = this.createLinkElement(user)
+        container.appendChild(a);
+        lastIndex = idx + tag.length
+      }
+      this.createTextAfterLink(lastIndex, text, container);
     })
-    this.createHTMLElement(text);
+    return
   }
 
-  createHTMLElement(text: string) {
-    let para = document.createElement('p');
-    para.innerHTML = text;
-    para.classList.add('text-link')
-    this.textRef.nativeElement.appendChild(para)
-
+  createText(container: HTMLParagraphElement, text: string) {
+    container.innerHTML = text;
+    this.textRef.nativeElement.innerHTML = '';
+    this.textRef.nativeElement.appendChild(container);
   }
 
-  async getDmChannel() {
-    let msgs = await this.directMsgService.getAllDirectMessages();
-    return msgs
-  }
-
-  serachDirectMsg(uid: string, dmChannels: { directMessagesId: string; users: any; }[]) {
-    let currentUser = this.getCurrentUserId();
-    let dmId = "";
-    if (currentUser) {
-      dmChannels.forEach(channel => {
-        let hasDM = channel.users.includes(currentUser) && channel.users.includes(uid);
-        if (hasDM) {
-          dmId = channel.directMessagesId;
-        }
-      })
+  createTextAfterLink(lastIndex: number, text: string, container: HTMLParagraphElement) {
+    if (lastIndex < text.length) {
+      container.appendChild(document.createTextNode(text.substring(lastIndex)))
     }
-    return dmId
+
+    this.textRef.nativeElement.innerHTML = '';
+    this.textRef.nativeElement.appendChild(container);
+  }
+
+  createLinkElement(user: { name: string, uid: string; }) {
+    let currentUser = this.getCurrentUserId();
+    let a = document.createElement('a');
+    a.textContent = `@${user.name}`;
+    a.href = '#';
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.navbarService.findOrCreateDMchannel(user.uid, currentUser!)
+    })
+
+    return a
   }
 
   getUserList(text: string) {

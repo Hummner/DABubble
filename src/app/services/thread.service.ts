@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { addDoc, collection, doc, DocumentData, increment, onSnapshot, orderBy, query, serverTimestamp, Timestamp, updateDoc } from '@angular/fire/firestore';
+import { addDoc, collection, doc, DocumentData, FieldValue, increment, onSnapshot, orderBy, query, serverTimestamp, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { Firestore } from '@angular/fire/firestore';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { BehaviorSubject } from 'rxjs';
@@ -19,6 +19,7 @@ export class ThreadService {
   currentTicketOpened!: TicketInterface;
   threadPath!: string;
   threadMessageCount!: number;
+  threadTimes: Date[] = [];
 
 
 
@@ -77,10 +78,16 @@ export class ThreadService {
     try {
       await addDoc(collection(this.firestore, this.threadPath), newMessage);
       await this.increaseThreadCounter()
+      await this.addLastAnswerDate(newMessage.createdAt)
     } catch (error) {
       console.error("Error by add a message", error);
 
     }
+  }
+
+  async addLastAnswerDate(time: FieldValue | Date | null) {
+    let ticketPath = this.getTicketPath();
+    await updateDoc(doc(this.firestore, ticketPath), { lastThread: time })
   }
 
 
@@ -101,6 +108,11 @@ export class ThreadService {
   getMessageToJson(messageData: DocumentData, threadMessageId: string) {
     const rawCreatedAt = messageData['createdAt'];
     const createdAtDate = rawCreatedAt instanceof Timestamp ? rawCreatedAt.toDate() : null;
+    if(createdAtDate) {
+      this.threadTimes.push(createdAtDate);
+      console.log(this.threadTimes);
+      
+    }
 
     let message: TicketInterface = {
       createdAt: createdAtDate,
@@ -109,6 +121,12 @@ export class ThreadService {
       text: messageData['text'],
       threadMessageId: threadMessageId
     }
+    
+
     return message
+  }
+
+  getLastThread() {
+
   }
 }

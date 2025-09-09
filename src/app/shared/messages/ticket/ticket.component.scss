@@ -245,6 +245,7 @@
 
 .emoji-popup {
   position: absolute;
+  
   width: 158px;
   min-height: 112px;
   background-color: #444df2;
@@ -266,6 +267,8 @@
     color: white;
     font-weight: bold;
     margin: 0;
+    width: 100%;
+    text-align: center;
   }
 
   >img {

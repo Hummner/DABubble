@@ -7,5 +7,6 @@ export interface TicketInterface {
     text: string,
     threadsCount?: number,
     threads?: CollectionReference<DocumentData>,
-    threadMessageId?: string
+    threadMessageId?: string,
+    lastThread?: FieldValue | Date | null
 }

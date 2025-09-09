@@ -29,7 +29,7 @@
                         {{answers}}
                     </span>
                 </div>
-                <span class="msg-date">Letze Antwort </span>
+                <span class="msg-date">Letze Antwort {{ lastThreadTime }} Uhr</span>
             </div>
             <div class="emoji-container" [ngClass]="{'reverse reverse-container' : isCurrentUser()}" *ngIf="isReaction()">
                 @for (emoji of ticket.reactions; track $index) {

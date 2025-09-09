@@ -60,6 +60,7 @@ export class ChannelsService implements OnDestroy {
     }
   }
 
+
   subChannel(channelId: string) {
     return onSnapshot(this.getChannelRef(channelId), (el) => {
       let channelData = el.data();
@@ -88,14 +89,17 @@ export class ChannelsService implements OnDestroy {
   getTickets(ticketId: string, ticketData: DocumentData, channelId: string) {
     if (ticketData) {
       const rawCreatedAt = ticketData['createdAt'];
+      const rawLastThread = ticketData['lastThread'];
       const createdAtDate = rawCreatedAt instanceof Timestamp ? rawCreatedAt.toDate() : null;
+      const lastThread = rawLastThread instanceof Timestamp ? rawLastThread.toDate() : null;
       const ticket: TicketInterface = {
         createdAt: createdAtDate,
         reactions: ticketData['reactions'],
         senderId: ticketData['senderId'],
         text: ticketData['text'],
         threadsCount: ticketData['threadsCount'],
-        threads: this.getThreadRef(channelId, ticketId)
+        threads: this.getThreadRef(channelId, ticketId),
+        lastThread: lastThread,
       }
       return ticket
     } else {
