@@ -12,6 +12,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { EmojiArrayService } from '../../../services/emoji-array.service';
+import { UserMentionService } from '../../../services/user-channel-mention.service';
+import { DirectMessageService } from '../../../services/direct-message.service';
+import { NavbarService } from '../../../services/navbar.service';
 
 @Component({
   selector: 'app-ticket',
@@ -28,7 +31,13 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() ticket!: TicketInterface;
   @Input() members?: any[];
   @ViewChild('text') textRef!: ElementRef<HTMLDivElement>;
+
+  userMentionService = inject(UserMentionService);
+  directMsgService = inject(DirectMessageService);
+  navbarService = inject(NavbarService);
+
   userName!: string;
+  userImg!: string;
   time!: string;
   answers!: string;
   firestoreService = inject(FirestoreService);
@@ -52,7 +61,7 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
       this.showName();
       this.time = this.showTime();
       this.getChannelId();
-      
+
     }
 
 
@@ -127,6 +136,46 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   showPopupIndex(index: number) {
     return this.showPopupIndexNumber = index
+  }
+
+  showReactName(users: string[]) {
+    let name = "Guest";
+
+    let nameArray: string[] = [];
+
+    let isCurrentUserReacted = false;
+
+    users.forEach(user => {
+      if (user == this.getCurrentUserId()) {
+        isCurrentUserReacted = true;
+      }
+
+      let userIndex = this.findUser(user);
+
+      if (userIndex >= 0 && this.members) {
+        let userName = this.members[userIndex]['name'];
+        if (user !== this.getCurrentUserId()) {
+          nameArray.push(userName)
+        }
+
+      }
+
+
+
+
+
+    })
+
+    if (isCurrentUserReacted && nameArray.length > 0) {
+      let lastName = nameArray[nameArray.length - 1];
+      name = `${lastName} und Du`;
+    }
+    console.log(nameArray);
+
+
+    return name
+
+
   }
 
   openThreadPanel() {
@@ -287,12 +336,14 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
 
   showName() {
-    const userIndex = this.findUser(this.ticket.senderId)
+    const userIndex = this.findUser(this.ticket.senderId);
 
     if (userIndex >= 0 && this.members && this.isMember(userIndex, this.members)) {
-      this.userName = this.members[userIndex]['name']
+      this.userName = this.members[userIndex]['name'];
+      this.userImg = this.members[userIndex]['imgUrl'];
     } else {
-      this.userName = "Guest"
+      this.userName = "Guest";
+      this.userImg = "assets/img/profile.png"
     }
   }
 
@@ -301,16 +352,60 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     return this.ticket?.createdAt instanceof Date ? this.ticket.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
   }
 
-  showText() {
+  async showText() {
     let text = this.ticket.text
+    let taggedUsers = this.getUserList(text);
+    let dmChannels = await this.getDmChannel();
+    taggedUsers.forEach(user => {
+      let dmId = this.serachDirectMsg(user.uid, dmChannels)
+      text = text.replace(`@${user.name}`,
+        `<a href="/directMessages/${dmId}">@${user.name}</a>`);
+    })
+    this.createHTMLElement(text);
+  }
 
-    text = text.replace(/@([\wäöüßÄÖÜ]+(?: [\wäöüßÄÖÜ]+)*)/g,
-      '<a class="text-link" href="#" onclick="openChat(\'$1\')">@$1</a>');
-
+  createHTMLElement(text: string) {
     let para = document.createElement('p');
     para.innerHTML = text;
-
+    para.classList.add('text-link')
     this.textRef.nativeElement.appendChild(para)
+
+  }
+
+  async getDmChannel() {
+    let msgs = await this.directMsgService.getAllDirectMessages();
+    return msgs
+  }
+
+  serachDirectMsg(uid: string, dmChannels: { directMessagesId: string; users: any; }[]) {
+    let currentUser = this.getCurrentUserId();
+    let dmId = "";
+    if (currentUser) {
+      dmChannels.forEach(channel => {
+        let hasDM = channel.users.includes(currentUser) && channel.users.includes(uid);
+        if (hasDM) {
+          dmId = channel.directMessagesId;
+        }
+      })
+    }
+    return dmId
+  }
+
+  getUserList(text: string) {
+    let userList = this.userMentionService.filteredUserList();
+    let taggedUsers: { name: string, uid: string }[] = [];
+
+    userList.forEach(user => {
+      const isTagged = text.search(user.name);
+      if (isTagged > 0) {
+        taggedUsers.push({
+          name: user.name,
+          uid: user.uid
+        })
+      }
+
+    })
+    return taggedUsers
   }
 
 
