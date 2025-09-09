@@ -6,11 +6,10 @@
     </div>
 </mat-menu>
 
-<div *ngIf="!editView" class="ticket-container" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()"
-    (click)="openThreadPanel()">
+<div *ngIf="!editView" class="ticket-container" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
     <div class="ticket" [ngClass]="{'reverse reverse-hover' : isCurrentUser()}">
         <div class="member-img-ticket">
-            <img src="assets/img/elias_neumann.svg" alt="">
+            <img src={{userImg}} alt="">
         </div>
         <div class="message-content">
 
@@ -37,7 +36,7 @@
                 <div class="emoji" (mouseenter)="showPopupIndex($index)" (mouseleave)="showPopupIndexNumber = -1">
                     <div class="emoji-popup" *ngIf="$index == showPopupIndexNumber">
                         {{emoji.emoji}}
-                        <p>Sofie Müller</p>
+                        <p>{{ showReactName(emoji.users) }}</p>
                         <span>hat reagiert</span>
                     </div>
                     {{emoji.emoji}}
@@ -57,7 +56,7 @@
                 (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple" src="assets/icon/add_reaction.svg">
             </div>
 
-            <div class="emoji-menu-item"><img class="hover-purple" src="assets/icon/comment.svg"></div>
+            <div class="emoji-menu-item" (click)="openThreadPanel()"><img class="hover-purple" src="assets/icon/comment.svg"></div>
             <div *ngIf="isCurrentUser()" class="emoji-menu-item">
                 <mat-icon #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="editTicket"
                     (menuOpened)="onEditMenuOpened()" (menuClosed)="onEditMenuClosed()">more_vert</mat-icon>
