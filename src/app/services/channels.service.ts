@@ -7,6 +7,7 @@ import { addDoc, DocumentData, query, orderBy } from '@angular/fire/firestore';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { user } from '@angular/fire/auth';
+import { FirestoreService } from './firestore.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class ChannelsService implements OnDestroy {
   private channelSubject = new BehaviorSubject<ChannelInterface | null>(null);
   private messagesSubject = new BehaviorSubject<TicketInterface[]>([]);
   private focusRequest = new Subject<void>();
+  firestoreService = inject(FirestoreService);
   focusRequest$ = this.focusRequest.asObservable();
   messages$ = this.messagesSubject.asObservable();
   channel$ = this.channelSubject.asObservable();
@@ -35,12 +37,47 @@ export class ChannelsService implements OnDestroy {
     const snapshot = await getDocs(channelsCol);
     const channels = snapshot.docs.map(doc => ({
       channelId: doc.id,
+      createdBy: doc.data()['createdBy'],
       members: doc.data()['members'] || [],
       name: doc.data()['name'],
       ...doc.data()
     }));
-    console.log('All channels:', channels);
     return channels;
+  }
+
+  async updatedChannels(user: any) {
+    const updatedMember = user;
+    const channels = await this.getAllChannels();
+
+    for (const channel of channels) {
+      const updated = this.updateMemberInChannel(channel, updatedMember);
+      if (updated) {
+        await this.saveChannelUpdates(channel);
+      }
+    }
+  }
+
+  updateMemberInChannel(channel: any, updatedMember: any): boolean {
+    let updated = false;
+    for (const member of channel.members) {
+      if (member.id === updatedMember.uid) {
+        member.name = updatedMember.name;
+        if (member.role === 'admin') {
+          channel.createdBy = updatedMember.name;
+        }
+        updated = true;
+      }
+    }
+    return updated;
+  }
+
+  async saveChannelUpdates(channel: any): Promise<void> {
+    const channelRef = doc(this.firestore, 'channels', channel.channelId);
+
+    await updateDoc(channelRef, {
+      members: channel.members,
+      createdBy: channel.createdBy
+    });
   }
 
   async getChannelInfos(channelData?: DocumentData, channelId?: string) {
@@ -55,8 +92,6 @@ export class ChannelsService implements OnDestroy {
 
       this.channelSubject.next(channel);
       this.putMessagesInArray(channelId);
-
-
     }
   }
 
@@ -82,7 +117,6 @@ export class ChannelsService implements OnDestroy {
       }
     }
     return members
-
   }
 
   getTickets(ticketId: string, ticketData: DocumentData, channelId: string) {
@@ -134,21 +168,14 @@ export class ChannelsService implements OnDestroy {
     async editTicketText(ticketRef: DocumentReference, text: string) {
     try {
       await updateDoc(ticketRef, { text: text })
-
     } catch (err) {
       console.error("The message could not be updated: ", err);
-
     }
-
   }
 
   renderThread(channelId: string, ticketId: string) {
     let threadRef = this.getThreadRef(channelId, ticketId);
-
-
   }
-
-  
 
   async getThreadsCount(channelId: string, ticketId: string) {
     let threadRef = this.getThreadRef(channelId, ticketId);
@@ -171,9 +198,7 @@ export class ChannelsService implements OnDestroy {
 
   getThreadRef(channelId: string, ticketId: string) {
     return collection(doc(this.firestore, "channels", channelId, "messages", ticketId), "threads")
-
   }
-
 
   getChannelRef(channelId: string) {
     return doc(collection(this.firestore, "channels"), channelId)
@@ -183,7 +208,6 @@ export class ChannelsService implements OnDestroy {
     this.unsubChannel?.();
     this.unsubMessages?.();
     console.log("Destroyed");
-
   }
 
   updateEditChannel(channelId: string, name: string, description: string) {

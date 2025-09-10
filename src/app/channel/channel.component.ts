@@ -91,16 +91,13 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, private ngZone: NgZone) {}
 
   ngOnInit(): void {
-    // this.focusTextarea();
-
     this.loading = true;
     this.getActiveRoute();
-    console.log(window.innerWidth);
     this.checkWindowWidth();
+    
     this.channelSubscription = this.channelsService.channel$.subscribe((channel) => {
       if (channel) {
         this.channel = channel;
-        console.log('Channel empfangen:', this.channel);
         this.loading = false;
         this.initialScrollDone = false;
       }
@@ -126,8 +123,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.initialScrollDone = true;
     }
   }
-
-
 
   checkWindowWidth() {
     if (window.innerWidth > 1024) {
