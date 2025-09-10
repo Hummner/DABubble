@@ -389,7 +389,7 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   createText(container: HTMLParagraphElement, text: string) {
-    container.innerHTML = text;
+    container.innerHTML = text.trim();
     this.textRef.nativeElement.innerHTML = '';
     this.textRef.nativeElement.appendChild(container);
   }

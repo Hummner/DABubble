@@ -235,8 +235,12 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   checkTheKey(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
+    event.preventDefault();
+    if (event.key === 'Enter' && event.shiftKey) {
+
+    } else if (event.key === 'Enter') {
       if (this.textInput != '') {
+        event.preventDefault();
         this.addTicket();
       }
     }
@@ -293,14 +297,17 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     return this.channelsService.getChannel(this.channelId);
   }
 
-  addTicket() {
+  async addTicket() {
     const currentUser = this.getCurrentUserId();
     const textMessage = this.textInput;
-    console.log(currentUser, ': ', textMessage);
-    this.initialScrollDone = false;
 
     if (currentUser && textMessage) {
-      this.channelsService.addTicketToChannel(this.channelId, currentUser, textMessage);
+      this.isMessage = false;
+      this.textInput = "";
+      await this.channelsService.addTicketToChannel(this.channelId, currentUser, textMessage);
+      this.initialScrollDone = false;
+      this.scrollToBottom()
+      this.isMessage = true;
     } else {
       console.error('No User or Text');
     }
