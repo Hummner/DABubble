@@ -760,25 +760,6 @@ main {
   border-radius: 50%;
 }
 
-::ng-deep .tag-menu-item,
-::ng-deep .channel-menu-item {
-    >.mat-mdc-menu-item-text {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-
-        >p {
-            margin: 0;
-        }
-    }
-}
-
-.tagbox-img {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-}
 
 .hide-content {
   display: none !important;
