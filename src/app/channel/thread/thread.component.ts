@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, input, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, inject, input, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { TicketInterface } from '../../interfaces/ticket.interface';
 import { Subscription } from 'rxjs';
@@ -9,15 +9,23 @@ import { FirestoreService } from '../../services/firestore.service';
 import { doc, FieldValue, getDoc, Timestamp } from '@angular/fire/firestore';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { UserMentionService } from '../../services/user-channel-mention.service';
+import { EmojiServiceService } from '../../services/emoji.service';
+import { EmojiArrayService } from '../../services/emoji-array.service';
 
 @Component({
   selector: 'app-thread',
   standalone: true,
-  imports: [MatIconModule, ThreadMessagesComponent, CommonModule, FormsModule],
+  imports: [MatIconModule, ThreadMessagesComponent, CommonModule, FormsModule, MatMenuModule],
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss'
 })
 export class ThreadComponent implements OnInit, OnDestroy {
+
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
 
 
   @Output() close = new EventEmitter<void>;
@@ -26,7 +34,10 @@ export class ThreadComponent implements OnInit, OnDestroy {
   @Input() isThreadOpen!: boolean;
   @Input() currentThreadPath?: string;
   firestoreService = inject(FirestoreService);
+  userMentionService = inject(UserMentionService);
   private auth = inject(AuthService);
+  emojiService = inject(EmojiServiceService);
+  emojiArray = inject(EmojiArrayService);
 
   threadService = inject(ThreadService);
   private messagesSubscription?: Subscription;
@@ -37,7 +48,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
   ticketUserName!: string;
   ticketCreatedAt!: string;
   ticketText!: string;
-  textInput!: string;
+  textInput: string = "";
   messagesCount!: string;
   ticketPath!: string | void;
   number?: number
@@ -59,14 +70,29 @@ export class ThreadComponent implements OnInit, OnDestroy {
     });
   }
 
+  checkTheKey(event: KeyboardEvent) {
+    event.preventDefault();
+    if (event.key === 'Enter' && event.shiftKey) {
+
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.textInput != '') {
+        if (this.textInput.trim() !== '') {
+          this.textInput = this.textInput.replace(/\n/g, '').trim();
+          this.addMessageToThread();
+        }
+      }
+    }
+  }
+
 
   async addMessageToThread() {
     let senderId = this.getCurrentUserId();
     let text = this.textInput;
-    this.textInput = "";
     try {
-      if (senderId && text) {
+      if (senderId && text.length !== 0) {
         await this.threadService.addMessageToThread(senderId, text).then(() => {
+          this.textInput = "";
         });
       }
     } catch (err) {
@@ -75,11 +101,19 @@ export class ThreadComponent implements OnInit, OnDestroy {
     }
   }
 
+  textLenghtCheck() {
+
+    if (this.textInput) {
+      return false
+    }
+
+    return true
+  }
+
 
   createCurrentTicket() {
-    this.showName();
     console.log(this.currentTicket.createdAt);
-    
+
     this.ticketCreatedAt = this.showTime();
     this.ticketText = this.currentTicket.text;
     this.messagesCount = this.messagesCounter();
@@ -89,17 +123,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
     const createdAtDate = this.currentTicket?.createdAt instanceof Timestamp ? this.currentTicket?.createdAt.toDate() : null;
     return createdAtDate instanceof Date ? createdAtDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
   }
-
-  showName() {
-    const userIndex = this.findUser(this.currentTicket.senderId)
-
-    if (userIndex >= 0 && this.members && this.isMember(userIndex, this.members)) {
-      this.ticketUserName = this.members[userIndex]['name']
-    } else {
-      this.ticketUserName = "Guest"
-    }
-  }
-
 
   showPlaceholder(index: number): string {
     const createdAt = this.messages[index]?.createdAt;
@@ -156,13 +179,48 @@ export class ThreadComponent implements OnInit, OnDestroy {
     return "Keine Antwort"
   }
 
+  takeUser(name: string) {
+    this.textInput = this.userMentionService.takeUser(name, this.textInput);
+  }
 
-  checkTheKey(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      if (this.textInput != "") {
-        this.addMessageToThread();
-      }
-    }
+  takeChannel(name: string) {
+    this.textInput = this.userMentionService.takeChannel(name, this.textInput);
+  }
+
+  tagInputStart() {
+    this.textInput = this.userMentionService.tagInputStart(this.textInput, this.chatInput);
+  }
+
+  tagInputChannelStart() {
+    this.textInput = this.userMentionService.tagChannelInputStart(this.textInput, this.chatInput);
+  }
+
+  openEmojiMenu(trigger: MatMenuTrigger) {
+    trigger.openMenu();
+  }
+
+  get emojiList() {
+    return this.emojiArray.emojiList;
+  }
+
+  get emojiUsageHistory() {
+    return this.emojiArray.emojiUsageHistory;
+  }
+
+  get sortedEmoji() {
+    const historySet = new Set(this.emojiUsageHistory);
+    const recentFirst = this.emojiUsageHistory.filter((e) => this.emojiList.includes(e));
+    const rest = this.emojiList.filter((e) => !historySet.has(e));
+    return [...recentFirst, ...rest];
+  }
+
+
+  onInputChange(event: Event) {
+    this.userMentionService.onInputChange(this.textInput, this.mentionMenuTrigger, this.channelMenuTrigger, this.chatInput);
+  }
+
+  addEmoji(emoji: any) {
+    this.textInput = this.emojiService.addEmojiToContent(emoji, this.textInput);
   }
 
 

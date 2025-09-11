@@ -158,7 +158,7 @@
               <mat-menu #reactMenu="matMenu" class="emoji-menu-small">
                 <div class="emoji-menu-container">
                   @for (emoji of sortedEmoji; track $index) {
-                  <span class="emoji-in-popup" (click)="selectEmoji(emoji)">{{ emoji }}</span>
+                  <span class="emoji-in-popup" (click)="addEmoji(emoji); $event.stopPropagation()">{{ emoji }}</span>
                   }
                 </div>
               </mat-menu>
@@ -196,7 +196,7 @@
               </div>
             </mat-menu>
           </div>
-          <div class="send-icon" (click)="addTicket()">
+          <div class="send-icon" (click)="addTicket()" [ngClass]="{'disabled' : textInput.length == 0}">
             <img src="assets/icon/send.png" alt="" />
           </div>
         </div>

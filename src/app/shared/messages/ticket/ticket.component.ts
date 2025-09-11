@@ -65,9 +65,6 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
     }
 
-
-
-
   }
 
   ngAfterViewInit() {

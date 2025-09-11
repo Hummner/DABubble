@@ -35,6 +35,7 @@ import { AddMemberComponent } from '../channel/add-member/add-member.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { UserMentionService } from '../services/user-channel-mention.service';
+import { EmojiServiceService } from '../services/emoji.service';
 
 
 @Component({
@@ -66,6 +67,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   firestoreService = inject(FirestoreService);
   private auth = inject(AuthService);
   emojiArray = inject(EmojiArrayService);
+  emojiService = inject(EmojiServiceService)
   userProfile = this.firestoreService.userProfile;
   user: UserProfileInterface | null = null;
   showMenu = false;
@@ -239,9 +241,12 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (event.key === 'Enter' && event.shiftKey) {
 
     } else if (event.key === 'Enter') {
+      event.preventDefault();
       if (this.textInput != '') {
-        event.preventDefault();
-        this.addTicket();
+        if (this.textInput.trim() !== '') {
+          this.textInput = this.textInput.replace(/\n/g, '').trim();
+          this.addTicket();
+        }
       }
     }
   }
@@ -299,13 +304,13 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   async addTicket() {
     const currentUser = this.getCurrentUserId();
-    const textMessage = this.textInput;
+    let textMessage = this.textInput;
 
-    if (currentUser && textMessage) {
+    if (currentUser && textMessage.length != 0) {
       this.isMessage = false;
-      this.textInput = "";
       await this.channelsService.addTicketToChannel(this.channelId, currentUser, textMessage);
       this.initialScrollDone = false;
+      this.textInput = "";
       this.scrollToBottom()
       this.isMessage = true;
     } else {
@@ -396,6 +401,11 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   takeChannel(name: string) {
     this.textInput = this.userMentionService.takeChannel(name, this.textInput);
   }
+
+    addEmoji(emoji: any) {
+    this.textInput = this.emojiService.addEmojiToContent(emoji, this.textInput);
+  }
+
 
 
   onInputChange(event: Event) {

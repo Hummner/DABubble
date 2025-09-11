@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketInterface } from '../../../interfaces/ticket.interface';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
@@ -13,6 +13,8 @@ import { EmojiArrayService } from '../../../services/emoji-array.service';
 import { ChannelsService } from '../../../services/channels.service';
 import { doc, getDocs, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { ThreadService } from '../../../services/thread.service';
+import { UserMentionService } from '../../../services/user-channel-mention.service';
+import { NavbarService } from '../../../services/navbar.service';
 
 @Component({
   selector: 'app-thread-messages',
@@ -21,7 +23,9 @@ import { ThreadService } from '../../../services/thread.service';
   templateUrl: './thread-messages.component.html',
   styleUrl: './thread-messages.component.scss'
 })
-export class ThreadMessagesComponent implements OnInit, OnChanges {
+export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit {
+
+  @ViewChild('text') textRef!: ElementRef<HTMLDivElement>;
 
   @Input() tickets!: TicketInterface[];
   @Input() message!: TicketInterface;
@@ -33,6 +37,8 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
   emojiArray = inject(EmojiArrayService);
   channelService = inject(ChannelsService);
   threadService = inject(ThreadService);
+  userMentionService = inject(UserMentionService);
+  navbarService = inject(NavbarService)
   currentUser?: string | null;
   channelId?: Subscription;
   showMenu = false;
@@ -41,6 +47,8 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
   editedText!: string;
   emojiMenuOpen = false;
   showPopup = false;
+  userImg!: string;
+  text!: void;
 
   constructor(
     private route: ActivatedRoute
@@ -55,6 +63,11 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
 
     }
     this.getChannelId();
+  }
+
+  ngAfterViewInit() {
+    console.log(this.textRef);
+    this.text = this.showText();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -94,6 +107,75 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
     this.showMenu = true
     console.log("Emojimenuopend");
 
+  }
+
+  showText() {
+    let container = document.createElement('p');
+    container.classList.add('text-link')
+    let text = this.message.text;
+    let taggedUsers = this.getUserList(text);
+    let lastIndex = 0;
+    if (taggedUsers.length == 0) return this.createText(container, text);
+
+    taggedUsers.forEach(user => {
+      let tag = `@${user.name}`
+      let idx = text.indexOf(tag, lastIndex)
+
+      if (idx !== -1) {
+        const before = text.substring(lastIndex, idx);
+        if (before) container.appendChild(document.createTextNode(before))
+        const a = this.createLinkElement(user)
+        container.appendChild(a);
+        lastIndex = idx + tag.length
+      }
+      this.createTextAfterLink(lastIndex, text, container);
+    })
+    return
+  }
+
+  createText(container: HTMLParagraphElement, text: string) {
+    container.innerHTML = text.trim();
+    this.textRef.nativeElement.innerHTML = '';
+    this.textRef.nativeElement.appendChild(container);
+  }
+
+  createTextAfterLink(lastIndex: number, text: string, container: HTMLParagraphElement) {
+    if (lastIndex < text.length) {
+      container.appendChild(document.createTextNode(text.substring(lastIndex)))
+    }
+
+    this.textRef.nativeElement.innerHTML = '';
+    this.textRef.nativeElement.appendChild(container);
+  }
+
+  createLinkElement(user: { name: string, uid: string; }) {
+    let currentUser = this.getCurrentUserId();
+    let a = document.createElement('a');
+    a.textContent = `@${user.name}`;
+    a.href = '#';
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.navbarService.findOrCreateDMchannel(user.uid, currentUser!)
+    })
+
+    return a
+  }
+
+  getUserList(text: string) {
+    let userList = this.userMentionService.filteredUserList();
+    let taggedUsers: { name: string, uid: string }[] = [];
+
+    userList.forEach(user => {
+      const isTagged = text.search(user.name);
+      if (isTagged > 0) {
+        taggedUsers.push({
+          name: user.name,
+          uid: user.uid
+        })
+      }
+
+    })
+    return taggedUsers
   }
 
 
@@ -152,9 +234,11 @@ export class ThreadMessagesComponent implements OnInit, OnChanges {
     const userIndex = this.findUser(this.message.senderId)
 
     if (userIndex >= 0 && this.members && this.isMember(userIndex, this.members)) {
-      this.userName = this.members[userIndex]['name']
+      this.userName = this.members[userIndex]['name'];
+      this.userImg = this.members[userIndex]['imgUrl'];
     } else {
-      this.userName = "Guest"
+      this.userName = "Guest";
+      this.userImg = "assets/img/profile.png";
     }
   }
 

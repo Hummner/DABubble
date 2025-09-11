@@ -22,7 +22,8 @@
                         </div>
                     </div>
                 </div> -->
-                <app-thread-messages *ngIf="isThreadOpen" [members]="members" [message]="currentTicket"></app-thread-messages>
+                <app-thread-messages *ngIf="isThreadOpen" [members]="members"
+                    [message]="currentTicket"></app-thread-messages>
 
                 <div class="placeholder">
                     <div class="placeholder-date msg-answer">{{ messagesCount }}</div>
@@ -40,22 +41,60 @@
         <footer>
             <div class="text-area">
                 <textarea (keyup)="checkTheKey($event)" [(ngModel)]="textInput" name="chat_input" id="chat_input"
-                    placeholder="Antworten..."></textarea>
+                    placeholder="Antworten..." (input)="onInputChange($event)"></textarea>
             </div>
             <div class="input-buttons">
                 <div class="icons">
-                    <div class="input-icon">
-                        <img src="assets/icon/reaction.png" alt="">
+                    <div class="input-icon" [matMenuTriggerFor]="reactMenu" #reactMenuTrigger="matMenuTrigger"
+                        (click)="openEmojiMenu(reactMenuTrigger)">
+                        <img src="assets/icon/reaction.png" alt="" />
                     </div>
-                    <div class="input-icon">
-                        <img src="assets/icon/tag_icon.png" alt="">
+
+                    <div class="input-icon" click-stop-propagation #mentionTrigger="matMenuTrigger"
+                        [matMenuTriggerFor]="tagBoxMenu" (click)="tagInputStart()">
+                        <img src="assets/icon/tag_icon.png" alt="" />
+                    </div>
+
+                    <div class="input-icon" click-stop-propagation [matMenuTriggerFor]="channelBoxMenu"
+                        #channelTrigger="matMenuTrigger" (click)="tagInputChannelStart()">
+                        <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
                     </div>
 
                 </div>
-                <div class="send-icon" (click)="addMessageToThread()">
+                <div class="send-icon" (click)="addMessageToThread()" [ngClass]="{'disabled' : textLenghtCheck()}">
                     <img src="assets/icon/send.png" alt="">
                 </div>
             </div>
         </footer>
     </div>
 </section>
+
+<mat-menu #channelBoxMenu="matMenu" class="channel-box-menu" yPosition="above">
+    <div class="channel-menu-wrap">
+        @for(channel of userMentionService.filteredChannelList(); track channel) {
+        <menu mat-menu-item class="channel-menu-item" (click)="takeChannel(channel.name)">
+            <img src="assets/icon/tag_channel.png" alt="" />
+            <p>{{ channel.name }}</p>
+        </menu>
+        }
+    </div>
+</mat-menu>
+
+<mat-menu #reactMenu="matMenu" class="emoji-menu-small">
+    <div class="emoji-menu-container">
+        @for (emoji of sortedEmoji; track $index) {
+        <span class="emoji-in-popup" (click)="addEmoji(emoji); $event.stopPropagation()">{{ emoji }}</span>
+        }
+    </div>
+</mat-menu>
+
+<mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu" yPosition="above">
+    <div class="tag-menu-wrap">
+        @for(user of userMentionService.filteredUserList();track user){
+        <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
+            <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+            <p>{{ user.name }}</p>
+        </menu>
+        }
+    </div>
+</mat-menu>
