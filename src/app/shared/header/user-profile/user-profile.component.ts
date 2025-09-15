@@ -1,10 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FirestoreService } from '../../../services/firestore.service';
 import { NgIf, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
+import { ChannelsService } from '../../../services/channels.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -16,6 +17,7 @@ import { UserProfileInterface } from '../../../interfaces/user-profile.interface
 export class UserProfileComponent implements OnInit {
   @Output() close = new EventEmitter();
   userProfile = this.firestoreService.userProfile;
+  channelService = inject(ChannelsService);
   edit = false;
   editImg = false;
   user!: UserProfileInterface;
@@ -63,6 +65,7 @@ export class UserProfileComponent implements OnInit {
   closeEdit() {
     this.user = { ...this.editableUser };
     this.saveName();
+    this.channelService.updatedChannels(this.user);
     this.edit = false;
   }
 
