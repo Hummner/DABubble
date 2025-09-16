@@ -60,19 +60,16 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnInit(): void {
 
-    
-    this.getMessageId();
-    console.log("This ticket: ", this.messageId);
-    if (this.messageId) {
+    if (this.ticket.threads) {
+      this.getMessageId();
+      let ticketPath = this.ticket.threads.path.split('/').slice(3, 4).join('/')
 
-
+      if (this.messageId === ticketPath) {
+        console.log("This ticket: ", this.messageId);
+        console.log("This path:", ticketPath);
+        this.openThreadPanel()
+      }
     }
-
-
-
-
-
-
 
 
     if (this.ticket) {
@@ -101,6 +98,8 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['ticket']) {
+
+
 
 
 

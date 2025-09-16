@@ -6,13 +6,14 @@ import { ThreadService } from '../../services/thread.service';
 import { ThreadMessagesComponent } from '../../shared/messages/thread-messages/thread-messages.component';
 import { AuthService } from '../../services/auth.service';
 import { FirestoreService } from '../../services/firestore.service';
-import { doc, FieldValue, getDoc, Timestamp } from '@angular/fire/firestore';
-import { CommonModule } from '@angular/common';
+import { doc, FieldValue, Firestore, getDoc, Timestamp } from '@angular/fire/firestore';
+import { CommonModule, getLocaleFirstDayOfWeek } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { UserMentionService } from '../../services/user-channel-mention.service';
 import { EmojiServiceService } from '../../services/emoji.service';
 import { EmojiArrayService } from '../../services/emoji-array.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-thread',
@@ -38,6 +39,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
   private auth = inject(AuthService);
   emojiService = inject(EmojiServiceService);
   emojiArray = inject(EmojiArrayService);
+  threadsService = inject(ThreadService);
 
   threadService = inject(ThreadService);
   private messagesSubscription?: Subscription;
@@ -55,12 +57,11 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
 
   constructor() {
+
   }
 
-
   ngOnInit(): void {
-    
-    
+
     this.messagesSubscription = this.threadService.messagesSubscribe$.subscribe(msgArray => {
       this.messages = msgArray
     });
@@ -71,6 +72,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
       this.createCurrentTicket();
     });
   }
+
 
   checkTheKey(event: KeyboardEvent) {
     event.preventDefault();
