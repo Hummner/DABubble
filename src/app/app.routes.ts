@@ -11,10 +11,14 @@ import { NewMessageComponent } from './new-message/new-message.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ImpressumComponent } from './impressum/impressum.component';
 import { DatenschutzComponent } from './datenschutz/datenschutz.component';
+import { ThreadMessagesComponent } from './shared/messages/thread-messages/thread-messages.component';
+import { TicketComponent } from './shared/messages/ticket/ticket.component';
 
 export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'channel/:ChannelId', component: ChannelComponent },
+  { path: 'channel/:ChannelId', component: ChannelComponent,
+    children: [{ path: 'messages/:messageId', component: ChannelComponent}]
+  },
   { path: '', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'avatarSelection', component: AvatarSelectionComponent },
