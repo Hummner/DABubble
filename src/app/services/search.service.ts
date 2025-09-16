@@ -239,7 +239,8 @@ export class SearchService {
     if (snap.exists()) {
       this.isLoading = false;
       this.searchText = '';
-      this.router.navigate(['channel', channelId]);
+      this.channelService.getChannel(channelId);
+      this.router.navigateByUrl(`channel/${channelId}`);
       return true;
     }
     return false;
