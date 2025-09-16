@@ -256,7 +256,7 @@ export class SearchService {
       if (snap.exists()) {
         this.isLoading = false;
         this.searchText = '';
-        this.router.navigate(['channel', channelId], {
+        this.router.navigate(['channel', channelId, 'messages', msg.id], {
           queryParams: { threadMessageId: messageId },
         });
         return true;
