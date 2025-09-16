@@ -59,6 +59,8 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    
+    
     this.messagesSubscription = this.threadService.messagesSubscribe$.subscribe(msgArray => {
       this.messages = msgArray
     });

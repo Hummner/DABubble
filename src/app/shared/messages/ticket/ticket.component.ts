@@ -54,32 +54,68 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   emojiMenuOpen = false;
   text!: any;
   lastThreadTime!: string;
+  messageId?: string | null;
 
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+
+    
+    this.getMessageId();
+    console.log("This ticket: ", this.messageId);
+    if (this.messageId) {
+
+
+    }
+
+
+
+
+
+
+
+
     if (this.ticket) {
       this.showName();
       this.time = this.showTime();
       this.getChannelId();
 
+
+
     }
 
   }
 
+  getMessageId() {
+    this.route.paramMap.subscribe(params => {
+      this.messageId = params.get('messageId');
+      return
+    })
+  }
+
+
   ngAfterViewInit() {
-    console.log(this.textRef);
     this.text = this.showText();
   }
 
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['ticket']) {
+
+
+
+
+
+
       this.answers = this.showAnswer();
       this.time = this.showTime();
       this.lastThreadTime = this.showLastThreadTime()
 
+
+
     }
+
+
 
   }
 
@@ -165,11 +201,11 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     if (isCurrentUserReacted && nameArray.length == 1) {
       let lastName = nameArray[nameArray.length - 1];
       name = `${lastName} und Du`;
-    } else if(isCurrentUserReacted && nameArray.length  > 1) {
+    } else if (isCurrentUserReacted && nameArray.length > 1) {
       name = `Du und +${allUserCount}`
     } else if (isCurrentUserReacted && nameArray.length == 0 && allUserCount == 0) {
       name = "Du"
-    } 
+    }
     else if (!isCurrentUserReacted && nameArray.length == 1) {
       name = nameArray[0];
     } else if (!isCurrentUserReacted && nameArray.length > 1) {
@@ -184,6 +220,8 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   openThreadPanel() {
     if (this.ticket.threads?.path) {
       this.getThreadPath(this.ticket.threads?.path)
+      console.log(this.ticket.threads.path);
+
       this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
       this.threadsService.getCurrentTicket()
       this.openThread.emit()

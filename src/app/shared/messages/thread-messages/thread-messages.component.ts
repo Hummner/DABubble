@@ -40,7 +40,8 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   userMentionService = inject(UserMentionService);
   navbarService = inject(NavbarService)
   currentUser?: string | null;
-  channelId?: Subscription;
+  channelId?: string;
+  messageId?: string;
   showMenu = false;
   editMenuOpen = false;
   editView = false;
@@ -57,12 +58,39 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   ngOnInit(): void {
+
+
+    // debugger
+    //      this.getChannelId();
+    //   this.getChannelInfo()
+    // this.getMessageId();
+    // if (this.messageId) {
+    //   console.log("This is message id: ", this.messageId);
+ 
+
+
+    // }
+    
+
+
     if (this.message) {
       this.showName();
       this.time = this.showTime();
 
     }
-    this.getChannelId();
+
+
+
+
+  }
+
+  getChannelInfo() {
+    if (this.channelId) {
+      this.channelService.getChannel(this.channelId);
+
+    }
+    return
+
   }
 
   ngAfterViewInit() {
@@ -71,6 +99,13 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    if (changes['message']) {
+      if (this.textRef) {
+        this.text = this.showText();
+      }
+    }
+
     this.currentUser = this.getCurrentUserId();
     this.time = this.showTime();
   }
@@ -346,10 +381,22 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
 
 
   getChannelId() {
-    this.channelId = this.route.params.subscribe(params => {
-      const channelId = params['ChannelId'];
+
+    this.route.paramMap.subscribe(params => {
+      const channelId = params.get('ChannelId');
       return channelId
     })
+  }
+
+  getMessageId() {
+    this.route.paramMap.subscribe(params => {
+      const messageId = params.get('messageId');
+      return messageId
+    })
+  }
+
+  getThreadFromRoute() {
+
   }
 
   getTicketRef() {
