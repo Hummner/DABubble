@@ -109,7 +109,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
       if (this.router.url.includes('/messages/')) {
         // this.isThreadOpen = true;
-        
+
       }
     });
 
@@ -156,6 +156,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (params) {
         this.loading = true;
         this.channelId = params['ChannelId'];
+        console.log(this.channelId);
+        
       }
     });
   }
@@ -398,7 +400,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.textInput = this.userMentionService.takeChannel(name, this.textInput);
   }
 
-    addEmoji(emoji: any) {
+  addEmoji(emoji: any) {
     this.textInput = this.emojiService.addEmojiToContent(emoji, this.textInput);
   }
 
