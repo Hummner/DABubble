@@ -5,7 +5,7 @@ import { addDoc, arrayUnion, collection, doc, getDocs, Timestamp, updateDoc } fr
 import { AuthService } from '../../../services/auth.service';
 import { FirestoreService } from '../../../services/firestore.service';
 import { ThreadService } from '../../../services/thread.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ChannelsService } from '../../../services/channels.service';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -56,9 +56,10 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   lastThreadTime!: string;
   messageId?: string | null;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
+
 
     if (this.ticket.threads) {
       this.getMessageId();
@@ -399,12 +400,23 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
 
   showText() {
+
+  
     let container = document.createElement('p');
     container.classList.add('text-link')
+
+      if (this.ticket.text.includes('#')) {
+      this.tagHastagInText(container)
+    }
+
+
+
+
     let text = this.ticket.text;
     let taggedUsers = this.getUserList(text);
+    let taggedChannels = this.getChannelList(text)
     let lastIndex = 0;
-    if (taggedUsers.length == 0) return this.createText(container, text);
+    
 
     taggedUsers.forEach(user => {
       let tag = `@${user.name}`
@@ -419,12 +431,70 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
       }
       this.createTextAfterLink(lastIndex, text, container);
     })
+    if (taggedUsers.length == 0 && taggedChannels.length == 0) return this.createText(container, text);
     return
+  }
+
+  tagHastagInText(container: any) {
+    
+    let text = this.ticket.text;
+    let taggedChannels = this.getChannelList(text)
+
+    let lastIndex = 0;
+
+
+    taggedChannels.forEach(channel => {
+      let tag = `#${channel.name}`;
+      let idx = text.indexOf(tag, lastIndex)
+
+      if (idx !== -1) {
+        const before = text.substring(lastIndex, idx);
+        if (before) container.appendChild(document.createTextNode(before))
+        const a = this.createLinkElementHastag(channel)
+        container.appendChild(a);
+        lastIndex = idx + tag.length
+      }
+      this.createTextAfterLink(lastIndex, text, container);
+    })
+
+  }
+
+  createLinkElementHastag(channel: { name: string, id: string }) {
+    let currentUser = this.getCurrentUserId();
+    let a = document.createElement('a');
+    a.textContent = `#${channel.name}`;
+    a.href = '#';
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.userMentionService.findChannel(channel.id)
+      
+    })
+
+    return a
+  }
+
+
+  getChannelList(text: string) {
+    let channelList = this.userMentionService.getChannelWithUserMemmership();
+    let taggedChannels: { name: string, id: string }[] = [];
+
+
+    channelList.forEach(channel => {
+      const isTagged = text.search(channel.name)
+      if (isTagged > 0) {
+        taggedChannels.push({
+          name: channel.name,
+          id: channel.channelId
+        })
+      }
+    })
+    return taggedChannels
+
   }
 
   createText(container: HTMLParagraphElement, text: string) {
     container.innerHTML = text.trim();
-    this.textRef.nativeElement.innerHTML = '';
+    
     this.textRef.nativeElement.appendChild(container);
   }
 
@@ -433,7 +503,7 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
       container.appendChild(document.createTextNode(text.substring(lastIndex)))
     }
 
-    this.textRef.nativeElement.innerHTML = '';
+    
     this.textRef.nativeElement.appendChild(container);
   }
 

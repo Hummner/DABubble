@@ -6,6 +6,7 @@ import { ChannelInterface } from '../interfaces/channel.interface';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarService } from '../services/navbar.service';
 import { NavbarInterface } from '../interfaces/navbar.interface';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class UserMentionService {
     initialValue: [] as NavbarInterface[],
   });
 
-  constructor(private firestoreService: FirestoreService) {
+  constructor(private firestoreService: FirestoreService, private router: Router) {
     // Initialize filtered lists
     this.firestoreService.subUserList((users) => {
       this.filteredUserList.set(
@@ -155,4 +156,9 @@ export class UserMentionService {
       return;
     }
   }
+
+  findChannel(id: string) {
+    this.router.navigateByUrl(`channel/${id}`)
+  }
+
 }
