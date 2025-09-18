@@ -410,12 +410,21 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
 
-
+    let lastIndex = 0;
 
     let text = this.ticket.text;
     let taggedUsers = this.getUserList(text);
     let taggedChannels = this.getChannelList(text)
-    let lastIndex = 0;
+    let taggedArray = taggedUsers.concat(taggedChannels);
+
+    taggedArray.sort((a, b) => a.textIndex - b.textIndex)
+
+    console.log(taggedArray);
+
+    // ########################
+    
+    
+    
     
 
     taggedUsers.forEach(user => {
@@ -476,15 +485,19 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   getChannelList(text: string) {
     let channelList = this.userMentionService.getChannelWithUserMemmership();
-    let taggedChannels: { name: string, id: string }[] = [];
+    let taggedChannels: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
 
 
     channelList.forEach(channel => {
       const isTagged = text.search(channel.name)
       if (isTagged > 0) {
+        let taggedText = `#${channel.name}`
+        let textIndex = text.indexOf(taggedText)
         taggedChannels.push({
           name: channel.name,
-          id: channel.channelId
+          id: channel.channelId,
+          textIndex: textIndex,
+          taggedType: "channel"
         })
       }
     })
@@ -507,14 +520,14 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     this.textRef.nativeElement.appendChild(container);
   }
 
-  createLinkElement(user: { name: string, uid: string; }) {
+  createLinkElement(user: { name: string, id: string; }) {
     let currentUser = this.getCurrentUserId();
     let a = document.createElement('a');
     a.textContent = `@${user.name}`;
     a.href = '#';
     a.addEventListener('click', (e) => {
       e.preventDefault();
-      this.navbarService.findOrCreateDMchannel(user.uid, currentUser!)
+      this.navbarService.findOrCreateDMchannel(user.id, currentUser!)
     })
 
     return a
@@ -522,14 +535,18 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   getUserList(text: string) {
     let userList = this.userMentionService.filteredUserList();
-    let taggedUsers: { name: string, uid: string }[] = [];
+    let taggedUsers: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
 
     userList.forEach(user => {
       const isTagged = text.search(user.name);
       if (isTagged > 0) {
+          let taggedText = `@${user.name}`
+        let textIndex = text.indexOf(taggedText)
         taggedUsers.push({
           name: user.name,
-          uid: user.uid
+          id: user.uid,
+          textIndex: textIndex,
+          taggedType: "user"
         })
       }
 
