@@ -45,6 +45,21 @@ export class ChannelsService implements OnDestroy {
     return channels;
   }
 
+  async getCurrentChannel(channelId: string): Promise<{ channelId: string; members: any[] } | null> {
+    const channelRef = doc(this.firestore, 'channels', channelId);
+    const channelSnap = await getDoc(channelRef);
+
+    if (!channelSnap.exists()) {
+      console.warn('Channel nicht gefunden:', channelId);
+      return null;
+    }
+      const channel = {
+        channelId: channelSnap.id,
+        members: channelSnap.data()['members'] || [],
+      };
+      return channel;
+  }
+
   async updatedChannels(user: any) {
     const updatedMember = user;
     const channels = await this.getAllChannels();
@@ -99,7 +114,6 @@ export class ChannelsService implements OnDestroy {
   subChannel(channelId: string) {
     return onSnapshot(this.getChannelRef(channelId), (el) => {
       let channelData = el.data();
-      console.log(channelData);
       this.getChannelInfos(channelData, channelId);
     })
 

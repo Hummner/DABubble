@@ -21,21 +21,34 @@
         }
       </ul>
       <div class="search-wrapper">
-        <input type="text" name="search" [(ngModel)]="searchText" placeholder="Name eingeben" class="full-input" />
+        <input
+          type="text"
+          name="search"
+          [(ngModel)]="searchText"
+          (input)="searchUser()"
+          placeholder="Name eingeben"
+          class="full-input"
+        />
 
         @if (searchText != '') {
-        <div class="member-box">
-          <ul class="direct-messages-list">
-            @for(user of getOtherUserList(); track user){
-            <li class="direct-messages-item" (click)="addMember(user.uid)">
-              <div class="avatar">
-                <img [src]="user.imgUrl" alt="Elise Roth" />
-              </div>
-              <p>{{ user.name }}</p>
-            </li>
-            }
-          </ul>
-        </div>
+          <div class="member-box">
+            <ul class="direct-messages-list ">
+              @if (availibleMembers.length === 0) {
+                <li class="direct-messages-item no-members">
+                  <p>Keine Users gefunden</p>
+                </li>
+              } @else {
+                @for (user of availibleMembers; track user) {
+                  <li class="direct-messages-item" (click)="addMember(user.uid)">
+                    <div class="avatar">
+                      <img [src]="user.imgUrl" alt="Avatar" />
+                    </div>
+                    <p>{{ user.name }}</p>
+                  </li>
+                }
+              }
+            </ul>
+          </div>
         }
       </div>
       <div class="actions">

@@ -179,6 +179,18 @@ form {
   }
 }
 
+.no-members {
+  
+  &:hover {
+    cursor: default !important;
+    background-color: transparent !important;
+  }
+
+  p {
+    text-align: center !important;
+  }
+}
+
 .actions {
   position: absolute;
   right: 32px;
