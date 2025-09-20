@@ -33,7 +33,7 @@
                     <div *ngIf="!isTheSameDate($index)" class="placeholder-thread">
                         <div class="placeholder-date-thread">{{ showPlaceholder($index)}}</div>
                     </div>
-                    <app-thread-messages [members]="members" [message]="message"></app-thread-messages>
+                    <app-thread-messages [members]="members" [message]="message" [index]="$index"></app-thread-messages>
                     }
                 </div>
             </div>
