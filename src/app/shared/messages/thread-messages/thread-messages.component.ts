@@ -30,6 +30,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   @Input() tickets!: TicketInterface[];
   @Input() message!: TicketInterface;
   @Input() members?: any[];
+  @Input() index!: number;
   userName!: string;
   time!: string;
   firestoreService = inject(FirestoreService);
@@ -66,11 +67,11 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     // this.getMessageId();
     // if (this.messageId) {
     //   console.log("This is message id: ", this.messageId);
- 
+
 
 
     // }
-    
+
 
 
     if (this.message) {
@@ -95,14 +96,17 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
 
   ngAfterViewInit() {
     console.log(this.textRef);
-    this.text = this.showText();
+    setTimeout(() => {
+      this.text = this.showText();
+    }, 1)
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
     if (changes['message']) {
       if (this.textRef) {
-        this.text = this.showText();
+        // this.text = this.showText();
       }
     }
 
@@ -144,74 +148,74 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
 
   }
 
-  showText() {
-    let container = document.createElement('p');
-    container.classList.add('text-link')
-    let text = this.message.text;
-    let taggedUsers = this.getUserList(text);
-    let lastIndex = 0;
-    if (taggedUsers.length == 0) return this.createText(container, text);
+  // showText() {
+  //   let container = document.createElement('p');
+  //   container.classList.add('text-link')
+  //   let text = this.message.text;
+  //   let taggedUsers = this.getUserList(text);
+  //   let lastIndex = 0;
+  //   if (taggedUsers.length == 0) return this.createText(container, text);
 
-    taggedUsers.forEach(user => {
-      let tag = `@${user.name}`
-      let idx = text.indexOf(tag, lastIndex)
+  //   taggedUsers.forEach(user => {
+  //     let tag = `@${user.name}`
+  //     let idx = text.indexOf(tag, lastIndex)
 
-      if (idx !== -1) {
-        const before = text.substring(lastIndex, idx);
-        if (before) container.appendChild(document.createTextNode(before))
-        const a = this.createLinkElement(user)
-        container.appendChild(a);
-        lastIndex = idx + tag.length
-      }
-      this.createTextAfterLink(lastIndex, text, container);
-    })
-    return
-  }
+  //     if (idx !== -1) {
+  //       const before = text.substring(lastIndex, idx);
+  //       if (before) container.appendChild(document.createTextNode(before))
+  //       const a = this.createLinkElement(user)
+  //       container.appendChild(a);
+  //       lastIndex = idx + tag.length
+  //     }
+  //     this.createTextAfterLink(lastIndex, text, container);
+  //   })
+  //   return
+  // }
 
-  createText(container: HTMLParagraphElement, text: string) {
-    container.innerHTML = text.trim();
-    this.textRef.nativeElement.innerHTML = '';
-    this.textRef.nativeElement.appendChild(container);
-  }
+  // createText(container: HTMLParagraphElement, text: string) {
+  //   container.innerHTML = text.trim();
+  //   this.textRef.nativeElement.innerHTML = '';
+  //   this.textRef.nativeElement.appendChild(container);
+  // }
 
-  createTextAfterLink(lastIndex: number, text: string, container: HTMLParagraphElement) {
-    if (lastIndex < text.length) {
-      container.appendChild(document.createTextNode(text.substring(lastIndex)))
-    }
+  // createTextAfterLink(lastIndex: number, text: string, container: HTMLParagraphElement) {
+  //   if (lastIndex < text.length) {
+  //     container.appendChild(document.createTextNode(text.substring(lastIndex)))
+  //   }
 
-    this.textRef.nativeElement.innerHTML = '';
-    this.textRef.nativeElement.appendChild(container);
-  }
+  //   this.textRef.nativeElement.innerHTML = '';
+  //   this.textRef.nativeElement.appendChild(container);
+  // }
 
-  createLinkElement(user: { name: string, uid: string; }) {
-    let currentUser = this.getCurrentUserId();
-    let a = document.createElement('a');
-    a.textContent = `@${user.name}`;
-    a.href = '#';
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.navbarService.findOrCreateDMchannel(user.uid, currentUser!)
-    })
+  // createLinkElement(user: { name: string, uid: string; }) {
+  //   let currentUser = this.getCurrentUserId();
+  //   let a = document.createElement('a');
+  //   a.textContent = `@${user.name}`;
+  //   a.href = '#';
+  //   a.addEventListener('click', (e) => {
+  //     e.preventDefault();
+  //     this.navbarService.findOrCreateDMchannel(user.uid, currentUser!)
+  //   })
 
-    return a
-  }
+  //   return a
+  // }
 
-  getUserList(text: string) {
-    let userList = this.userMentionService.filteredUserList();
-    let taggedUsers: { name: string, uid: string }[] = [];
+  // getUserList(text: string) {
+  //   let userList = this.userMentionService.filteredUserList();
+  //   let taggedUsers: { name: string, uid: string }[] = [];
 
-    userList.forEach(user => {
-      const isTagged = text.search(user.name);
-      if (isTagged > 0) {
-        taggedUsers.push({
-          name: user.name,
-          uid: user.uid
-        })
-      }
+  //   userList.forEach(user => {
+  //     const isTagged = text.search(user.name);
+  //     if (isTagged > 0) {
+  //       taggedUsers.push({
+  //         name: user.name,
+  //         uid: user.uid
+  //       })
+  //     }
 
-    })
-    return taggedUsers
-  }
+  //   })
+  //   return taggedUsers
+  // }
 
 
   onEmojiMenuClosed() {
@@ -342,6 +346,102 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     } catch (err) {
       console.error("Failed to update reactions:", err);
     }
+  }
+
+  showText() {
+    let container = document.createElement('p');
+    container.classList.add('text-link')
+    let text = this.message.text;
+    let taggedUsers = this.getUserList(text);
+    let taggedChannels = this.getChannelList(text)
+    let taggedArray = taggedUsers.concat(taggedChannels);
+    if (taggedArray.length == 0) this.createTextElement(container, text)
+    taggedArray.sort((a, b) => a.textIndex - b.textIndex)
+    text = this.replaceTaggedText(taggedArray, text);
+    this.createTextElement(container, text)
+    this.createListener(taggedArray)
+  }
+
+  createListener(taggedArray: { name: string, id: string, textIndex: number, taggedType: string }[]) {
+    taggedArray.forEach(tag => {
+      let currentUser = this.getCurrentUserId();
+
+      let customId = `${tag.id}_${tag.textIndex}_${this.index}`
+      let tagId = document.getElementById(customId)
+      tagId?.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log("click");
+        if (tag.taggedType == "user") this.navbarService.findOrCreateDMchannel(tag.id, currentUser!)
+        if (tag.taggedType == "channel") this.userMentionService.findChannel(tag.id)
+      })
+    })
+  }
+
+  replaceTaggedText(taggedArray: { name: string, id: string, textIndex: number, taggedType: string }[], text: string) {
+    let replacedText = text;
+    taggedArray.forEach((tag) => {
+      if (tag.taggedType == "user") {
+        let customId = `${tag.id}_${tag.textIndex}_${this.index}`
+        replacedText = replacedText.replace(`@${tag.name}`,
+          `<span id="${customId}">@${tag.name}</span>`);
+
+      } else if (tag.taggedType == "channel") {
+        let customId = `${tag.id}_${tag.textIndex}_${this.index}`
+        replacedText = replacedText.replace(`#${tag.name}`,
+          `<span id="${customId}">#${tag.name}</span>`);
+      }
+    });
+    return replacedText
+  }
+
+  createTextElement(container: HTMLParagraphElement, text: string) {
+    container.innerHTML = text;
+    this.textRef.nativeElement.appendChild(container);
+  }
+
+
+  getChannelList(text: string) {
+    let channelList = this.userMentionService.getChannelWithUserMemmership();
+    let taggedChannels: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
+
+
+    channelList.forEach(channel => {
+      const isTagged = text.search(channel.name)
+      if (isTagged > 0) {
+        let taggedText = `#${channel.name}`
+        let textIndex = text.indexOf(taggedText)
+        taggedChannels.push({
+          name: channel.name,
+          id: channel.channelId,
+          textIndex: textIndex,
+          taggedType: "channel"
+        })
+      }
+    })
+    return taggedChannels
+
+  }
+
+
+  getUserList(text: string) {
+    let userList = this.userMentionService.filteredUserList();
+    let taggedUsers: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
+
+    userList.forEach(user => {
+      const isTagged = text.search(user.name);
+      if (isTagged > 0) {
+        let taggedText = `@${user.name}`
+        let textIndex = text.indexOf(taggedText)
+        taggedUsers.push({
+          name: user.name,
+          id: user.uid,
+          textIndex: textIndex,
+          taggedType: "user"
+        })
+      }
+
+    })
+    return taggedUsers
   }
 
   getIndexOfEmoji(emoji: string) {

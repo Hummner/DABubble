@@ -388,7 +388,6 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
-
   showTime(): string {
     return this.ticket?.createdAt instanceof Date ? this.ticket.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
   }
@@ -397,157 +396,55 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     return this.ticket?.lastThread instanceof Date ? this.ticket.lastThread.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'
   }
 
-
-
   showText() {
-
-
     let container = document.createElement('p');
     container.classList.add('text-link')
-
-    //   if (this.ticket.text.includes('#')) {
-    //   this.tagHastagInText(container)
-    // }
-
-
-    let lastIndex = 0;
-
     let text = this.ticket.text;
     let taggedUsers = this.getUserList(text);
     let taggedChannels = this.getChannelList(text)
     let taggedArray = taggedUsers.concat(taggedChannels);
-
+    if (taggedArray.length == 0) this.createTextElement(container, text)
     taggedArray.sort((a, b) => a.textIndex - b.textIndex)
+    text = this.replaceTaggedText(taggedArray, text);
+    this.createTextElement(container, text)
+    this.createListener(taggedArray)
+  }
 
-    console.log(taggedArray);
+  createListener(taggedArray: { name: string, id: string, textIndex: number, taggedType: string }[]) {
+    taggedArray.forEach(tag => {
+      let currentUser = this.getCurrentUserId();
 
-    // ########################
+      let customId = `${tag.id}_${tag.textIndex}_${this.index}`
+      let tagId = document.getElementById(customId)
+      tagId?.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log("click");
+        if (tag.taggedType == "user") this.navbarService.findOrCreateDMchannel(tag.id, currentUser!)
+        if (tag.taggedType == "channel") this.userMentionService.findChannel(tag.id)
+      })
+    })
+  }
 
-    if (taggedArray.length > 0) {
-          taggedArray.forEach(tag => {
-      if (tag.taggedType == "channel") {
-        lastIndex = this.changeTextToChannelLink(tag, container, lastIndex, text);
-        this.createTextAfterLink(lastIndex, tag.name, container);
-        return
-      }
-      
+  replaceTaggedText(taggedArray: { name: string, id: string, textIndex: number, taggedType: string }[], text: string) {
+    let replacedText = text;
+    taggedArray.forEach((tag) => {
       if (tag.taggedType == "user") {
-        lastIndex = this.changeTextToUserLink(tag, container, lastIndex, text);
-        this.createTextAfterLink(lastIndex, tag.name, container);
-        return
+        let customId = `${tag.id}_${tag.textIndex}_${this.index}`
+        replacedText = replacedText.replace(`@${tag.name}`,
+          `<span id="${customId}">@${tag.name}</span>`);
+        
+      } else if (tag.taggedType == "channel") {
+        let customId = `${tag.id}_${tag.textIndex}_${this.index}`
+        replacedText = replacedText.replace(`#${tag.name}`,
+          `<span id="${customId}">#${tag.name}</span>`);
       }
-
-
-
-    })
-
-    } else {
-      this.createText(container, text);
-    }
-
-
-
-
-
-
-
-    // taggedUsers.forEach(user => {
-    //   let tag = `@${user.name}`
-    //   let idx = text.indexOf(tag, lastIndex)
-
-    //   if (idx !== -1) {
-    //     const before = text.substring(lastIndex, idx);
-    //     if (before) container.appendChild(document.createTextNode(before))
-    //     const a = this.createLinkElement(user)
-    //     container.appendChild(a);
-    //     lastIndex = idx + tag.length
-    //   }
-    //   this.createTextAfterLink(lastIndex, text, container);
-    // })
-    // if (taggedUsers.length == 0 && taggedChannels.length == 0) return this.createText(container, text);
-    // return
+    });
+    return replacedText
   }
 
-  changeTextToChannelLink(tag: { name: string, id: string, textIndex: number, taggedType: string }, container: any, lastIndex: number, text: any) {
-    let symbol = `#${tag.name}`;
-    let idx = text.indexOf(symbol, lastIndex);
-
-    const before = text.substring(lastIndex, idx);
-    if (before) container.appendChild(document.createTextNode(before));
-    const a = this.createLinkElement(tag);
-    container.appendChild(a);
-    return lastIndex = idx + symbol.length
-  }
-
-  changeTextToUserLink(tag: { name: string, id: string, textIndex: number, taggedType: string }, container: any, lastIndex: number, text: any) {
-    let symbol = `@${tag.name}`;
-    let idx = text.indexOf(symbol, lastIndex);
-
-    const before = text.substring(lastIndex, idx);
-    if (before) container.appendChild(document.createTextNode(before));
-    const a = this.createLinkElement(tag);
-    container.appendChild(a);
-    lastIndex = idx + symbol.length
-    return lastIndex
-  }
-
-  // tagHastagInText(container: any) {
-
-  //   let text = this.ticket.text;
-  //   let taggedChannels = this.getChannelList(text)
-
-  //   let lastIndex = 0;
-
-
-  //   taggedChannels.forEach(channel => {
-  //     let tag = `#${channel.name}`;
-  //     let idx = text.indexOf(tag, lastIndex)
-
-  //     if (idx !== -1) {
-  //       const before = text.substring(lastIndex, idx);
-  //       if (before) container.appendChild(document.createTextNode(before))
-  //       const a = this.createLinkElementHastag(channel)
-  //       container.appendChild(a);
-  //       lastIndex = idx + tag.length
-  //     }
-  //     this.createTextAfterLink(lastIndex, text, container);
-  //   })
-
-  // }
-
-  createLinkElement(tag: { name: string, id: string, textIndex: number, taggedType: string }) {
-    let a = document.createElement('a');
-
-    if (tag.taggedType == "channel") {
-      a = this.linkWithHastag(tag, a)
-    }
-
-    if (tag.taggedType == "user") {
-      a = this.linkWithAt(tag, a)
-    }
-
-    return a
-  }
-
-  linkWithHastag(tag: { name: string, id: string, textIndex: number, taggedType: string }, a: HTMLAnchorElement) {
-    a.textContent = `#${tag.name}`;
-    a.href = '#';
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.userMentionService.findChannel(tag.id)
-    })
-    return a
-  }
-
-  linkWithAt(tag: { name: string, id: string, textIndex: number, taggedType: string }, a: HTMLAnchorElement) {
-    let currentUser = this.getCurrentUserId();
-    a.textContent = `@${tag.name}`;
-    a.href = '#';
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.navbarService.findOrCreateDMchannel(tag.id, currentUser!)
-    })
-    return a
+  createTextElement(container: HTMLParagraphElement, text: string) {
+    container.innerHTML = text;
+    this.textRef.nativeElement.appendChild(container);
   }
 
 
@@ -573,31 +470,6 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   }
 
-  createText(container: HTMLParagraphElement, text: string) {
-    container.innerHTML = text.trim();
-    this.textRef.nativeElement.appendChild(container);
-  }
-
-  createTextAfterLink(lastIndex: number, text: string, container: HTMLParagraphElement) {
-    if (lastIndex < text.length) {
-      container.appendChild(document.createTextNode(text.substring(lastIndex)))
-    }
-    this.textRef.nativeElement.innerHTML = "";
-    this.textRef.nativeElement.appendChild(container);
-  }
-
-  // createLinkElement(user: { name: string, id: string; }) {
-  //   let currentUser = this.getCurrentUserId();
-  //   let a = document.createElement('a');
-  //   a.textContent = `@${user.name}`;
-  //   a.href = '#';
-  //   a.addEventListener('click', (e) => {
-  //     e.preventDefault();
-  //     this.navbarService.findOrCreateDMchannel(user.id, currentUser!)
-  //   })
-
-  //   return a
-  // }
 
   getUserList(text: string) {
     let userList = this.userMentionService.filteredUserList();
