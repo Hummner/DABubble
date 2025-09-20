@@ -1,14 +1,13 @@
-import { Component, Inject, ViewChild, ElementRef, HostListener, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef, HostListener, OnInit, AfterViewInit, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { FirestoreService } from '../../services/firestore.service';
 import { NavbarInterface } from '../../interfaces/navbar.interface';
-import { updateDoc, arrayUnion, Firestore, doc } from '@angular/fire/firestore';
+import { updateDoc, arrayUnion, Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, NgClass } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
-
+import { Router, RouterModule } from '@angular/router';
+import { ChannelsService } from '../../services/channels.service';
 
 @Component({
   selector: 'app-add-member',
@@ -21,11 +20,14 @@ export class AddMemberComponent implements OnInit, AfterViewInit {
   userProfile = this.firestoreService.userProfile;
   user: UserProfileInterface | null = null;
   navbar: Partial<NavbarInterface> = {};
+  channelsService = inject(ChannelsService);
   channelName = '';
   channelId = '';
   searchText = '';
   members: { id: string; role: string; name: string; imgUrl: string }[] = [];
-  allUsers: UserProfileInterface[] = [];
+  availibleMembers: UserProfileInterface[] = [];
+  filteredMembers: UserProfileInterface[] = [];
+  
 
   @ViewChild('sheetBox') sheetBox!: ElementRef<HTMLElement>;
   isMobileView = false;
@@ -35,7 +37,6 @@ export class AddMemberComponent implements OnInit, AfterViewInit {
     private addMemberRef: MatDialogRef<AddMemberComponent>,
     private firestore: Firestore,
     private firestoreService: FirestoreService,
-    private route: ActivatedRoute,
     private router: Router,
 
     @Inject(MAT_DIALOG_DATA) data: { channelName: string; channelId: string }
@@ -86,16 +87,10 @@ export class AddMemberComponent implements OnInit, AfterViewInit {
     setTimeout(() => this.addMemberRef.close(), 300);
   }
 
-  getOtherUserList() {
-    this.allUsers = this.firestoreService.userList().filter((user) => user.uid !== this.userProfile()?.uid);
-    this.searchUser();
-    return this.allUsers;
-  }
-
   addMember(userId: string) {
-    for (let i = 0; i < this.allUsers.length; i++) {
-      if (this.allUsers[i].uid === userId) {
-        this.fillInterfaceWithMember(this.allUsers[i]);
+    for (let i = 0; i < this.availibleMembers.length; i++) {
+      if (this.availibleMembers[i].uid === userId) {
+        this.fillInterfaceWithMember(this.availibleMembers[i]);
         this.searchText = '';
       }
     }
@@ -112,10 +107,7 @@ export class AddMemberComponent implements OnInit, AfterViewInit {
     if (!this.members.find((m) => m.id === newMember.id)) {
       this.members.push(newMember);
     }
-
     this.navbar.members = this.members;
-
-    console.log('Aktuelle Members:', this.members);
     return this.navbar;
   }
 
@@ -131,16 +123,30 @@ export class AddMemberComponent implements OnInit, AfterViewInit {
     return this.members.length === 0;
   }
 
-  searchUser() {
+  async getMembersInCurrentChannel() {
+    const currentChannel = await this.channelsService.getCurrentChannel(this.channelId);
+
+    if (currentChannel) {
+      const currentMembers = currentChannel.members.map((member: any) => member.id);
+      this.filteredMembers = this.firestoreService
+        .userList()
+        .filter((user) => !currentMembers.includes(user.uid));
+    } else {
+      this.filteredMembers = [];
+    }
+  }
+
+  async searchUser() {
     this.searchText = this.searchText.trim();
     if (this.searchText !== '') {
-      this.allUsers = this.firestoreService
-        .userList()
-        .filter(
-          (user) =>
-            user.name.toLowerCase().includes(this.searchText.toLowerCase()) && !this.members.find((m) => m.id === user.uid)
-        );
+      await this.getMembersInCurrentChannel();
+      this.availibleMembers = this.filteredMembers.filter((user) =>
+        user.name.toLowerCase().includes(this.searchText.toLowerCase())
+      );
+    } else {
+      this.availibleMembers = [];
     }
+    return this.availibleMembers;
   }
 
   addNewMemberToChannel() {
