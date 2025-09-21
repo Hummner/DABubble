@@ -84,6 +84,7 @@
             id="chat_input"
             placeholder="Nachricht an @{{ secondUser.name }}"
             (input)="onInputChange($event)"
+            (keyup)="updateField($event)"
           ></textarea>
         </div>
         <div class="input-buttons">

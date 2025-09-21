@@ -113,28 +113,23 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    if (this.shouldScroll && this.threadMessages.length) {
-      requestAnimationFrame(() => {
-        this.scrollToBottomInstantly();
-        this.shouldScroll = false;
-        if (this.threadInput && this.threadInput.nativeElement) this.threadInput.nativeElement.focus();
-      });
+    if (this.shouldScroll && this.threadMessages.length && this.scrollContainerThread?.nativeElement) {
+      this.scrollToBottomInstantly();
+      this.shouldScroll = false;
+      if (this.threadInput && this.threadInput.nativeElement) this.threadInput.nativeElement.focus();
     }
   }
 
   scrollToBottomInstantly() {
     if (this.scrollContainerThread?.nativeElement) {
       const el = this.scrollContainerThread.nativeElement;
-      requestAnimationFrame(() => {
-        el.scrollTop = el.scrollHeight;
-      });
+      el.scrollTop = el.scrollHeight;
     } else {
       console.log('ScrollContainer not available');
     }
   }
 
-
-    handleRouteParams() {
+  handleRouteParams() {
     this.route.paramMap.subscribe((params) => {
       this.messageId = params.get('messageId');
       this.route.queryParamMap.subscribe((qp) => {
@@ -149,7 +144,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       });
     });
   }
-
 
   waitForUserThenSubscribe() {
     const currentUser = this.userProfile();
@@ -232,15 +226,13 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     this.threadMessageService.subThreadList(channelId, messageId);
     this.threadMessagesSub = this.threadMessageService.threadMessages$.subscribe((messages) => {
       console.log('[ThreadMessages] Received from Firestore:', messages);
-      if (this.isInitialThreadLoad || messages.length > this.previousThreadMessageCount) {
-        const wasEmpty = this.messages.length === 0;
-        const hadNewMessage = messages.length > this.previousThreadMessageCount;
-        this.threadMessages = messages;
-        if (wasEmpty || (hadNewMessage && this.previousThreadMessageCount > 0)) {
+      const wasEmpty = this.threadMessages.length === 0;
+      const hadNewMessage = messages.length > this.previousThreadMessageCount;
+      this.threadMessages = messages;
+      if (wasEmpty || (hadNewMessage && this.previousThreadMessageCount > 0)) {
+        setTimeout(() => {
           this.shouldScroll = true;
-        }
-      } else {
-        this.threadMessages = messages;
+        }, 0);
       }
       this.previousThreadMessageCount = messages.length;
       this.isInitialThreadLoad = false;
@@ -314,5 +306,17 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
 
   onEditViewChange(isOpen: boolean) {
     this.parentEditView = isOpen;
+  }
+
+  updateField(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.content != '') {
+        if (this.content.trim() !== '') {
+          this.content = this.content.replace(/\n/g, '').trim();
+          this.addThreadMessage();
+        }
+      }
+    }
   }
 }

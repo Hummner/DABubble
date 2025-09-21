@@ -66,7 +66,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   unsubUserList?: () => void;
   unsubList?: () => void;
   private previousMessageCount = 0;
-  private isInitialLoad = true;
   public Object = Object;
   channelId!: string;
   userProfile = this.firestoreService.userProfile;
@@ -107,7 +106,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     this.subThreadRoute();
     this.subscribeToDmChannel();
     this.subscribeToMsgList();
-    console.log(this.router.url)
+    console.log(this.router.url);
     if (this.router.url.includes('/messages/')) {
       this.isThreadOpen = true;
     }
@@ -130,10 +129,8 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
 
   ngAfterViewChecked() {
     if (this.shouldScroll && this.messages.length && this.scrollContainer?.nativeElement) {
-      requestAnimationFrame(() => {
-        this.scrollToBottomInstantly();
-        this.shouldScroll = false;
-      });
+      this.scrollToBottomInstantly();
+      this.shouldScroll = false;
     }
     if (!this.isThreadOpen && this.input?.nativeElement && !this.parentEditView && !this.didFocusInput) {
       this.input.nativeElement.focus();
@@ -168,7 +165,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
       if (id) {
         this.channelId = id;
         this.shouldScroll = true;
-        this.isInitialLoad = true;
         this.didFocusInput = false;
         this.waitForUserThenSubscribe(id);
         this.unsubList = this.messageService.subList(this.channelId);
@@ -189,15 +185,14 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
         this.shouldScroll = true;
       }
       this.previousMessageCount = msgs.length;
-      this.isInitialLoad = false;
     });
   }
 
   subThreadRoute() {
     this.routerEventsSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        console.log(this.router.url)
-        this.isThreadOpen = this.router.url.includes('/messages/') || this.router.url.includes('/threadMessages/') ;
+        console.log(this.router.url);
+        this.isThreadOpen = this.router.url.includes('/messages/') || this.router.url.includes('/threadMessages/');
       }
     });
   }
@@ -205,9 +200,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   scrollToBottomInstantly() {
     if (this.scrollContainer?.nativeElement) {
       const el = this.scrollContainer.nativeElement;
-      requestAnimationFrame(() => {
-        el.scrollTop = el.scrollHeight;
-      });
+      el.scrollTop = el.scrollHeight + 100;
     } else {
       console.log('ScrollContainer not available');
     }
@@ -221,7 +214,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
         this.subscribeToDM(id);
         this.senderId = currentUser.uid;
         this.previousMessageCount = 0;
-        this.isInitialLoad = true;
       }
     }, 100);
   }
@@ -243,7 +235,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     this.unsubSingleDM = this.directMessageService.subDirectMessageChannel(id, currentUserId);
   }
 
-  addMessage() {
+  async addMessage() {
     const message: Message = {
       createdAt: serverTimestamp(),
       senderId: this.senderId,
@@ -251,7 +243,8 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
       hasThread: this.hasThread,
       threadCount: this.threadCount,
     };
-    this.messageService.addMessage(message, this.channelId);
+    await this.messageService.addMessage(message, this.channelId);
+    this.shouldScroll = true;
     this.content = '';
   }
 
@@ -323,5 +316,17 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
 
   openMoreEmoji(event: Event) {
     this.emojiService.toggleSmallEmojiInputMenu();
+  }
+
+  updateField(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.content != '') {
+        if (this.content.trim() !== '') {
+          this.content = this.content.replace(/\n/g, '').trim();
+          this.addMessage();
+        }
+      }
+    }
   }
 }

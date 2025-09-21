@@ -57,6 +57,7 @@
           placeholder="Antworten..."
           [(ngModel)]="content"
           (input)="onInputChange($event)"
+          (keyup)="updateField($event)"
         ></textarea>
       </div>
       <div class="input-buttons">
