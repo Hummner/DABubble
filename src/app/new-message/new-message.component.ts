@@ -169,7 +169,7 @@ export class NewMessageComponent {
 
   private updateFilteredLists(content: string): void {
     if (content.includes('@')) {
-      this.userMentionService.updateFilteredUserList(content);
+      // this.userMentionService.updateFilteredUserList(content);
     }
     if (content.includes('#')) {
       this.userMentionService.updateFilteredChannelList(content);

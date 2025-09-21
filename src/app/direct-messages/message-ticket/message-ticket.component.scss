@@ -405,3 +405,13 @@
     height: 24px;
   }
 }
+
+.mention-link {
+  background-color: #eceefe !important;
+  border-radius: 20px !important;
+  color: black;
+  padding: 4px 8px !important;
+  &:hover {
+    color: #535af1;
+  }
+}

@@ -44,7 +44,7 @@
                 {{ token.value }}
               </ng-container>
               <ng-container *ngIf="token.type === 'mentionUser'">
-                <a class="mention-link" (click)="onUserMentionClick(token.userName)" style="cursor: pointer; color: #113d6b">
+                <a class="mention-link" (click)="onUserMentionClick(token.userName)">
                   &#64;{{ token.userName }}
                 </a>
               </ng-container>
@@ -52,7 +52,7 @@
                 <a
                   class="mention-link"
                   (click)="onChannelMentionClick(token.channelName)"
-                  style="cursor: pointer; color: #113d6b"
+                 
                 >
                   &#35;{{ token.channelName }}
                 </a>

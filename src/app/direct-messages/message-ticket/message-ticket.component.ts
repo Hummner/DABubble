@@ -28,6 +28,7 @@ import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../services/message.service';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
+import { UserMentionService } from '../../services/user-channel-mention.service';
 
 type MessageToken =
   | { type: 'text'; value: string }
@@ -88,7 +89,8 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
     private messageService: MessageService,
     private threadDMService: ThreadDirectMessageService,
     public emojiService: EmojiServiceService,
-    private authService: AuthService
+    private authService: AuthService,
+    private mentionService: UserMentionService
   ) {}
 
   ngOnInit(): void {
@@ -145,17 +147,109 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
     const mentionRegex = /([@#])([\wäöüÄÖÜß]+(?:\s[\wäöüÄÖÜß]+)*)/g;
     const tokens: MessageToken[] = [];
     let lastIndex = 0;
+    const validUsers = this.getValidUserNames();
+    const validChannels = this.getValidChannelNames();
     let match: RegExpExecArray | null;
     while ((match = mentionRegex.exec(content)) !== null) {
-      const index = match.index;
-      const mentionSymbol = match[1];
-      const mentionName = match[2];
-      this.createTextType(content, lastIndex, tokens, index);
-      this.createMentionType(mentionSymbol, mentionName, tokens);
-      lastIndex = mentionRegex.lastIndex;
+      this.handleMentionMatch(match, content, tokens, validUsers, validChannels, lastIndex);
+      lastIndex = this.getNextLastIndex(match, content, validUsers, validChannels, lastIndex);
     }
-    this.createTextType(content, lastIndex, tokens);
+    if (lastIndex < content.length) {
+      this.createTextType(content, lastIndex, tokens);
+    }
     return tokens;
+  }
+
+  private getValidUserNames(): string[] {
+    console.log(this.mentionService.filteredUserList());
+    return (typeof this.mentionService.filteredUserList === 'function' ? this.mentionService.filteredUserList() : [])
+      .map((u: any) => u.name?.trim())
+      .filter(Boolean);
+  }
+
+  private getValidChannelNames(): string[] {
+    console.log(this.mentionService.getChannelWithUserMemmership())
+    return (this.mentionService.getChannelWithUserMemmership?.() || []).map((c: any) => c.name?.trim()).filter(Boolean);
+  }
+
+  private findValidMention(
+    mentionSymbol: string,
+    mentionName: string,
+    validUsers: string[],
+    validChannels: string[]
+  ): { validMention: boolean; foundName: string } {
+    if (mentionSymbol === '@') {
+      let found = '';
+      for (const name of validUsers) {
+        if (mentionName.startsWith(name) && name.length > found.length) {
+          found = name;
+        }
+      }
+      return { validMention: !!found, foundName: found || mentionName };
+    } else if (mentionSymbol === '#') {
+      let found = '';
+      for (const name of validChannels) {
+        if (mentionName.startsWith(name) && name.length > found.length) {
+          found = name;
+        }
+      }
+      return { validMention: !!found, foundName: found || mentionName };
+    }
+    return { validMention: false, foundName: mentionName };
+  }
+
+  private handleMentionMatch(
+    match: RegExpExecArray,
+    content: string,
+    tokens: MessageToken[],
+    validUsers: string[],
+    validChannels: string[],
+    lastIndex: number
+  ) {
+    const index = match.index;
+    const mentionSymbol = match[1];
+    let mentionName = match[2];
+    const { validMention, foundName } = this.findValidMention(mentionSymbol, mentionName, validUsers, validChannels);
+    mentionName = foundName;
+    if (index > lastIndex) {
+      this.createTextType(content, lastIndex, tokens, index);
+    }
+    if (validMention) {
+      this.createMentionType(mentionSymbol, mentionName, tokens);
+      const mentionEnd = index + mentionSymbol.length + mentionName.length;
+      if (mentionEnd < index + mentionSymbol.length + match[2].length) {
+        const extraText = content.slice(mentionEnd, index + mentionSymbol.length + match[2].length);
+        if (extraText.trim().length > 0) {
+          this.createTextType(extraText, 0, tokens);
+        }
+      }
+    } else {
+      this.createTextType(content, index, tokens, match.index + match[0].length);
+    }
+  }
+
+  private getNextLastIndex(
+    match: RegExpExecArray,
+    content: string,
+    validUsers: string[],
+    validChannels: string[],
+    prevLastIndex: number
+  ): number {
+    const index = match.index;
+    const mentionSymbol = match[1];
+    let mentionName = match[2];
+    const { validMention, foundName } = this.findValidMention(mentionSymbol, mentionName, validUsers, validChannels);
+    mentionName = foundName;
+    if (validMention) {
+      const mentionEnd = index + mentionSymbol.length + mentionName.length;
+      if (mentionEnd < index + mentionSymbol.length + match[2].length) {
+        return index + mentionSymbol.length + match[2].length;
+      } else {
+        return mentionEnd;
+      }
+    } else {
+      return match.index + match[0].length;
+    }
   }
 
   createTextType(content: string, lastIndex: number, tokens: MessageToken[], index?: number) {

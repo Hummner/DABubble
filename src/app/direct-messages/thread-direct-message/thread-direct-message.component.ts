@@ -292,9 +292,9 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     this.content = this.userMentionService.tagChannelInputStart(this.content, this.threadInput);
   }
 
-  updateFilteredUserList() {
-    this.userMentionService.updateFilteredUserList(this.content);
-  }
+  // updateFilteredUserList() {
+  //   this.userMentionService.updateFilteredUserList(this.content);
+  // }
 
   updateFilteredChannelList() {
     this.userMentionService.updateFilteredChannelList(this.content);

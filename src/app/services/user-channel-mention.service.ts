@@ -1,4 +1,4 @@
-import { Injectable, signal, ElementRef, inject } from '@angular/core';
+import { Injectable, signal, ElementRef, inject, computed } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { FirestoreService } from './firestore.service';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
@@ -12,29 +12,26 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class UserMentionService {
-  filteredUserList = signal<UserProfileInterface[]>([]);
+  filteredUserList = computed(() =>
+    this.firestoreService
+      .userList()
+      .filter((user) => user.uid !== this.firestoreService.userProfile()?.uid && user.name !== 'Guest')
+  );
   filteredChannelList = signal<NavbarInterface[]>([]);
   channels = toSignal(inject(NavbarService).channelsObs$, {
     initialValue: [] as NavbarInterface[],
   });
 
-  constructor(private firestoreService: FirestoreService, private router: Router) {
-    // Initialize filtered lists
-    this.firestoreService.subUserList((users) => {
-      this.filteredUserList.set(
-        users.filter((user) => user.uid !== this.firestoreService.userProfile()?.uid && user.name !== 'Guest')
-      );
-    });
 
-    // Initialize channel list when channels are loaded
+  constructor(private firestoreService: FirestoreService, private router: Router) {
     this.filteredChannelList.set(this.getChannelWithUserMemmership());
   }
 
   tagInputStart(content: string, input: ElementRef<HTMLInputElement | HTMLTextAreaElement>): string {
     const newContent = content + '@';
-    this.firestoreService.subUserList((users) => {
-      this.updateFilteredUserList(newContent);
-    });
+    // this.firestoreService.subUserList((users) => {
+    //   this.updateFilteredUserList(newContent);
+    // });
     requestAnimationFrame(() => {
       if (input && input.nativeElement) input.nativeElement.focus();
     });
@@ -50,23 +47,6 @@ export class UserMentionService {
     return newContent;
   }
 
-  updateFilteredUserList(content: string) {
-    const uid = this.firestoreService.userProfile()?.uid;
-    let list = this.firestoreService.userList();
-    if (content.includes('@')) {
-      const query = content.slice(1).toLowerCase();
-      const querySecond = content.split('@').pop()?.toLowerCase();
-      list = list.filter(
-        (user) =>
-          user.uid !== uid &&
-          user.name !== 'Guest' &&
-          (user.name.toLowerCase().includes(query) || user.name.toLowerCase().includes(querySecond!))
-      );
-    } else if (content.endsWith('@')) {
-      list = this.firestoreService.userList().filter((user) => user.uid !== uid && user.name !== 'Guest');
-    }
-    this.filteredUserList.set(list);
-  }
 
   updateFilteredChannelList(content: string) {
     let list = this.getChannelWithUserMemmership();
@@ -101,7 +81,7 @@ export class UserMentionService {
   }
 
   takeChannel(name: string, content: string): string {
-    debugger
+    debugger;
     const lastAtIndex = content.lastIndexOf('#');
     if (lastAtIndex !== -1) {
       const before = content.slice(0, lastAtIndex);
@@ -124,7 +104,7 @@ export class UserMentionService {
     const hasAt = content.includes('@') || lastChar === '@';
     const hasHash = content.includes('#') || lastChar === '#';
     if (hasAt) {
-      this.firestoreService.subUserList(() => this.updateFilteredUserList(content));
+      // this.firestoreService.subUserList(() => this.updateFilteredUserList(content));
       if (lastChar === '@') this.onTypeEt(channelMenuTrigger, mentionMenuTrigger, input);
     }
     if (hasHash) {
@@ -158,7 +138,6 @@ export class UserMentionService {
   }
 
   findChannel(id: string) {
-    this.router.navigateByUrl(`channel/${id}`)
+    this.router.navigateByUrl(`channel/${id}`);
   }
-
 }

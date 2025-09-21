@@ -292,13 +292,13 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     this.content = this.userMentionService.tagChannelInputStart(this.content, this.input);
   }
 
-  updateFilteredUserList() {
-    this.userMentionService.updateFilteredUserList(this.content);
-  }
+  // updateFilteredUserList() {
+  //   this.userMentionService.updateFilteredUserList(this.content);
+  // }
 
-  updateFilteredChannelList() {
-    this.userMentionService.updateFilteredChannelList(this.content);
-  }
+  // updateFilteredChannelList() {
+  //   this.userMentionService.updateFilteredChannelList(this.content);
+  // }
 
   takeUser(name: string) {
     this.content = this.userMentionService.takeUser(name, this.content);
