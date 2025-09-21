@@ -271,29 +271,40 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   focusAfterText(inputRef: ElementRef<HTMLInputElement> | ElementRef<HTMLTextAreaElement>) {
     let input = inputRef.nativeElement;
-    debugger
     let length = input.value.length;
     input.setSelectionRange(length, length);
   }
 
   editChannelClose(editField: string) {
     if (editField === 'editName') {
-      this.editName = false;
-      this.nameInput.nativeElement.blur();
+      this.editChannelName();
     }
     if (editField === 'editDisc') {
-      this.editDisc = false;
-      this.discInput.nativeElement.blur();
+      this.editChannelDescription();
     }
+  }
+
+  editChannelName() {
+    this.editName = false;
+    this.nameInput.nativeElement.blur();
     this.checkValidation().then((isValid) => {
-      if (isValid) {
-        this.channelsService.updateEditChannel(
-          this.channelId,
-          this.nameInput.nativeElement.value,
-          this.discInput.nativeElement.value
-        );
+    if (isValid) {
+      this.channelsService.updateChannelName(
+        this.channelId,
+        this.nameInput.nativeElement.value
+      );
+      this.router.navigate([`/channel/${this.channelId}`]);
       }
     });
+  }
+
+  editChannelDescription() {
+    this.editDisc = false;
+    this.discInput.nativeElement.blur();
+    this.channelsService.updateChannelDescription(
+      this.channelId,
+      this.discInput.nativeElement.value
+    );
   }
 
   getChannelInfo() {
@@ -382,10 +393,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 
   focusAfterTag(input: string) {
-
     let length = input.length;
     this.chatInput.nativeElement.setSelectionRange(length, length);
-
   }
 
   tagInputStart() {
@@ -404,11 +413,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.textInput = this.emojiService.addEmojiToContent(emoji, this.textInput);
   }
 
-
-
   onInputChange(event: Event) {
     this.userMentionService.onInputChange(this.textInput, this.mentionMenuTrigger, this.channelMenuTrigger, this.chatInput);
   }
-
 }
 

@@ -116,7 +116,6 @@ export class ChannelsService implements OnDestroy {
       let channelData = el.data();
       this.getChannelInfos(channelData, channelId);
     })
-
   }
 
   async putMembersToArray(channelData?: DocumentData): Promise<any[]> {
@@ -156,9 +155,8 @@ export class ChannelsService implements OnDestroy {
   }
 
   createText(text: string) {
-    
+    // Brauchen wir die Funktion noch?
   }
-
 
   putMessagesInArray(channelId: string) {
     const q = query(this.getMessagesSubCollRef(channelId), orderBy('createdAt'))
@@ -187,7 +185,7 @@ export class ChannelsService implements OnDestroy {
     await addDoc(this.getNewMessageRef(channelId), newTicket)
   }
 
-    async editTicketText(ticketRef: DocumentReference, text: string) {
+  async editTicketText(ticketRef: DocumentReference, text: string) {
     try {
       await updateDoc(ticketRef, { text: text })
     } catch (err) {
@@ -212,11 +210,9 @@ export class ChannelsService implements OnDestroy {
     return collection(this.firestore, `channels/${channelId}/messages`)
   }
 
-
   getMessagesSubCollRef(channelId: string) {
     return collection(this.getChannelRef(channelId), "messages")
   }
-
 
   getThreadRef(channelId: string, ticketId: string) {
     return collection(doc(this.firestore, "channels", channelId, "messages", ticketId), "threads")
@@ -232,17 +228,19 @@ export class ChannelsService implements OnDestroy {
     console.log("Destroyed");
   }
 
-  updateEditChannel(channelId: string, name: string, description: string) {
-      const channelRef = doc(this.firestore, 'channels', channelId);     
-      updateDoc(channelRef, {
-        name,
-        description,
-      })
-      .then(() => {
-        console.log('Channel updated successfully');
-        console.log("Name: ", name, " Description: ", description);
-      })
-    }
+  updateChannelName(channelId: string, name: string) {
+    const channelRef = doc(this.firestore, 'channels', channelId);     
+    updateDoc(channelRef, {
+      name
+    })
+  }
+
+  updateChannelDescription(channelId: string, description: string) {
+    const channelRef = doc(this.firestore, 'channels', channelId);     
+    updateDoc(channelRef, {
+      description
+    })
+  }
 
   async deleteMember(channelId: string, userProfile: any) {
     const channelRef = doc(this.firestore, 'channels', channelId);
