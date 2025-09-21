@@ -65,7 +65,7 @@
     (click)="showOverlay()"
     #menuTrigger="matMenuTrigger"
   >
-    <div class="user-name">{{ user.name }}</div>
+    <div class="user-name truncate">{{ user.name }}</div>
     <div class="profile-img-section">
       <img class="profile-img" [src]="user.imgUrl" alt="user" />
       <img class="status-img" src="assets/icon/Online.png" alt="online icon" />

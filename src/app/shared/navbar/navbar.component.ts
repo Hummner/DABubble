@@ -28,7 +28,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     RouterModule,
     NgClass,
     DatePipe,
-    MatProgressSpinnerModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',

@@ -13,6 +13,22 @@
     width: 100% !important;
     max-width: 100% !important;
   }
+
+  .truncate {
+    max-width: 400px !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .truncate {
+    max-width: 200px !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  .truncate {
+    max-width: 420px !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -47,6 +63,10 @@
   ::ng-deep .edit-channel-menu-container {
     max-width: 552px !important;
     min-width: 420px !important;
+  }
+
+  .truncate {
+    max-width: 100% !important;
   }
 }
 

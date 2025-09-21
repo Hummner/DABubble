@@ -14,7 +14,7 @@
         <div class="message-content">
 
             <div class="name-date" [ngClass]="{'reverse' : isCurrentUser()}">
-                <span class="msg-name"> {{ userName }}</span>
+                <span class="msg-name truncate-text"> {{ userName }}</span>
                 <span class="msg-date">{{ time }} Uhr</span>
             </div>
             <div class="message-wrapper" [ngClass]="{'reverse' : isCurrentUser()}">
@@ -29,7 +29,7 @@
                         {{answers}}
                     </span>
                 </div>
-                <span class="msg-date">Letze Antwort {{ lastThreadTime }} Uhr</span>
+                <span class="msg-date">Letzte Antwort {{ lastThreadTime }} Uhr</span>
             </div>
             <div class="emoji-container" [ngClass]="{'reverse reverse-container' : isCurrentUser()}" *ngIf="isReaction()">
                 @for (emoji of ticket.reactions; track $index) {

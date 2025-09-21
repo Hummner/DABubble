@@ -10,7 +10,7 @@
       <header>
         <div class="channel-name" [matMenuTriggerFor]="editChannelMenu" (click)="openMenu(editChannelTrigger)"
           #editChannelTrigger="matMenuTrigger">
-          <h2># {{ channel?.name }}</h2>
+          <h2 class="truncate"># {{ channel?.name }}</h2>
           <mat-icon>keyboard_arrow_down</mat-icon>
           <mat-menu #editChannelMenu="matMenu" (closed)="menuOpen = false" class="edit-channel-menu-container">
             <div class="edit-channel-menu" (click)="$event.stopPropagation()">
@@ -126,10 +126,10 @@
         <div #chat class="scroll-wrapper" *ngIf="!loading">
           <div class="first-message">
             <div class="first-message-title">
-              <h2># {{ channel?.name }}</h2>
+              <h2 class="truncate-text"># {{ channel?.name }}</h2>
             </div>
             <div class="first-message-text">
-              <p>{{ channel?.createdBy }} hat diesen Channel erstellt.</p>
+              <p class="truncate-text">{{ channel?.createdBy }} hat diesen Channel erstellt.</p>
             </div>
           </div>
           <div *ngIf="isMessage">
