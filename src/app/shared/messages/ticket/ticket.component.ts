@@ -55,6 +55,7 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   text!: any;
   lastThreadTime!: string;
   messageId?: string | null;
+  moreEmoji: boolean = false;
 
   constructor(private route: ActivatedRoute, private router: Router) { }
 
@@ -103,17 +104,23 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
 
 
-
-
-
-
       this.answers = this.showAnswer();
       this.time = this.showTime();
-      this.lastThreadTime = this.showLastThreadTime()
+      this.lastThreadTime = this.showLastThreadTime();
+
+      if (this.textRef) {
+        this.text = this.showText();
+      }
+
 
 
 
     }
+    if (changes['text']) {
+      console.log("CHanges:_ Text");
+
+    }
+
 
 
 
@@ -162,9 +169,17 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   editText() {
     this.channelService.editTicketText(this.getTicketRef(), this.editedText).then(() => {
-      this.ticket.text = this.editedText
+      this.ticket.text = this.editedText;
       this.editView = false;
+      setTimeout(() => {
+        this.text = this.showText();
+
+      }, 10);
+
     })
+
+
+
 
 
   }
@@ -397,6 +412,10 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   showText() {
+    if (!this.textRef.nativeElement) {
+      return
+    }
+    this.textRef.nativeElement.innerHTML = "";
     let container = document.createElement('p');
     container.classList.add('text-link')
     let text = this.ticket.text;
@@ -432,7 +451,7 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
         let customId = `${tag.id}_${tag.textIndex}_${this.index}`
         replacedText = replacedText.replace(`@${tag.name}`,
           `<span id="${customId}">@${tag.name}</span>`);
-        
+
       } else if (tag.taggedType == "channel") {
         let customId = `${tag.id}_${tag.textIndex}_${this.index}`
         replacedText = replacedText.replace(`#${tag.name}`,

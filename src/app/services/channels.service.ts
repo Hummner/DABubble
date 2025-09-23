@@ -25,7 +25,7 @@ export class ChannelsService implements OnDestroy {
   unsubChannel?: () => void;
   unsubMessages?: () => void;
 
-  constructor() {}
+  constructor() { }
 
   getChannel(channelId: string) {
     this.unsubChannel = this.subChannel(channelId);
@@ -156,7 +156,7 @@ export class ChannelsService implements OnDestroy {
   }
 
   createText(text: string) {
-    
+
   }
 
 
@@ -165,7 +165,7 @@ export class ChannelsService implements OnDestroy {
     this.unsubMessages = onSnapshot(q, (msgList) => {
       const messagesArray: TicketInterface[] = [];
       msgList.docs.forEach(msg => {
-        let ticketToJson =  this.getTickets(msg.id, msg.data(), channelId)
+        let ticketToJson = this.getTickets(msg.id, msg.data(), channelId)
         if (ticketToJson) {
           messagesArray.push(ticketToJson)
         }
@@ -183,11 +183,11 @@ export class ChannelsService implements OnDestroy {
       text: text,
       threadsCount: 0,
     };
-    
+
     await addDoc(this.getNewMessageRef(channelId), newTicket)
   }
 
-    async editTicketText(ticketRef: DocumentReference, text: string) {
+  async editTicketText(ticketRef: DocumentReference, text: string) {
     try {
       await updateDoc(ticketRef, { text: text })
     } catch (err) {
@@ -202,8 +202,8 @@ export class ChannelsService implements OnDestroy {
   async getThreadsCount(channelId: string, ticketId: string) {
     let threadRef = this.getThreadRef(channelId, ticketId);
     let snapshot = await getCountFromServer(threadRef)
-    let threadsCount  = snapshot.data().count
-    
+    let threadsCount = snapshot.data().count
+
     return threadsCount
   }
 
@@ -233,16 +233,16 @@ export class ChannelsService implements OnDestroy {
   }
 
   updateEditChannel(channelId: string, name: string, description: string) {
-      const channelRef = doc(this.firestore, 'channels', channelId);     
-      updateDoc(channelRef, {
-        name,
-        description,
-      })
+    const channelRef = doc(this.firestore, 'channels', channelId);
+    updateDoc(channelRef, {
+      name,
+      description,
+    })
       .then(() => {
         console.log('Channel updated successfully');
         console.log("Name: ", name, " Description: ", description);
       })
-    }
+  }
 
   async deleteMember(channelId: string, userProfile: any) {
     const channelRef = doc(this.firestore, 'channels', channelId);

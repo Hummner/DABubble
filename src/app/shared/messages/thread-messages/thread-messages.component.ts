@@ -31,6 +31,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   @Input() message!: TicketInterface;
   @Input() members?: any[];
   @Input() index!: number;
+  @Input() isCurrentEdited!: boolean;
   userName!: string;
   time!: string;
   firestoreService = inject(FirestoreService);
@@ -95,7 +96,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   ngAfterViewInit() {
-    console.log(this.textRef);
+   
     setTimeout(() => {
       this.text = this.showText();
     }, 1)
@@ -103,15 +104,27 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+
+    const c = changes['message'];
+    if (c) {
+      console.log('message changed', { prev: c.previousValue, curr: c.currentValue, first: c.firstChange });
+    }
+  
     if (changes['message']) {
       if (this.textRef) {
-        // this.text = this.showText();
+        this.text = this.showText();
       }
+      // console.log("This message changed: ", this.message);
+
     }
 
     this.currentUser = this.getCurrentUserId();
     this.time = this.showTime();
+
+    // if(changes['isCurrentEdited']) {
+    //   console.log("Say yes", this.message);
+
+    // }
   }
 
   onMouseEnter() {
@@ -234,6 +247,15 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   editText() {
+    this.channelService.editTicketText(this.getThreadMessageRef(), this.editedText).then(() => {
+      this.message.text = this.editedText;
+      this.threadService.reemitCurrentTicket();
+      this.editView = false;
+      setTimeout(() => {
+        this.text = this.showText();
+      }, 10);
+
+    })
   }
 
   isReaction() {
@@ -349,6 +371,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   showText() {
+    this.textRef.nativeElement.innerHTML = "";
     let container = document.createElement('p');
     container.classList.add('text-link')
     let text = this.message.text;
@@ -475,7 +498,10 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   getThreadMessageRef() {
-    return this.threadService.getThreadMesssageRef(this.message.threadMessageId!)
+    let path = this.threadService.getThreadMesssageRef(this.message.threadMessageId!)
+    console.log(path);
+
+    return path
 
   }
 
