@@ -19,7 +19,7 @@
             </div>
             <div class="message-wrapper" [ngClass]="{'reverse' : isCurrentUser()}">
                 <div #text class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}">
-                    
+
                 </div>
             </div>
 
@@ -31,9 +31,11 @@
                 </div>
                 <span class="msg-date">Letze Antwort {{ lastThreadTime }} Uhr</span>
             </div>
-            <div class="emoji-container" [ngClass]="{'reverse reverse-container' : isCurrentUser()}" *ngIf="isReaction()">
+            <div class="emoji-container" [ngClass]="{'reverse reverse-container' : isCurrentUser()}"
+                *ngIf="isReaction()">
                 @for (emoji of ticket.reactions; track $index) {
-                <div class="emoji" (mouseenter)="showPopupIndex($index)" (mouseleave)="showPopupIndexNumber = -1">
+                <div *ngIf="$index < 3 || moreEmoji" class="emoji" (mouseenter)="showPopupIndex($index)"
+                    (mouseleave)="showPopupIndexNumber = -1">
                     <div class="emoji-popup" *ngIf="$index == showPopupIndexNumber">
                         {{emoji.emoji}}
                         <p>{{ showReactName(emoji.users) }}</p>
@@ -42,10 +44,20 @@
                     {{emoji.emoji}}
                     <span>{{ emoji.users.length }}</span>
                 </div>
+
                 }
-                <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()" (click)="$event.stopPropagation()"
-                    (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple" src="assets/icon/add_reaction.svg">
+                  <div *ngIf="ticket.reactions.length > 3 && !moreEmoji" class="emoji-more" (click)="moreEmoji = true">
+                    +{{ticket.reactions.length - 3}} weitere</div>
+                <div *ngIf="moreEmoji" class="emoji-more" (click)="moreEmoji = false">Weniger anzeigen</div>
+
+
+
+                <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()"
+                    (click)="$event.stopPropagation()" (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple"
+                        src="assets/icon/add_reaction.svg">
                 </div>
+
+              
             </div>
         </div>
         <div class="emoji-menu" (click)="$event.stopPropagation()"
@@ -56,7 +68,8 @@
                 (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple" src="assets/icon/add_reaction.svg">
             </div>
 
-            <div class="emoji-menu-item" (click)="openThreadPanel()"><img class="hover-purple" src="assets/icon/comment.svg"></div>
+            <div class="emoji-menu-item" (click)="openThreadPanel()"><img class="hover-purple"
+                    src="assets/icon/comment.svg"></div>
             <div *ngIf="isCurrentUser()" class="emoji-menu-item">
                 <mat-icon #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="editTicket"
                     (menuOpened)="onEditMenuOpened()" (menuClosed)="onEditMenuClosed()">more_vert</mat-icon>

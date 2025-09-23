@@ -14,7 +14,7 @@ export class ThreadService {
   unsubCurrentTicket?: () => void;
   private messagesSubscribe = new BehaviorSubject<TicketInterface[]>([])
   messagesSubscribe$ = this.messagesSubscribe.asObservable();
-  private currentTicketSubscribe = new BehaviorSubject<TicketInterface>({} as TicketInterface);
+  private currentTicketSubscribe = new BehaviorSubject<TicketInterface | null>(null);
   currentTicketSubscribe$ = this.currentTicketSubscribe.asObservable();
   currentTicketOpened!: TicketInterface;
   threadPath!: string;
@@ -55,6 +55,15 @@ export class ThreadService {
     });
   }
 
+  reemitCurrentTicket() {
+    debugger
+    const v = this.currentTicketSubscribe.value;
+    console.log(v);
+    
+    if (v) this.currentTicketSubscribe.next({ ...v }); // neue Referenz erzwingen
+  }
+
+
 
   getThreadPath() {
     return this.threadPath
@@ -64,7 +73,13 @@ export class ThreadService {
     let path = this.threadPath + `/${id}`;
     console.log(path);
 
-    return doc(this.firestore, path)
+    if (id) {
+      return doc(this.firestore, path)
+    }
+    return this.getTicketPathDoc(this.getTicketPath())
+
+
+
   }
 
   async addMessageToThread(senderId: string, text: string) {
@@ -108,10 +123,9 @@ export class ThreadService {
   getMessageToJson(messageData: DocumentData, threadMessageId: string) {
     const rawCreatedAt = messageData['createdAt'];
     const createdAtDate = rawCreatedAt instanceof Timestamp ? rawCreatedAt.toDate() : null;
-    if(createdAtDate) {
+    if (createdAtDate) {
       this.threadTimes.push(createdAtDate);
-      console.log(this.threadTimes);
-      
+
     }
 
     let message: TicketInterface = {
@@ -121,7 +135,7 @@ export class ThreadService {
       text: messageData['text'],
       threadMessageId: threadMessageId
     }
-    
+
 
     return message
   }

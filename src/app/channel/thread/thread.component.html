@@ -23,7 +23,7 @@
                     </div>
                 </div> -->
                 <app-thread-messages *ngIf="isThreadOpen" [members]="members"
-                    [message]="currentTicket"></app-thread-messages>
+                    [message]="currentTicket" [isCurrentEdited]="isCurrentEdited"></app-thread-messages>
 
                 <div class="placeholder">
                     <div class="placeholder-date msg-answer">{{ messagesCount }}</div>

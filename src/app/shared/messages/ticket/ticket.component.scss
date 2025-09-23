@@ -208,16 +208,20 @@
 
 
   span {
-    background-color: #ECEEFE !important;
     border-radius: 20px !important;
-    color: black;
-    padding: 4px 8px !important;
+    text-decoration: underline;
 
     &:hover {
       color: #535af1;
     }
   }
 }
+
+::ng-deep .reverse-text-link {
+  color: red !important;
+
+}
+
 
 .message-wrapper {
   display: flex;
@@ -227,6 +231,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .emoji {
@@ -245,7 +250,7 @@
 
 .emoji-popup {
   position: absolute;
-  
+
   width: 158px;
   min-height: 112px;
   background-color: #444df2;
@@ -276,6 +281,19 @@
     width: 20px;
     height: 20px;
     object-fit: contain;
+  }
+}
+
+.emoji-more {
+  width: fit-content;;
+  height: 34px;
+  border-radius: 30px;
+  border: 1px solid #adb0d9;
+  padding: 5px 10px;
+  background-color: white;
+  text-align: center;
+  &:hover {
+    color: #535AF1;
   }
 }
 
@@ -360,5 +378,9 @@
   .member-img-ticket {
     width: 50px;
     height: 50px;
+  }
+
+  .msg-data {
+    font-size: 14px;
   }
 }

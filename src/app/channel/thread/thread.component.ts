@@ -14,6 +14,7 @@ import { UserMentionService } from '../../services/user-channel-mention.service'
 import { EmojiServiceService } from '../../services/emoji.service';
 import { EmojiArrayService } from '../../services/emoji-array.service';
 import { ActivatedRoute } from '@angular/router';
+import { filter, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-thread',
@@ -54,6 +55,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
   messagesCount!: string;
   ticketPath!: string | void;
   number?: number
+  isCurrentEdited: boolean = false;
 
 
   constructor() {
@@ -62,14 +64,26 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.messagesSubscription = this.threadService.messagesSubscribe$.subscribe(msgArray => {
+    this.messagesSubscription = this.threadService.messagesSubscribe$.pipe(
+      filter((arr): arr is TicketInterface[] => Array.isArray(arr)), distinctUntilChanged((a, b) => {
+    if (a.length !== b.length) return false;
+    const la = a[a.length - 1];
+    const lb = b[b.length - 1];
+    // passe die Keys an dein Modell an
+    return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
+  })
+    ).subscribe(msgArray => {
       this.messages = msgArray
     });
 
-    this.currentTicketSubscription = this.threadService.currentTicketSubscribe$.subscribe(ticket => {
+    this.currentTicketSubscription = this.threadService.currentTicketSubscribe$.pipe(
+      filter((t): t is TicketInterface => !!t), distinctUntilChanged((a, b) => a.text === a.text && a.createdAt === b.createdAt)
+    ).subscribe(ticket => {
       this.currentTicket = ticket
       console.log(this.currentTicket);
-      this.createCurrentTicket();
+      
+
+      // this.createCurrentTicket();
     });
   }
 
@@ -115,13 +129,13 @@ export class ThreadComponent implements OnInit, OnDestroy {
   }
 
 
-  createCurrentTicket() {
-    console.log(this.currentTicket.createdAt);
+  // createCurrentTicket() {
+  //   console.log(this.currentTicket.createdAt);
 
-    this.ticketCreatedAt = this.showTime();
-    this.ticketText = this.currentTicket.text;
-    this.messagesCount = this.messagesCounter();
-  }
+  //   this.ticketCreatedAt = this.showTime();
+  //   this.ticketText = this.currentTicket.text;
+  //   this.messagesCount = this.messagesCounter();
+  // }
 
   showTime(): string {
     const createdAtDate = this.currentTicket?.createdAt instanceof Timestamp ? this.currentTicket?.createdAt.toDate() : null;
