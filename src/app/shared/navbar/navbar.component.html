@@ -107,7 +107,7 @@
         <ul *ngIf="showChannel" class="channel-list">
           <li *ngFor="let ch of this.navbarService.hideChannelWithoutCurrentUser() | async; let i = index" class="channel-item" (click)="this.navbarService.selectChannel(ch.channelId)">
             <span class="material-symbols-outlined edit-icon">tag</span>
-            <p>{{ ch.name }}</p>
+            <p class="truncate">{{ ch.name }}</p>
           </li>
           <li class="channel-item" (click)="openDialog()">
             <span class="material-symbols-outlined edit-icon">add_circle</span>
@@ -152,7 +152,7 @@
             <div class="avatar">
               <img [src]="userA.imgUrl" alt="Elias Neumann" />
             </div>
-            <p>{{ userA.name }} (Du)</p>
+            <p class="truncate">{{ userA.name }}</p><span>(Du)</span>
           </li>
           @for(userB of this.navbarService.getOtherUserList(); track userB){
           <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)" 

@@ -19,7 +19,7 @@ header {
   justify-content: center;
   background-color: white;
   border-radius: 30px;
-  margin: 0 64px;
+  margin: 0 32px;
   position: relative;
 
   > input {
@@ -171,6 +171,8 @@ header {
   width: 600px;
   justify-content: flex-end;
   cursor: pointer;
+  overflow: hidden;
+  padding-right: 16px;
 
   .user-name {
     font-weight: bold;
@@ -292,6 +294,10 @@ app-user-profile {
 
 ::ng-deep .slide-out {
   animation: slideOut 0.3s forwards;
+}
+
+::ng-deep .mat-icon {
+  overflow: visible !important;
 }
 
 @keyframes slideIn {

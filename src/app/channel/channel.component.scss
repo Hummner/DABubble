@@ -40,6 +40,8 @@ section {
   gap: 12px;
   cursor: pointer;
   padding: 6px 10px;
+  max-width: 100%;
+  overflow: hidden;
 
   > h2 {
     font-weight: bold;
@@ -213,7 +215,7 @@ section {
 .first-message-title {
   > h2 {
     font-weight: bold;
-    font-size: 24px;
+    font-size: 24px;          
   }
 }
 

@@ -91,6 +91,22 @@ a {
   font-size: 18px;
 }
 
+.truncate {
+  display: inline-block;
+  max-width: 100%;               
+  white-space: nowrap;        
+  overflow: hidden;           
+  text-overflow: ellipsis;
+}
+
+.truncate-text {
+  white-space: nowrap;
+  overflow: hidden;            
+  text-overflow: ellipsis;     
+  max-width: 100%;             
+  display: block;    
+}
+
 app-login,
 app-signup,
 app-avatar-selection,

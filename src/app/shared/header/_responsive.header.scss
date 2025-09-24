@@ -24,6 +24,10 @@
   .menu-resp {
     display: flex;
   }
+
+  .truncate {
+    max-width: 300px !important;
+  }
 }
 
 @include respond-to(md) {

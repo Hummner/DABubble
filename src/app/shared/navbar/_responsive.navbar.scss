@@ -74,6 +74,10 @@
   .hidden {
     display: none;
   }
+
+  .channel-item {
+    max-width: 100% !important;
+  }
 }
 
 @include respond-to(ssm) {
