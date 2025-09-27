@@ -37,6 +37,7 @@ export class MessageService {
       reactions: item.reactions || [],
       hasThread: item.hasThread || false,
       threadCount: item.threadCount || 0,
+      // lastThreadCreatedAt:item.lastThreadCreatedAt
     });
     await setDoc(docRef, { id: docRef.id }, { merge: true });
   }
@@ -85,6 +86,7 @@ export class MessageService {
       reactions: message.reactions,
       hasThread: message.hasThread,
       threadCount: message.threadCount,
+      lastThreadCreatedAt:message.lastThreadCreatedAt
     };
   }
 
@@ -114,6 +116,7 @@ export class MessageService {
       reactions: obj.reactions || [],
       hasThread: obj.hasThread || false,
       threadCount: obj.threadCount || 0,
+      lastThreadCreatedAt:obj.lastThreadCreatedAt  ?? obj.clientCreatedAt ?? null,
     };
   }
 

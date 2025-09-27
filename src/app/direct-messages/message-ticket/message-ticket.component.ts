@@ -161,14 +161,14 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   private getValidUserNames(): string[] {
-    console.log(this.mentionService.filteredUserList());
+    // console.log(this.mentionService.filteredUserList());
     return (typeof this.mentionService.filteredUserList === 'function' ? this.mentionService.filteredUserList() : [])
       .map((u: any) => u.name?.trim())
       .filter(Boolean);
   }
 
   private getValidChannelNames(): string[] {
-    console.log(this.mentionService.getChannelWithUserMemmership())
+    // console.log(this.mentionService.getChannelWithUserMemmership())
     return (this.mentionService.getChannelWithUserMemmership?.() || []).map((c: any) => c.name?.trim()).filter(Boolean);
   }
 

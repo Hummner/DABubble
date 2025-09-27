@@ -18,7 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DirectMessageService } from '../../services/direct-message.service';
 import { MessageService } from '../../services/message.service';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, NgIf } from '@angular/common';
 import { ThreadDirectMessageService } from '../../services/thread-direct-message.service';
 import { onSnapshot } from '@angular/fire/firestore';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
@@ -213,10 +213,14 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       {
         hasThread: true,
         threadCount: (this.message?.threadCount || 0) + 1,
+        lastThreadCreatedAt: serverTimestamp(),
       },
       message.id!,
       this.channelId!
     );
+    console.log(this.message?.lastThreadCreatedAt);
+    console.log(this.message?.createdAt);
+    console.log(message);
   }
 
   subscribeToThreadMessages(channelId: string, messageId: string) {
@@ -225,7 +229,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     }
     this.threadMessageService.subThreadList(channelId, messageId);
     this.threadMessagesSub = this.threadMessageService.threadMessages$.subscribe((messages) => {
-      console.log('[ThreadMessages] Received from Firestore:', messages);
+      // console.log('[ThreadMessages] Received from Firestore:', messages);
       const wasEmpty = this.threadMessages.length === 0;
       const hadNewMessage = messages.length > this.previousThreadMessageCount;
       this.threadMessages = messages;

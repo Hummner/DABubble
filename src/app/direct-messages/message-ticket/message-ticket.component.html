@@ -44,18 +44,10 @@
                 {{ token.value }}
               </ng-container>
               <ng-container *ngIf="token.type === 'mentionUser'">
-                <a class="mention-link" (click)="onUserMentionClick(token.userName)">
-                  &#64;{{ token.userName }}
-                </a>
+                <a class="mention-link" (click)="onUserMentionClick(token.userName)"> &#64;{{ token.userName }} </a>
               </ng-container>
               <ng-container *ngIf="token.type === 'mentionChannel'">
-                <a
-                  class="mention-link"
-                  (click)="onChannelMentionClick(token.channelName)"
-                 
-                >
-                  &#35;{{ token.channelName }}
-                </a>
+                <a class="mention-link" (click)="onChannelMentionClick(token.channelName)"> &#35;{{ token.channelName }} </a>
               </ng-container>
             </ng-container>
           </p>
@@ -73,6 +65,7 @@
           @if(message.threadCount == 0){ Keine Antwort } @else {
           {{ message.threadCount }} Antwort }
         </span>
+        <span class="msg-date" *ngIf="isTimestamp(message.lastThreadCreatedAt)">Letzte Antwort {{ message.lastThreadCreatedAt.toDate() | date : "dd/MM/yyyy HH:mm"}} Uhr</span>
       </div>
       <div class="emoji-container" [ngClass]="{ reverse: currentUserText }" *ngIf="message.reactions">
         <div *ngFor="let emoji of reactionsAll; let i = index" class="emoji-wrapper">

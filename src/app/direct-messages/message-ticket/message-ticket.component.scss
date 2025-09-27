@@ -69,7 +69,8 @@
 
 .answers {
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  gap:30px;
 }
 
 .msg-date {
