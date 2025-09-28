@@ -65,7 +65,9 @@
           @if(message.threadCount == 0){ Keine Antwort } @else {
           {{ message.threadCount }} Antwort }
         </span>
-        <span class="msg-date" *ngIf="isTimestamp(message.lastThreadCreatedAt)">Letzte Antwort {{ message.lastThreadCreatedAt.toDate() | date : "dd/MM/yyyy HH:mm"}} Uhr</span>
+        <span class="msg-date" *ngIf="isTimestamp(message.lastThreadCreatedAt)"
+          >Letzte Antwort {{ message.lastThreadCreatedAt.toDate() | date : "dd/MM/yyyy HH:mm" }} Uhr</span
+        >
       </div>
       <div class="emoji-container" [ngClass]="{ reverse: currentUserText }" *ngIf="message.reactions">
         <div *ngFor="let emoji of reactionsAll; let i = index" class="emoji-wrapper">
@@ -85,7 +87,7 @@
           </div>
         </div>
         <div [matMenuTriggerFor]="restEmoji" #menuTrigger="matMenuTrigger" class="restEmoji" *ngIf="hasMoreReactions">
-          {{ restOfReactions?.length }} weitere ...
+          + {{ restOfReactions?.length }} weitere
         </div>
         <div
           class="emoji-menu-item"

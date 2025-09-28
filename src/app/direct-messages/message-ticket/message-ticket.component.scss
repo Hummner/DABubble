@@ -70,7 +70,7 @@
 .answers {
   display: flex;
   align-items: baseline;
-  gap:30px;
+  gap: 30px;
 }
 
 .msg-date {
@@ -390,7 +390,16 @@
   border-radius: 30px;
   border: 1px solid #797ef3;
   background-color: white;
+  &:hover {
+    color: #797ef3;
+  }
 }
+
+::ng-deep .mat-mdc-menu-panel .rest-emoji-emnu {
+  border-radius: 20px;
+  padding: 10px;
+}
+
 ::ng-deep .rest-emoji-menu-panel {
   display: flex;
   gap: 10px;
@@ -407,6 +416,15 @@
   }
 }
 
+:ng-deep #cdk-overlay-0 {
+  > .rest-emoji-menu {
+    > .mat-mdc-menu-content {
+      border-radius: 20px;
+      padding: 10px;
+    }
+  }
+}
+
 .mention-link {
   background-color: #eceefe !important;
   border-radius: 20px !important;
@@ -414,5 +432,16 @@
   padding: 4px 8px !important;
   &:hover {
     color: #535af1;
+  }
+}
+
+
+::ng-deep .mat-mdc-menu-panel.rest-emoji-menu {
+  border-radius: 20px !important;
+  padding: 12px !important;
+
+  .mat-mdc-menu-content {
+    border-radius: 20px !important;
+    padding: 8px !important;
   }
 }
