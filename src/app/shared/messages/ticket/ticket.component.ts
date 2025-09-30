@@ -15,6 +15,7 @@ import { EmojiArrayService } from '../../../services/emoji-array.service';
 import { UserMentionService } from '../../../services/user-channel-mention.service';
 import { DirectMessageService } from '../../../services/direct-message.service';
 import { NavbarService } from '../../../services/navbar.service';
+import { EmojiServiceService } from '../../../services/emoji.service';
 
 @Component({
   selector: 'app-ticket',
@@ -35,6 +36,7 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   userMentionService = inject(UserMentionService);
   directMsgService = inject(DirectMessageService);
   navbarService = inject(NavbarService);
+  emojiService = inject(EmojiServiceService)
 
   userName!: string;
   userImg!: string;
@@ -265,9 +267,10 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     return [...recentFirst, ...rest]
   }
 
-  selectEmoji(emoji: string) {
-    this.emojiArray.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter(e => e !== emoji)]
-    this.addEmojiToTicket(emoji);
+  selectEmoji(emoji: {name:string, code: string}) {
+    // this.emojiArray.emojiUsageHistory = [emoji.code, ...this.emojiUsageHistory.filter(e => e !== emoji)]
+    this.emojiService.selectEmoji(emoji.name)
+    this.addEmojiToTicket(emoji.code);
 
   }
 

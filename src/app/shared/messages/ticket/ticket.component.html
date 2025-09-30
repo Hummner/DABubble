@@ -1,7 +1,7 @@
 <mat-menu class="emoji-menu-small" #reactMenu="matMenu">
     <div class="emoji-menu-container">
-        @for (emoji of sortedEmoji; track $index) {
-        <span class="emoji-in-popup" (click)="selectEmoji(emoji)">{{emoji}}</span>
+        @for (emoji of emojiService.sortedEmojis; track $index) {
+        <span class="emoji-in-popup" (click)="selectEmoji(emoji)">{{emoji.code}}</span>
         }
     </div>
 </mat-menu>
@@ -62,8 +62,8 @@
         </div>
         <div class="emoji-menu" (click)="$event.stopPropagation()"
             [ngClass]="{ 'visible': showMenu, 'hidden': !showMenu, 'emoji-menu-reverse width-255' : isCurrentUser()}">
-            <div class="emoji-menu-item" (click)="addEmojiToTicket(sortedEmoji[0])">{{ sortedEmoji[0] }}</div>
-            <div class="emoji-menu-item" (click)="addEmojiToTicket(sortedEmoji[1])">{{ sortedEmoji[1] }}</div>
+            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[0])">{{ emojiService.sortedEmojis[0].code }}</div>
+            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[1])">{{ emojiService.sortedEmojis[1].code }}</div>
             <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()"
                 (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple" src="assets/icon/add_reaction.svg">
             </div>

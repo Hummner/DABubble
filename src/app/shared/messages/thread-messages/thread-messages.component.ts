@@ -15,6 +15,7 @@ import { doc, getDocs, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { ThreadService } from '../../../services/thread.service';
 import { UserMentionService } from '../../../services/user-channel-mention.service';
 import { NavbarService } from '../../../services/navbar.service';
+import { EmojiServiceService } from '../../../services/emoji.service';
 
 @Component({
   selector: 'app-thread-messages',
@@ -37,6 +38,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   firestoreService = inject(FirestoreService);
   private auth = inject(AuthService);
   emojiArray = inject(EmojiArrayService);
+  emojiService = inject(EmojiServiceService)
   channelService = inject(ChannelsService);
   threadService = inject(ThreadService);
   userMentionService = inject(UserMentionService);
@@ -52,6 +54,8 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   showPopup = false;
   userImg!: string;
   text!: void;
+  moreEmoji: boolean = false;
+  showPopupIndexNumber!: number;
 
   constructor(
     private route: ActivatedRoute
@@ -96,7 +100,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   ngAfterViewInit() {
-   
+
     setTimeout(() => {
       this.text = this.showText();
     }, 1)
@@ -109,7 +113,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     if (c) {
       console.log('message changed', { prev: c.previousValue, curr: c.currentValue, first: c.firstChange });
     }
-  
+
     if (changes['message']) {
       if (this.textRef) {
         this.text = this.showText();
@@ -231,14 +235,64 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   // }
 
 
+  showPopupIndex(index: number) {
+    return this.showPopupIndexNumber = index
+  }
+
+  showReactName(users: string[]) {
+    let name = "Guest";
+    let allUserCount = users.length - 1;
+    let nameArray: string[] = [];
+    let isCurrentUserReacted = false;
+
+    users.forEach(user => {
+      let userIndex = this.findUser(user);
+      if (user == this.getCurrentUserId()) {
+        isCurrentUserReacted = true;
+      }
+
+      if (userIndex >= 0 && this.members) {
+        let userName = this.members[userIndex]['name'];
+        if (user !== this.getCurrentUserId()) {
+          nameArray.push(userName)
+        }
+      }
+    })
+    name = this.renderPopUpText(isCurrentUserReacted, nameArray, allUserCount)
+    return name
+  }
+
+  renderPopUpText(isCurrentUserReacted: boolean, nameArray: string[], allUserCount: number) {
+    let name = "Guest"
+    if (isCurrentUserReacted && nameArray.length == 1) {
+      let lastName = nameArray[nameArray.length - 1];
+      name = `${lastName} und Du`;
+    } else if (isCurrentUserReacted && nameArray.length > 1) {
+      name = `Du und +${allUserCount}`
+    } else if (isCurrentUserReacted && nameArray.length == 0 && allUserCount == 0) {
+      name = "Du"
+    }
+    else if (!isCurrentUserReacted && nameArray.length == 1) {
+      name = nameArray[0];
+    } else if (!isCurrentUserReacted && nameArray.length > 1) {
+      let firsName = nameArray[0];
+      name = `${firsName} und +${allUserCount}`
+    } else if (allUserCount > 0) {
+      name = `Guest und +${allUserCount}`
+    }
+    return name
+  }
+
+
   onEmojiMenuClosed() {
     this.emojiMenuOpen = false;
     this.showMenu = false;
   }
 
-  selectEmoji(emoji: string) {
-    this.emojiArray.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter(e => e !== emoji)]
-    this.addEmojiToTicket(emoji);
+  selectEmoji(emoji: { name: string, code: string }) {
+    // this.emojiArray.emojiUsageHistory = [emoji.code, ...this.emojiUsageHistory.filter(e => e !== emoji)]
+    this.emojiService.selectEmoji(emoji.name)
+    this.addEmojiToTicket(emoji.code);
 
   }
 

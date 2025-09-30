@@ -66,12 +66,12 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
     this.messagesSubscription = this.threadService.messagesSubscribe$.pipe(
       filter((arr): arr is TicketInterface[] => Array.isArray(arr)), distinctUntilChanged((a, b) => {
-    if (a.length !== b.length) return false;
-    const la = a[a.length - 1];
-    const lb = b[b.length - 1];
-    // passe die Keys an dein Modell an
-    return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
-  })
+        if (a.length !== b.length) return false;
+        const la = a[a.length - 1];
+        const lb = b[b.length - 1];
+        // passe die Keys an dein Modell an
+        return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
+      })
     ).subscribe(msgArray => {
       this.messages = msgArray
     });
@@ -81,7 +81,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
     ).subscribe(ticket => {
       this.currentTicket = ticket
       console.log(this.currentTicket);
-      
+
 
       // this.createCurrentTicket();
     });
@@ -239,6 +239,11 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
   addEmoji(emoji: any) {
     this.textInput = this.emojiService.addEmojiToContent(emoji, this.textInput);
+  }
+
+  onEmojiClick(emoji: any) {
+    this.addEmoji(emoji.code);
+    this.emojiService.selectEmoji(emoji.name);
   }
 
 

@@ -157,8 +157,8 @@
               <img src="assets/icon/reaction.png" alt="" />
               <mat-menu #reactMenu="matMenu" class="emoji-menu-small">
                 <div class="emoji-menu-container">
-                  @for (emoji of sortedEmoji; track $index) {
-                  <span class="emoji-in-popup" (click)="addEmoji(emoji); $event.stopPropagation()">{{ emoji }}</span>
+                  @for (emoji of emojiService.sortedEmojis; track emojiService.emojiList) {
+                  <span class="emoji-in-popup" (click)="onEmojiClick(emoji); $event.stopPropagation()">{{ emoji.code }}</span>
                   }
                 </div>
               </mat-menu>

@@ -100,7 +100,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.loading = true;
     this.getActiveRoute();
     this.checkWindowWidth();
-    
+
     this.channelSubscription = this.channelsService.channel$.subscribe((channel) => {
       if (channel) {
         this.channel = channel;
@@ -157,7 +157,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.loading = true;
         this.channelId = params['ChannelId'];
         console.log(this.channelId);
-        
+
       }
     });
   }
@@ -288,12 +288,12 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.editName = false;
     this.nameInput.nativeElement.blur();
     this.checkValidation().then((isValid) => {
-    if (isValid) {
-      this.channelsService.updateChannelName(
-        this.channelId,
-        this.nameInput.nativeElement.value
-      );
-      this.router.navigate([`/channel/${this.channelId}`]);
+      if (isValid) {
+        this.channelsService.updateChannelName(
+          this.channelId,
+          this.nameInput.nativeElement.value
+        );
+        this.router.navigate([`/channel/${this.channelId}`]);
       }
     });
   }
@@ -411,6 +411,11 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   addEmoji(emoji: any) {
     this.textInput = this.emojiService.addEmojiToContent(emoji, this.textInput);
+  }
+
+  onEmojiClick(emoji: any) {
+    this.addEmoji(emoji.code);
+    this.emojiService.selectEmoji(emoji.name);
   }
 
   onInputChange(event: Event) {

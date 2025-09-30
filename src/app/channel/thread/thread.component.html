@@ -22,8 +22,8 @@
                         </div>
                     </div>
                 </div> -->
-                <app-thread-messages *ngIf="isThreadOpen" [members]="members"
-                    [message]="currentTicket" [isCurrentEdited]="isCurrentEdited"></app-thread-messages>
+                <app-thread-messages *ngIf="isThreadOpen" [members]="members" [message]="currentTicket"
+                    [isCurrentEdited]="isCurrentEdited"></app-thread-messages>
 
                 <div class="placeholder">
                     <div class="placeholder-date msg-answer">{{ messagesCount }}</div>
@@ -82,8 +82,8 @@
 
 <mat-menu #reactMenu="matMenu" class="emoji-menu-small">
     <div class="emoji-menu-container">
-        @for (emoji of sortedEmoji; track $index) {
-        <span class="emoji-in-popup" (click)="addEmoji(emoji); $event.stopPropagation()">{{ emoji }}</span>
+        @for (emoji of emojiService.sortedEmojis; track emojiService.emojiList) {
+        <span class="emoji-in-popup" (click)="onEmojiClick(emoji); $event.stopPropagation()">{{ emoji.code }}</span>
         }
     </div>
 </mat-menu>
