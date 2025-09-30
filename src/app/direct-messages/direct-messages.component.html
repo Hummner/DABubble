@@ -129,7 +129,8 @@
             <div class="emoji-menu-panel">
               @for(emoji of emojiService.sortedEmojis;track emojiService.emojiList){
               <div class="emoji-menu-item" (click)="onEmojiClick(emoji)">
-                <img src="assets/emojis/{{ emoji.name }}.png" />
+                <span class="emoji-in-popup">{{ emoji.code }}</span>
+                <!-- <img src="assets/emojis/{{ emoji.name }}.png" /> -->
               </div>
               }
             </div>
