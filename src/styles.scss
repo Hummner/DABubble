@@ -93,18 +93,18 @@ a {
 
 .truncate {
   display: inline-block;
-  max-width: 100%;               
-  white-space: nowrap;        
-  overflow: hidden;           
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .truncate-text {
   white-space: nowrap;
-  overflow: hidden;            
-  text-overflow: ellipsis;     
-  max-width: 100%;             
-  display: block;    
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
 }
 
 app-login,
@@ -130,15 +130,28 @@ $breakpoint-lg: 992px;
     @media (max-width: $breakpoint-sm) {
       @content;
     }
-  } @else if $breakpoint ==md {
+  }
+
+  @else if $breakpoint ==md {
     @media (max-width: $breakpoint-md) {
-      @content;
-    }
-  } @else if $breakpoint ==lg {
-    @media (max-width: $breakpoint-lg) {
       @content;
     }
   }
 
-  
+  @else if $breakpoint ==lg {
+    @media (max-width: $breakpoint-lg) {
+      @content;
+    }
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
 }

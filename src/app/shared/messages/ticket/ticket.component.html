@@ -34,7 +34,7 @@
             <div class="emoji-container" [ngClass]="{'reverse reverse-container' : isCurrentUser()}"
                 *ngIf="isReaction()">
                 @for (emoji of ticket.reactions; track $index) {
-                <div *ngIf="$index < 3 || moreEmoji" class="emoji" (mouseenter)="showPopupIndex($index)"
+                <div *ngIf="$index < 20 || moreEmoji" class="emoji" (mouseenter)="showPopupIndex($index)"
                     (mouseleave)="showPopupIndexNumber = -1">
                     <div class="emoji-popup" *ngIf="$index == showPopupIndexNumber">
                         {{emoji.emoji}}
@@ -46,8 +46,8 @@
                 </div>
 
                 }
-                  <div *ngIf="ticket.reactions.length > 3 && !moreEmoji" class="emoji-more" (click)="moreEmoji = true">
-                    +{{ticket.reactions.length - 3}} weitere</div>
+                  <div *ngIf="ticket.reactions.length > 20 && !moreEmoji" class="emoji-more" (click)="moreEmoji = true">
+                    +{{ticket.reactions.length - 20}} weitere</div>
                 <div *ngIf="moreEmoji" class="emoji-more" (click)="moreEmoji = false">Weniger anzeigen</div>
 
 

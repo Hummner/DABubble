@@ -131,6 +131,21 @@
     transform: translateX(20px);
 }
 
+.emoji-more {
+    width: fit-content;
+    ;
+    height: 34px;
+    border-radius: 30px;
+    border: 1px solid #adb0d9;
+    padding: 5px 10px;
+    background-color: white;
+    text-align: center;
+
+    &:hover {
+        color: #535AF1;
+    }
+}
+
 .emoji-menu-item {
     width: 40px;
     height: 40px;
@@ -203,6 +218,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .emoji {
@@ -233,6 +249,7 @@
     left: 50%;
     gap: 5px;
     padding: 15px 10px;
+    animation: fade 0.3s;
 
     >span {
         color: white;
@@ -327,9 +344,13 @@
 
 @media(max-width: 768px) {
     .ticket {
-        padding: 20px 24px;
+        padding: 20px 14px;
     }
 
+    .emoji-popup {
+        width: 118px !important;
+        height: unset !important;
+    }
 }
 
 @media(max-width: 576px) {
@@ -337,5 +358,4 @@
         width: 50px;
         height: 50px;
     }
-
 }

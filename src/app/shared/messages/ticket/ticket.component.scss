@@ -234,6 +234,7 @@
   flex-wrap: wrap;
 }
 
+
 .emoji {
   width: 64px;
   height: 34px;
@@ -246,11 +247,12 @@
   gap: 10px;
   background-color: white;
   position: relative;
+
 }
 
 .emoji-popup {
   position: absolute;
-
+  animation: fade 0.3s;
   width: 158px;
   min-height: 112px;
   background-color: #444df2;
@@ -285,13 +287,15 @@
 }
 
 .emoji-more {
-  width: fit-content;;
+  width: fit-content;
+  ;
   height: 34px;
   border-radius: 30px;
   border: 1px solid #adb0d9;
   padding: 5px 10px;
   background-color: white;
   text-align: center;
+
   &:hover {
     color: #535AF1;
   }
@@ -370,7 +374,12 @@
 
 @media (max-width: 768px) {
   .ticket {
-    padding: 20px 24px;
+    padding: 20px 14px;
+  }
+
+  .emoji-popup {
+    width: 118px !important;
+    height: unset !important;
   }
 }
 
@@ -383,7 +392,17 @@
   .msg-data {
     font-size: 14px;
   }
+
   .msg-name {
     max-width: 100px !important;
+  }
+
+  .emoji-menu {
+    width: 200px !important;
+  }
+
+  .emoji-menu-item {
+    width: 28px;
+    height: 28px;
   }
 }
