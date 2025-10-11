@@ -29,12 +29,12 @@
     </div>
     <div class="message-content">
       <div>
-        <p class="time" *ngIf="isTimestamp(message.createdAt)">
-          {{ message.createdAt.toDate() | date : "dd/MM/yyyy HH:mm" }}
-        </p>
-      </div>
-      <div class="name-date" [ngClass]="{ reverse: currentUserText }">
-        <span class="msg-name"> {{ user?.name }}</span>
+        <div class="name-date" [ngClass]="{ reverse: currentUserText }">
+          <span class="msg-name"> {{ user?.name }}</span>
+          <p class="time" *ngIf="isTimestamp(message.createdAt)">
+            {{ message.createdAt.toDate() | date : "HH:mm" }}
+          </p>
+        </div>
       </div>
 
       <div class="message-wrapper" [ngClass]="{ reverse: currentUserText }">
@@ -67,7 +67,7 @@
           {{ message.threadCount }} Antwort }
         </span>
         <span class="msg-date" *ngIf="isTimestamp(message.lastThreadCreatedAt)"
-          >Letzte Antwort {{ message.lastThreadCreatedAt.toDate() | date : "dd/MM/yyyy HH:mm" }} Uhr</span
+          >Letzte Antwort {{ message.lastThreadCreatedAt.toDate() | date : "dd/MM/yyyy HH:mm" }}</span
         >
       </div>
       <div class="emoji-container" [ngClass]="{ reverse: currentUserText }" *ngIf="message.reactions">

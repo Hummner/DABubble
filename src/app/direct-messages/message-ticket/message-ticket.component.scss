@@ -60,6 +60,9 @@
   display: flex;
   gap: 24px;
   align-items: center;
+  > p {
+    margin: 0;
+  }
 }
 
 .msg-name {
@@ -426,15 +429,13 @@
 }
 
 .mention-link {
-  background-color: #eceefe !important;
+  margin: 0 !important;
   border-radius: 20px !important;
-  color: black;
-  padding: 4px 8px !important;
+  text-decoration: underline;
   &:hover {
     color: #535af1;
   }
 }
-
 
 ::ng-deep .mat-mdc-menu-panel.rest-emoji-menu {
   border-radius: 20px !important;
