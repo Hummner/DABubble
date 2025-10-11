@@ -79,6 +79,7 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   shownEmoji!: string;
   emojiIndex!: number;
   editedText!: string;
+  allEmoji: boolean = false;
 
   constructor(
     private firestore: FirestoreService,
@@ -411,9 +412,13 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   get reactionsAll() {
     let limitedReactions: { emojiName: string; users: string[] }[] = [];
     if (this.message.reactions) {
-      const limit = this.emojiLimit;
-      if (this.message.reactions && this.message.reactions.length > limit) {
-        limitedReactions = this.message.reactions.slice(0, limit - 1);
+      if (this.allEmoji) {
+        const limit = this.emojiLimit;
+        if (this.message.reactions && this.message.reactions.length > limit) {
+          limitedReactions = this.message.reactions.slice(0, limit);
+        } else {
+          limitedReactions = this.message.reactions;
+        }
       } else {
         limitedReactions = this.message.reactions;
       }
@@ -428,5 +433,14 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
 
   get hasMoreReactions(): boolean {
     return this.message.reactions ? this.message.reactions.length > this.emojiLimit : false;
+  }
+
+
+
+  toggleEmojiAmount() {
+    this.allEmoji = !this.allEmoji;
+    console.log(this.allEmoji);
+    console.log(this.message.reactions);
+    console.log(this.reactionsAll);
   }
 }

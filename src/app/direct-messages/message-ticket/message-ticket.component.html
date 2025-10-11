@@ -88,8 +88,11 @@
             </div>
           </div>
         </div>
-        <div [matMenuTriggerFor]="restEmoji" #menuTrigger="matMenuTrigger" class="restEmoji" *ngIf="hasMoreReactions">
-          + {{ restOfReactions?.length }} weitere
+        <div class="restEmoji" *ngIf="hasMoreReactions && allEmoji" (click)="toggleEmojiAmount()">
+          <span class="moreEmojiText"> + {{ restOfReactions?.length }} weitere</span>
+        </div>
+        <div class="restEmoji" *ngIf="hasMoreReactions && !allEmoji" (click)="toggleEmojiAmount()">
+          <span class="lessEmojiText">Weniger</span>
         </div>
         <div
           class="emoji-menu-item"

@@ -42,19 +42,20 @@ export class EmojiServiceService {
     { name: 'pray', code: '🙏' },
     { name: 'sleeping', code: '😴' },
     { name: 'halo', code: '😇' },
-    { name: 'monkey-see-no', code: '🙈' },
-    { name: 'monkey-say-no', code: '🙊' },
-    { name: 'monkey-hear-no', code: '🙉' },
-    { name: 'poop', code: '💩' },
-    { name: 'sad-cry', code: '😢' },
-    { name: 'vomit', code: '🤮' },
-    { name: 'fear', code: '😨' },
-    { name: 'shocked', code: '😱' },
     { name: 'confetty', code: '🎉' },
-    { name: 'cry', code: '😭' },
     { name: 'kiss', code: '😘' },
-    { name: 'devil', code: '😈' },
   ];
+
+//  { name: 'poop', code: '💩' },
+//     { name: 'sad-cry', code: '😢' },
+//     { name: 'vomit', code: '🤮' },
+//     { name: 'fear', code: '😨' },
+//     { name: 'shocked', code: '😱' },
+//     { name: 'cry', code: '😭' },
+//     { name: 'devil', code: '😈' },
+//      { name: 'monkey-see-no', code: '🙈' },
+//     { name: 'monkey-say-no', code: '🙊' },
+//     { name: 'monkey-hear-no', code: '🙉' },
 
   emojiHistory: typeof this.emojiList = [];
 
