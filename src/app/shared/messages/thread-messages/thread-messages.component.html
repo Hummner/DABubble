@@ -1,7 +1,7 @@
 <mat-menu class="emoji-menu-small" #reactMenu="matMenu">
     <div class="emoji-menu-container">
         @for (emoji of emojiService.sortedEmojis; track $index) {
-        <span class="emoji-in-popup" (click)="selectEmoji(emoji)">{{emoji.code}}</span>
+        <span class="emoji-in-popup" (click)="selectEmoji(emoji)"><img src="assets/emojis/{{ emoji.name }}.png" /></span>
         }
     </div>
 </mat-menu>
@@ -28,11 +28,11 @@
                 <div *ngIf="$index < 7 || moreEmoji" class="emoji" (mouseenter)="showPopupIndex($index)"
                     (mouseleave)="showPopupIndexNumber = -1">
                     <div class="emoji-popup" *ngIf="$index == showPopupIndexNumber">
-                        {{emoji.emoji}}
+                        <img src="assets/emojis/{{ showEmojiName(emoji) }}.png" />
                         <p>{{ showReactName(emoji.users) }}</p>
                         <span>hat reagiert</span>
                     </div>
-                    {{emoji.emoji}}
+                    <img src="assets/emojis/{{ showEmojiName(emoji) }}.png" />
                     <span>{{ emoji.users.length }}</span>
                 </div>
                 }
