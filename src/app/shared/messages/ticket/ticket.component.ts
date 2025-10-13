@@ -67,11 +67,19 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     if (this.ticket.threads) {
       this.getMessageId();
       let ticketPath = this.ticket.threads.path.split('/').slice(3, 4).join('/')
+      console.log(ticketPath);
+      
 
       if (this.messageId === ticketPath) {
+        setTimeout(() => {
+          this.openThreadPanel()
+          
+        }, 20);
         console.log("This ticket: ", this.messageId);
         console.log("This path:", ticketPath);
-        this.openThreadPanel()
+        
+      } else {
+        
       }
     }
 
@@ -232,6 +240,17 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
       name = `Guest und +${allUserCount}`
     }
     return name
+  }
+
+  openThreadUrl() {
+    
+      if (this.ticket.threads?.path) {
+        const ticketpath = this.ticket.threads?.path.split('/')[3]
+        const channelPath = this.ticket.threads?.path.split('/')[1]
+        console.log(ticketpath[3]);
+
+        this.router.navigate(['channel', channelPath, 'messages', ticketpath])
+      }
   }
 
   openThreadPanel() {
@@ -491,6 +510,17 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     return taggedChannels
 
   }
+
+  showEmojiName(emoji: {emoji: string, users: string[]}) {
+    
+    let emojiCode = emoji.emoji;
+    let emojiName = this.emojiService.emojiList.find( emo => {return emo.code === emojiCode})
+
+    if (emojiName) return emojiName.name
+
+    return 
+  }
+
 
 
   getUserList(text: string) {

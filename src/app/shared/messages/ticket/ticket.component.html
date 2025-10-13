@@ -1,7 +1,7 @@
 <mat-menu class="emoji-menu-small" #reactMenu="matMenu">
     <div class="emoji-menu-container">
         @for (emoji of emojiService.sortedEmojis; track $index) {
-        <span class="emoji-in-popup" (click)="selectEmoji(emoji)">{{emoji.code}}</span>
+        <span class="emoji-in-popup" (click)="selectEmoji(emoji)"><img src="assets/emojis/{{ emoji.name }}.png" /></span>
         }
     </div>
 </mat-menu>
@@ -25,11 +25,11 @@
 
             <div class="answers" [ngClass]="{'reverse' : isCurrentUser()}">
                 <div class="msg-answer-container" [ngClass]="{'reverse' : isCurrentUser()}">
-                    <span class="msg-answer" (click)="openThreadPanel()">
+                    <span class="msg-answer" (click)="openThreadUrl()">
                         {{answers}}
                     </span>
                 </div>
-                <span class="msg-date">Letzte Antwort {{ lastThreadTime }} Uhr</span>
+                <span *ngIf="lastThreadTime != '-'" class="msg-date">Letzte Antwort {{ lastThreadTime }} Uhr</span>
             </div>
             <div class="emoji-container" [ngClass]="{'reverse reverse-container' : isCurrentUser()}"
                 *ngIf="isReaction()">
@@ -37,11 +37,11 @@
                 <div *ngIf="$index < 20 || moreEmoji" class="emoji" (mouseenter)="showPopupIndex($index)"
                     (mouseleave)="showPopupIndexNumber = -1">
                     <div class="emoji-popup" *ngIf="$index == showPopupIndexNumber">
-                        {{emoji.emoji}}
+                        <img src="assets/emojis/{{ showEmojiName(emoji) }}.png" />
                         <p>{{ showReactName(emoji.users) }}</p>
                         <span>hat reagiert</span>
                     </div>
-                    {{emoji.emoji}}
+                    <img src="assets/emojis/{{ showEmojiName(emoji) }}.png" />
                     <span>{{ emoji.users.length }}</span>
                 </div>
 
@@ -62,8 +62,8 @@
         </div>
         <div class="emoji-menu" (click)="$event.stopPropagation()"
             [ngClass]="{ 'visible': showMenu, 'hidden': !showMenu, 'emoji-menu-reverse width-255' : isCurrentUser()}">
-            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[0])">{{ emojiService.sortedEmojis[0].code }}</div>
-            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[1])">{{ emojiService.sortedEmojis[1].code }}</div>
+            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[0])"><img src="assets/emojis/{{ emojiService.sortedEmojis[0].name }}.png" /></div>
+            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[1])"><img src="assets/emojis/{{ emojiService.sortedEmojis[1].name }}.png" /></div>
             <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()"
                 (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple" src="assets/icon/add_reaction.svg">
             </div>

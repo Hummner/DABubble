@@ -137,6 +137,12 @@
   transform: scale(1);
   transition: transform 75ms ease-in-out;
 
+  >img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+
   &:hover {
     transform: scale(1.2);
   }
@@ -167,6 +173,12 @@
   align-items: center;
   cursor: pointer;
   position: relative;
+
+  >img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
 
   &:hover {
     background-color: #eceefe;
@@ -248,6 +260,12 @@
   background-color: white;
   position: relative;
 
+  >img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+
 }
 
 .emoji-popup {
@@ -265,6 +283,12 @@
   left: 50%;
   gap: 5px;
   padding: 15px 10px;
+
+  >img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
 
   >span {
     color: white;
