@@ -236,6 +236,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   }
 
   async addMessage() {
+    if(this.canSendMessage()){
     const message: Message = {
       createdAt: serverTimestamp(),
       senderId: this.senderId,
@@ -246,6 +247,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     await this.messageService.addMessage(message, this.channelId);
     this.shouldScroll = true;
     this.content = '';
+    }
   }
 
   canSendMessage(): boolean {

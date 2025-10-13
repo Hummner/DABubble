@@ -107,7 +107,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       setTimeout(() => {
         this.loading = false;
         this.cdr.markForCheck();
-        this.scrollToBottomInstantly();
+        // this.scrollToBottomInstantly();
       }, 1000);
     });
   }
@@ -185,6 +185,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       console.error('Cannot send thread message: No user ID available');
       return;
     }
+    if(this.canSendMessage()){
     const threadMessage = {
       createdAt: serverTimestamp(),
       senderId: currentUserId,
@@ -198,6 +199,8 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       this.shouldScroll = true;
     }
     this.content = '';
+    }
+
   }
 
   canSendMessage(): boolean {

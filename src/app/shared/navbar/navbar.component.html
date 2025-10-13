@@ -65,7 +65,7 @@
       </div>
       }
     </div>
-    
+
     <div class="navbar-menu">
       <div class="float-btn" (click)="toNewMessage()">
         <img src="assets/icon/add_message_white.svg" alt="" />
@@ -155,8 +155,8 @@
             <p class="truncate">{{ userA.name }}</p><span>(Du)</span>
           </li>
           @for(userB of this.navbarService.getOtherUserList(); track userB){
-          <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)" 
-            ><li class="direct-messages-item" [ngClass]="{'selected':userB.uid === this.navbarService.selectedUserId()}">
+          <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)"
+            ><li class="direct-messages-item" [ngClass]="{'selected':(userB.uid === this.navbarService.selectedUserId()) && isDirectMessageSelected}">
               <div class="avatar">
                 <img [src]="userB.imgUrl" alt="Elise Roth" />
               </div>
