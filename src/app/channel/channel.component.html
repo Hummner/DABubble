@@ -77,12 +77,19 @@
         <div class="members">
           <div class="members-container" [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger"
             (click)="openMenu(menuTrigger)">
-            @for (member of channel?.members?.slice(0, 10); track $index) {
-            <div class="member-img"><img [src]="member?.imgUrl" alt="" /></div>
+            @for (member of channel?.members?.slice(0, 3); track $index) {
+              <div class="member-img">
+                <img [src]="member?.imgUrl" alt="" />
+              </div>
             }
-            <div class="member-img">
+            @if ((channel?.members?.length ?? 0) > 5) {
+              <div class="member-img">
+                <span>+{{ (channel?.members?.length ?? 0) - 5 }}</span>
+              </div>
+            }
+            <!-- <div class="member-img">
               <span>{{ channel?.members?.length }}</span>
-            </div>
+            </div> -->
           </div>
           <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
             class="add-member-icon am-icon">
