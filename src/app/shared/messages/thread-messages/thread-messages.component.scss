@@ -188,6 +188,12 @@
     transform: scale(1);
     transition: transform 75ms ease-in-out;
 
+    >img {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+    }
+
     &:hover {
         transform: scale(1.2);
     }
@@ -233,6 +239,12 @@
     gap: 10px;
     background-color: white;
     position: relative;
+
+    >img {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+    }
 }
 
 .emoji-popup {
@@ -250,6 +262,12 @@
     gap: 5px;
     padding: 15px 10px;
     animation: fade 0.3s;
+
+    >img {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+    }
 
     >span {
         color: white;

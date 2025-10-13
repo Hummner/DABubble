@@ -4,7 +4,7 @@ import { TicketInterface } from '../../../interfaces/ticket.interface';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
 import { AuthService } from '../../../services/auth.service';
 import { FirestoreService } from '../../../services/firestore.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -58,7 +58,8 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   showPopupIndexNumber!: number;
 
   constructor(
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
 
   }
@@ -82,7 +83,6 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     if (this.message) {
       this.showName();
       this.time = this.showTime();
-
     }
 
 
@@ -104,7 +104,6 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     setTimeout(() => {
       this.text = this.showText();
     }, 1)
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -124,11 +123,6 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
 
     this.currentUser = this.getCurrentUserId();
     this.time = this.showTime();
-
-    // if(changes['isCurrentEdited']) {
-    //   console.log("Say yes", this.message);
-
-    // }
   }
 
   onMouseEnter() {
@@ -294,6 +288,16 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     this.emojiService.selectEmoji(emoji.name)
     this.addEmojiToTicket(emoji.code);
 
+  }
+
+  showEmojiName(emoji: { emoji: string, users: string[] }) {
+
+    let emojiCode = emoji.emoji;
+    let emojiName = this.emojiService.emojiList.find(emo => { return emo.code === emojiCode })
+
+    if (emojiName) return emojiName.name
+
+    return
   }
 
   openEmojiMenu(trigger: MatMenuTrigger) {
