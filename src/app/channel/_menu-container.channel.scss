@@ -1,0 +1,261 @@
+// Style for Edit- and Members-Container in Channel
+
+
+::ng-deep .edit-channel-menu-container {
+  border-radius: 0px 30px 30px 30px !important;
+  max-width: 832px !important;
+  min-width: 620px !important;
+}
+
+::ng-deep .members-menu-container {
+  border-radius: 30px 0 30px 30px !important;
+  max-width: 600px !important;
+}
+
+::ng-deep .mat-typography {
+  font: unset;
+
+  > h1,
+  h2,
+  h3 {
+    font: 18px Nunito;
+  }
+}
+
+::ng-deep .cdk-overlay-container {
+  z-index: 4000;
+}
+
+::ng-deep .emoji-menu-small {
+  padding: 12px;
+  border-radius: 20px 20px 20px 20px;
+  border: 1px solid #adb0d9;
+  margin-right: 15px;
+  margin-left: 15px;
+  margin-top: -15px;
+  margin-bottom: -15px;
+}
+
+::ng-deep .tag-box-menu,
+::ng-deep .channel-box-menu {
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 30px !important;
+    border-top-left-radius: 30px !important;
+    border-top-right-radius: 30px !important;
+    padding: 20px !important;
+    max-height: 500px !important;
+    min-width: 400px !important;
+}
+
+::ng-deep .tag-menu-item,
+::ng-deep .channel-menu-item {
+    >.mat-mdc-menu-item-text {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+
+        >p {
+            margin: 0;
+        }
+    }
+}
+
+.channel-name-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 20px 10px 20px;
+
+  > h3 {
+    font-weight: 700;
+    margin: 0;
+    font-size: 18px;
+  }
+
+  > span {
+    color: #535af1;
+    transform: scale(1);
+    transition: transform 100ms ease-in-out;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.channel-name-textarea {
+  width: 100%;
+  resize: none;
+  font-size: 18px;
+}
+
+
+
+.placeholder-edit {
+  width: calc(100% - 48px);
+  height: 1px;
+  background-color: #adb0d9;
+  margin: 16px 0;
+}
+
+.created-by-name {
+  color: #535af1;
+  font-size: 24px;
+  font-weight: 400;
+  width: 100%;
+  padding-left: 24px;
+  margin-bottom: 24px;
+}
+
+
+
+.members-menu-listelement {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  padding: 4px 20px;
+  border-radius: 30px;
+
+  &:hover {
+    background-color: #eceefe;
+    cursor: pointer;
+  }
+
+  &:active {
+    .member-menu-name {
+      color: #535af1;
+    }
+  }
+}
+
+.member-menu-name {
+  font-size: 18px;
+  flex: 1;
+  text-wrap: unset;
+}
+
+.members-menu-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.members-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.members-menu-add {
+  display: flex;
+  align-items: center;
+  padding: 4px 20px;
+  border-radius: 30px;
+
+  .add-member-icon {
+    position: relative;
+    margin-right: 16px;
+  }
+
+  &:hover {
+    background-color: #eceefe;
+    cursor: pointer;
+
+    > span {
+      filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+    }
+
+        .add-member-icon img {
+            filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
+            transform: scale(1.1);
+        }
+    }
+}
+
+.menu-container {
+  padding: 20px 40px;
+  border-radius: 30px 0 30px 30px !important;
+}
+
+.channel-name-menu-container {
+  width: 100%;
+  border-radius: 30px;
+  border: 1px solid #adb0d9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  > h3 {
+    font-weight: 700;
+    margin: 0;
+    font-size: 18px;
+    margin-bottom: 16px;
+    width: 100%;
+    padding-left: 24px;
+  }
+}
+
+.edit-channel-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 32px;
+}
+
+.edit-channel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 12px;
+
+  > h2 {
+    font-weight: bold;
+    margin: 0;
+    width: fit-content;
+    text-align: left;
+    font-size: 24px;
+  }
+}
+
+
+
+.no-border-edit {
+  border: 1px solid transparent;
+}
+
+.no-border {
+  border: none;
+  padding: 18px 20px;
+  border: 1px solid transparent;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.border-on-focus {
+  border-radius: 30px;
+  border: 1px solid #535af1;
+}
+
+.channel-name-input {
+  width: 100%;
+  font-size: 18px;
+  padding-left: 40px;
+  margin-bottom: 10px;
+  border-radius: 30px;
+}
+

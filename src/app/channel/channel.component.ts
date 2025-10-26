@@ -42,14 +42,7 @@ import { EmojiServiceService } from '../services/emoji.service';
   selector: 'app-channel',
   standalone: true,
   imports: [
-    MatIconModule,
-    MatSidenavModule,
-    ThreadComponent,
-    MatMenuModule,
-    CommonModule,
-    TicketComponent,
-    FormsModule,
-    MatProgressSpinnerModule,
+    MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent, FormsModule, MatProgressSpinnerModule,
   ],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
@@ -106,10 +99,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.channel = channel;
         this.loading = false;
         this.initialScrollDone = false;
-      }
-      if (this.router.url.includes('/messages/')) {
-        // this.isThreadOpen = true;
-
       }
     });
 
@@ -173,26 +162,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   openEmojiMenu(trigger: MatMenuTrigger) {
     trigger.openMenu();
-  }
-
-  get emojiList() {
-    return this.emojiArray.emojiList;
-  }
-
-  get emojiUsageHistory() {
-    return this.emojiArray.emojiUsageHistory;
-  }
-
-  get sortedEmoji() {
-    const historySet = new Set(this.emojiUsageHistory);
-    const recentFirst = this.emojiUsageHistory.filter((e) => this.emojiList.includes(e));
-    const rest = this.emojiList.filter((e) => !historySet.has(e));
-    return [...recentFirst, ...rest];
-  }
-
-  selectEmoji(emoji: string) {
-    this.emojiArray.emojiUsageHistory = [emoji, ...this.emojiUsageHistory.filter((e) => e !== emoji)];
-    console.log('Selected Emojio: ', emoji);
   }
 
   showPlaceholder(index: number): string {
@@ -311,6 +280,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     return this.channelsService.getChannel(this.channelId);
   }
 
+  // servie?
   async addTicket() {
     const currentUser = this.getCurrentUserId();
     let textMessage = this.textInput;
