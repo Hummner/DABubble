@@ -161,6 +161,11 @@
       color: #535af1;
     }
 
+    &.active {
+      background-color: #eceefe;
+      color: #535af1;
+    }
+
     > p {
       font-size: 18px;
       margin: 0;

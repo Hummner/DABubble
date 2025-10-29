@@ -23,11 +23,15 @@ export class NavbarService implements OnDestroy {
   private router = inject(Router);
   private searchService = inject(SearchService);
 
+  private selectedChannelId$ = new BehaviorSubject<string | null>(null);
+  selectedChannelIdObs$ = this.selectedChannelId$.asObservable();
+
   readonly channelUsers = this.directMessageService.userIds;
   readonly currentUserId = computed(() => this.userProfile()?.uid);
   readonly selectedUserId = computed(() => {
     const users = this.channelUsers();
     const current = this.currentUserId();
+    this.clearSelectedChannelId();
     if (!users || !current) return null;
       return users.find((uid) => uid !== current) ?? null;
     });
@@ -54,6 +58,7 @@ export class NavbarService implements OnDestroy {
       );
       if (selectedChannel) {
         this.searchService.searchText = '';
+        this.selectedChannelId$.next(channelId);
         this.channelService.getChannel(selectedChannel.channelId);
         this.router.navigateByUrl(`channel/${selectedChannel.channelId}`);
         this.focusOnChannelTextarea();
@@ -61,6 +66,14 @@ export class NavbarService implements OnDestroy {
         console.error('Channel not found:', channelId);
       }
     });
+  }
+
+  getSelectedChannelId() {
+    return this.selectedChannelId$.value;
+  }
+
+  clearSelectedChannelId() {
+    this.selectedChannelId$.next(null);
   }
 
   hideChannelWithoutCurrentUser() {
