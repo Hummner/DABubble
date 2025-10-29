@@ -3,6 +3,8 @@ import { FirestoreService } from './firestore.service';
 import { Message } from '../interfaces/message.interface';
 import { ThreadDirectMessageService } from './thread-direct-message.service';
 import { MessageService } from './message.service';
+import { TicketInterface } from '../interfaces/ticket.interface';
+import { DocumentData, DocumentReference, updateDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +23,7 @@ export class EmojiServiceService {
     private firestore: FirestoreService,
     private threadMsgService: ThreadDirectMessageService,
     private dmMsgService: MessageService
-  ) {}
+  ) { }
 
   emojiList = [
     { name: 'checked', code: '✅' },
@@ -46,16 +48,16 @@ export class EmojiServiceService {
     { name: 'kiss', code: '😘' },
   ];
 
-//  { name: 'poop', code: '💩' },
-//     { name: 'sad-cry', code: '😢' },
-//     { name: 'vomit', code: '🤮' },
-//     { name: 'fear', code: '😨' },
-//     { name: 'shocked', code: '😱' },
-//     { name: 'cry', code: '😭' },
-//     { name: 'devil', code: '😈' },
-//      { name: 'monkey-see-no', code: '🙈' },
-//     { name: 'monkey-say-no', code: '🙊' },
-//     { name: 'monkey-hear-no', code: '🙉' },
+  //  { name: 'poop', code: '💩' },
+  //     { name: 'sad-cry', code: '😢' },
+  //     { name: 'vomit', code: '🤮' },
+  //     { name: 'fear', code: '😨' },
+  //     { name: 'shocked', code: '😱' },
+  //     { name: 'cry', code: '😭' },
+  //     { name: 'devil', code: '😈' },
+  //      { name: 'monkey-see-no', code: '🙈' },
+  //     { name: 'monkey-say-no', code: '🙊' },
+  //     { name: 'monkey-hear-no', code: '🙉' },
 
   emojiHistory: typeof this.emojiList = [];
 
@@ -93,7 +95,7 @@ export class EmojiServiceService {
     const reaction = updatedReactions.find((r) => r.emojiName === emojiName);
     if (reaction) {
       this.toggleUserReaction(reaction.users, userId);
-      if(reaction.users.length === 0){
+      if (reaction.users.length === 0) {
         this.removeEmoji(updatedReactions, reaction);
       }
     } else {
@@ -102,8 +104,8 @@ export class EmojiServiceService {
     return updatedReactions;
   }
 
-  removeEmoji(  reactions: { emojiName: string; users: string[] }[],
-  reaction: { emojiName: string; users: string[] }){
+  removeEmoji(reactions: { emojiName: string; users: string[] }[],
+    reaction: { emojiName: string; users: string[] }) {
     return reactions.splice(reactions.indexOf(reaction), 1);
   }
 
@@ -156,4 +158,78 @@ export class EmojiServiceService {
     }
     return currentContent;
   }
+
+  addEmojiToTicket(
+    senderId: string,
+    isEmoji: boolean,
+    isUserAddedReaction: boolean,
+    reactionsCopy: { emoji: string; users: string[] }[],
+    indexOfEmoji: number, emoji: string,
+    ticket: TicketInterface,
+    ticketRef: DocumentReference<DocumentData, DocumentData>
+  ) {
+    if (isEmoji && !isUserAddedReaction) {
+      reactionsCopy[indexOfEmoji] = this.addUserIdToEmoji(senderId!, indexOfEmoji, emoji, reactionsCopy, ticket)
+      this.updateReaction(reactionsCopy, ticketRef, ticket)
+    } else if (!isEmoji) {
+      this.addnewEmoji(reactionsCopy, emoji, senderId!)
+      this.updateReaction(reactionsCopy, ticketRef, ticket)
+
+    } else if (isEmoji && isUserAddedReaction) {
+      this.deleteUserOrEmoji(reactionsCopy, indexOfEmoji, senderId!, emoji, ticketRef, ticket)
+    }
+  }
+
+  deleteUserOrEmoji(reactionsCopy: { emoji: string; users: string[] }[], indexOfEmoji: number, senderId: string, emoji: string,
+    ticketRef: DocumentReference<DocumentData, DocumentData>, ticket: TicketInterface
+  ) {
+    let users = reactionsCopy[indexOfEmoji].users
+    let indexUser = reactionsCopy[indexOfEmoji].users.findIndex(user => user === senderId!)
+    let newUserArray = users.splice(indexUser, 1)
+    if (users.length === 0) {
+      reactionsCopy.splice(indexOfEmoji, 1);
+      this.updateReaction(reactionsCopy, ticketRef, ticket)
+    } else {
+      reactionsCopy[indexOfEmoji] = {
+        emoji: emoji,
+        users: newUserArray
+      }
+      this.updateReaction(reactionsCopy, ticketRef, ticket)
+    }
+  }
+
+  addnewEmoji(reactionsCopy: { emoji: string; users: string[] }[], emoji: string, senderId: string) {
+    reactionsCopy.push({
+      emoji: emoji,
+      users: [senderId!]
+    })
+  }
+
+  addUserIdToEmoji(
+    senderId: string,
+    indexOfEmoji: number,
+    emoji: string, reactionsCopy: { emoji: string; users: string[] }[],
+    ticket: TicketInterface
+  ) {
+    let usersCopy = [...ticket.reactions[indexOfEmoji].users]
+    usersCopy.push(senderId!)
+    return reactionsCopy[indexOfEmoji] = {
+      emoji: emoji,
+      users: usersCopy
+    }
+  }
+
+  async updateReaction(reactionsCopy: { emoji: string; users: string[] }[], ticketRef: DocumentReference<DocumentData, DocumentData>, ticket: TicketInterface,) {
+
+    try {
+      await updateDoc(ticketRef, {
+        reactions: reactionsCopy
+      });
+      ticket.reactions = reactionsCopy;
+    } catch (err) {
+      console.error("Failed to update reactions:", err);
+    }
+  }
+
+
 }

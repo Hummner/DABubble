@@ -218,69 +218,16 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     }
   }
 
+  
+
   async addEmojiToTicket(emoji: string) {
     let senderId = this.getCurrentUserId();
     let isEmoji: boolean = this.checkEmojiInArray(emoji);
     let isUserAddedReaction: boolean = this.checkUserReactions(senderId!);
     let reactionsCopy: { emoji: string; users: string[] }[] = [...this.message.reactions];
     let indexOfEmoji = this.getIndexOfEmoji(emoji);
-
-    if (isEmoji && !isUserAddedReaction) {
-      reactionsCopy[indexOfEmoji] = this.addUserIdToEmoji(senderId!, indexOfEmoji, emoji, reactionsCopy)
-      this.updateReaction(reactionsCopy)
-    } else if (!isEmoji) {
-      this.addnewEmoji(reactionsCopy, emoji, senderId!)
-      this.updateReaction(reactionsCopy)
-
-    } else if (isEmoji && isUserAddedReaction) {
-      this.deleteUserOrEmoji(reactionsCopy, indexOfEmoji, senderId!, emoji)
-    }
-  }
-
-  deleteUserOrEmoji(reactionsCopy: { emoji: string; users: string[] }[], indexOfEmoji: number, senderId: string, emoji: string) {
-    let users = reactionsCopy[indexOfEmoji].users
-    let indexUser = reactionsCopy[indexOfEmoji].users.findIndex(user => user === senderId!)
-    let newUserArray = users.splice(indexUser, 1)
-
-    if (users.length === 0) {
-      reactionsCopy.splice(indexOfEmoji, 1);
-      this.updateReaction(reactionsCopy)
-    } else {
-      reactionsCopy[indexOfEmoji] = {
-        emoji: emoji,
-        users: newUserArray
-      }
-      this.updateReaction(reactionsCopy)
-    }
-  }
-
-  addnewEmoji(reactionsCopy: { emoji: string; users: string[] }[], emoji: string, senderId: string) {
-    reactionsCopy.push({
-      emoji: emoji,
-      users: [senderId!]
-    })
-  }
-
-  addUserIdToEmoji(senderId: string, indexOfEmoji: number, emoji: string, reactionsCopy: { emoji: string; users: string[] }[]) {
-    let usersCopy = [...this.message.reactions[indexOfEmoji].users]
-    usersCopy.push(senderId!)
-
-    return reactionsCopy[indexOfEmoji] = {
-      emoji: emoji,
-      users: usersCopy
-    }
-  }
-
-  async updateReaction(reactionsCopy: { emoji: string; users: string[] }[]) {
-    let threadMessageRef = this.getThreadMessageRef()
-    try {
-      await updateDoc(threadMessageRef, {
-        reactions: reactionsCopy
-      });
-      this.message.reactions = reactionsCopy;
-    } catch (err) {
-      console.error("Failed to update reactions:", err);
-    }
+    let ticketRef = this.getThreadMessageRef()
+    this.emojiService.addEmojiToTicket(senderId!, isEmoji, isUserAddedReaction, reactionsCopy, indexOfEmoji, emoji, this.message, ticketRef)
   }
 
   showText() {
@@ -459,7 +406,6 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     if (createdAtDate) return createdAtDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     return "-"
   }
-
 }
 
 
