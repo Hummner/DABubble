@@ -25,19 +25,16 @@ import { EmojiServiceService } from '../../../services/emoji.service';
   styleUrl: './ticket.component.scss'
 })
 export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
-
   @Output() openThread = new EventEmitter<void>();
   @Output() currentPath = new EventEmitter<string>();
   @Input() index!: number;
   @Input() ticket!: TicketInterface;
   @Input() members?: any[];
   @ViewChild('text') textRef!: ElementRef<HTMLDivElement>;
-
   userMentionService = inject(UserMentionService);
   directMsgService = inject(DirectMessageService);
   navbarService = inject(NavbarService);
-  emojiService = inject(EmojiServiceService)
-
+  emojiService = inject(EmojiServiceService);
   userName!: string;
   userImg!: string;
   time!: string;
@@ -62,37 +59,19 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-
-
     if (this.ticket.threads) {
       this.getMessageId();
-      let ticketPath = this.ticket.threads.path.split('/').slice(3, 4).join('/')
-      console.log(ticketPath);
-      
-
+      let ticketPath = this.ticket.threads.path.split('/').slice(3, 4).join('/');
       if (this.messageId === ticketPath) {
         setTimeout(() => {
-          this.openThreadPanel()
-          
+          this.openThreadPanel();
         }, 20);
-        console.log("This ticket: ", this.messageId);
-        console.log("This path:", ticketPath);
-        
-      } else {
-        
-      }
-    }
-
-
+      }};
     if (this.ticket) {
       this.showName();
       this.time = this.showTime();
       this.getChannelId();
-
-
-
     }
-
   }
 
   getMessageId() {
@@ -102,56 +81,34 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     })
   }
 
-
   ngAfterViewInit() {
     this.text = this.showText();
   }
 
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['ticket']) {
-
-
-
-
       this.answers = this.showAnswer();
       this.time = this.showTime();
       this.lastThreadTime = this.showLastThreadTime();
-
       if (this.textRef) {
         this.text = this.showText();
       }
-
-
-
-
     }
-    if (changes['text']) {
-      console.log("CHanges:_ Text");
-
-    }
-
-
-
-
   }
 
   onMouseEnter() {
     this.showMenu = true
   }
 
-
   onMouseLeave() {
     if (!this.editMenuOpen && !this.emojiMenuOpen)
       this.showMenu = false
   }
 
-
   onEditMenuOpened() {
     this.editMenuOpen = true;
     this.showMenu = true
   }
-
 
   onEditMenuClosed() {
     this.editMenuOpen = false;
@@ -160,11 +117,8 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   onEmojiMenuOpened() {
     this.emojiMenuOpen = true;
-    this.showMenu = true
-    console.log("Emojimenuopend");
-
+    this.showMenu = true;
   }
-
 
   onEmojiMenuClosed() {
     this.emojiMenuOpen = false;
@@ -176,22 +130,14 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     this.editedText = this.ticket.text;
   }
 
-
   editText() {
     this.channelService.editTicketText(this.getTicketRef(), this.editedText).then(() => {
       this.ticket.text = this.editedText;
       this.editView = false;
       setTimeout(() => {
         this.text = this.showText();
-
       }, 10);
-
     })
-
-
-
-
-
   }
 
   showPopupIndex(index: number) {
@@ -203,13 +149,11 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     let allUserCount = users.length - 1;
     let nameArray: string[] = [];
     let isCurrentUserReacted = false;
-
     users.forEach(user => {
       let userIndex = this.findUser(user);
       if (user == this.getCurrentUserId()) {
         isCurrentUserReacted = true;
       }
-
       if (userIndex >= 0 && this.members) {
         let userName = this.members[userIndex]['name'];
         if (user !== this.getCurrentUserId()) {
@@ -243,12 +187,9 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   openThreadUrl() {
-    
       if (this.ticket.threads?.path) {
         const ticketpath = this.ticket.threads?.path.split('/')[3]
         const channelPath = this.ticket.threads?.path.split('/')[1]
-        console.log(ticketpath[3]);
-
         this.router.navigate(['channel', channelPath, 'messages', ticketpath])
       }
   }
@@ -256,41 +197,15 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   openThreadPanel() {
     if (this.ticket.threads?.path) {
       this.getThreadPath(this.ticket.threads?.path)
-      console.log(this.ticket.threads.path);
-
       this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
       this.threadsService.getCurrentTicket()
       this.openThread.emit()
     }
   }
 
-
-  get emojiList() {
-    return this.emojiArray.emojiList
-  }
-
-  get emojiUsageHistory() {
-    return this.emojiArray.emojiUsageHistory
-  }
-
-
-  get lastEmojis() {
-    const emojis = [this.emojiUsageHistory[0], this.emojiUsageHistory[1]];
-    return emojis
-  }
-
-  get sortedEmoji() {
-    const historySet = new Set(this.emojiUsageHistory);
-    const recentFirst = this.emojiUsageHistory.filter(e => this.emojiList.includes(e));
-    const rest = this.emojiList.filter(e => !historySet.has(e));
-    return [...recentFirst, ...rest]
-  }
-
   selectEmoji(emoji: {name:string, code: string}) {
-    // this.emojiArray.emojiUsageHistory = [emoji.code, ...this.emojiUsageHistory.filter(e => e !== emoji)]
     this.emojiService.selectEmoji(emoji.name)
     this.addEmojiToTicket(emoji.code);
-
   }
 
   openEmojiMenu(trigger: MatMenuTrigger) {
@@ -303,7 +218,6 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     let isUserAddedReaction: boolean = this.checkUserReactions(senderId!);
     let reactionsCopy: { emoji: string; users: string[] }[] = [...this.ticket.reactions];
     let indexOfEmoji = this.getIndexOfEmoji(emoji)
-
     if (isEmoji && !isUserAddedReaction) {
       reactionsCopy[indexOfEmoji] = this.addUserIdToEmoji(senderId!, indexOfEmoji, emoji, reactionsCopy)
       this.updateReaction(reactionsCopy)
@@ -320,7 +234,6 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     let users = reactionsCopy[indexOfEmoji].users
     let indexUser = reactionsCopy[indexOfEmoji].users.findIndex(user => user === senderId!)
     let newUserArray = users.splice(indexUser, 1)
-
     if (users.length === 0) {
       reactionsCopy.splice(indexOfEmoji, 1);
       this.updateReaction(reactionsCopy)
@@ -343,13 +256,11 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   addUserIdToEmoji(senderId: string, indexOfEmoji: number, emoji: string, reactionsCopy: { emoji: string; users: string[] }[]) {
     let usersCopy = [...this.ticket.reactions[indexOfEmoji].users]
     usersCopy.push(senderId!)
-
     return reactionsCopy[indexOfEmoji] = {
       emoji: emoji,
       users: usersCopy
     }
   }
-
 
   async updateReaction(reactionsCopy: { emoji: string; users: string[] }[]) {
     let ticketRef = this.getTicketRef();
@@ -360,15 +271,12 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
       this.ticket.reactions = reactionsCopy;
     } catch (err) {
       console.error("Failed to update reactions:", err);
-
     }
   }
 
   getIndexOfEmoji(emoji: string) {
     return this.ticket.reactions.findIndex(reaction => reaction.emoji === emoji);
   }
-
-
 
   checkUserReactions(senderId: string) {
     let isUserAddedReaction = false;
@@ -384,17 +292,13 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 
   checkEmojiInArray(emoji: string) {
     let isEmoji = false;
-
     this.ticket.reactions.forEach((reaction) => {
       if (reaction.emoji == emoji) {
         isEmoji = true
       }
     })
-
     return isEmoji
   }
-
-
 
   getThreadPath(path: string) {
     return this.currentPath.emit(path)
@@ -406,16 +310,12 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     if (counter) {
       if (counter == 1) return `${counter} Antwort`
       if (counter > 1) return `${counter} Antworten`
-
-
     }
     return answers
   }
 
-
   showName() {
     const userIndex = this.findUser(this.ticket.senderId);
-
     if (userIndex >= 0 && this.members && this.isMember(userIndex, this.members)) {
       this.userName = this.members[userIndex]['name'];
       this.userImg = this.members[userIndex]['imgUrl'];
@@ -473,7 +373,6 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
         let customId = `${tag.id}_${tag.textIndex}_${this.index}`
         replacedText = replacedText.replace(`@${tag.name}`,
           `<span id="${customId}">@${tag.name}</span>`);
-
       } else if (tag.taggedType == "channel") {
         let customId = `${tag.id}_${tag.textIndex}_${this.index}`
         replacedText = replacedText.replace(`#${tag.name}`,
@@ -488,12 +387,9 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     this.textRef.nativeElement.appendChild(container);
   }
 
-
   getChannelList(text: string) {
     let channelList = this.userMentionService.getChannelWithUserMemmership();
     let taggedChannels: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
-
-
     channelList.forEach(channel => {
       const isTagged = text.search(channel.name)
       if (isTagged > 0) {
@@ -508,25 +404,18 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
       }
     })
     return taggedChannels
-
   }
 
   showEmojiName(emoji: {emoji: string, users: string[]}) {
-    
     let emojiCode = emoji.emoji;
     let emojiName = this.emojiService.emojiList.find( emo => {return emo.code === emojiCode})
-
     if (emojiName) return emojiName.name
-
     return 
   }
-
-
 
   getUserList(text: string) {
     let userList = this.userMentionService.filteredUserList();
     let taggedUsers: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
-
     userList.forEach(user => {
       const isTagged = text.search(user.name);
       if (isTagged > 0) {
@@ -539,11 +428,9 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
           taggedType: "user"
         })
       }
-
     })
     return taggedUsers
   }
-
 
   findUser(uId: string): number {
     if (this.members) {
@@ -555,7 +442,6 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   isMember(userIndex: number, members: any[]): boolean {
     return userIndex >= 0 && !!members[userIndex];
   }
-
 
   reactionsUsers(index: number) {
     let userArray = this.ticket.reactions[index]['users']
@@ -578,7 +464,6 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     let ticketPath = threadPath?.split('/').slice(0, 4).join('/')
     return doc(this.channelService.firestore, ticketPath!)
   }
-
 
   isCurrentUser() {
     return (this.getCurrentUserId() === this.ticket.senderId)
