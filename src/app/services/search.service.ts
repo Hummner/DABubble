@@ -31,19 +31,28 @@ export class SearchService {
     const value = (event.target as HTMLInputElement).value;
     this.searchText = value;
 
-    const result = await this.search(this.searchText, this.members);
+    const result = await this.search(this.searchText);
 
     this.filteredUsers = result.users;
     this.filteredChannels = result.channels;
     this.filteredMessages = result.messages;
     this.noResultsMessage = result.noResultsMessage;
   }
-  async search(searchText: string, members: { id: string }[]) {
+
+  async search(searchText: string) {
     const searchTextTrimmed = searchText.trim();
+    this.searchTextEmpty(searchTextTrimmed);
+    
+    return this.setSearchPath(searchTextTrimmed, this.members);
+  }
+
+  searchTextEmpty(searchTextTrimmed: string): any {
     if (!searchTextTrimmed && searchTextTrimmed === '') {
       return { users: [], channels: [], messages: [], noResultsMessage: '' };
     }
+  }
 
+  async setSearchPath(searchTextTrimmed: string, members: { id: string }[]) {
     const channels = await this.channelService.getAllChannels();
     const directMessages = await this.directMessageService.getAllDirectMessages();
 
@@ -82,64 +91,68 @@ export class SearchService {
 
   async searchForMessages(searchText: string, channels: any[], directMessages: any[]) {
     const currentUserId = this.auth.firebaseAuth.currentUser?.uid ?? null;
-
     const userChannels = channels.filter((channel) => channel.members.some((member: any) => member.id === currentUserId));
-
     const userDMs = directMessages.filter((dm: any) => dm.users.includes(currentUserId));
+    const channelMessagesResults = await this.mapAllChannelMessages(userChannels);
+    const dmMessagesResults = await this.mapAllDirectMessages(userDMs);
 
-    const channelMessagesPromises = userChannels.map((channel) =>
-      this.getChannelMessages(channel.channelId).then((messages) => ({
-        channelId: channel.channelId,
-        messages,
-      }))
-    );
-    const channelMessagesResults = await Promise.all(channelMessagesPromises);
+    const filteredMessages = await this.sortAllMessages(channelMessagesResults, dmMessagesResults, searchText);
 
-    const dmMessagesPromises = userDMs.map((dm) =>
-      this.getDirectMessages(dm.directMessagesId).then((messages) => ({
-        directMessagesId: dm.directMessagesId,
-        messages,
-      }))
-    );
-    const dmMessagesResults = await Promise.all(dmMessagesPromises);
+    return this.noFilteredMessagesFound(filteredMessages);
+  }
 
-    let filteredMessages: any[] = [];
-
-    for (const { directMessagesId, messages } of dmMessagesResults) {
-      const filtered = messages.filter((m) => m.text.toLowerCase().includes(searchText.toLowerCase()));
-      filteredMessages.push(...filtered);
-
-      const threadPromises = messages.map((msg) => this.getThreadDMessages(directMessagesId, msg.id));
-      const threadResults = await Promise.all(threadPromises);
-
-      for (const threadMsgs of threadResults) {
-        const filteredThreads = threadMsgs.filter((m) => m.text.toLowerCase().includes(searchText.toLowerCase()));
-        filteredMessages.push(...filteredThreads);
-      }
-    }
-
-    for (const { channelId, messages } of channelMessagesResults) {
-      const filtered = messages.filter((m) => m.text.toLowerCase().includes(searchText.toLowerCase()));
-      filteredMessages.push(...filtered);
-
-      const threadPromises = messages.map((msg) => this.getThreadMessages(channelId, msg.id));
-      const threadResults = await Promise.all(threadPromises);
-
-      for (const threadMsgs of threadResults) {
-        const filteredThreads = threadMsgs.filter((m) => m.text.toLowerCase().includes(searchText.toLowerCase()));
-        filteredMessages.push(...filteredThreads);
-      }
-    }
-
-    filteredMessages = this.removeDuplicates(filteredMessages);
-    this.sortMessagesByTimestamp(filteredMessages);
-
+  noFilteredMessagesFound(filteredMessages: any[]) {
     return {
       users: [],
       channels: [],
       messages: filteredMessages,
       noResultsMessage: filteredMessages.length === 0 ? 'Keine Nachrichten gefunden.' : '',
     };
+  }
+
+  async sortAllMessages(channelMessagesResults: any = [], dmMessagesResults: any = [], searchText: string = '') {
+    let filteredMessages: any[] = [];
+    filteredMessages = await this.filterAllMessages(channelMessagesResults, dmMessagesResults, searchText);
+    filteredMessages = this.removeDuplicates(filteredMessages);
+    this.sortMessagesByTimestamp(filteredMessages);
+    return filteredMessages;
+  }
+
+  async filterAllMessages(channelMessagesResults: any = [], dmMessagesResults: any = [], searchText: string = '') {
+    return this.filteredMessages = [
+      ...await this.filterChannelMessages([], channelMessagesResults, searchText),
+      ...await this.filterDirectMessages([], dmMessagesResults, searchText),
+    ];
+  }
+
+  async filterChannelMessages(filteredMessages: any, channelMessagesResults: any, searchText: string) {
+    for (const { channelId, messages } of channelMessagesResults) {
+      const filtered = messages.filter((m: any) => m.text.toLowerCase().includes(searchText.toLowerCase()));
+      filteredMessages.push(...filtered);
+
+      const threadPromises = messages.map((msg: any) => this.getThreadMessages(channelId, msg.id));
+      const threadResults = await Promise.all(threadPromises);
+      for (const threadMsgs of threadResults) {
+        const filteredThreads = threadMsgs.filter((m: any) => m.text.toLowerCase().includes(searchText.toLowerCase()));
+        filteredMessages.push(...filteredThreads);
+      }
+    }
+    return filteredMessages;
+  }
+
+  async filterDirectMessages(filteredMessages: any, dmMessagesResults: any, searchText: string) {
+    for (const { directMessagesId, messages } of dmMessagesResults) {
+      const filtered = messages.filter((m: any) => m.text.toLowerCase().includes(searchText.toLowerCase()));
+      filteredMessages.push(...filtered);
+
+      const threadPromises = messages.map((msg: any) => this.getThreadDMessages(directMessagesId, msg.id));
+      const threadResults = await Promise.all(threadPromises);
+      for (const threadMsgs of threadResults) {
+        const filteredThreads = threadMsgs.filter((m:any) => m.text.toLowerCase().includes(searchText.toLowerCase()));
+        filteredMessages.push(...filteredThreads);
+      }
+    }
+    return filteredMessages;
   }
 
   async getMessagesFromCollection(colRef: CollectionReference): Promise<any[]> {
@@ -149,14 +162,36 @@ export class SearchService {
 
     return snapshot.docs.map((doc) => {
       const createdAt = doc.data()['createdAt']?.toDate();
-      return {
-        id: doc.id,
-        text: doc.data()['text'] || doc.data()['content'] || '',
-        userId: doc.data()['senderId'],
-        timestamp: createdAt ? createdAt.getTime() : 0,
-        userName: allUsers.find((u) => u.uid === doc.data()['senderId'])?.name || 'Unknown',
-      };
+      return this.returnSnapshotData(createdAt, doc, allUsers);
     });
+  }
+
+  returnSnapshotData(createdAt: Date | null, doc: any, allUsers: any) {
+    return {
+      id: doc.id,
+      text: doc.data()['text'] || doc.data()['content'] || '',
+      userId: doc.data()['senderId'],
+      timestamp: createdAt ? createdAt.getTime() : 0,
+      userName: allUsers.find((u: any) => u.uid === doc.data()['senderId'])?.name || 'Unknown',
+    };
+  }
+
+  async mapAllChannelMessages(userChannels: any[]) {
+    return Promise.all(
+      userChannels.map(async (channel) => ({
+        channelId: channel.channelId,
+        messages: await this.getChannelMessages(channel.channelId),
+      }))
+    );
+  }
+
+  async mapAllDirectMessages(userDMs: any[]) {
+    return Promise.all(
+      userDMs.map(async (dm) => ({
+        directMessagesId: dm.directMessagesId,
+        messages: await this.getDirectMessages(dm.directMessagesId),
+      }))
+    )
   }
 
   getChannelMessages(channelId: string): Promise<any[]> {
@@ -191,20 +226,25 @@ export class SearchService {
 
   async selectMessage(messageId: string) {
     this.isLoading = true;
-
     const allChannels = await this.channelService.getAllChannels();
     const allDirectMessages = await this.directMessageService.getAllDirectMessages();
+    
+    this.foundMessageInChannel(allChannels, messageId);
+    this.foundMessageInDM(allDirectMessages, messageId);
+  }
 
+  async foundMessageInChannel(allChannels: any[], messageId: string) {
     const foundInChannel = await this.findMessageInChannels(allChannels, messageId);
     if (foundInChannel) {
       return;
     }
+  }
 
+  async foundMessageInDM(allDirectMessages: any[], messageId: string) {
     const foundInDM = await this.findMessageInDirectMessages(allDirectMessages, messageId);
     if (foundInDM) {
       return;
     }
-    console.warn('Message not found in channels or DMs:', messageId);
   }
 
   async findMessageInChannels(channels: any[], messageId: string): Promise<boolean> {
@@ -231,7 +271,6 @@ export class SearchService {
     return this.navigateIfDirectThreadExists(dmId, messageId);
   }
   
-
   async navigateIfChannelMessageExists(channelId: string, messageId: string): Promise<boolean> {
     const ref = doc(this.firestore, `channels/${channelId}/messages/${messageId}`);
     const snap = await getDoc(ref);
@@ -253,15 +292,9 @@ export class SearchService {
     for (const msg of snapshot.docs) {
       const ref = doc(this.firestore, `channels/${channelId}/messages/${msg.id}/threads/${messageId}`);
       const snap = await getDoc(ref);
-
-      if (snap.exists()) {
-        this.isLoading = false;
-        this.searchText = '';
-        this.router.navigate(['channel', channelId, 'messages', msg.id], {
-          queryParams: { threadMessageId: messageId },
-        });
+      if (this.handleSnapIfExists(snap, 'channel', channelId, messageId, msg)) {
         return true;
-      }
+      };
     }
     return false;
   }
@@ -286,15 +319,21 @@ export class SearchService {
     for (const msg of snapshot.docs) {
       const ref = doc(this.firestore, `directMessages/${dmId}/messages/${msg.id}/threadMessages/${messageId}`);
       const snap = await getDoc(ref);
-
-      if (snap.exists()) {
-        this.isLoading = false;
-        this.searchText = '';
-        this.router.navigate(['directMessages', dmId, 'messages', msg.id], {
-          queryParams: { threadMessageId: messageId },
-        });
+      if (this.handleSnapIfExists(snap, 'directMessages', dmId, messageId, msg)) {
         return true;
-      }
+      };
+    }
+    return false;
+  }
+
+  handleSnapIfExists(snap: any, direction: string, directionId: string, messageId: string, msg: any): boolean {
+    if (snap.exists()) {
+      this.isLoading = false;
+      this.searchText = '';
+      this.router.navigate([direction, directionId, 'messages', msg.id], {
+        queryParams: { threadMessageId: messageId },
+      });
+      return true;
     }
     return false;
   }
