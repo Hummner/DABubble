@@ -103,21 +103,16 @@ export class AddChannelMemberComponent {
 
   fillInterfaceWithMember(data: any) {
     this.navbar.createdBy = this.userProfile()?.name || '';
-
     const newMember = {
       id: data.uid,
       role: data.uid === this.userProfile()?.uid ? 'admin' : 'member',
       name: data.name,
       imgUrl: data.imgUrl
     };
-
     if (!this.members.find(m => m.id === newMember.id)) {
       this.members.push(newMember);
     }
-
     this.navbar.members = this.members;
-
-    console.log('Aktuelle Members:', this.members);
     return this.navbar;
   }
 
@@ -140,18 +135,12 @@ export class AddChannelMemberComponent {
   }
 
   updateChannel() {
-    const channelRef = doc(this.firestore, 'channels', this.channelId); 
-    console.log('Add all Members:', this.navbar.members);
-    
+    const channelRef = doc(this.firestore, 'channels', this.channelId);     
     updateDoc(channelRef, {
       members: arrayUnion(...(this.navbar.members || [])),
       createdBy: this.navbar.createdBy,
       channelId: this.channelId
-    }).then(() => {
-      console.log('Member added successfully');
-    }).catch((error) => {
-      console.error('Error adding member to channel:', error);
-    });
+    })
     this.closeDialog();
     this.router.navigateByUrl('/channel/' + this.channelId);
   }

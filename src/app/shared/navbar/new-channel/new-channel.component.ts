@@ -52,32 +52,34 @@ export class NewChannelComponent {
   }
 
   async createChannel() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
+    if (!this.IsFormValid()) return;
     this.navbar.name = this.form.get('channelName')?.value as string;
     this.navbar.description = this.form.get('channelDescription')?.value as string;
-
-    const channelNameExists = await this.checkIfChannelNameExists(this.navbar.name)
-
-    if (channelNameExists) {
-      this.form.get('channelName')?.setErrors({ 'exists': true });
-      return;
-    } else {
-      addDoc(collection(this.firestore, 'channels'), this.navbar)
-        .then((docRef) => {
-          console.log('Channel was successfully created!', docRef.id);
-          this.navbar.channelId = docRef.id
-          console.log("channelId", this.navbar.channelId);
-          this.openAddMemberDialog(this.navbar.channelId);
-          this.closeDialog();
-        })
-        .catch((error) => {
-          console.error('Issue during channel creation', error);
-      });
+    
+    const nameExists = await this.checkIfChannelNameExists(this.navbar.name);
+    if (nameExists) {
+      return this.handleExistingName();
     }
+    await this.addChannelToFirestore();
+  }
+
+  private IsFormValid(): boolean {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return false;
+    }
+    return true;
+  }
+
+  private handleExistingName(): void {
+    this.form.get('channelName')?.setErrors({ 'exists': true });
+  }
+
+  private async addChannelToFirestore(): Promise<void> {
+    const docRef = await addDoc(collection(this.firestore, 'channels'), this.navbar);
+    this.navbar.channelId = docRef.id
+    this.openAddMemberDialog(this.navbar.channelId);
+    this.closeDialog();
   }
 
   openAddMemberDialog(channelId: string) {
@@ -97,14 +99,12 @@ export class NewChannelComponent {
     return !querySnapshot.empty;
   }
 
-channelNameExistsValidator(): AsyncValidatorFn {
+  channelNameExistsValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Promise<{ exists: boolean } | null> => {
       const name = control.value?.trim();
-
       if (!name) {
         return Promise.resolve(null);
       }
-      
       const channelRef = collection(this.firestore, 'channels');
       const queryName = query(channelRef, where('name', '==', name));
 
