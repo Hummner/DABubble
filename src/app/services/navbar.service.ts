@@ -22,10 +22,8 @@ export class NavbarService implements OnDestroy {
   private channelService = inject(ChannelsService);
   private router = inject(Router);
   private searchService = inject(SearchService);
-
   private selectedChannelId$ = new BehaviorSubject<string | null>(null);
   selectedChannelIdObs$ = this.selectedChannelId$.asObservable();
-
   readonly channelUsers = this.directMessageService.userIds;
   readonly currentUserId = computed(() => this.userProfile()?.uid);
   readonly selectedUserId = computed(() => {
@@ -62,8 +60,6 @@ export class NavbarService implements OnDestroy {
         this.channelService.getChannel(selectedChannel.channelId);
         this.router.navigateByUrl(`channel/${selectedChannel.channelId}`);
         this.focusOnChannelTextarea();
-      } else {
-        console.error('Channel not found:', channelId);
       }
     });
   }
