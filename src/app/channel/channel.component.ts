@@ -87,12 +87,16 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 
   constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, private ngZone: NgZone,
-    public userMentionService: UserMentionService,) { }
+    public userMentionService: UserMentionService) { }
 
   ngOnInit(): void {
     this.loading = true;
     this.getActiveRoute();
     this.checkWindowWidth();
+
+    this.channelsService.focusRequest$.subscribe(() => {
+      this.focusTextarea();
+    });
 
     this.channelSubscription = this.channelsService.channel$.subscribe((channel) => {
       if (channel) {
@@ -330,11 +334,11 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   focusTextarea() {
-    this.channelsService.focusRequest$.subscribe(() => {
-      this.ngZone.onStable.subscribe(() => {
+    setTimeout(() => {
+      if (this.chatInput) {
         this.chatInput.nativeElement.focus();
-      });
-    });
+      }
+    }, 1000);
   }
 
   async checkValidation() {
