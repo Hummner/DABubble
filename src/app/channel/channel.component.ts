@@ -76,7 +76,15 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.loading = true;
     this.getActiveRoute();
     this.checkWindowWidth();
+    this.setupChannelSubscription();
+    this.getChannelInfo();
+    this.setupMessagesSubscription();
+    this.channelsService.focusRequest$.subscribe(() => {
+      this.focusTextarea();
+    });
+  }
 
+  setupChannelSubscription() {
     this.channelSubscription = this.channelsService.channel$.subscribe((channel) => {
       if (channel) {
         this.channel = channel;
@@ -84,8 +92,9 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.initialScrollDone = false;
       }
     });
+  }
 
-    this.getChannelInfo();
+  setupMessagesSubscription() {
     this.messagesSubscription = this.channelsService.messages$.subscribe((msgs) => {
       if (this.channel) {
         this.channel.messages = msgs;
@@ -93,10 +102,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.isMessage = true;
         }
       }
-    });
-
-    this.channelsService.focusRequest$.subscribe(() => {
-      this.focusTextarea();
     });
   }
 
@@ -164,22 +169,20 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     return date ? date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) : '-';
   }
 
-  isTheSameDate(index: number) {
-    let isSame: boolean;
-    if (index == 0) return (isSame = false);
+  isTheSameDate(index: number): boolean {
+    if (index == 0) return false;
 
-    let thisTicketDate = this.channel?.messages[index]?.createdAt;
-    let lastTicketDate = this.channel?.messages[index - 1]?.createdAt;
+    let thisTicketDate = this.convertToDate(this.channel?.messages[index]?.createdAt);
+    let lastTicketDate = this.convertToDate(this.channel?.messages[index - 1]?.createdAt);
+    return this.checkTicketDate(thisTicketDate, lastTicketDate);
+  }
 
-    thisTicketDate = this.convertToDate(thisTicketDate);
-    lastTicketDate = this.convertToDate(lastTicketDate);
+  checkTicketDate(thisTicketDate: Date | null, lastTicketDate: Date | null): boolean {
+    if (!thisTicketDate || !lastTicketDate) return false;
 
-    if (thisTicketDate && lastTicketDate) {
-      let thisTicketDateDatefrom = thisTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
-      let lastTicketDateDatefrom = lastTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
-      if (thisTicketDateDatefrom === lastTicketDateDatefrom) return (isSame = true);
-    }
-    return false;
+    const thisDate = thisTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+    const lastDate = lastTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+    return thisDate === lastDate;
   }
 
   convertToDate(dateToConvert: any): Date | null {
@@ -213,8 +216,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.editName = true;
       this.nameInput.nativeElement.focus();
       this.focusAfterText(this.nameInput);
-    }
-    if (editField === 'editDisc') {
+    } else if (editField === 'editDisc') {
       this.editDisc = true;
       setTimeout(() => {
         this.discInput.nativeElement.focus();
