@@ -80,6 +80,7 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   emojiIndex!: number;
   editedText!: string;
   allEmoji: boolean = false;
+  isThereEmoji = false;
 
   constructor(
     private firestore: FirestoreService,
@@ -272,6 +273,7 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   onEmojiClick(emojiName: string) {
+    console.log(this.shownEmoji)
     this.emojiServise.toggleEmojiReaction(emojiName, this.message, this.channelId, this.inThreadView, this.messageId);
     this.emojiServise.selectEmoji(emojiName);
   }

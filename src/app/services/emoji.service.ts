@@ -95,6 +95,7 @@ export class EmojiServiceService {
     const reaction = updatedReactions.find((r) => r.emojiName === emojiName);
     if (reaction) {
       this.toggleUserReaction(reaction.users, userId);
+    
       if (reaction.users.length === 0) {
         this.removeEmoji(updatedReactions, reaction);
       }

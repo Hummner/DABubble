@@ -72,6 +72,7 @@
 
 .answers {
   display: flex;
+  flex-direction: column;
   align-items: baseline;
   gap: 30px;
 }
@@ -144,14 +145,13 @@
   position: relative;
   cursor: pointer;
   > img {
-    width: 25px;
-    height: 25px;
+    width: 22px;
+    height: 22px;
   }
 
   &:hover {
-    background-color: #eceefe;
-    border-radius: 100%;
-
+    transform: scale(1.2);
+    background-color: unset;
     .hover-purple {
       filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
     }
@@ -160,6 +160,16 @@
 
 .reverse {
   flex-direction: row-reverse !important;
+}
+
+.reverseAnswer {
+  flex-direction: row-reverse !important;
+}
+
+.answers-flex{
+  display:flex;
+  gap:20px;
+  align-items: baseline;
 }
 
 .reverse-backround {
@@ -179,6 +189,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  gap: 8px;
 }
 
 .emoji {
@@ -245,10 +256,9 @@
 
 ::ng-deep .emoji-menu-panel {
   display: flex !important;
-  justify-content: center;
-  align-items: center;
-  height: 150px;
-  width: 200px;
+  justify-content: flex-start;
+  height: 200px;
+  width: 250px;
   flex-wrap: wrap !important;
 }
 
@@ -263,14 +273,15 @@
   left: 0;
   border-radius: 20px;
   > .mat-mdc-menu-content {
-    height: 150px;
-    width: 200px;
-    background-color: white;
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap !important;
+    // height: 250px;
+    // width: 200px;
+    // background-color: white;
+    // display: flex !important;
+    // justify-content: center;
+    // align-items: center;
+    // flex-wrap: wrap !important;
     > .emoji-menu-item {
+      // margin:4px;
       > img {
         width: 20px;
         height: 20px;

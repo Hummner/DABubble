@@ -55,20 +55,22 @@
         </div>
       </div>
       <div *ngIf="inThreadView == false" class="answers" [ngClass]="{ reverse: currentUserText }">
-        <span
-          class="thread-answers"
-          style="color: #535af1; font-size: 18px"
-          (mouseenter)="isHovered = true"
-          (mouseleave)="isHovered = false"
-          [style.fontWeight]="isHovered ? 700 : 400"
-          (click)="openThreadPanel()"
-        >
-          @if(message.threadCount == 0){ Keine Antwort } @else {
-          {{ message.threadCount }} Antwort }
-        </span>
-        <span class="msg-date" *ngIf="isTimestamp(message.lastThreadCreatedAt)"
-          >Letzte Antwort {{ message.lastThreadCreatedAt.toDate() | date : "dd/MM/yyyy HH:mm" }}</span
-        >
+        <div class="answers-flex"  [ngClass]="{ reverseAnswer: currentUserText }">
+          <span
+            class="thread-answers"
+            style="color: #535af1; font-size: 18px"
+            (mouseenter)="isHovered = true"
+            (mouseleave)="isHovered = false"
+            [style.fontWeight]="isHovered ? 700 : 400"
+            (click)="openThreadPanel()"
+          >
+            @if(message.threadCount == 0){ Keine Antwort } @else {
+            {{ message.threadCount }} Antwort }
+          </span>
+          <span class="msg-date" *ngIf="isTimestamp(message.lastThreadCreatedAt)"
+            >Letzte Antwort {{ message.lastThreadCreatedAt.toDate() | date : "dd/MM/yyyy HH:mm" }}</span
+          >
+        </div>
       </div>
       <div class="emoji-container" [ngClass]="{ reverse: currentUserText }" *ngIf="message.reactions">
         <div *ngFor="let emoji of reactionsAll; let i = index" class="emoji-wrapper">
@@ -100,7 +102,7 @@
           #emojiEditTrigger="matMenuTrigger"
           (click)="openMoreEmoji($event)"
         >
-          <img class="hover-purple" src="assets/icon/add_reaction.svg" />
+          <img *ngIf="message.reactions.length > 0" class="hover-purple" src="assets/icon/add_reaction.svg" />
         </div>
       </div>
     </div>
