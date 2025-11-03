@@ -1,16 +1,5 @@
-import {
-  Component,
-  signal,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  AfterViewChecked,
-  inject,
-  HostListener,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, signal, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { AfterViewChecked, inject, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NgIf, NgFor } from '@angular/common';
@@ -106,10 +95,7 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     this.subThreadRoute();
     this.subscribeToDmChannel();
     this.subscribeToMsgList();
-    console.log(this.router.url);
-    if (this.router.url.includes('/messages/')) {
-      this.isThreadOpen = true;
-    }
+    if (this.router.url.includes('/messages/')) this.isThreadOpen = true;
     this.checkWindowWidth();
   }
 
@@ -191,7 +177,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   subThreadRoute() {
     this.routerEventsSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        console.log(this.router.url);
         this.isThreadOpen = this.router.url.includes('/messages/') || this.router.url.includes('/threadMessages/');
       }
     });
@@ -236,17 +221,17 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   }
 
   async addMessage() {
-    if(this.canSendMessage()){
-    const message: Message = {
-      createdAt: serverTimestamp(),
-      senderId: this.senderId,
-      content: this.content,
-      hasThread: this.hasThread,
-      threadCount: this.threadCount,
-    };
-    await this.messageService.addMessage(message, this.channelId);
-    this.shouldScroll = true;
-    this.content = '';
+    if (this.canSendMessage()) {
+      const message: Message = {
+        createdAt: serverTimestamp(),
+        senderId: this.senderId,
+        content: this.content,
+        hasThread: this.hasThread,
+        threadCount: this.threadCount,
+      };
+      await this.messageService.addMessage(message, this.channelId);
+      this.shouldScroll = true;
+      this.content = '';
     }
   }
 
@@ -286,14 +271,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
   tagInputChannelStart() {
     this.content = this.userMentionService.tagChannelInputStart(this.content, this.input);
   }
-
-  // updateFilteredUserList() {
-  //   this.userMentionService.updateFilteredUserList(this.content);
-  // }
-
-  // updateFilteredChannelList() {
-  //   this.userMentionService.updateFilteredChannelList(this.content);
-  // }
 
   takeUser(name: string) {
     this.content = this.userMentionService.takeUser(name, this.content);

@@ -1,15 +1,4 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnInit,
-  OnDestroy,
-  inject,
-  ViewChild,
-  ElementRef,
-  HostListener,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject, ViewChild, ElementRef } from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { UserProfileInterface } from '../../interfaces/user-profile.interface';
 import { Message } from '../../interfaces/message.interface';
@@ -43,15 +32,12 @@ type MessageToken =
   styleUrl: './message-ticket.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MessageTicketComponent implements OnChanges, OnInit{
-  @Input() userProfileB!: UserProfileInterface | null;
-  @Input() userProfile!: UserProfileInterface | null;
+export class MessageTicketComponent implements OnChanges, OnInit {
   @Input() message!: Message;
   @Input() channelId!: string;
   @Input() threadId?: string;
   @Input() messageId!: string;
   @Input() inThreadView: boolean = false;
-  @Input() isParentInThread: boolean = false;
   @Input() disableFloatingMenu: boolean = false;
   @Input() isMobileScreen: boolean = false;
   @Output() openThread = new EventEmitter<string | undefined>();
@@ -63,10 +49,8 @@ export class MessageTicketComponent implements OnChanges, OnInit{
   private nameToUidMap = new Map<string, string>();
   private channelMap = new Map<string, NavbarInterface>();
   private channelNameToUidMap = new Map<string, string>();
-  senderId = '';
   user: UserProfileInterface | null = null;
   currentUserText = false;
-  content = '';
   showFloatingMenu = false;
   isHovered = false;
   editView: boolean = false;
@@ -80,7 +64,6 @@ export class MessageTicketComponent implements OnChanges, OnInit{
   emojiIndex!: number;
   editedText!: string;
   allEmoji: boolean = false;
-  isThereEmoji = false;
 
   constructor(
     private firestore: FirestoreService,
@@ -101,7 +84,6 @@ export class MessageTicketComponent implements OnChanges, OnInit{
     this.emojiListChange.emit(this.emojiService.emojiList);
   }
 
-
   createLookUpUser() {
     const users = this.firestore.userList();
     this.userMap.clear();
@@ -120,20 +102,14 @@ export class MessageTicketComponent implements OnChanges, OnInit{
     this.channelNameToUidMap.clear();
     channels?.forEach((channel) => {
       this.channelMap.set(channel.channelId, channel);
-      if (channel.name) {
-        this.channelNameToUidMap.set(channel.name.toLowerCase(), channel.channelId);
-      }
+      if (channel.name) this.channelNameToUidMap.set(channel.name.toLowerCase(), channel.channelId);
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['message']) {
-      if (this.userMap.size === 0) {
-        this.createLookUpUser();
-      }
-      if (this.channelMap.size === 0) {
-        this.createLookupChannel();
-      }
+      if (this.userMap.size === 0) this.createLookUpUser();
+      if (this.channelMap.size === 0) this.createLookupChannel();
       this.user = this.userMap.get(this.message.senderId) ?? null;
       const currentUserId = this.firestore.getUserId();
       this.currentUserText = this.message.senderId === currentUserId;
@@ -151,23 +127,19 @@ export class MessageTicketComponent implements OnChanges, OnInit{
     let match: RegExpExecArray | null;
     while ((match = mentionRegex.exec(content)) !== null) {
       this.handleMentionMatch(match, content, tokens, validUsers, validChannels, lastIndex);
-      lastIndex = this.getNextLastIndex(match, content, validUsers, validChannels, lastIndex);
+      lastIndex = this.getNextLastIndex(match, validUsers, validChannels);
     }
-    if (lastIndex < content.length) {
-      this.createTextType(content, lastIndex, tokens);
-    }
+    if (lastIndex < content.length) this.createTextType(content, lastIndex, tokens);
     return tokens;
   }
 
   private getValidUserNames(): string[] {
-    // console.log(this.mentionService.filteredUserList());
     return (typeof this.mentionService.filteredUserList === 'function' ? this.mentionService.filteredUserList() : [])
       .map((u: any) => u.name?.trim())
       .filter(Boolean);
   }
 
   private getValidChannelNames(): string[] {
-    // console.log(this.mentionService.getChannelWithUserMemmership())
     return (this.mentionService.getChannelWithUserMemmership?.() || []).map((c: any) => c.name?.trim()).filter(Boolean);
   }
 
@@ -180,17 +152,13 @@ export class MessageTicketComponent implements OnChanges, OnInit{
     if (mentionSymbol === '@') {
       let found = '';
       for (const name of validUsers) {
-        if (mentionName.startsWith(name) && name.length > found.length) {
-          found = name;
-        }
+        if (mentionName.startsWith(name) && name.length > found.length) found = name;
       }
       return { validMention: !!found, foundName: found || mentionName };
     } else if (mentionSymbol === '#') {
       let found = '';
       for (const name of validChannels) {
-        if (mentionName.startsWith(name) && name.length > found.length) {
-          found = name;
-        }
+        if (mentionName.startsWith(name) && name.length > found.length) found = name;
       }
       return { validMention: !!found, foundName: found || mentionName };
     }
@@ -229,10 +197,8 @@ export class MessageTicketComponent implements OnChanges, OnInit{
 
   private getNextLastIndex(
     match: RegExpExecArray,
-    content: string,
     validUsers: string[],
-    validChannels: string[],
-    prevLastIndex: number
+    validChannels: string[]
   ): number {
     const index = match.index;
     const mentionSymbol = match[1];
@@ -252,17 +218,12 @@ export class MessageTicketComponent implements OnChanges, OnInit{
   }
 
   createTextType(content: string, lastIndex: number, tokens: MessageToken[], index?: number) {
-    if (lastIndex < content.length || index! > lastIndex) {
-      tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
-    }
+    if (lastIndex < content.length || index! > lastIndex) tokens.push({ type: 'text', value: content.slice(lastIndex, index) });
   }
 
   createMentionType(symbol: string, name: string, tokens: MessageToken[]) {
-    if (symbol === '@') {
-      tokens.push({ type: 'mentionUser', userName: name });
-    } else if (symbol === '#') {
-      tokens.push({ type: 'mentionChannel', channelName: name });
-    }
+    if (symbol === '@') tokens.push({ type: 'mentionUser', userName: name });
+    else if (symbol === '#') tokens.push({ type: 'mentionChannel', channelName: name });
   }
 
   isTimestamp(value: any): value is Timestamp {
@@ -270,7 +231,6 @@ export class MessageTicketComponent implements OnChanges, OnInit{
   }
 
   onEmojiClick(emojiName: string) {
-    console.log(this.shownEmoji)
     this.emojiServise.toggleEmojiReaction(emojiName, this.message, this.channelId, this.inThreadView, this.messageId);
     this.emojiServise.selectEmoji(emojiName);
   }
@@ -402,9 +362,7 @@ export class MessageTicketComponent implements OnChanges, OnInit{
   }
 
   get emojiLimit(): number {
-    if (this.inThreadView) {
-      return 7;
-    }
+    if (this.inThreadView) return 7;
     return this.isMobileDevice ? 7 : 20;
   }
 
@@ -413,11 +371,9 @@ export class MessageTicketComponent implements OnChanges, OnInit{
     if (this.message.reactions) {
       if (this.allEmoji) {
         const limit = this.emojiLimit;
-        if (this.message.reactions && this.message.reactions.length > limit) {
+        if (this.message.reactions && this.message.reactions.length > limit)
           limitedReactions = this.message.reactions.slice(0, limit);
-        } else {
-          limitedReactions = this.message.reactions;
-        }
+        else limitedReactions = this.message.reactions;
       } else {
         limitedReactions = this.message.reactions;
       }
@@ -436,8 +392,5 @@ export class MessageTicketComponent implements OnChanges, OnInit{
 
   toggleEmojiAmount() {
     this.allEmoji = !this.allEmoji;
-    console.log(this.allEmoji);
-    console.log(this.message.reactions);
-    console.log(this.reactionsAll);
   }
 }

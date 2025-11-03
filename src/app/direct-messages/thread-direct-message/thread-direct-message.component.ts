@@ -1,16 +1,5 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  signal,
-  ViewChild,
-  ElementRef,
-  AfterViewChecked,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
+import { ViewChild, ElementRef, AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MessageTicketComponent } from '../message-ticket/message-ticket.component';
 import { Message } from '../../interfaces/message.interface';
@@ -49,21 +38,18 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
   styleUrl: './thread-direct-message.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+
 export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
-  @Input() isThreadOpen!: boolean;
   @Output() close = new EventEmitter<void>();
   @Input() message: Message | null = null;
-  routeSub!: Subscription;
   messageId!: string | null;
   channelId!: string | null;
-  threadId!: string | null;
   threadMessages: Message[] = [];
   private threadMessagesSub!: Subscription;
   private parentMessageUnsub: (() => void) | null = null;
   messages: Message[] = [];
   public Object = Object;
   unsubSingleDM?: () => void;
-  unsubUserList?: () => void;
   unsubList?: () => void;
   userProfile = this.firestoreService.userProfile;
   userProfileB = signal<UserProfileInterface | null>(null);
@@ -72,7 +58,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   shouldScroll = false;
   private previousThreadMessageCount = 0;
   private isInitialThreadLoad = true;
-  private previousMessageCount = 0;
   private isInitialLoad = true;
 
   @ViewChild('threadInput') threadInput!: ElementRef<HTMLTextAreaElement>;
@@ -98,16 +83,13 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   ngOnInit(): void {
     this.loading = true;
     this.handleRouteParams();
-    if (this.channelId) {
-      this.unsubList = this.messageService.subList(this.channelId);
-    }
+    if (this.channelId) this.unsubList = this.messageService.subList(this.channelId);
     this.messageService.messageList$.subscribe((msgs) => {
       this.messages = msgs;
       this.isInitialLoad = false;
       setTimeout(() => {
         this.loading = false;
         this.cdr.markForCheck();
-        // this.scrollToBottomInstantly();
       }, 1000);
     });
   }
@@ -181,26 +163,22 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
 
   addThreadMessage() {
     const currentUserId = this.senderId || this.userProfile()?.uid;
-    if (!currentUserId) {
-      console.error('Cannot send thread message: No user ID available');
-      return;
+    if (!currentUserId) return;
+    if (this.canSendMessage()) {
+      const threadMessage = {
+        createdAt: serverTimestamp(),
+        senderId: currentUserId,
+        content: this.content,
+        hasThread: false,
+        threadCount: 0,
+      };
+      if (this.channelId && this.message?.id) {
+        this.threadMessageService.addThreadMessage(threadMessage, this.channelId, this.message?.id);
+        this.updateParentMessageWithThreadInfo(this.message);
+        this.shouldScroll = true;
+      }
+      this.content = '';
     }
-    if(this.canSendMessage()){
-    const threadMessage = {
-      createdAt: serverTimestamp(),
-      senderId: currentUserId,
-      content: this.content,
-      hasThread: false,
-      threadCount: 0,
-    };
-    if (this.channelId && this.message?.id) {
-      this.threadMessageService.addThreadMessage(threadMessage, this.channelId, this.message?.id);
-      this.updateParentMessageWithThreadInfo(this.message);
-      this.shouldScroll = true;
-    }
-    this.content = '';
-    }
-
   }
 
   canSendMessage(): boolean {
@@ -221,18 +199,12 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
       message.id!,
       this.channelId!
     );
-    console.log(this.message?.lastThreadCreatedAt);
-    console.log(this.message?.createdAt);
-    console.log(message);
   }
 
   subscribeToThreadMessages(channelId: string, messageId: string) {
-    if (this.threadMessagesSub) {
-      this.threadMessagesSub.unsubscribe();
-    }
+    if (this.threadMessagesSub) this.threadMessagesSub.unsubscribe();
     this.threadMessageService.subThreadList(channelId, messageId);
     this.threadMessagesSub = this.threadMessageService.threadMessages$.subscribe((messages) => {
-      // console.log('[ThreadMessages] Received from Firestore:', messages);
       const wasEmpty = this.threadMessages.length === 0;
       const hadNewMessage = messages.length > this.previousThreadMessageCount;
       this.threadMessages = messages;
@@ -259,9 +231,7 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   subscribeToParentMessage(channelId: string, messageId: string) {
     const docRef = this.messageService.getSingleMessageRef(channelId, messageId);
     this.parentMessageUnsub = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        this.message = this.messageService.setMessageObject(docSnap.data(), docSnap.id);
-      }
+      if (docSnap.exists()) this.message = this.messageService.setMessageObject(docSnap.data(), docSnap.id);
     });
   }
 
@@ -290,10 +260,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
   tagInputChannelStart() {
     this.content = this.userMentionService.tagChannelInputStart(this.content, this.threadInput);
   }
-
-  // updateFilteredUserList() {
-  //   this.userMentionService.updateFilteredUserList(this.content);
-  // }
 
   updateFilteredChannelList() {
     this.userMentionService.updateFilteredChannelList(this.content);

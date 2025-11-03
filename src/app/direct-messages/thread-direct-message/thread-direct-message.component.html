@@ -103,13 +103,11 @@
         <div class="emoji-menu-panel">
           @for(emoji of emojiService.sortedEmojis;track emojiService.emojiList){
           <div class="emoji-menu-item" (click)="onEmojiClick(emoji)">
-            <!-- <span class="emoji-in-popup">{{ emoji.code }}</span> -->
             <img src="assets/emojis/{{ emoji.name }}.png" />
           </div>
           }
         </div>
       </mat-menu>
-      <!-- <app-emoji-picker *ngIf="emojiService.smallEmojiMenu()" (emojiSelected)="addEmoji($event)"></app-emoji-picker> -->
       <mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu-thread" yPosition="above" xPosition="after">
         <div class="tag-menu-wrap">
           @for(user of userMentionService.filteredUserList();track user){
