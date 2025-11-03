@@ -48,16 +48,6 @@ export class EmojiServiceService {
     { name: 'kiss', code: '😘' },
   ];
 
-  //  { name: 'poop', code: '💩' },
-  //     { name: 'sad-cry', code: '😢' },
-  //     { name: 'vomit', code: '🤮' },
-  //     { name: 'fear', code: '😨' },
-  //     { name: 'shocked', code: '😱' },
-  //     { name: 'cry', code: '😭' },
-  //     { name: 'devil', code: '😈' },
-  //      { name: 'monkey-see-no', code: '🙈' },
-  //     { name: 'monkey-say-no', code: '🙊' },
-  //     { name: 'monkey-hear-no', code: '🙉' },
 
   emojiHistory: typeof this.emojiList = [];
 
@@ -95,7 +85,6 @@ export class EmojiServiceService {
     const reaction = updatedReactions.find((r) => r.emojiName === emojiName);
     if (reaction) {
       this.toggleUserReaction(reaction.users, userId);
-    
       if (reaction.users.length === 0) {
         this.removeEmoji(updatedReactions, reaction);
       }
@@ -154,9 +143,7 @@ export class EmojiServiceService {
   }
 
   addEmojiToContent(emoji: any, currentContent: string): string {
-    if (emoji) {
-      return currentContent + emoji;
-    }
+    if (emoji) return currentContent + emoji;
     return currentContent;
   }
 
@@ -175,7 +162,6 @@ export class EmojiServiceService {
     } else if (!isEmoji) {
       this.addnewEmoji(reactionsCopy, emoji, senderId!)
       this.updateReaction(reactionsCopy, ticketRef, ticket)
-
     } else if (isEmoji && isUserAddedReaction) {
       this.deleteUserOrEmoji(reactionsCopy, indexOfEmoji, senderId!, emoji, ticketRef, ticket)
     }
@@ -221,7 +207,6 @@ export class EmojiServiceService {
   }
 
   async updateReaction(reactionsCopy: { emoji: string; users: string[] }[], ticketRef: DocumentReference<DocumentData, DocumentData>, ticket: TicketInterface,) {
-
     try {
       await updateDoc(ticketRef, {
         reactions: reactionsCopy

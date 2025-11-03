@@ -1,17 +1,6 @@
-import { Injectable, inject, Input, OnInit } from '@angular/core';
-import {
-  Firestore,
-  collection,
-  doc,
-  onSnapshot,
-  query,
-  where,
-  getDoc,
-  addDoc,
-  updateDoc,
-  serverTimestamp,
-  setDoc,
-} from '@angular/fire/firestore';
+import { Injectable, inject, Input } from '@angular/core';
+import { collection, doc, onSnapshot, query, getDoc } from '@angular/fire/firestore';
+import { addDoc, updateDoc, serverTimestamp, setDoc } from '@angular/fire/firestore';
 import { DirectMessageService } from './direct-message.service';
 import { Message } from '../interfaces/message.interface';
 import { MessageService } from './message.service';
@@ -22,7 +11,6 @@ import { orderBy } from '@angular/fire/firestore';
   providedIn: 'root',
 })
 export class ThreadDirectMessageService {
-  private directMessageService = inject(DirectMessageService);
   private messageService = inject(MessageService);
   @Input() message!: Message;
   private _threadMessages$ = new BehaviorSubject<Message[]>([]);
@@ -47,10 +35,7 @@ export class ThreadDirectMessageService {
     const unsubList = onSnapshot(q, (list) => {
       const threadMessages: Message[] = [];
       list.forEach((element) => {
-        const msg = this.messageService.setMessageObject(
-          element.data(),
-          element.id
-        );
+        const msg = this.messageService.setMessageObject(element.data(), element.id);
         threadMessages.push(msg);
       });
       this._threadMessages$.next(threadMessages);
@@ -58,32 +43,25 @@ export class ThreadDirectMessageService {
     return unsubList;
   }
 
-  async updateThreadMessage(
-    message: Message,
-    docId: string,
-    channelId: string,
-    threadId: string
-  ) {
+  async updateThreadMessage(message: Message, docId: string, channelId: string, threadId: string) {
     if (!docId || !channelId) {
       console.error('Missing docId or channelId:', { docId, channelId });
       return;
     }
     if (message.id) {
       let ref = this.getSingleThreadRef(channelId, docId, threadId);
-      await updateDoc(ref, this.messageService.getCleanJson(message)).catch(
-        (err) => {
-          console.log(err);
-        }
-      );
+      await updateDoc(ref, this.messageService.getCleanJson(message)).catch((err) => {
+        console.log(err);
+      });
     }
   }
 
-    async updateThreadPartial(partialData: Partial<Message>, docId: string, channelId: string, threadId:string) {
+  async updateThreadPartial(partialData: Partial<Message>, docId: string, channelId: string, threadId: string) {
     if (!docId || !channelId) {
       console.error('Missing docId or channelId:', { docId, channelId });
       return;
     }
-    const ref = this.getSingleThreadRef(channelId, docId ,threadId);
+    const ref = this.getSingleThreadRef(channelId, docId, threadId);
     try {
       await updateDoc(ref, partialData);
     } catch (err) {
@@ -91,34 +69,19 @@ export class ThreadDirectMessageService {
     }
   }
 
-
-
-  async getThreadMessageById(
-    channelId: string,
-    messageId: string,
-    threadId: string
-  ): Promise<Message | null> {
+  async getThreadMessageById(channelId: string, messageId: string, threadId: string): Promise<Message | null> {
     const ref = this.getSingleThreadRef(channelId, messageId, threadId);
     const snap = await getDoc(ref);
-    if (snap.exists()) {
-      return this.messageService.setMessageObject(snap.data(), snap.id);
-    }
+    if (snap.exists()) return this.messageService.setMessageObject(snap.data(), snap.id);
     return null;
   }
 
   getSingleThreadRef(channelId: string, docId: string, threadId: string) {
-    const threadMessageDocRef = doc(
-      this.getThreadMessagesRef(channelId, docId),
-      threadId
-    );
+    const threadMessageDocRef = doc(this.getThreadMessagesRef(channelId, docId), threadId);
     return threadMessageDocRef;
   }
 
-
   getThreadMessagesRef(channelId: string, docId: string) {
-    return collection(
-      this.messageService.getSingleMessageRef(channelId, docId),
-      'threadMessages'
-    );
+    return collection(this.messageService.getSingleMessageRef(channelId, docId), 'threadMessages');
   }
 }

@@ -1,8 +1,6 @@
 import { Injectable, signal, ElementRef, inject, computed } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { FirestoreService } from './firestore.service';
-import { UserProfileInterface } from '../interfaces/user-profile.interface';
-import { ChannelInterface } from '../interfaces/channel.interface';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavbarService } from '../services/navbar.service';
 import { NavbarInterface } from '../interfaces/navbar.interface';
@@ -22,16 +20,12 @@ export class UserMentionService {
     initialValue: [] as NavbarInterface[],
   });
 
-
   constructor(private firestoreService: FirestoreService, private router: Router) {
     this.filteredChannelList.set(this.getChannelWithUserMemmership());
   }
 
   tagInputStart(content: string, input: ElementRef<HTMLInputElement | HTMLTextAreaElement>): string {
     const newContent = content + '@';
-    // this.firestoreService.subUserList((users) => {
-    //   this.updateFilteredUserList(newContent);
-    // });
     requestAnimationFrame(() => {
       if (input && input.nativeElement) input.nativeElement.focus();
     });
@@ -104,7 +98,6 @@ export class UserMentionService {
     const hasAt = content.includes('@') || lastChar === '@';
     const hasHash = content.includes('#') || lastChar === '#';
     if (hasAt) {
-      // this.firestoreService.subUserList(() => this.updateFilteredUserList(content));
       if (lastChar === '@') this.onTypeEt(channelMenuTrigger, mentionMenuTrigger, input);
     }
     if (hasHash) {

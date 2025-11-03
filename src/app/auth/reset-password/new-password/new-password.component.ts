@@ -3,7 +3,7 @@ import { AuthService } from '../../../services/auth.service';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { StrongPasswordRegx } from '../../signup/strong-password.pattern';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { getAuth, verifyPasswordResetCode, confirmPasswordReset } from '@angular/fire/auth';
 import { FooterComponent } from '../../../shared/footer/footer.component';
 import { Header2Component } from '../../../shared/header-2/header-2.component';
@@ -23,7 +23,6 @@ export class NewPasswordComponent implements OnInit {
   route = inject(ActivatedRoute);
   submitted = false;
   auth = getAuth();
-
   oobCode: string = '';
   email: string | null = null;
   errorMessage: string | null = null;
@@ -61,14 +60,10 @@ export class NewPasswordComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
-    if (this.newPasswordForm.invalid || !this.oobCode) {
-      return;
-    }
-
+    if (this.newPasswordForm.invalid || !this.oobCode) return;
     const newPassword = this.newPasswordForm.value.password_1!;
     confirmPasswordReset(this.auth, this.oobCode, newPassword)
       .then(() => {
- 
         this.onSuccessfulSignup();
       })
       .catch((err) => {
@@ -77,6 +72,7 @@ export class NewPasswordComponent implements OnInit {
         }
       });
   }
+
   showLog() {
     this.log.show(2000);
   }

@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { getAuth } from '@angular/fire/auth';
 import { FirestoreService } from '../../services/firestore.service';
-
 import { Header2Component } from '../../shared/header-2/header-2.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
 
@@ -37,11 +36,10 @@ export class LoginComponent {
   get loginFormControl() {
     return this.loginForm.controls;
   }
+
   onSubmit() {
     this.submitted = true;
-    if (this.loginForm.invalid) {
-      return;
-    }
+    if (this.loginForm.invalid) return;
     const rawForm = this.loginForm.getRawValue();
     this.authService.login(rawForm.email!, rawForm.password!).subscribe({
       next: () => {
@@ -52,13 +50,9 @@ export class LoginComponent {
           const control = this.loginForm.get('email');
           const existing = control?.errors || {};
           control?.setErrors({ ...existing, invalidEmail: true });
-        } else if (err.code === 'auth/wrong-password') {
-          this.loginForm.get('password')?.setErrors({ incorrect: true });
-        } else if (err.code === 'auth/invalid-credential') {
-          this.loginForm.get('password')?.setErrors({ invalid: true });
-        } else {
-          this.errorMessage = 'An unknown error occurred.';
-        }
+        } else if (err.code === 'auth/wrong-password') this.loginForm.get('password')?.setErrors({ incorrect: true });
+        else if (err.code === 'auth/invalid-credential') this.loginForm.get('password')?.setErrors({ invalid: true });
+        else this.errorMessage = 'An unknown error occurred.';
       },
     });
   }

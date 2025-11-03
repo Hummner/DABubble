@@ -1,18 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Message } from '../interfaces/message.interface';
-import {
-  Firestore,
-  collection,
-  doc,
-  onSnapshot,
-  query,
-  addDoc,
-  orderBy,
-  setDoc,
-  updateDoc,
-  serverTimestamp,
-  getDoc,
-} from '@angular/fire/firestore';
+import { Firestore, collection, doc, onSnapshot, query, addDoc } from '@angular/fire/firestore';
+import { orderBy, setDoc, updateDoc, serverTimestamp, getDoc } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { Timestamp } from '@angular/fire/firestore';
 
@@ -37,7 +26,6 @@ export class MessageService {
       reactions: item.reactions || [],
       hasThread: item.hasThread || false,
       threadCount: item.threadCount || 0,
-      // lastThreadCreatedAt:item.lastThreadCreatedAt
     });
     await setDoc(docRef, { id: docRef.id }, { merge: true });
   }
@@ -71,9 +59,7 @@ export class MessageService {
   async getMessageById(channelId: string, messageId: string): Promise<Message | null> {
     const ref = this.getSingleMessageRef(channelId, messageId);
     const snap = await getDoc(ref);
-    if (snap.exists()) {
-      return this.setMessageObject(snap.data(), snap.id);
-    }
+    if (snap.exists()) return this.setMessageObject(snap.data(), snap.id);
     return null;
   }
 
@@ -86,7 +72,7 @@ export class MessageService {
       reactions: message.reactions,
       hasThread: message.hasThread,
       threadCount: message.threadCount,
-      lastThreadCreatedAt:message.lastThreadCreatedAt
+      lastThreadCreatedAt: message.lastThreadCreatedAt,
     };
   }
 
@@ -116,7 +102,7 @@ export class MessageService {
       reactions: obj.reactions || [],
       hasThread: obj.hasThread || false,
       threadCount: obj.threadCount || 0,
-      lastThreadCreatedAt:obj.lastThreadCreatedAt  ?? obj.clientCreatedAt ?? null,
+      lastThreadCreatedAt: obj.lastThreadCreatedAt ?? obj.clientCreatedAt ?? null,
     };
   }
 
@@ -140,15 +126,11 @@ export class MessageService {
   }
 
   formatDateLabel(date: Date | Timestamp): string {
-    if ('toDate' in date) {
-      date = date.toDate();
-    }
+    if ('toDate' in date) date = date.toDate();
     const now = new Date();
     const isToday =
       date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-    if (isToday) {
-      return 'Heute';
-    }
+    if (isToday) return 'Heute';
     const weekday = date.toLocaleDateString('de-DE', { weekday: 'long' });
     const formattedDate = date.toLocaleDateString('de-DE');
     return `${weekday}, ${formattedDate}`;
@@ -161,13 +143,9 @@ export class MessageService {
   getMessagesGroupedByDate(messageArr: any[]): { [date: string]: Message[] } {
     return messageArr.reduce((groups, message) => {
       const createdAt = message.createdAt;
-      if (!this.isTimestamp(createdAt)) {
-        return groups;
-      }
+      if (!this.isTimestamp(createdAt)) return groups;
       const dateStr = this.formatDateLabel(createdAt);
-      if (!groups[dateStr]) {
-        groups[dateStr] = [];
-      }
+      if (!groups[dateStr]) groups[dateStr] = [];
       groups[dateStr].push(message);
       return groups;
     }, {} as { [date: string]: Message[] });

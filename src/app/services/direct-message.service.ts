@@ -1,4 +1,4 @@
-import { inject, Injectable, OnDestroy, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Firestore, collection, doc, onSnapshot, query, where, getDocs, addDoc, orderBy } from '@angular/fire/firestore';
 import { DirectMessageInterface } from '../interfaces/direct-message.interface';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
@@ -10,15 +10,13 @@ export class DirectMessageService {
   private firestore = inject(Firestore);
   private userIdsSignal = signal<string[]>([]);
   readonly userIds = this.userIdsSignal;
-
   public currentUserProfile = signal<UserProfileInterface | null>(null);
   public secondUserProfile = signal<UserProfileInterface | null>(null);
   private unsubDMList?: () => void;
   private unsubUserProfile?: () => void;
+
   constructor(private firestoreService: FirestoreService) {}
 
-  //we need to find the channel id, which exists between the current user and user I clicked on
-  //if there is an existing one (already opened), it searches for it, if not, then creates a new one
   async getDMChannel(currentUserId: string, clickedUserId: string): Promise<string> {
     const q = query(this.getDirectMessageChannelListRef(), where('users', 'array-contains', currentUserId));
     const snapshot = await getDocs(q);
@@ -34,9 +32,7 @@ export class DirectMessageService {
     this.unsubUserProfile?.();
     this.unsubUserProfile = this.firestoreService.subUserList((users) => {
       const secondUser = users.find((user) => user.uid === uid);
-      if (secondUser) {
-        this.secondUserProfile.set(secondUser);
-      }
+      if (secondUser) this.secondUserProfile.set(secondUser);
     });
   }
 
@@ -95,10 +91,9 @@ export class DirectMessageService {
     const snapshot = await getDocs(directMessagesCol);
     const directMessages = snapshot.docs.map(doc => ({
       directMessagesId: doc.id,
-      users: doc.data()['users'] || [],      
+      users: doc.data()['users'] || [],
       ...doc.data()
     }));
-    console.log('All directMessages:', directMessages);
     return directMessages;
   }
 }

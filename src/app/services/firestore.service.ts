@@ -1,13 +1,7 @@
 import { inject, signal, WritableSignal } from '@angular/core';
 import { Injectable, OnDestroy } from '@angular/core';
-import {
-  Firestore,
-  collection,
-  setDoc,
-  doc,
-  onSnapshot,
-  updateDoc,
-} from '@angular/fire/firestore';
+import { Firestore, collection, setDoc } from '@angular/fire/firestore';
+import { doc, onSnapshot, updateDoc } from '@angular/fire/firestore';
 import { user } from '@angular/fire/auth';
 import { AuthService } from './auth.service';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
@@ -19,7 +13,6 @@ export class FirestoreService implements OnDestroy {
   private firestore = inject(Firestore);
   private auth = inject(AuthService);
   private user$ = user(this.auth.firebaseAuth);
-  // userList: UserProfileInterface[] = [];
   userList: WritableSignal<UserProfileInterface[]> = signal([]);
   unsubUsers;
   userProfile: WritableSignal<UserProfileInterface | null> = signal(null);
@@ -38,18 +31,18 @@ export class FirestoreService implements OnDestroy {
     this.unsubUsers = this.subUserList();
   }
 
-subUserList(callback?: (users: UserProfileInterface[]) => void) {
-  const ref = this.getUsersRef();
-  const unsub = onSnapshot(ref, (list) => {
-    const userList: UserProfileInterface[] = [];
-    list.forEach((element) => {
-      userList.push(this.toUserProfile(element.data(), element.id));
-    });
-      this.userList.set(userList);  // update the signal instead of plain array
+  subUserList(callback?: (users: UserProfileInterface[]) => void) {
+    const ref = this.getUsersRef();
+    const unsub = onSnapshot(ref, (list) => {
+      const userList: UserProfileInterface[] = [];
+      list.forEach((element) => {
+        userList.push(this.toUserProfile(element.data(), element.id));
+      });
+      this.userList.set(userList);
       callback?.(userList);
-  });
-  return unsub;
-}
+    });
+    return unsub;
+  }
 
   ngOnDestroy() {
     this.unsubUserProfile?.();
@@ -62,7 +55,6 @@ subUserList(callback?: (users: UserProfileInterface[]) => void) {
       if (docSnap.exists()) {
         const profile = this.toUserProfile(docSnap.data(), uid);
         this.userProfile.set(profile);
-        // console.log('Updated userProfile:', profile);
       }
     });
   }
@@ -81,10 +73,7 @@ subUserList(callback?: (users: UserProfileInterface[]) => void) {
       name: source.displayName || source.name || '',
       email: source.email || '',
       imgUrl: source.photoURL || source.imgUrl || '',
-      createdAt:
-        source.createdAt ||
-        source.metadata?.createdAt ||
-        new Date().toISOString(),
+      createdAt: source.createdAt || source.metadata?.createdAt || new Date().toISOString(),
       isAnonymous: source.isAnonymous ?? false,
     };
   }
