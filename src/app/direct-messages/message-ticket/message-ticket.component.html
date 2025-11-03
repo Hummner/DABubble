@@ -2,17 +2,7 @@
   <div class="emoji-menu-panel">
     @for(emoji of emojiService.sortedEmojis;track emojiService.emojiList){
     <div class="emoji-menu-item" (click)="onEmojiClick(emoji.name)">
-      <!-- <span class="emoji-in-popup">{{ emoji.code }}</span> -->
       <img src="assets/emojis/{{ emoji.name }}.png" />
-    </div>
-    }
-  </div>
-</mat-menu>
-<mat-menu #restEmoji="matMenu" class="rest-emoji-menu">
-  <div class="rest-emoji-menu-panel">
-    @for(emoji of restOfReactions;track emoji){
-    <div class="rest-emoji-menu-item">
-      <img src="assets/emojis/{{ emoji.emojiName }}.png" />
     </div>
     }
   </div>
@@ -82,7 +72,6 @@
             (mouseleave)="hideUsers(emoji.users)"
           >
             <img src="assets/emojis/{{ emoji.emojiName }}.png" alt="" />
-            <!-- <span class="emoji-in-popup">{{ emoji.emojiName }}</span> -->
             <p>{{ emoji.users.length }}</p>
             <div class="reactionBox" *ngIf="showReactions && emojiIndex === i">
               <img src="assets/emojis/{{ shownEmoji }}.png" alt="" />
@@ -117,11 +106,8 @@
       <div class="more-emoji">
         <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(emojiService.sortedEmojis[0].name)">
           <img class="emoji-img" src="assets/emojis/{{ emojiService.sortedEmojis[0].name }}.png" />
-
-          <!-- <span class="emoji-in-popup">{{ emojiService.sortedEmojis[0].code }}</span> -->
         </div>
         <div class="emoji-menu-item" *ngIf="inThreadView == false" (click)="onEmojiClick(emojiService.sortedEmojis[1].name)">
-          <!-- <span class="emoji-in-popup">{{ emojiService.sortedEmojis[1].code }}</span> -->
           <img class="emoji-img" src="assets/emojis/{{ emojiService.sortedEmojis[1].name }}.png" />
         </div>
         <div

@@ -43,7 +43,7 @@ type MessageToken =
   styleUrl: './message-ticket.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
+export class MessageTicketComponent implements OnChanges, OnInit{
   @Input() userProfileB!: UserProfileInterface | null;
   @Input() userProfile!: UserProfileInterface | null;
   @Input() message!: Message;
@@ -101,9 +101,6 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
     this.emojiListChange.emit(this.emojiService.emojiList);
   }
 
-  ngOnDestroy(): void {
-    // Cleanup if needed
-  }
 
   createLookUpUser() {
     const users = this.firestore.userList();
@@ -436,8 +433,6 @@ export class MessageTicketComponent implements OnChanges, OnInit, OnDestroy {
   get hasMoreReactions(): boolean {
     return this.message.reactions ? this.message.reactions.length > this.emojiLimit : false;
   }
-
-
 
   toggleEmojiAmount() {
     this.allEmoji = !this.allEmoji;

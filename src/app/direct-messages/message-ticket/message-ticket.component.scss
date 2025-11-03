@@ -106,13 +106,10 @@
   justify-content: space-between;
   border: 1px solid #adb0d9;
   border-radius: 25px 25px 0 25px;
-  // width: 210px;
-  // height: 46px;
   padding: 3px 15px 3px 15px;
   background-color: white;
   top: -24px;
   right: 48px;
-
   opacity: 0;
   pointer-events: none;
   transform: translateX(20px);
@@ -166,16 +163,15 @@
   flex-direction: row-reverse !important;
 }
 
-.answers-flex{
-  display:flex;
-  gap:20px;
+.answers-flex {
+  display: flex;
+  gap: 20px;
   align-items: baseline;
 }
 
 .reverse-backround {
   background-color: #797ef3 !important;
   border-radius: 30px 0 30px 30px !important;
-
   > p {
     color: white !important;
   }
@@ -198,7 +194,6 @@
   border-radius: 30px;
   border: 1px solid #adb0d9;
   display: flex;
-  // align-items: center;
   justify-content: center;
   padding: 5px 10px;
   gap: 10px;
@@ -223,17 +218,14 @@
   left: 50%;
   gap: 5px;
   padding: 15px 10px;
-
   > span {
     color: white;
   }
-
   > p {
     color: white;
     font-weight: bold;
     margin: 0;
   }
-
   > img {
     margin-bottom: 5px;
     width: 20px;
@@ -241,10 +233,12 @@
     object-fit: contain;
   }
 }
+
 .more-emoji {
   position: relative;
   display: flex;
 }
+
 ::ng-deep .small-emoji-menu {
   padding: 12px;
   border-radius: 20px 20px 20px 20px;
@@ -273,15 +267,7 @@
   left: 0;
   border-radius: 20px;
   > .mat-mdc-menu-content {
-    // height: 250px;
-    // width: 200px;
-    // background-color: white;
-    // display: flex !important;
-    // justify-content: center;
-    // align-items: center;
-    // flex-wrap: wrap !important;
     > .emoji-menu-item {
-      // margin:4px;
       > img {
         width: 20px;
         height: 20px;
@@ -367,7 +353,6 @@
   font-size: 18px;
   color: #686868;
   resize: none;
-
   &:focus {
     outline: none;
   }
@@ -382,19 +367,6 @@
   position: relative;
 }
 
-@media (max-width: 768px) {
-  .ticket {
-    padding: 20px 24px;
-  }
-}
-
-@media (max-width: 576px) {
-  .member-img-ticket {
-    width: 50px;
-    height: 50px;
-  }
-}
-
 .restEmoji {
   display: flex;
   justify-content: center;
@@ -406,36 +378,6 @@
   background-color: white;
   &:hover {
     color: #797ef3;
-  }
-}
-
-::ng-deep .mat-mdc-menu-panel .rest-emoji-emnu {
-  border-radius: 20px;
-  padding: 10px;
-}
-
-::ng-deep .rest-emoji-menu-panel {
-  display: flex;
-  gap: 10px;
-  overflow: auto;
-  flex-wrap: wrap;
-}
-::ng-deep .rest-emoji-menu-item {
-  align-items: center;
-  display: flex;
-  gap: 20px;
-  > img {
-    width: 24px;
-    height: 24px;
-  }
-}
-
-:ng-deep #cdk-overlay-0 {
-  > .rest-emoji-menu {
-    > .mat-mdc-menu-content {
-      border-radius: 20px;
-      padding: 10px;
-    }
   }
 }
 
@@ -457,3 +399,5 @@
     padding: 8px !important;
   }
 }
+
+@import "./responsive.message-ticket";
