@@ -47,7 +47,6 @@
               <div class="menu-container-resp" (click)="$event.stopPropagation()">
                 <div class="members-menu-header">
                   <h2 class="no-margin">Mitglieder</h2>
-                  <!-- <div class="close-dialog" (click)="closeMenu(menuTrigger)"><mat-icon class="icon">close</mat-icon></div> -->
                 </div>
                 <div class="members-menu-list">
                   @for (member of channel?.members; track $index) {
@@ -87,9 +86,6 @@
                 <span>+{{ (channel?.members?.length ?? 0) - 5 }}</span>
               </div>
             }
-            <!-- <div class="member-img">
-              <span>{{ channel?.members?.length }}</span>
-            </div> -->
           </div>
           <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
             class="add-member-icon am-icon">

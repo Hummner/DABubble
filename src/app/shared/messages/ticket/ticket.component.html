@@ -12,14 +12,12 @@
             <img src={{userImg}} alt="">
         </div>
         <div class="message-content">
-
             <div class="name-date" [ngClass]="{'reverse' : isCurrentUser()}">
                 <span class="msg-name truncate-text"> {{ userName }}</span>
                 <span class="msg-date">{{ time }} Uhr</span>
             </div>
             <div class="message-wrapper" [ngClass]="{'reverse' : isCurrentUser()}">
                 <div #text class="message" [ngClass]="{'reverse-backround' : isCurrentUser()}">
-
                 </div>
             </div>
 
@@ -44,20 +42,14 @@
                     <img src="assets/emojis/{{ showEmojiName(emoji) }}.png" />
                     <span>{{ emoji.users.length }}</span>
                 </div>
-
                 }
                   <div *ngIf="ticket.reactions.length > 20 && !moreEmoji" class="emoji-more" (click)="moreEmoji = true">
                     +{{ticket.reactions.length - 20}} weitere</div>
                 <div *ngIf="moreEmoji" class="emoji-more" (click)="moreEmoji = false">Weniger anzeigen</div>
-
-
-
                 <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()"
                     (click)="$event.stopPropagation()" (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple"
                         src="assets/icon/add_reaction.svg">
                 </div>
-
-              
             </div>
         </div>
         <div class="emoji-menu" (click)="$event.stopPropagation()"
@@ -67,7 +59,6 @@
             <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()"
                 (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple" src="assets/icon/add_reaction.svg">
             </div>
-
             <div class="emoji-menu-item" (click)="openThreadPanel()"><img class="hover-purple"
                     src="assets/icon/comment.svg"></div>
             <div *ngIf="isCurrentUser()" class="emoji-menu-item">
@@ -78,11 +69,9 @@
                 </mat-menu>
             </div>
         </div>
-
     </div>
 </div>
 <div *ngIf="editView" class="ticket-edit">
-
     <div class="message-edit">
         <textarea class="edit-textarea" [(ngModel)]="editedText" name="edit-textarea" id="edit_textarea"></textarea>
         <div class="button-container">
@@ -93,12 +82,9 @@
                 <span class="secondary-button" (click)="editView = false">Abbrechen</span>
                 <span class="primary-button" (click)="editText()">Speichern</span>
             </div>
-
         </div>
-
     </div>
     <div class="member-img-ticket">
         <img src="assets/img/elias_neumann.svg" alt="">
     </div>
-
 </div>
