@@ -68,7 +68,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   originalChannelName: string = '';
   channelNameExists = false;
   windowWidth = window.innerWidth;
-  focusInterval: any;
 
   constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
 
@@ -290,7 +289,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnDestroy(): void {
     this.channelSubscription?.unsubscribe();
     this.messagesSubscription?.unsubscribe();
-    this.stopFocusInterval();
   }
 
   addMemberDialog() {
@@ -315,21 +313,11 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   focusTextarea() {
     if (this.chatInput && !this.loading) {
-      this.stopFocusInterval();
-      this.focusInterval = setInterval(() => {
-      if (this.textInput == '' || this.textInput == null) {
-        this.chatInput.nativeElement.focus();
-      }
-      else {
-        this.stopFocusInterval();
-      }}, 1000);
-    }
-  }
-
-  stopFocusInterval() {
-    if (this.focusInterval) {
-      clearInterval(this.focusInterval);
-      this.focusInterval = null;
+      setTimeout(() => {
+        if (!this.textInput || this.textInput.trim() === '') {
+          this.chatInput.nativeElement.focus();
+        }
+      }, 1000);
     }
   }
 
