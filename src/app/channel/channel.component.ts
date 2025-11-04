@@ -1,19 +1,6 @@
-import {
-  AfterViewChecked,
-  booleanAttribute,
-  Component,
-  ElementRef,
-  HostListener,
-  inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  output,
-  ViewChild,
-  NgZone,
-} from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, HostListener, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDrawer, MatDrawerMode, MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawerMode, MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
@@ -21,10 +8,9 @@ import { TicketComponent } from '../shared/messages/ticket/ticket.component';
 import { ChannelsService } from '../services/channels.service';
 import { ChannelInterface } from '../interfaces/channel.interface';
 import { FormsModule } from '@angular/forms';
-import { user } from '@angular/fire/auth';
 import { AuthService } from '../services/auth.service';
 import { FirestoreService } from '../services/firestore.service';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { ThreadService } from '../services/thread.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -36,7 +22,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { UserMentionService } from '../services/user-channel-mention.service';
 import { EmojiServiceService } from '../services/emoji.service';
-
 
 @Component({
   selector: 'app-channel',
@@ -82,22 +67,23 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   drawerMode!: MatDrawerMode;
   originalChannelName: string = '';
   channelNameExists = false;
-
   windowWidth = window.innerWidth;
 
-
-  constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, private ngZone: NgZone,
-    public userMentionService: UserMentionService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
 
   ngOnInit(): void {
     this.loading = true;
     this.getActiveRoute();
     this.checkWindowWidth();
-
+    this.setupChannelSubscription();
+    this.getChannelInfo();
+    this.setupMessagesSubscription();
     this.channelsService.focusRequest$.subscribe(() => {
       this.focusTextarea();
     });
+  }
 
+  setupChannelSubscription() {
     this.channelSubscription = this.channelsService.channel$.subscribe((channel) => {
       if (channel) {
         this.channel = channel;
@@ -105,8 +91,9 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.initialScrollDone = false;
       }
     });
+  }
 
-    this.getChannelInfo();
+  setupMessagesSubscription() {
     this.messagesSubscription = this.channelsService.messages$.subscribe((msgs) => {
       if (this.channel) {
         this.channel.messages = msgs;
@@ -149,8 +136,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (params) {
         this.loading = true;
         this.channelId = params['ChannelId'];
-        console.log(this.channelId);
-
       }
     });
   }
@@ -183,22 +168,20 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     return date ? date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }) : '-';
   }
 
-  isTheSameDate(index: number) {
-    let isSame: boolean;
-    if (index == 0) return (isSame = false);
+  isTheSameDate(index: number): boolean {
+    if (index == 0) return false;
 
-    let thisTicketDate = this.channel?.messages[index]?.createdAt;
-    let lastTicketDate = this.channel?.messages[index - 1]?.createdAt;
+    let thisTicketDate = this.convertToDate(this.channel?.messages[index]?.createdAt);
+    let lastTicketDate = this.convertToDate(this.channel?.messages[index - 1]?.createdAt);
+    return this.checkTicketDate(thisTicketDate, lastTicketDate);
+  }
 
-    thisTicketDate = this.convertToDate(thisTicketDate);
-    lastTicketDate = this.convertToDate(lastTicketDate);
+  checkTicketDate(thisTicketDate: Date | null, lastTicketDate: Date | null): boolean {
+    if (!thisTicketDate || !lastTicketDate) return false;
 
-    if (thisTicketDate && lastTicketDate) {
-      let thisTicketDateDatefrom = thisTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
-      let lastTicketDateDatefrom = lastTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
-      if (thisTicketDateDatefrom === lastTicketDateDatefrom) return (isSame = true);
-    }
-    return false;
+    const thisDate = thisTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+    const lastDate = lastTicketDate.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+    return thisDate === lastDate;
   }
 
   convertToDate(dateToConvert: any): Date | null {
@@ -232,8 +215,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.editName = true;
       this.nameInput.nativeElement.focus();
       this.focusAfterText(this.nameInput);
-    }
-    if (editField === 'editDisc') {
+    } else if (editField === 'editDisc') {
       this.editDisc = true;
       setTimeout(() => {
         this.discInput.nativeElement.focus();
@@ -284,7 +266,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     return this.channelsService.getChannel(this.channelId);
   }
 
-  // servie?
   async addTicket() {
     const currentUser = this.getCurrentUserId();
     let textMessage = this.textInput;
@@ -296,8 +277,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.textInput = "";
       this.scrollToBottom()
       this.isMessage = true;
-    } else {
-      console.error('No User or Text');
     }
   }
 
@@ -310,7 +289,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnDestroy(): void {
     this.channelSubscription?.unsubscribe();
     this.messagesSubscription?.unsubscribe();
-    console.log('Unsubscribed on Channel');
   }
 
   addMemberDialog() {
@@ -334,17 +312,18 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   focusTextarea() {
-    setTimeout(() => {
-      if (this.chatInput) {
-        this.chatInput.nativeElement.focus();
-      }
-    }, 1000);
+    if (this.chatInput && !this.loading) {
+      setTimeout(() => {
+        if (!this.textInput || this.textInput.trim() === '') {
+          this.chatInput.nativeElement.focus();
+        }
+      }, 1000);
+    }
   }
 
   async checkValidation() {
     let channelName = this.nameInput.nativeElement.value.trim();
     let allChannels = await this.channelsService.getAllChannels();
-
     const exists = allChannels.some((channel) => channel.name === channelName && channelName !== this.originalChannelName);
 
     this.channelNameExists = exists;
@@ -364,7 +343,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   takeUser(name: string) {
     this.textInput = this.userMentionService.takeUser(name, this.textInput);
   }
-
 
   focusAfterTag(input: string) {
     let length = input.length;
