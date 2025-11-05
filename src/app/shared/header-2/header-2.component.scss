@@ -64,15 +64,6 @@
   }
 }
 
-@keyframes shiftLogoSmall {
-  0% {
-    left: calc(50% - 58px);
-  }
-  100% {
-    left: calc(50% - 105px);
-  }
-}
-
 .changeColor {
   animation: changeColor;
   animation-duration: 5.8s;
@@ -138,32 +129,6 @@
   100% {
     top: -11px;
     scale: 0.4;
-  }
-}
-@keyframes slideToTopSmall {
-  0% {
-    left: calc(50% - 250px);
-    top: calc(50vh - 40px);
-    scale: 1;
-  }
-  100% {
-    top: -22px;
-    scale: 0.96;
-  }
-}
-
-@media (max-width: 992px) {
-  .slide {
-    top: 5px;
-    left: calc(50% - 256px);
-    animation: slideToTop 1s ease-in-out forwards;
-  }
-  .create-account-section {
-    display: none;
-  }
-  .header {
-    justify-content: center;
-    height: 140px;
   }
 }
 
@@ -298,16 +263,13 @@
     left: 0px;
   }
 }
-@keyframes slideNameSmall {
-  from {
-    left: -130px;
-  }
-  to {
-    left: 14px;
-  }
-}
+
 .create-account-section {
   margin-left: auto;
 }
 
-@import "_responsive.header-2.scss";
+
+@import './responsive.header-2'
+
+
+

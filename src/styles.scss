@@ -130,15 +130,11 @@ $breakpoint-lg: 992px;
     @media (max-width: $breakpoint-sm) {
       @content;
     }
-  }
-
-  @else if $breakpoint ==md {
+  } @else if $breakpoint ==md {
     @media (max-width: $breakpoint-md) {
       @content;
     }
-  }
-
-  @else if $breakpoint ==lg {
+  } @else if $breakpoint ==lg {
     @media (max-width: $breakpoint-lg) {
       @content;
     }
@@ -153,5 +149,35 @@ $breakpoint-lg: 992px;
   to {
     opacity: 1;
   }
+}
 
+
+@keyframes shiftLogoSmall {
+  0% {
+    left: calc(50% - 58px);
+  }
+  100% {
+    left: calc(50% - 105px);
+  }
+}
+
+@keyframes slideToTopSmall {
+  0% {
+    left: calc(50% - 250px);
+    top: calc(50vh - 40px);
+    transform: scale(1);
+  }
+  100% {
+    top: -22px;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideNameSmall {
+  from {
+    left: -130px;
+  }
+  to {
+    left: 14px;
+  }
 }

@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { AfterViewInit, Component, inject, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, inject, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewChecked } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, map, distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -12,16 +12,16 @@ import { Subject } from 'rxjs';
   templateUrl: './header-2.component.html',
   styleUrl: './header-2.component.scss',
 })
-export class Header2Component implements OnInit, AfterViewInit, OnDestroy {
+export class Header2Component implements OnInit, AfterViewInit, OnDestroy, AfterViewChecked {
   isLoginPage = false;
   private animationStarted = false;
   private viewInitialized = false;
   private destroy$ = new Subject<void>();
   router = inject(Router);
-  @ViewChild('greetingContainer') greetingContainer!: ElementRef;
-  @ViewChild('greetingName') greetingName!: ElementRef;
-  @ViewChild('greeting') greeting!: ElementRef;
-  @ViewChild('wholeLogo') wholeLogo!: ElementRef;
+  @ViewChild('greetingContainer', { static: false }) greetingContainer!: ElementRef;
+  @ViewChild('greetingName', { static: false }) greetingName!: ElementRef;
+  @ViewChild('greeting', { static: false }) greeting!: ElementRef;
+  @ViewChild('wholeLogo', { static: false }) wholeLogo!: ElementRef;
   constructor() {}
 
   ngOnInit(): void {
@@ -35,15 +35,20 @@ export class Header2Component implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe((isLogin) => {
         this.isLoginPage = isLogin;
-        if (isLogin) {
-          this.tryStartAnimation();
-        }
+        if (isLogin) this.tryStartAnimation();
       });
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.isLoginPage && !this.animationStarted && this.greetingContainer && this.greetingName) {
+      this.animationStarted = true;
+      this.runGreetingAnimation();
+    }
   }
 
   ngAfterViewInit(): void {
     this.viewInitialized = true;
-    this.tryStartAnimation();
+    setTimeout(() => this.tryStartAnimation(), 50);
   }
 
   ngOnDestroy(): void {
@@ -60,18 +65,38 @@ export class Header2Component implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private runGreetingAnimation(): void {
+    this.addSlideClassToLogo();
+    this.addSlideClassToName();
+    this.addColorClassToName();
+    this.finalizeLogo();
+  }
+
+  addSlideClassToLogo() {
     setTimeout(() => {
-      this.greetingContainer?.nativeElement?.classList.add('slide');
+      if (this.greetingContainer?.nativeElement) {
+        this.greetingContainer.nativeElement.classList.add('slide');
+      }
     }, 2200);
+  }
+
+  addSlideClassToName() {
     setTimeout(() => {
-      this.greetingName?.nativeElement?.classList.add('slide-name');
+      if (this.greetingName?.nativeElement) {
+        this.greetingName.nativeElement.classList.add('slide-name');
+      }
     }, 1000);
+  }
+
+  addColorClassToName() {
     setTimeout(() => {
       if (this.greetingName?.nativeElement && this.greeting?.nativeElement) {
         this.greetingName.nativeElement.classList.add('changeColor');
         this.greeting.nativeElement.classList.add('hide');
       }
     }, 3000);
+  }
+
+  finalizeLogo() {
     setTimeout(() => {
       if (this.greeting?.nativeElement && this.greetingContainer?.nativeElement) {
         this.greetingContainer.nativeElement.classList.add('animation-finished');
