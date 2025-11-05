@@ -61,6 +61,7 @@ export class SearchService {
     } else if (searchTextTrimmed.startsWith('#')) {
       return this.searchForChannels(searchTextTrimmed.slice(1), channels);
     } else if (searchTextTrimmed.length > 2) {
+      this.isLoading = true;
       return this.searchForMessages(searchTextTrimmed.toLowerCase(), channels, directMessages);
     }
 
@@ -102,6 +103,10 @@ export class SearchService {
   }
 
   noFilteredMessagesFound(filteredMessages: any[]) {
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1000);
+    
     return {
       users: [],
       channels: [],
