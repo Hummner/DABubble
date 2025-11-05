@@ -63,6 +63,8 @@ export class SearchService {
     } else if (searchTextTrimmed.length > 2) {
       this.isLoading = true;
       return this.searchForMessages(searchTextTrimmed.toLowerCase(), channels, directMessages);
+    } else if (searchTextTrimmed.length <= 2) {
+      return this.toFewLetters();
     }
 
     return { users: [], channels: [], messages: [], noResultsMessage: '' };
@@ -100,6 +102,15 @@ export class SearchService {
     const filteredMessages = await this.sortAllMessages(channelMessagesResults, dmMessagesResults, searchText);
 
     return this.noFilteredMessagesFound(filteredMessages);
+  }
+
+  toFewLetters() {
+    return {
+      users: [],
+      channels: [],
+      messages: [],
+      noResultsMessage: 'Bitte geben sie mindestens 3 Buchstaben ein.',
+    };
   }
 
   noFilteredMessagesFound(filteredMessages: any[]) {
