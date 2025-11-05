@@ -43,7 +43,7 @@ export class ResetPasswordComponent {
     }
     const rawForm = this.resetPasswordForm.getRawValue();
     this.authService
-      .sendPasswordResetEmail(this.auth, rawForm.email!, 'https://dabubble-415.developerakademie.net/resetPassword/newPassword')
+      .sendPasswordResetEmail(this.auth, rawForm.email!, 'https://dabubble-415.developerakademie.net')
       .subscribe({
         next: () => {
           this.onSuccessfulSignup();

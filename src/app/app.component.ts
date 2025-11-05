@@ -1,7 +1,6 @@
 import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
-
+import { RouterOutlet, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 
@@ -15,6 +14,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 export class AppComponent {
   title = 'dabubble';
   router = inject(Router);
+  route = inject(ActivatedRoute);
 
   isAuthLayout = false;
   isNavbarClosed = false;
@@ -24,6 +24,14 @@ export class AppComponent {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.updateLayoutForRoute(event.urlAfterRedirects);
+      }
+    });
+
+this.route.queryParams.subscribe(params => {
+      const mode = params['mode'];
+      const oobCode = params['oobCode'];
+      if (mode === 'resetPassword' && oobCode) {
+        this.router.navigate(['/resetPassword/newPassword'], { queryParams: { oobCode } });
       }
     });
   }
@@ -44,8 +52,8 @@ export class AppComponent {
   private updateLayoutForRoute(url: string) {
     this.isAuthLayout =
       url === '/' ||
-      ['/resetPassword', '/signup', '/avatarSelection', '/resetPassword/newPassword', '/impressum', '/privacy-policy'].some((path) =>
-        url.startsWith(path)
+      ['/resetPassword', '/signup', '/avatarSelection', '/resetPassword/newPassword', '/impressum', '/privacy-policy'].some(
+        (path) => url.startsWith(path)
       );
     this.updateNavbarVisibility();
   }
