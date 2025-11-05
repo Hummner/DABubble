@@ -77,6 +77,7 @@ export class ChannelsService implements OnDestroy {
     for (const member of channel.members) {
       if (member.id === updatedMember.uid) {
         member.name = updatedMember.name;
+        member.imgUrl = updatedMember.imgUrl;
         if (member.role === 'admin') {
           channel.createdBy = updatedMember.name;
         }

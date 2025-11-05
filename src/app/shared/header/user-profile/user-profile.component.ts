@@ -70,8 +70,10 @@ export class UserProfileComponent implements OnInit {
   }
 
   closeEditImg() {
-    this.editImg = false;
+    this.user = { ...this.editableUser };
     this.saveImg();
+    this.channelService.updatedChannels(this.user);
+    this.editImg = false;
   }
 
   cancelEdit() {
