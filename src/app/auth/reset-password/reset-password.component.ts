@@ -24,6 +24,7 @@ export class ResetPasswordComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
   });
 
+
    @ViewChild('log') log!: LogMessageComponent;
 
   get resetPasswordFormControl() {
@@ -42,7 +43,7 @@ export class ResetPasswordComponent {
     }
     const rawForm = this.resetPasswordForm.getRawValue();
     this.authService
-      .sendPasswordResetEmail(this.auth, rawForm.email!, 'http://localhost:4200/resetPassword/newPassword')
+      .sendPasswordResetEmail(this.auth, rawForm.email!, 'https://dabubble-415.developerakademie.net/resetPassword/newPassword')
       .subscribe({
         next: () => {
           this.onSuccessfulSignup();
