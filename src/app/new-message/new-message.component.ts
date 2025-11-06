@@ -1,7 +1,6 @@
-import { Component, ViewChild, ElementRef, computed, signal, AfterViewInit } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
+import { Component, ViewChild, ElementRef, computed, signal } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatMenu, MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,7 +11,7 @@ import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { UserMentionService } from '../services/user-channel-mention.service';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { NavbarInterface } from '../interfaces/navbar.interface';
-import { Observable, startWith, map, combineLatest } from 'rxjs';
+import { Observable, startWith, map} from 'rxjs';
 import { Message } from '../interfaces/message.interface';
 import { MessageTicketComponent } from '../direct-messages/message-ticket/message-ticket.component';
 import { ClickStopPropagation } from '../click-stop-propagation.directive';
@@ -134,7 +133,6 @@ export class NewMessageComponent {
   onInputChange(event: any): void {
     const value = event.target.value;
     this.currentInput.set(value);
-
     if (this._shouldShowAutocomplete(value)) {
       this.showAutocomplete.set(true);
       this.updateFilteredLists(value);
@@ -145,7 +143,6 @@ export class NewMessageComponent {
 
   private _shouldShowAutocomplete(value: string): boolean {
     if (!value.includes('@') && !value.includes('#')) return false;
-
     const lastAtIndex = value.lastIndexOf('@');
     const lastHashIndex = value.lastIndexOf('#');
     return (
@@ -168,9 +165,6 @@ export class NewMessageComponent {
   }
 
   private updateFilteredLists(content: string): void {
-    if (content.includes('@')) {
-      // this.userMentionService.updateFilteredUserList(content);
-    }
     if (content.includes('#')) {
       this.userMentionService.updateFilteredChannelList(content);
     }
@@ -179,10 +173,8 @@ export class NewMessageComponent {
   selectOption(option: { type: 'user' | 'channel'; data: UserProfileInterface | NavbarInterface }): void {
     const newTag = this._createTagFromOption(option);
     if (this._isTagAlreadySelected(newTag)) return;
-
     this.selectedTags.update((tags) => [...tags, newTag]);
     this._clearInputs();
-    console.log(this.selectedTags());
   }
 
   private _createTagFromOption(option: { type: 'user' | 'channel'; data: UserProfileInterface | NavbarInterface }) {
