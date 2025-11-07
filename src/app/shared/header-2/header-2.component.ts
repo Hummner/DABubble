@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, map, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { AnimationService } from '../../services/animation.service';
 
 @Component({
   selector: 'app-header-2',
@@ -22,7 +23,9 @@ export class Header2Component implements OnInit, AfterViewInit, OnDestroy, After
   @ViewChild('greetingName', { static: false }) greetingName!: ElementRef;
   @ViewChild('greeting', { static: false }) greeting!: ElementRef;
   @ViewChild('wholeLogo', { static: false }) wholeLogo!: ElementRef;
-  constructor() {}
+  showAnimation: boolean = false;
+
+  constructor(private animation: AnimationService) {}
 
   ngOnInit(): void {
     this.isLoginPage = this.router.url === '/';
@@ -35,20 +38,26 @@ export class Header2Component implements OnInit, AfterViewInit, OnDestroy, After
       )
       .subscribe((isLogin) => {
         this.isLoginPage = isLogin;
-        if (isLogin) this.tryStartAnimation();
+        if (isLogin && this.showAnimation === true) this.tryStartAnimation();
       });
+    this.showAnimation = this.animation.isFirstLoad();
   }
 
   ngAfterViewChecked(): void {
     if (this.isLoginPage && !this.animationStarted && this.greetingContainer && this.greetingName) {
-      this.animationStarted = true;
-      this.runGreetingAnimation();
+      if (this.showAnimation === true) {
+        this.runGreetingAnimation();
+      } else {
+        this.everythingWithoutAnimation();
+      }
     }
   }
 
   ngAfterViewInit(): void {
-    this.viewInitialized = true;
-    setTimeout(() => this.tryStartAnimation(), 50);
+    if (this.showAnimation == true) {
+      this.viewInitialized = true;
+      setTimeout(() => this.tryStartAnimation(), 50);
+    }
   }
 
   ngOnDestroy(): void {
@@ -105,5 +114,14 @@ export class Header2Component implements OnInit, AfterViewInit, OnDestroy, After
         this.greetingContainer.nativeElement.style.animation = 'none';
       }
     }, 4200);
+  }
+
+  everythingWithoutAnimation() {
+    this.greetingContainer.nativeElement.classList.add('animation-finished');
+    this.greeting.nativeElement.classList.add('animation-finished-parent');
+    this.greetingContainer.nativeElement.classList.remove('slide');
+    this.greeting.nativeElement.classList.add('hide');
+    this.greetingContainer.nativeElement.style.animation = 'none';
+    this.greetingName.nativeElement.classList.add('blackText');
   }
 }
