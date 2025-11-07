@@ -22,8 +22,12 @@
               <div class="channel-name-menu-container" [ngClass]="{ 'no-border-edit': editName }">
                 <div class="channel-name-menu-header">
                   <h3>Channel-Name</h3>
-                  <span *ngIf="!editName" (click)="editChannel('editName')">Bearbeiten</span>
-                  <span *ngIf="editName" (click)="editChannelClose('editName')">Speichern</span>
+                  @for (member of channel?.members; track $index) {
+                    @if (member.name === userProfile()?.name) {
+                      <span *ngIf="!editName" (click)="editChannel('editName')">Bearbeiten</span>
+                      <span *ngIf="editName" (click)="editChannelClose('editName')">Speichern</span>
+                    }
+                  }
                 </div>
                 <div class="name-input-wrapper">
                   <input #nameInput [readonly]="!editName" [ngClass]="{ 'border-on-focus': editName }" type="text"
@@ -34,8 +38,12 @@
               <div class="channel-name-menu-container" [ngClass]="{ 'no-border-edit': editDisc }">
                 <div class="channel-name-menu-header">
                   <h3>Beschreibung</h3>
-                  <span *ngIf="!editDisc" (click)="editChannel('editDisc')">Bearbeiten</span>
-                  <span *ngIf="editDisc" (click)="editChannelClose('editDisc')">Speichern</span>
+                  @for (member of channel?.members; track $index) {
+                    @if (member.name === userProfile()?.name) {
+                      <span *ngIf="!editDisc" (click)="editChannel('editDisc')">Bearbeiten</span>
+                      <span *ngIf="editDisc" (click)="editChannelClose('editDisc')">Speichern</span>
+                    }
+                  }
                 </div>
                 <textarea #discInput [ngClass]="{ 'border-on-focus': editDisc }" [readonly]="!editDisc"
                   class="channel-name-textarea no-border" name="channel_name"
@@ -45,8 +53,12 @@
                 <span class="created-by-name">{{ channel?.createdBy }}</span>
               </div>
               <div class="edit-channel-footer">
+                @for (member of channel?.members; track $index) {
+                  @if (member.name === userProfile()?.name) {
                 <span (click)="leaveChannel(this.userProfile(), editChannelTrigger)" class="primary-button">Channel
                   verlassen</span>
+                  }
+                }
               </div>
             </div>
           </mat-menu>
