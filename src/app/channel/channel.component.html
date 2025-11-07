@@ -58,7 +58,7 @@
                   </div>
                   }
                 </div>
-                <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
+                <div (click)="addMemberDialog()"
                   class="members-menu-add margin-16">
                   <div class="add-member-icon">
                     <img src="assets/icon/person_add.png" />
@@ -87,11 +87,11 @@
               </div>
             }
           </div>
-          <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
+          <div (click)="addMemberDialog()"
             class="add-member-icon am-icon">
             <img src="assets/icon/person_add.png" alt="" />
           </div>
-          <div *ngIf="channel?.createdBy === userProfile()?.name" [matMenuTriggerFor]="menu"
+          <div [matMenuTriggerFor]="menu"
             #menuTrigger="matMenuTrigger" (click)="openMenu(menuTrigger)" class="add-member-icon-resp">
             <img src="assets/icon/person_add.png" alt="" />
           </div>
@@ -112,7 +112,7 @@
               </div>
               }
             </div>
-            <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
+            <div (click)="addMemberDialog()"
               class="members-menu-add margin-16">
               <div class="add-member-icon">
                 <img src="assets/icon/person_add.png" />

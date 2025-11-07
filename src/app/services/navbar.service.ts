@@ -72,19 +72,6 @@ export class NavbarService implements OnDestroy {
     this.selectedChannelId$.next(null);
   }
 
-  hideChannelWithoutCurrentUser() {
-    const filteredChannels$ = this.channelsObs$.pipe(
-      map(channels =>
-        channels.filter(channel =>
-          (channel.members ?? []).some(
-            member => member.id === this.currentUserId()
-          )
-        )
-      )
-    );
-    return filteredChannels$
-  }
-
   focusOnChannelTextarea() {
     this.channelService.requestFocus();
   }
