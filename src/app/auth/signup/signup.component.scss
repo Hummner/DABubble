@@ -28,6 +28,7 @@
   padding: 60px;
   border-radius: 30px;
   box-shadow: 0 2px 10px #00000014;
+  margin-top: 150px;
 
   > form {
     display: flex;
@@ -93,11 +94,15 @@
 }
 
 .error {
-  color: red;
+  color: rgb(226, 24, 24);
+  font-size: 16px;
 }
 .error-pw-list {
-  font-size: 13px;
+  font-size: 16px;
   padding: 10px;
+  > li {
+    list-style-type: none;
+  }
 }
 
 .ok {

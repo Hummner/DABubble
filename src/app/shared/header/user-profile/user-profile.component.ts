@@ -41,6 +41,13 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
+  get isFormEmpty():boolean {
+    if(this.editableUser.name === ""){
+      return true;
+    }
+    return false;
+  }
+
   constructor(private firestoreService: FirestoreService) {}
 
   closeProfileCard(event: any) {

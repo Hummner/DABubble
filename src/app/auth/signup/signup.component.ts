@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { getAuth } from '@angular/fire/auth';
-import { StrongPasswordRegx } from './strong-password.pattern';
 import { NgIf } from '@angular/common';
 import { Header2Component } from '../../shared/header-2/header-2.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
@@ -26,7 +25,7 @@ export class SignupComponent {
   signupForm = new FormGroup({
     name: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required, Validators.pattern(StrongPasswordRegx)]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
     privacyPolicy: new FormControl('', Validators.requiredTrue),
   });
 

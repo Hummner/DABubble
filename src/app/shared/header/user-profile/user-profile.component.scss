@@ -146,6 +146,18 @@ form {
   }
 }
 
+.btn-section {
+  > .disabled {
+    border: none;
+    border-radius: 25px;
+    height: 50px;
+    width: 130px;
+    cursor: not-allowed;
+    color: #fdfdfd;
+    background-color: #686868;
+  }
+}
+
 .img-list {
   display: flex;
   justify-content: space-evenly;

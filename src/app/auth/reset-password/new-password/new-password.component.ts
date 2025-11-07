@@ -1,7 +1,6 @@
 import { confirmPasswordValidator } from './confirm-password.validator';
 import { AuthService } from '../../../services/auth.service';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { StrongPasswordRegx } from '../../signup/strong-password.pattern';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { getAuth, verifyPasswordResetCode, confirmPasswordReset } from '@angular/fire/auth';
@@ -29,8 +28,8 @@ export class NewPasswordComponent implements OnInit {
 
   newPasswordForm = new FormGroup(
     {
-      password_1: new FormControl('', [Validators.required, Validators.pattern(StrongPasswordRegx)]),
-      password_2: new FormControl('', [Validators.required, Validators.pattern(StrongPasswordRegx)]),
+      password_1: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      password_2: new FormControl('', [Validators.required, Validators.minLength(6)]),
     },
     { validators: confirmPasswordValidator }
   );
