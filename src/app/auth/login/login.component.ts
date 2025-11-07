@@ -57,6 +57,11 @@ export class LoginComponent {
     });
   }
 
+  get isFormEmpty(){
+    const {email, password} = this.loginForm.value;
+    return !email?.trim() || !password?.trim();
+  }
+
   guestLogin() {
     this.authService.signInAnonymously().subscribe({
       next: () => {

@@ -126,7 +126,7 @@
   width: 20px;
   height: 20px;
   margin-right: 8px;
-  background: url("/assets/icon/checkbox-default.png") no-repeat center center;
+  background: url("../../../assets/icon/checkbox-default.png") no-repeat center center;
   background-size: contain;
   vertical-align: middle;
   transition: background 0.2s ease;
@@ -134,13 +134,13 @@
 }
 
 .input-checkbox > label:hover::before {
-  background-image: url("/assets/icon/checkbox-default-hover.png");
+  background-image: url("../../../assets/icon/checkbox-default-hover.png");
 }
 .input-checkbox > input[type="checkbox"]:checked + label::before {
-  background-image: url("/assets/icon/checkbox-checked-default.png");
+  background-image: url("../../../assets/icon/checkbox-checked-default.png");
 }
 .input-checkbox > input[type="checkbox"]:checked + label:hover::before {
-  background-image: url("/assets/icon/checkbox-checked-hover.png");
+  background-image: url("../../../assets/icon/checkbox-checked-hover.png");
 }
 
 .span {

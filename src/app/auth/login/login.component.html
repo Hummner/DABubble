@@ -1,5 +1,4 @@
 <div class="auth-page">
-
   <app-header-2></app-header-2>
 
   <div class="section">
@@ -45,8 +44,8 @@
             <a [routerLink]="['/resetPassword']"><p class="fs-18 blue">Passwort vergessen?</p></a>
           </div>
           <div class="btn-section">
-            <button type="submit" class="fs-18">Anmelden</button
-            ><button type="button" (click)="guestLogin()" class="fs-18 blue">Gäste-Login</button>
+            <button [disabled]="isFormEmpty" [class.disabled]="isFormEmpty" type="submit" class="fs-18">Anmelden</button
+            ><button class="button" (click)="guestLogin()" class="fs-18 blue">Gäste-Login</button>
           </div>
         </form>
       </div>
