@@ -31,7 +31,7 @@
               </a>
             }
             @if (this.searchService.searchText[0] == '#') {
-              @for (channel of this.navbarService.hideChannelWithoutCurrentUser() | async; track channel) {
+              @for (channel of this.navbarService.channelsObs$ | async; track channel) {
                 @if (channel.name.toLowerCase().includes(this.searchService.searchText.slice(1))) {
                   <li class="search-result-item" (click)="this.navbarService.selectChannel(channel.channelId)">
                       <p>{{ channel.name }}</p>
@@ -105,7 +105,7 @@
       </div>
 
         <ul *ngIf="showChannel" class="channel-list">
-          <li *ngFor="let ch of this.navbarService.hideChannelWithoutCurrentUser() | async; let i = index" class="channel-item" [ngClass]="{ 'active': (ch.channelId === this.navbarService.getSelectedChannelId())}" (click)="this.navbarService.selectChannel(ch.channelId)">
+          <li *ngFor="let ch of this.navbarService.channelsObs$ | async; let i = index" class="channel-item" [ngClass]="{ 'active': (ch.channelId === this.navbarService.getSelectedChannelId())}" (click)="this.navbarService.selectChannel(ch.channelId)">
             <span class="material-symbols-outlined edit-icon">tag</span>
             <p class="truncate">{{ ch.name }}</p>
           </li>

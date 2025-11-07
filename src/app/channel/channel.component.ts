@@ -296,6 +296,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       data: {
         channelName: this.channel?.name,
         channelId: this.channelId,
+        channelMembers: this.channel?.members
       },
     });
   }

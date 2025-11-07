@@ -22,8 +22,12 @@
               <div class="channel-name-menu-container" [ngClass]="{ 'no-border-edit': editName }">
                 <div class="channel-name-menu-header">
                   <h3>Channel-Name</h3>
-                  <span *ngIf="!editName" (click)="editChannel('editName')">Bearbeiten</span>
-                  <span *ngIf="editName" (click)="editChannelClose('editName')">Speichern</span>
+                  @for (member of channel?.members; track $index) {
+                    @if (member.name === userProfile()?.name) {
+                      <span *ngIf="!editName" (click)="editChannel('editName')">Bearbeiten</span>
+                      <span *ngIf="editName" (click)="editChannelClose('editName')">Speichern</span>
+                    }
+                  }
                 </div>
                 <div class="name-input-wrapper">
                   <input #nameInput [readonly]="!editName" [ngClass]="{ 'border-on-focus': editName }" type="text"
@@ -34,8 +38,12 @@
               <div class="channel-name-menu-container" [ngClass]="{ 'no-border-edit': editDisc }">
                 <div class="channel-name-menu-header">
                   <h3>Beschreibung</h3>
-                  <span *ngIf="!editDisc" (click)="editChannel('editDisc')">Bearbeiten</span>
-                  <span *ngIf="editDisc" (click)="editChannelClose('editDisc')">Speichern</span>
+                  @for (member of channel?.members; track $index) {
+                    @if (member.name === userProfile()?.name) {
+                      <span *ngIf="!editDisc" (click)="editChannel('editDisc')">Bearbeiten</span>
+                      <span *ngIf="editDisc" (click)="editChannelClose('editDisc')">Speichern</span>
+                    }
+                  }
                 </div>
                 <textarea #discInput [ngClass]="{ 'border-on-focus': editDisc }" [readonly]="!editDisc"
                   class="channel-name-textarea no-border" name="channel_name"
@@ -44,31 +52,13 @@
                 <h3>Erstellt von</h3>
                 <span class="created-by-name">{{ channel?.createdBy }}</span>
               </div>
-              <div class="menu-container-resp" (click)="$event.stopPropagation()">
-                <div class="members-menu-header">
-                  <h2 class="no-margin">Mitglieder</h2>
-                </div>
-                <div class="members-menu-list">
-                  @for (member of channel?.members; track $index) {
-                  <div class="members-menu-listelement">
-                    <div class="member-img margin-16">
-                      <img [src]="member?.imgUrl" alt="" />
-                    </div>
-                    <div class="member-menu-name">{{ member?.name }}</div>
-                  </div>
-                  }
-                </div>
-                <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
-                  class="members-menu-add margin-16">
-                  <div class="add-member-icon">
-                    <img src="assets/icon/person_add.png" />
-                  </div>
-                  <span>Mitglieder hinzufügen</span>
-                </div>
-              </div>
               <div class="edit-channel-footer">
+                @for (member of channel?.members; track $index) {
+                  @if (member.name === userProfile()?.name) {
                 <span (click)="leaveChannel(this.userProfile(), editChannelTrigger)" class="primary-button">Channel
                   verlassen</span>
+                  }
+                }
               </div>
             </div>
           </mat-menu>
@@ -81,20 +71,23 @@
                 <img [src]="member?.imgUrl" alt="" />
               </div>
             }
-            @if ((channel?.members?.length ?? 0) > 5) {
+            @if ((channel?.members?.length ?? 0) > 3) {
               <div class="member-img">
-                <span>+{{ (channel?.members?.length ?? 0) - 5 }}</span>
+                <span>+{{ (channel?.members?.length ?? 0) - 3 }}</span>
               </div>
             }
           </div>
-          <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
-            class="add-member-icon am-icon">
-            <img src="assets/icon/person_add.png" alt="" />
-          </div>
-          <div *ngIf="channel?.createdBy === userProfile()?.name" [matMenuTriggerFor]="menu"
-            #menuTrigger="matMenuTrigger" (click)="openMenu(menuTrigger)" class="add-member-icon-resp">
-            <img src="assets/icon/person_add.png" alt="" />
-          </div>
+          @for (members of channel?.members; track $index) {
+            @if (members.name === userProfile()?.name) {
+              <div class="add-member-icon am-icon" (click)="addMemberDialog()">
+                <img src="assets/icon/person_add.png" alt="" />
+              </div>
+              <div [matMenuTriggerFor]="menu"
+                #menuTrigger="matMenuTrigger" (click)="openMenu(menuTrigger)" class="add-member-icon-resp">
+                <img src="assets/icon/person_add.png" alt="" />
+              </div>
+            }
+          }
         </div>
         <mat-menu (closed)="menuOpen = false" xPosition="before" #menu="matMenu" class="members-menu-container">
           <div class="menu-container" (click)="$event.stopPropagation()">
@@ -104,20 +97,23 @@
             </div>
             <div class="members-menu-list">
               @for (member of channel?.members; track $index) {
-              <div class="members-menu-listelement">
-                <div class="member-img margin-16">
-                  <img [src]="member?.imgUrl" alt="" />
+                <div class="members-menu-listelement">
+                  <div class="member-img margin-16">
+                    <img [src]="member?.imgUrl" alt="" />
+                  </div>
+                  <div class="member-menu-name">{{ member?.name }}</div>
                 </div>
-                <div class="member-menu-name">{{ member?.name }}</div>
-              </div>
               }
-            </div>
-            <div *ngIf="channel?.createdBy === userProfile()?.name" (click)="addMemberDialog()"
-              class="members-menu-add margin-16">
-              <div class="add-member-icon">
-                <img src="assets/icon/person_add.png" />
-              </div>
-              <span>Mitglieder hinzufügen</span>
+              @for (member of channel?.members; track $index) {
+                @if (member.name === userProfile()?.name) {
+                  <div class="members-menu-add margin-16" (click)="addMemberDialog()">
+                    <div class="add-member-icon" >
+                      <img src="assets/icon/person_add.png" />
+                    </div>
+                    <span>Mitglieder hinzufügen</span>
+                  </div>
+                  }
+                }
             </div>
           </div>
         </mat-menu>

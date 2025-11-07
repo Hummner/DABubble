@@ -159,12 +159,6 @@ export class AddMemberComponent implements OnInit, AfterViewInit {
       members: arrayUnion(...(this.navbar.members || [])),
       channelId: this.channelId,
     })
-      .then(() => {
-        console.log('Member added successfully');
-      })
-      .catch((error) => {
-        console.error('Error adding member to channel:', error);
-      });
     this.closeDialog();
     this.router.navigate(['/channel', this.channelId]);
   }

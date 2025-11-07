@@ -155,10 +155,6 @@ export class ChannelsService implements OnDestroy {
     }
   }
 
-  createText(text: string) {
-    // Brauchen wir die Funktion noch?
-  }
-
   putMessagesInArray(channelId: string) {
     const q = query(this.getMessagesSubCollRef(channelId), orderBy('createdAt'))
     this.unsubMessages = onSnapshot(q, (msgList) => {
@@ -205,7 +201,6 @@ export class ChannelsService implements OnDestroy {
 
     return threadsCount
   }
-
 
   getNewMessageRef(channelId: string) {
     return collection(this.firestore, `channels/${channelId}/messages`)
