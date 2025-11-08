@@ -14,7 +14,7 @@ import { UserMentionService } from '../../services/user-channel-mention.service'
 import { EmojiServiceService } from '../../services/emoji.service';
 import { EmojiArrayService } from '../../services/emoji-array.service';
 import { ActivatedRoute } from '@angular/router';
-import { filter, distinctUntilChanged } from 'rxjs/operators';
+import { filter, distinctUntilChanged, flatMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-thread',
@@ -56,10 +56,10 @@ export class ThreadComponent implements OnInit, OnDestroy {
   ticketPath!: string | void;
   number?: number
   isCurrentEdited: boolean = false;
+  isSending = false
 
 
   constructor() {
-
   }
 
   ngOnInit(): void {
@@ -69,7 +69,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
         if (a.length !== b.length) return false;
         const la = a[a.length - 1];
         const lb = b[b.length - 1];
-        // passe die Keys an dein Modell an
         return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
       })
     ).subscribe(msgArray => {
@@ -82,9 +81,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
       this.currentTicket = ticket
       console.log(this.currentTicket);
       this.messagesCount = this.messagesCounter();
-
-
-      // this.createCurrentTicket();
     });
   }
 
@@ -106,12 +102,15 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
 
   async addMessageToThread() {
+    if (!this.canSendMessage()) return
+    this.isSending = true;
     let senderId = this.getCurrentUserId();
     let text = this.textInput;
     try {
-      if (senderId && text.length !== 0) {
+      if (senderId && text.trim().length !== 0) {
         await this.threadService.addMessageToThread(senderId, text).then(() => {
           this.textInput = "";
+          this.isSending = false
         });
       }
     } catch (err) {
@@ -119,24 +118,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
       this.textInput = text;
     }
   }
-
-  textLenghtCheck() {
-
-    if (this.textInput) {
-      return false
-    }
-
-    return true
-  }
-
-
-  // createCurrentTicket() {
-  //   console.log(this.currentTicket.createdAt);
-
-  //   this.ticketCreatedAt = this.showTime();
-  //   this.ticketText = this.currentTicket.text;
-  //   this.messagesCount = this.messagesCounter();
-  // }
 
   showTime(): string {
     const createdAtDate = this.currentTicket?.createdAt instanceof Timestamp ? this.currentTicket?.createdAt.toDate() : null;
@@ -183,15 +164,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
   }
 
   messagesCounter() {
-    // let ticketThread = this.threadService.getTicketPathDoc(this.threadService.getTicketPath());
-    // let asd = await getDoc(ticketThread)
-    // if (asd.exists()) {
-    //   console.log(asd.data());
-    // }
-
-
-
-
     let number = this.currentTicket.threadsCount ? this.currentTicket.threadsCount : 0;
     if (number > 1) return `${number} Antworten`
     if (number == 1) return '1 Antwort'
@@ -217,22 +189,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
   openEmojiMenu(trigger: MatMenuTrigger) {
     trigger.openMenu();
   }
-
-  get emojiList() {
-    return this.emojiArray.emojiList;
-  }
-
-  get emojiUsageHistory() {
-    return this.emojiArray.emojiUsageHistory;
-  }
-
-  get sortedEmoji() {
-    const historySet = new Set(this.emojiUsageHistory);
-    const recentFirst = this.emojiUsageHistory.filter((e) => this.emojiList.includes(e));
-    const rest = this.emojiList.filter((e) => !historySet.has(e));
-    return [...recentFirst, ...rest];
-  }
-
 
   onInputChange(event: Event) {
     this.userMentionService.onInputChange(this.textInput, this.mentionMenuTrigger, this.channelMenuTrigger, this.chatInput);
@@ -263,12 +219,13 @@ export class ThreadComponent implements OnInit, OnDestroy {
     return this.auth.firebaseAuth.currentUser?.uid ?? null;
   }
 
-
   isCurrentUser() {
     return (this.getCurrentUserId() === this.currentTicket.senderId)
-
   }
 
+  canSendMessage(): boolean {
+    return this.textInput.trim().length > 0 && !this.isSending;
+  }
 
   ngOnDestroy(): void {
     this.messagesSubscription?.unsubscribe();

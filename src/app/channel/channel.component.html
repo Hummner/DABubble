@@ -195,7 +195,7 @@
               </div>
             </mat-menu>
           </div>
-          <div class="send-icon" (click)="addTicket()" [ngClass]="{'disabled' : textInput.length == 0}">
+          <div class="send-icon" (click)="addTicket()" [ngClass]="{'disabled' : !canSendMessage()}">
             <img src="assets/icon/send.png" alt="" />
           </div>
         </div>

@@ -47,7 +47,7 @@
                     </div>
 
                 </div>
-                <div class="send-icon" (click)="addMessageToThread()" [ngClass]="{'disabled' : textLenghtCheck()}">
+                <div class="send-icon" (click)="addMessageToThread()" [ngClass]="{'disabled' : !canSendMessage()}">
                     <img src="assets/icon/send.png" alt="">
                 </div>
             </div>

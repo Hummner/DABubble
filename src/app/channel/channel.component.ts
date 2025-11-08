@@ -68,6 +68,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   originalChannelName: string = '';
   channelNameExists = false;
   windowWidth = window.innerWidth;
+  isSending = false
 
   constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
 
@@ -267,16 +268,19 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   async addTicket() {
+    if (!this.canSendMessage()) return
+    this.isSending = true;
     const currentUser = this.getCurrentUserId();
     let textMessage = this.textInput;
 
-    if (currentUser && textMessage.length != 0) {
+    if (currentUser && textMessage.trim().length != 0) {
       this.isMessage = false;
       await this.channelsService.addTicketToChannel(this.channelId, currentUser, textMessage);
       this.initialScrollDone = false;
       this.textInput = "";
       this.scrollToBottom()
       this.isMessage = true;
+      this.isSending = false;
     }
   }
 
@@ -374,5 +378,10 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   onInputChange(event: Event) {
     this.userMentionService.onInputChange(this.textInput, this.mentionMenuTrigger, this.channelMenuTrigger, this.chatInput);
   }
+
+  canSendMessage(): boolean {
+    return this.textInput.trim().length > 0 && !this.isSending;
+  }
+
 }
 
