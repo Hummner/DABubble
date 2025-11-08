@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -6,9 +6,10 @@ import { RouterModule } from '@angular/router';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
 import { FirestoreService } from '../../../services/firestore.service';
 import { NavbarInterface } from '../../../interfaces/navbar.interface';
-import { User } from 'firebase/auth';
-import { updateDoc, arrayUnion, Firestore, doc } from '@angular/fire/firestore';
+import { updateDoc, arrayUnion, Firestore, doc, docData } from '@angular/fire/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NavbarService } from '../../../services/navbar.service';
+
 
 @Component({
   selector: 'app-add-channel-member',
@@ -26,6 +27,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class AddChannelMemberComponent {
 
   userProfile = this.firestoreService.userProfile;
+  navbarService = inject(NavbarService);
   user: UserProfileInterface | null = null;
   navbar: Partial<NavbarInterface> = {}
   channelName = '';
@@ -164,5 +166,11 @@ export class AddChannelMemberComponent {
     } else if (this.inviteMode === 1) {
       this.addAllMemmberToChannel();
     }
+  }
+
+  navigateToChannelAfterCreation() {
+    this.closeDialog();
+    this.navbarService.selectChannel(this.channelId);
+    this.router.navigateByUrl('/channel/' + this.channelId);
   }
 }
