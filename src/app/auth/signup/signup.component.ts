@@ -50,7 +50,7 @@ export class SignupComponent {
   onSubmit() {
     this.submitted = true;
     const rawForm = this.signupForm.getRawValue();
-    this.authService.register(rawForm.name!, rawForm.email!, rawForm.password!).subscribe({
+    this.authService.register(rawForm.name!.trim(), rawForm.email!.trim(), rawForm.password!).subscribe({
       next: () => {
         this.router.navigateByUrl('/avatarSelection');
       },
