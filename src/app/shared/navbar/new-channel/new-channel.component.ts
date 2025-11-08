@@ -76,18 +76,21 @@ export class NewChannelComponent {
   }
 
   private async addChannelToFirestore(): Promise<void> {
-    const docRef = await addDoc(collection(this.firestore, 'channels'), this.navbar);
-    this.navbar.channelId = docRef.id
-    this.openAddMemberDialog(this.navbar.channelId);
+    this.navbar.members = [];
+    const docRef = await addDoc(collection(this.firestore, 'channels'), {
+      ...this.navbar,
+      members: this.navbar.members
+    });
+
+    this.navbar.channelId = docRef.id;
+    this.openAddMemberDialog(this.navbar.channelId, this.navbar.members);
     this.closeDialog();
   }
 
-  openAddMemberDialog(channelId: string) {
+  openAddMemberDialog(channelId: string, members: any[]) {
     this.dialog.open(AddChannelMemberComponent, {
-      data: { channelName: this.navbar.name, channelDescription: this.navbar.description, channelId: channelId }
-    }).afterClosed().subscribe(result => {
-      console.log('AddMember－Result', this.form.value);
-    });
+      data: { channelName: this.navbar.name, channelDescription: this.navbar.description, channelId: channelId, members: members }
+    }).afterClosed().subscribe(result => {});
     return channelId
   }
 

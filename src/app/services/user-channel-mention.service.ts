@@ -58,7 +58,7 @@ export class UserMentionService {
 
   getChannelWithUserMemmership() {
     const uid = this.firestoreService.userProfile()?.uid;
-    let list = this.channels().filter((channel) => channel.members.some((member) => member.id == uid));
+    let list = this.channels().filter((channel) => channel.members?.some((member) => member.id == uid));
     return list;
   }
 
