@@ -41,6 +41,7 @@ export class NewPasswordComponent implements OnInit {
     return !password_1?.trim() || !password_2?.trim();
   }
 
+
   ngOnInit() {
     this.oobCode = this.route.snapshot.queryParamMap.get('oobCode') || '';
     if (!this.oobCode) {

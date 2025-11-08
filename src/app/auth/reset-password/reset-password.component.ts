@@ -10,7 +10,7 @@ import { LogMessageComponent } from '../log-message/log-message.component';
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [LogMessageComponent,RouterLink, ReactiveFormsModule, FooterComponent, Header2Component],
+  imports: [LogMessageComponent, RouterLink, ReactiveFormsModule, FooterComponent, Header2Component],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
 })
@@ -24,8 +24,7 @@ export class ResetPasswordComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
   });
 
-
-   @ViewChild('log') log!: LogMessageComponent;
+  @ViewChild('log') log!: LogMessageComponent;
 
   get resetPasswordFormControl() {
     return this.resetPasswordForm.controls;
@@ -43,7 +42,7 @@ export class ResetPasswordComponent {
     }
     const rawForm = this.resetPasswordForm.getRawValue();
     this.authService
-      .sendPasswordResetEmail(this.auth, rawForm.email!, 'https://dabubble-415.developerakademie.net')
+      .sendPasswordResetEmail(this.auth, rawForm.email!, 'https://dabubble-415.developerakademie.net/angular-projects/DABubble')
       .subscribe({
         next: () => {
           this.onSuccessfulSignup();
