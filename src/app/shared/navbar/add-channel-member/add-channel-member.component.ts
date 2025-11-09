@@ -171,7 +171,6 @@ export class AddChannelMemberComponent {
   }
 
   submitForm() {
-    console.log(this.navbar);
     if (this.inviteMode === 2) {
       this.addMemberToChannel();
     } else if (this.inviteMode === 1) {
@@ -181,7 +180,9 @@ export class AddChannelMemberComponent {
 
   navigateToChannelAfterCreation() {
     this.closeDialog();
-    this.navbarService.selectChannel(this.channelId);
-    this.router.navigateByUrl('/channel/' + this.channelId);
+    setTimeout(() => {
+      this.navbarService.selectChannel(this.channelId);
+      this.router.navigateByUrl('/channel/' + this.channelId);
+    }, 1000);
   }
 }
