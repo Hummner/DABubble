@@ -120,6 +120,7 @@ export class AddChannelMemberComponent {
 
   addMemberToChannel() {
     this.addCreatorToMembers();
+    this.pushMemberToArray();
     this.updateChannel();
   }
 
@@ -133,6 +134,7 @@ export class AddChannelMemberComponent {
       imgUrl: user.imgUrl
     }));
     this.addCreatorToMembers();
+    this.pushMemberToArray();
     this.updateChannel();
   }
 
@@ -156,11 +158,20 @@ export class AddChannelMemberComponent {
         imgUrl: this.userProfile()?.imgUrl || ''
       });
     }
-    this.navbar.members = this.members;
+    return this.members;
+  }
+
+  pushMemberToArray() {
+    if (this.inviteMode === 1) {
+      this.navbar.members?.push(...this.members);
+    } else {
+      this.navbar.members = this.members;
+    }
     return this.navbar;
   }
 
   submitForm() {
+    console.log(this.navbar);
     if (this.inviteMode === 2) {
       this.addMemberToChannel();
     } else if (this.inviteMode === 1) {
