@@ -51,7 +51,7 @@
           </div>
         }
       </div>
-      <div class="actions">
+      <div class="actions" (click)="addNewMemberToChannel()">
         <button type="submit" [disabled]="isDisabled()" [ngClass]="isDisabled() ? 'btn-disabled' : 'btn-active'">
           Hinzufügen
         </button>
