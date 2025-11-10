@@ -59,7 +59,7 @@
             <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()"
                 (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple" src="assets/icon/add_reaction.svg">
             </div>
-            <div class="emoji-menu-item" (click)="openThreadPanel()"><img class="hover-purple"
+            <div class="emoji-menu-item" (click)="openThreadUrl()"><img class="hover-purple"
                     src="assets/icon/comment.svg"></div>
             <div *ngIf="isCurrentUser()" class="emoji-menu-item">
                 <mat-icon #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="editTicket"

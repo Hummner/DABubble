@@ -13,7 +13,7 @@ import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { UserMentionService } from '../../services/user-channel-mention.service';
 import { EmojiServiceService } from '../../services/emoji.service';
 import { EmojiArrayService } from '../../services/emoji-array.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { filter, distinctUntilChanged, flatMap } from 'rxjs/operators';
 
 @Component({
@@ -59,7 +59,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
   isSending = false
 
 
-  constructor() {
+  constructor(private router: Router, private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -168,6 +168,14 @@ export class ThreadComponent implements OnInit, OnDestroy {
     if (number > 1) return `${number} Antworten`
     if (number == 1) return '1 Antwort'
     return "Keine Antwort"
+  }
+
+  closeThread() {
+    const channelPath = this.router.url.split('/')[2]
+    this.close.emit()
+    setTimeout(() => {
+      this.router.navigate(['channel', channelPath])
+    }, 500);
   }
 
   takeUser(name: string) {
