@@ -53,13 +53,19 @@
             @if (inviteMode == 2 && searchText != '') {
               <div class="member-box">
                 <ul class="direct-messages-list" >
-                  @for(user of getOtherUserList(); track user){
-                    <li class="direct-messages-item" (click)="addMember(user.uid)" >
-                      <div class="avatar">
-                        <img [src]="user.imgUrl" alt="Elise Roth" />
-                      </div>
-                      <p>{{ user.name }}</p>
-                  </li>
+                  @if (this.getOtherUserList().length === 0) {
+                    <li class="direct-messages-item no-members">
+                      <p>Keine Benutzer gefunden</p>
+                    </li>
+                  } @else {
+                    @for(user of getOtherUserList(); track user){
+                      <li class="direct-messages-item" (click)="addMember(user.uid)" >
+                        <div class="avatar">
+                          <img [src]="user.imgUrl" alt="Elise Roth" />
+                        </div>
+                        <p>{{ user.name }}</p>
+                    </li>
+                    }
                   }
                 </ul>
               </div>

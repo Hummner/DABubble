@@ -109,7 +109,7 @@ export class SearchService {
       users: [],
       channels: [],
       messages: [],
-      noResultsMessage: 'Bitte geben sie mindestens 3 Buchstaben ein.',
+      noResultsMessage: 'Bitte geben sie mindestens drei Buchstaben ein.',
     };
   }
 
