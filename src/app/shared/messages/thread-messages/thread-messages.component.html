@@ -22,7 +22,7 @@
             </div>
             <div class="emoji-container" [ngClass]="{'reverse reverse-container' : isCurrentUser()}"
                 *ngIf="isReaction()">
-                @for (emoji of message.reactions; track $index) {
+                @for (emoji of message!.reactions; track $index) {
                 <div *ngIf="$index < 7 || moreEmoji" class="emoji" (mouseenter)="showPopupIndex($index)"
                     (mouseleave)="showPopupIndexNumber = -1">
                     <div class="emoji-popup" *ngIf="$index == showPopupIndexNumber">
