@@ -7,23 +7,27 @@
   align-items: center;
   padding: 40px;
   height: 120px;
+  position: relative;
 }
 
+
 .main-logo {
+  width:250px;
+  height:65px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
   transform-origin: 0% 50%;
 }
 
 .main-logo .logo {
   width: 60px;
-  height: auto;
+  height: 60px;
 }
 
 .main-logo .name {
-  width: 180px;
-  height: auto;
+  width: 184px;
+  height: 29px;
   display: block;
   filter: invert(100%);
 }
@@ -89,7 +93,7 @@
   z-index: 9999;
   left: calc(50% - 250px);
   width: 425px;
-  margin: 40px;
+  margin: 0;
   height: 95px;
   display: flex;
   justify-content: center;
@@ -97,17 +101,6 @@
 }
 
 .slide {
-  position: absolute;
-  top: -9px;
-  z-index: 9999;
-  left: -90px;
-  width: 425px;
-  margin: 40px;
-  height: 95px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  scale: 0.4;
   animation: slideToCorner 1s ease-in-out forwards;
 }
 
@@ -118,8 +111,8 @@
     scale: 1;
   }
   100% {
-    left: -91px;
-    top: -21px;
+    left: max(-52px, calc((100vw - 1920px) / 2 - 52px));
+    top: 19px;
     scale: 0.4;
   }
 }
@@ -175,7 +168,7 @@
   position: static !important;
   top: auto !important;
   left: auto !important;
-  width: 100% !important;
+  width: 280px !important;
   height: auto !important;
   margin: 0 !important;
   z-index: auto !important;
@@ -185,7 +178,7 @@
 
 .animation-finished .whole-img {
   position: static !important;
-  width: auto !important;
+  width: 260px !important;
   height: auto !important;
   display: flex !important;
   align-items: center !important;
@@ -211,7 +204,7 @@
 .animation-finished .greeting-name {
   position: static !important;
   left: auto !important;
-  width: 468px !important;
+  width: 460px !important;
   height: auto !important;
   display: block !important;
 }
