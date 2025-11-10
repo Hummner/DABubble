@@ -183,6 +183,6 @@ export class AddChannelMemberComponent {
     setTimeout(() => {
       this.navbarService.selectChannel(this.channelId);
       this.router.navigateByUrl('/channel/' + this.channelId);
-    }, 1000);
+    }, 2000);
   }
 }

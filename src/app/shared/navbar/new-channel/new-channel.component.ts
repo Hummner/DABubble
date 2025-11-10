@@ -146,6 +146,6 @@ export class NewChannelComponent {
     setTimeout(() => {
       this.navbarService.selectChannel(this.navbar.channelId || '');
       this.router.navigateByUrl('/channel/' + this.navbar.channelId || '');
-    }, 1000);
+    }, 2000);
   }
 }
