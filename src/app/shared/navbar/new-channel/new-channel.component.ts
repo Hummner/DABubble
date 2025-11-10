@@ -4,8 +4,10 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddChannelMemberComponent } from '../add-channel-member/add-channel-member.component';
 import { NgClass, NgIf } from '@angular/common';
 import { NavbarInterface } from '../../../interfaces/navbar.interface';
-import { addDoc, Firestore, collection, query, where, getDocs, doc, updateDoc, arrayUnion, docData } from '@angular/fire/firestore';
+import { addDoc, Firestore, collection, query, where, getDocs, updateDoc } from '@angular/fire/firestore';
 import { FirestoreService } from '../../../services/firestore.service';
+import { NavbarService } from '../../../services/navbar.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-channel',
@@ -21,6 +23,7 @@ import { FirestoreService } from '../../../services/firestore.service';
 export class NewChannelComponent {
   userProfile = this.firestoreService.userProfile;
   navbar: Partial<NavbarInterface> = {}
+  navbarService = inject(NavbarService);
   channelName = '';
   channelDescription = '';
 
@@ -34,7 +37,9 @@ export class NewChannelComponent {
     private dialog: MatDialog,
     private firestoreService: FirestoreService,
     private firestore: Firestore,
-    private formbuilder: FormBuilder) {}
+    private formbuilder: FormBuilder,
+    private router: Router,) {}
+    
 
   ngOnInit() {
     this.form = this.formbuilder.group({
@@ -134,5 +139,13 @@ export class NewChannelComponent {
         return querySnapshot.empty ? null : { exists: true };
       });
     };
+  }
+
+  navigateToChannelAfterCreation() {
+    this.closeDialog();
+    setTimeout(() => {
+      this.navbarService.selectChannel(this.navbar.channelId || '');
+      this.router.navigateByUrl('/channel/' + this.navbar.channelId || '');
+    }, 1000);
   }
 }

@@ -29,7 +29,7 @@
                 placeholder="Dein Text hier"
                 class="full-input textarea"></textarea>
 
-      <div class="actions">
+      <div class="actions" (click)="navigateToChannelAfterCreation()">
         <button 
           type="submit" 
           [disabled]="!form.valid"
