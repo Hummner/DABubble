@@ -15,6 +15,7 @@ import { EmojiServiceService } from '../../services/emoji.service';
 import { EmojiArrayService } from '../../services/emoji-array.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, distinctUntilChanged, flatMap } from 'rxjs/operators';
+import { ChannelsService } from '../../services/channels.service';
 
 @Component({
   selector: 'app-thread',
@@ -41,10 +42,11 @@ export class ThreadComponent implements OnInit, OnDestroy {
   emojiService = inject(EmojiServiceService);
   emojiArray = inject(EmojiArrayService);
   threadsService = inject(ThreadService);
-
+  channelService = inject(ChannelsService)
   threadService = inject(ThreadService);
   private messagesSubscription?: Subscription;
   private currentTicketSubscription?: Subscription;
+  private currentChannelSubscription?: Subscription
   currentTicketSub!: TicketInterface;
   messages: TicketInterface[] = [];
   currentTicket!: TicketInterface;
@@ -73,6 +75,8 @@ export class ThreadComponent implements OnInit, OnDestroy {
       })
     ).subscribe(msgArray => {
       this.messages = msgArray
+      console.log(this.messages);
+      
     });
 
     this.currentTicketSubscription = this.threadService.currentTicketSubscribe$.pipe(
@@ -82,8 +86,25 @@ export class ThreadComponent implements OnInit, OnDestroy {
       console.log(this.currentTicket);
       this.messagesCount = this.messagesCounter();
     });
+
+    this.currentChannelSubscription = this.channelService.channel$.subscribe(channel => {
+      this.members = channel?.members
+      console.log("Members:", this.members);
+      
+    })
+
+    this.isThreadOpen = this.isThreadOpenFunc()
   }
 
+  isThreadOpenFunc() {
+    let path = this.router.url
+    let ticketPath = path.split("/")[4]
+    if (ticketPath) {
+      return true
+    } else {
+      return false
+    }
+  }
 
   checkTheKey(event: KeyboardEvent) {
     event.preventDefault();

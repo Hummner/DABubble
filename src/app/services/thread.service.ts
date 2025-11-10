@@ -56,7 +56,6 @@ export class ThreadService {
   }
 
   reemitCurrentTicket() {
-    debugger
     const v = this.currentTicketSubscribe.value;
     console.log(v);
     

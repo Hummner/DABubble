@@ -10,6 +10,7 @@
             <div class="scroll-wrapper">
                 <app-thread-messages *ngIf="isThreadOpen" [members]="members" [message]="currentTicket"
                     [isCurrentEdited]="isCurrentEdited"></app-thread-messages>
+                
 
                 <div class="placeholder">
                     <div class="placeholder-date msg-answer">{{ messagesCount }}</div>

@@ -66,7 +66,8 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
         setTimeout(() => {
           this.openThreadPanel();
         }, 20);
-      }};
+      }
+    };
     if (this.ticket) {
       this.showName();
       this.time = this.showTime();
@@ -187,12 +188,15 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   openThreadUrl() {
-      if (this.ticket.threads?.path) {
-        const ticketpath = this.ticket.threads?.path.split('/')[3]
-        const channelPath = this.ticket.threads?.path.split('/')[1]
-        
-        this.router.navigate(['messages', ticketpath], { relativeTo: this.route });
-      }
+    if (this.ticket.threads?.path) {
+      const ticketpath = this.ticket.threads?.path.split('/')[3]
+      const channelPath = this.ticket.threads?.path.split('/')[1]
+      this.getThreadPath(this.ticket.threads?.path)
+      this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
+      this.threadsService.getCurrentTicket()
+
+      this.router.navigate(['messages', ticketpath], { relativeTo: this.route });
+    }
   }
 
   openThreadPanel() {
@@ -204,7 +208,7 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
-  selectEmoji(emoji: {name:string, code: string}) {
+  selectEmoji(emoji: { name: string, code: string }) {
     this.emojiService.selectEmoji(emoji.name)
     this.addEmojiToTicket(emoji.code);
   }
@@ -355,11 +359,11 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     return taggedChannels
   }
 
-  showEmojiName(emoji: {emoji: string, users: string[]}) {
+  showEmojiName(emoji: { emoji: string, users: string[] }) {
     let emojiCode = emoji.emoji;
-    let emojiName = this.emojiService.emojiList.find( emo => {return emo.code === emojiCode})
+    let emojiName = this.emojiService.emojiList.find(emo => { return emo.code === emojiCode })
     if (emojiName) return emojiName.name
-    return 
+    return
   }
 
   getUserList(text: string) {

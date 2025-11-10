@@ -58,13 +58,10 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   showPopupIndexNumber!: number;
 
   constructor(
-    private route: ActivatedRoute, private router: Router) {}
+    private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    if (this.message) {
-      this.showName();
-      this.time = this.showTime();
-    }
+
   }
 
   getChannelInfo() {
@@ -76,6 +73,8 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
 
   ngAfterViewInit() {
     setTimeout(() => {
+      this.showName();
+      this.time = this.showTime();
       this.text = this.showText();
     }, 1)
   }
@@ -200,7 +199,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   isReaction() {
-    if (this.message.reactions.length == 0) {
+    if (this.message?.reactions.length == 0) {
       return false;
     } else {
       return true
@@ -218,7 +217,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     }
   }
 
-  
+
 
   async addEmojiToTicket(emoji: string) {
     let senderId = this.getCurrentUserId();
@@ -397,7 +396,10 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   isCurrentUser() {
-    return (this.getCurrentUserId() === this.message.senderId)
+    if (this.message) {
+      return (this.getCurrentUserId() === this.message.senderId)
+    }
+    return
   }
 
   convertToDate(timestamp: Timestamp) {
