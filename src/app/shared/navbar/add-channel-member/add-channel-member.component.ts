@@ -176,13 +176,11 @@ export class AddChannelMemberComponent {
     } else if (this.inviteMode === 1) {
       this.addAllMemmberToChannel();
     }
+    this.navigateToChannelAfterCreation();
   }
 
   navigateToChannelAfterCreation() {
     this.closeDialog();
-    setTimeout(() => {
-      this.navbarService.selectChannel(this.channelId);
-      this.router.navigateByUrl('/channel/' + this.channelId);
-    }, 2000);
+    this.navbarService.selectChannel(this.channelId);
   }
 }
