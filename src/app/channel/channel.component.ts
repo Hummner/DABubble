@@ -1,6 +1,6 @@
 import { AfterViewChecked, Component, ElementRef, HostListener, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDrawerMode, MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawer, MatDrawerMode, MatSidenavModule } from '@angular/material/sidenav';
 import { ThreadComponent } from './thread/thread.component';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
@@ -10,10 +10,10 @@ import { ChannelInterface } from '../interfaces/channel.interface';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { FirestoreService } from '../services/firestore.service';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { ThreadService } from '../services/thread.service';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Timestamp } from '@angular/fire/firestore';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EmojiArrayService } from '../services/emoji-array.service';
@@ -29,7 +29,7 @@ import { EmojiServiceService } from '../services/emoji.service';
   imports: [
     MatIconModule, MatSidenavModule, MatMenuModule, CommonModule, TicketComponent, FormsModule, MatProgressSpinnerModule,
     RouterOutlet
-],
+  ],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
 })
@@ -41,6 +41,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('threadTrigger') threadTrigger!: MatDrawer;
 
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService);
@@ -87,7 +88,17 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.stopAutoFokus = false;
       this.focusTextarea();
     });
+    this.setupThreadSubscripton()
   }
+
+  setupThreadSubscripton() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      const child = this.route.firstChild
+      const hasThread = !!this.route.firstChild?.snapshot.paramMap.get('messageId');
+      this.isThreadOpen = hasThread
+    })
+  }
+
 
   setupChannelSubscription() {
     this.channelSubscription = this.channelsService.channel$.subscribe((channel) => {
@@ -155,6 +166,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     }
   }
+
+
 
   currentThreadPathRef(data: string) {
     this.currentThreadPath = data;
