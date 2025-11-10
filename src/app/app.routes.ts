@@ -17,8 +17,11 @@ import { ThreadComponent } from './channel/thread/thread.component';
 
 export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'channel/:ChannelId', component: ChannelComponent},
-  { path: 'channel/:ChannelId/messages/:messageId', component: ChannelComponent},
+  {
+    path: 'channel/:ChannelId',
+    component: ChannelComponent,
+    children: [{ path: 'messages/:messageId', component: ThreadComponent }],
+  },
   { path: '', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'avatarSelection', component: AvatarSelectionComponent },
