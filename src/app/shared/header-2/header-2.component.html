@@ -1,26 +1,25 @@
 <header class="header">
-
-
   <div *ngIf="!isLoginPage">
     <div class="main-logo">
-    <img src="assets/img/Logo-intro.png" class="logo" />
-    <img class="name" src="assets/img/Logo-intro-name.png" alt="greeting-logo-name" />
+      <img src="assets/img/Logo-intro.png" class="logo" />
+      <img class="name" src="assets/img/Logo-intro-name.png" alt="greeting-logo-name" />
     </div>
-
   </div>
   <div *ngIf="isLoginPage" #greeting class="greeting">
-    <div #greetingContainer class="greeting-container">
-      <div class="whole-img" #wholeLogo>
-        <img #greetingLogo src="assets/img/Logo-intro.png" class="greeting-logo" />
 
-        <div class="invisible-wall">
-          <img #greetingName class="greeting-name" src="assets/img/Logo-intro-name.png" alt="greeting-logo-name" />
+      <div #greetingContainer class="greeting-container">
+        <div class="whole-img" #wholeLogo>
+          <img #greetingLogo src="assets/img/Logo-intro.png" class="greeting-logo" />
+
+          <div class="invisible-wall">
+            <img #greetingName class="greeting-name" src="assets/img/Logo-intro-name.png" alt="greeting-logo-name" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div *ngIf="isLoginPage" class="create-account-section">
-    <p class="fs-18">Neu bei DABubble?</p>
-    <a [routerLink]="['signup']"><p class="fs-18 blue create-acc">Konto erstellen</p></a>
-  </div>
+    <div *ngIf="isLoginPage" class="create-account-section">
+      <p class="fs-18">Neu bei DABubble?</p>
+      <a [routerLink]="['signup']"><p class="fs-18 blue create-acc">Konto erstellen</p></a>
+    </div>
+
 </header>
