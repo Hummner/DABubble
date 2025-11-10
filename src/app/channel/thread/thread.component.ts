@@ -172,10 +172,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
   closeThread() {
     const channelPath = this.router.url.split('/')[2]
-    this.close.emit()
-    setTimeout(() => {
-      this.router.navigate(['channel', channelPath])
-    }, 500);
+    this.router.navigate(['channel', channelPath])
   }
 
   takeUser(name: string) {
