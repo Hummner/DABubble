@@ -13,7 +13,7 @@ import { FirestoreService } from '../services/firestore.service';
 import { Subscription } from 'rxjs';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { ThreadService } from '../services/thread.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { Timestamp } from '@angular/fire/firestore';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EmojiArrayService } from '../services/emoji-array.service';
@@ -27,8 +27,9 @@ import { EmojiServiceService } from '../services/emoji.service';
   selector: 'app-channel',
   standalone: true,
   imports: [
-    MatIconModule, MatSidenavModule, ThreadComponent, MatMenuModule, CommonModule, TicketComponent, FormsModule, MatProgressSpinnerModule,
-  ],
+    MatIconModule, MatSidenavModule, MatMenuModule, CommonModule, TicketComponent, FormsModule, MatProgressSpinnerModule,
+    RouterOutlet
+],
   templateUrl: './channel.component.html',
   styleUrl: './channel.component.scss',
 })

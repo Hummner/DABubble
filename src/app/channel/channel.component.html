@@ -3,8 +3,9 @@
   <mat-drawer-container class="container" autosize [class.margin-30]="isThreadOpen && windowWidth < 1400">
     <mat-drawer #drawer [mode]="drawerMode" class="example-sidenav" position="end"
       [class.example-sidenav-100]="isThreadOpen && windowWidth < 1400" [(opened)]="isThreadOpen">
-      <app-thread  [isThreadOpen]="isThreadOpen" [members]="channel?.members"
-        [tickets]="channel?.messages" (close)="drawer.toggle()"></app-thread>
+      <!-- <app-thread  [isThreadOpen]="isThreadOpen" [members]="channel?.members"
+        [tickets]="channel?.messages" (close)="drawer.toggle()"></app-thread> -->
+        <router-outlet></router-outlet>
     </mat-drawer>
     <div class="content" [class.hide-content]="isThreadOpen && windowWidth < 1400">
       <header>

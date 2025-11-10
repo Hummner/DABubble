@@ -190,7 +190,8 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
       if (this.ticket.threads?.path) {
         const ticketpath = this.ticket.threads?.path.split('/')[3]
         const channelPath = this.ticket.threads?.path.split('/')[1]
-        this.router.navigate(['channel', channelPath, 'messages', ticketpath])
+        
+        this.router.navigate(['messages', ticketpath], { relativeTo: this.route });
       }
   }
 
