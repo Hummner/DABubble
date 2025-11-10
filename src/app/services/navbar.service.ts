@@ -63,6 +63,19 @@ export class NavbarService implements OnDestroy {
       }
     });
   }
+  
+  hideChannelWithoutCurrentUser() {
+    const filteredChannels$ = this.channelsObs$.pipe(
+      map(channels =>
+        channels.filter(channel =>
+          (channel.members ?? []).some(
+            member => member.id === this.currentUserId()
+          )
+        )
+      )
+    );
+    return filteredChannels$
+  }
 
   getSelectedChannelId() {
     return this.selectedChannelId$.value;
