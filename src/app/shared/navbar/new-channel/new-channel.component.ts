@@ -90,7 +90,7 @@ export class NewChannelComponent {
 
     let newChannelID = await this.updateChannelIDToFirestore(docRef);
     this.openAddMemberDialog(newChannelID || '', this.navbar.members || []);
-    this.navigateToChannelAfterCreation(newChannelID || '');
+    this.closeDialog();
   }
 
   async updateChannelIDToFirestore(docRef: any) {
@@ -139,10 +139,5 @@ export class NewChannelComponent {
         return querySnapshot.empty ? null : { exists: true };
       });
     };
-  }
-
-  navigateToChannelAfterCreation(channelId: string) {
-    this.closeDialog();
-    this.navbarService.selectChannel(channelId);
   }
 }

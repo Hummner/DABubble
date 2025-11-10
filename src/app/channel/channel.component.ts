@@ -69,6 +69,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   channelNameExists = false;
   windowWidth = window.innerWidth;
   isSending = false
+  stopAutoFokus = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
 
@@ -80,6 +81,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.getChannelInfo();
     this.setupMessagesSubscription();
     this.channelsService.focusRequest$.subscribe(() => {
+      this.stopAutoFokus = false;
       this.focusTextarea();
     });
   }
@@ -110,7 +112,9 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.scrollToBottom();
       this.initialScrollDone = true;
     }
+    this.focusTextarea();
   }
+
 
   checkWindowWidth() {
     if (window.innerWidth > 1024) {
@@ -125,6 +129,20 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.windowWidth = width;
     this.checkWindowWidth();
     if (this.windowWidth >= 1400) {
+    }
+  }
+
+  @HostListener('window:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const clickedInside = this.chatInput?.nativeElement.contains(event.target as Node);
+    const clickedChannelList = (event.target as HTMLElement).closest('.channel-list');
+    console.log("clickedChannelList", clickedChannelList);
+
+    if (clickedChannelList) return
+
+    if (!clickedInside) {
+      this.stopAutoFokus = true;
+      this.chatInput.nativeElement.blur();
     }
   }
 
@@ -317,12 +335,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   focusTextarea() {
-    if (this.chatInput && !this.loading) {
-      setTimeout(() => {
-        if (!this.textInput || this.textInput.trim() === '') {
-          this.chatInput.nativeElement.focus();
-        }
-      }, 1000);
+    if (this.chatInput && !this.loading && !this.stopAutoFokus) {
+      this.chatInput.nativeElement.focus();
     }
   }
 
