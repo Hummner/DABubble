@@ -16,6 +16,8 @@ import { UserMentionService } from '../../../services/user-channel-mention.servi
 import { DirectMessageService } from '../../../services/direct-message.service';
 import { NavbarService } from '../../../services/navbar.service';
 import { EmojiServiceService } from '../../../services/emoji.service';
+import { filter, take, switchMap } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-ticket',
@@ -187,17 +189,30 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     return name
   }
 
-  openThreadUrl() {
-    if (this.ticket.threads?.path) {
-      const ticketpath = this.ticket.threads?.path.split('/')[3]
-      const channelPath = this.ticket.threads?.path.split('/')[1]
-      this.getThreadPath(this.ticket.threads?.path)
-      this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
-      this.threadsService.getCurrentTicket()
+openThreadUrl() {
+  const path = this.ticket.threads?.path;
+  if (!path) return;
 
-      this.router.navigate(['messages', ticketpath], { relativeTo: this.route });
-    }
-  }
+  const ticketpath = path.split('/')[3];
+  // optional: const channelPath = path.split('/')[1];
+
+  // 1) Trigger Laden
+  this.getThreadPath(path);
+  this.threadsService.getThreadsFromTicket(path, this.ticket);
+  this.threadsService.getCurrentTicket();
+
+  // 2) Auf erste Daten warten
+  firstValueFrom(
+    this.threadsService.messagesSubscribe$
+      .pipe(
+        filter(arr => Array.isArray(arr)), // nicht undefined/null
+        take(1) // nur erstes Mal
+      )
+  ).then(() => {
+    // 3) Jetzt ist sicher was da → navigieren
+    this.router.navigate(['messages', ticketpath], { relativeTo: this.route });
+  });
+}
 
   openThreadPanel() {
     if (this.ticket.threads?.path) {

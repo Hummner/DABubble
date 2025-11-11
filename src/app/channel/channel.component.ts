@@ -10,7 +10,7 @@ import { ChannelInterface } from '../interfaces/channel.interface';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { FirestoreService } from '../services/firestore.service';
-import { filter, Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, map, startWith, Subscription } from 'rxjs';
 import { TicketInterface } from '../interfaces/ticket.interface';
 import { ThreadService } from '../services/thread.service';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
@@ -73,6 +73,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   windowWidth = window.innerWidth;
   isSending = false
   stopAutoFokus = false;
+  private routerSub?: Subscription;
 
   constructor(
     private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
@@ -91,12 +92,29 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.setupThreadSubscripton()
   }
 
+  // setupThreadSubscripton() {
+  //   this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+  //     const child = this.route.firstChild
+  //     const hasThread = !!this.route.firstChild?.snapshot.paramMap.get('messageId');
+  //     this.isThreadOpen = hasThread
+  //   })
+
+
+  // }
+
   setupThreadSubscripton() {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-      const child = this.route.firstChild
-      const hasThread = !!this.route.firstChild?.snapshot.paramMap.get('messageId');
-      this.isThreadOpen = hasThread
-    })
+    this.routerSub = this.router.events.pipe(
+      // sorgt dafür, dass es auch beim initialen Laden einmal ausführt
+      startWith(null),
+      filter(ev => ev === null || ev instanceof NavigationEnd),
+      // immer bis zur tiefsten Route runter
+      map(() => {
+        let r = this.route;
+        while (r.firstChild) r = r.firstChild;
+        return !!r.snapshot.paramMap.get('messageId');
+      }),
+      distinctUntilChanged()
+    ).subscribe(open => this.isThreadOpen = open);
   }
 
 

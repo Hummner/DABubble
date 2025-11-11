@@ -16,11 +16,14 @@ import { EmojiArrayService } from '../../services/emoji-array.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, distinctUntilChanged, flatMap } from 'rxjs/operators';
 import { ChannelsService } from '../../services/channels.service';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+
+
 
 @Component({
   selector: 'app-thread',
   standalone: true,
-  imports: [MatIconModule, ThreadMessagesComponent, CommonModule, FormsModule, MatMenuModule],
+  imports: [MatIconModule, ThreadMessagesComponent, CommonModule, FormsModule, MatMenuModule, MatProgressSpinnerModule],
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss'
 })
@@ -59,6 +62,8 @@ export class ThreadComponent implements OnInit, OnDestroy {
   number?: number
   isCurrentEdited: boolean = false;
   isSending = false
+  loading = true
+  firstSeen = false
 
 
   constructor(private router: Router, private route: ActivatedRoute) {
@@ -66,18 +71,36 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.messagesSubscription = this.threadService.messagesSubscribe$.pipe(
-      filter((arr): arr is TicketInterface[] => Array.isArray(arr)), distinctUntilChanged((a, b) => {
-        if (a.length !== b.length) return false;
-        const la = a[a.length - 1];
-        const lb = b[b.length - 1];
-        return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
-      })
-    ).subscribe(msgArray => {
-      this.messages = msgArray
-      console.log(this.messages);
+    // this.messagesSubscription = this.threadService.messagesSubscribe$
+    // // .pipe(
+    // //   // filter((arr): arr is TicketInterface[] => Array.isArray(arr)), 
+    // //   // distinctUntilChanged((a, b) => {
+    // //   //   if (a.length !== b.length) return false;
+    // //   //   const la = a[a.length - 1];
+    // //   //   const lb = b[b.length - 1];
+    // //   //   return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
+    // //   // })
+    // // )
+    // .subscribe(msgArray => {
+    //   this.messages = msgArray
+    //   console.log(this.messages);
       
-    });
+    // });
+
+    
+this.messagesSubscription = this.threadService.messagesSubscribe$
+  .subscribe(arr => {
+    if (!this.firstSeen) {          // erste Emission
+      this.firstSeen = true;
+      this.loading = false;
+    }
+    this.messages = (arr ?? []).map(m => ({
+      ...m,
+      reactions: m.reactions ? [...m.reactions] : []
+    }));
+    // bei OnPush:
+    // this.cdr.markForCheck();
+  });
 
     this.currentTicketSubscription = this.threadService.currentTicketSubscribe$.pipe(
       filter((t): t is TicketInterface => !!t), distinctUntilChanged((a, b) => a.text === a.text && a.createdAt === b.createdAt)

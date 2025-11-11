@@ -73,20 +73,26 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   ngAfterViewInit() {
+    setTimeout(() => {
+      this.showName();
+      this.time = this.showTime();
+      this.text = this.showText();
+    }, 1)
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+
     if (changes['message']) {
       const nextMsg = changes['message'].currentValue as { reactions?: any[] } | undefined;
       this.reactions = nextMsg?.reactions ?? [];
-      console.log(this.reactions);
 
-      if (this.textRef && nextMsg) {
-        this.text = this.showText();
-        this.showName();
-        this.time = this.showTime();
-        this.text = this.showText();
-      }
+      this.text = this.showText();
+      this.showName();
+      this.time = this.showTime();
+
+
     }
     this.currentUser = this.getCurrentUserId();
     this.time = this.showTime();
@@ -212,6 +218,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   showName() {
+    if (!this.message) return
     const userIndex = this.findUser(this.message.senderId)
     if (userIndex >= 0 && this.members && this.isMember(userIndex, this.members)) {
       this.userName = this.members[userIndex]['name'];
@@ -235,18 +242,20 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   showText() {
-    this.textRef.nativeElement.innerHTML = "";
-    let container = document.createElement('p');
-    container.classList.add('text-link')
-    let text = this.message.text;
-    let taggedUsers = this.getUserList(text);
-    let taggedChannels = this.getChannelList(text)
-    let taggedArray = taggedUsers.concat(taggedChannels);
-    if (taggedArray.length == 0) this.createTextElement(container, text)
-    taggedArray.sort((a, b) => a.textIndex - b.textIndex)
-    text = this.replaceTaggedText(taggedArray, text);
-    this.createTextElement(container, text)
-    this.createListener(taggedArray)
+    if (this.textRef) {
+      this.textRef.nativeElement.innerHTML = "";
+      let container = document.createElement('p');
+      container.classList.add('text-link')
+      let text = this.message.text;
+      let taggedUsers = this.getUserList(text);
+      let taggedChannels = this.getChannelList(text)
+      let taggedArray = taggedUsers.concat(taggedChannels);
+      if (taggedArray.length == 0) this.createTextElement(container, text)
+      taggedArray.sort((a, b) => a.textIndex - b.textIndex)
+      text = this.replaceTaggedText(taggedArray, text);
+      this.createTextElement(container, text)
+      this.createListener(taggedArray)
+    }
   }
 
   createListener(taggedArray: { name: string, id: string, textIndex: number, taggedType: string }[]) {

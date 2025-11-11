@@ -7,20 +7,23 @@
             <div class="close-dialog" (click)="closeThread()"><mat-icon class="icon">close</mat-icon></div>
         </header>
         <main>
+            <div *ngIf="loading" class="laoding-spinner">
+                <mat-spinner></mat-spinner>
+            </div>
             <div class="scroll-wrapper">
                 <app-thread-messages *ngIf="isThreadOpen" [members]="members" [message]="currentTicket"
                     [isCurrentEdited]="isCurrentEdited"></app-thread-messages>
-                
+
 
                 <div class="placeholder">
                     <div class="placeholder-date msg-answer">{{ messagesCount }}</div>
                 </div>
                 <div>
-                    @for (message of messages; track $index) {
-                    <div *ngIf="!isTheSameDate($index)" class="placeholder-thread">
-                        <div class="placeholder-date-thread">{{ showPlaceholder($index)}}</div>
+                    @for (message of messages; track message.threadMessageId; let i = $index) {
+                    <div *ngIf="!isTheSameDate(i)" class="placeholder-thread">
+                        <div class="placeholder-date-thread">{{ showPlaceholder(i)}}</div>
                     </div>
-                    <app-thread-messages [members]="members" [message]="message" [index]="$index"></app-thread-messages>
+                    <app-thread-messages [members]="members" [message]="message" [index]="i"></app-thread-messages>
                     }
                 </div>
             </div>
