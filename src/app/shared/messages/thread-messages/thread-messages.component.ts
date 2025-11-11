@@ -56,12 +56,13 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   text!: void;
   moreEmoji: boolean = false;
   showPopupIndexNumber!: number;
+  reactions!: any;
 
   constructor(
     private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-
+    this.reactions = this.message?.reactions ?? [];
   }
 
   getChannelInfo() {
@@ -72,21 +73,25 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      this.showName();
-      this.time = this.showTime();
-      this.text = this.showText();
-    }, 1)
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['message']) {
-      if (this.textRef) {
+      const nextMsg = changes['message'].currentValue as { reactions?: any[] } | undefined;
+      this.reactions = nextMsg?.reactions ?? [];
+      console.log(this.reactions);
+
+      if (this.textRef && nextMsg) {
+        this.text = this.showText();
+        this.showName();
+        this.time = this.showTime();
         this.text = this.showText();
       }
     }
     this.currentUser = this.getCurrentUserId();
     this.time = this.showTime();
+
+
   }
 
   onMouseEnter() {
