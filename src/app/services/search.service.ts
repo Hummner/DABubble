@@ -56,6 +56,10 @@ export class SearchService {
     const channels = await this.channelService.getAllChannels();
     const directMessages = await this.directMessageService.getAllDirectMessages();
 
+    return this.handleSearchType(searchTextTrimmed, members, channels, directMessages);
+  }
+
+  handleSearchType(searchTextTrimmed: string, members: { id: string }[], channels: any[], directMessages: any[]) {
     if (searchTextTrimmed.startsWith('@')) {
       return this.searchForUsers(searchTextTrimmed.slice(1), members);
     } else if (searchTextTrimmed.startsWith('#')) {
@@ -63,7 +67,7 @@ export class SearchService {
     } else if (searchTextTrimmed.length > 2) {
       this.isLoading = true;
       return this.searchForMessages(searchTextTrimmed.toLowerCase(), channels, directMessages);
-    } else if (searchTextTrimmed.length <= 2) {
+    } else if (this.isTooShortAndNotPrefixed(searchTextTrimmed)) {
       return this.toFewLetters();
     }
 
@@ -104,12 +108,16 @@ export class SearchService {
     return this.noFilteredMessagesFound(filteredMessages);
   }
 
+  isTooShortAndNotPrefixed(text: string) {
+    return (!text.startsWith('@') && !text.startsWith('#')) && text.length <= 2 && text.length > 0;
+  }
+
   toFewLetters() {
     return {
       users: [],
       channels: [],
       messages: [],
-      noResultsMessage: 'Bitte geben sie mindestens 3 Buchstaben ein.',
+      noResultsMessage: 'Bitte geben sie mindestens drei Buchstaben ein.',
     };
   }
 

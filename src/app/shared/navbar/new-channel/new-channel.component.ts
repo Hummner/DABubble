@@ -4,9 +4,10 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AddChannelMemberComponent } from '../add-channel-member/add-channel-member.component';
 import { NgClass, NgIf } from '@angular/common';
 import { NavbarInterface } from '../../../interfaces/navbar.interface';
-import { addDoc, Firestore, collection, query, where, getDocs } from '@angular/fire/firestore';
-import { Observable, timer } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { addDoc, Firestore, collection, query, where, getDocs, updateDoc } from '@angular/fire/firestore';
+import { FirestoreService } from '../../../services/firestore.service';
+import { NavbarService } from '../../../services/navbar.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-channel',
@@ -20,8 +21,9 @@ import { switchMap, map } from 'rxjs/operators';
   ]
 })
 export class NewChannelComponent {
-
+  userProfile = this.firestoreService.userProfile;
   navbar: Partial<NavbarInterface> = {}
+  navbarService = inject(NavbarService);
   channelName = '';
   channelDescription = '';
 
@@ -33,8 +35,11 @@ export class NewChannelComponent {
   private dialogRef = inject(MatDialogRef<NewChannelComponent>);
   constructor(
     private dialog: MatDialog,
+    private firestoreService: FirestoreService,
     private firestore: Firestore,
-    private formbuilder: FormBuilder) {}
+    private formbuilder: FormBuilder,
+    private router: Router,) {}
+    
 
   ngOnInit() {
     this.form = this.formbuilder.group({
@@ -77,14 +82,33 @@ export class NewChannelComponent {
 
   private async addChannelToFirestore(): Promise<void> {
     this.navbar.members = [];
+    this.navbar = this.addCreatorToChannel();
     const docRef = await addDoc(collection(this.firestore, 'channels'), {
       ...this.navbar,
-      members: this.navbar.members
+      members: this.navbar.members,
     });
 
-    this.navbar.channelId = docRef.id;
-    this.openAddMemberDialog(this.navbar.channelId, this.navbar.members);
+    let newChannelID = await this.updateChannelIDToFirestore(docRef);
+    this.openAddMemberDialog(newChannelID || '', this.navbar.members || []);
     this.closeDialog();
+  }
+
+  async updateChannelIDToFirestore(docRef: any) {
+    this.navbar.channelId = docRef.id;
+      await updateDoc(docRef, { 
+        channelId: docRef.id 
+      });
+      return this.navbar.channelId
+  }
+
+  addCreatorToChannel(){
+    this.navbar.members?.push({
+      id: this.userProfile()?.uid || '',
+      role: 'admin',
+      name: this.userProfile()?.name || '',
+      imgUrl: this.userProfile()?.imgUrl || ''
+    });
+    return this.navbar
   }
 
   openAddMemberDialog(channelId: string, members: any[]) {

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, Input, Output, EventEmitter, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { FirestoreService } from '../../services/firestore.service';
 import { NgIf, DatePipe, AsyncPipe, NgClass } from '@angular/common';
@@ -38,6 +38,7 @@ export class HeaderComponent implements OnInit {
   isMobileView = false;
   private previousIsMobileView = false;
   @ViewChild('menuTrigger') menuTrigger!: MatMenuTrigger;
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   ngOnInit(): void {
     const user = this.userProfile();
@@ -51,6 +52,10 @@ export class HeaderComponent implements OnInit {
     public dialog: MatDialog,
     private menuOverlay: ResponsiveMenuOverlayService
   ) {}
+
+  ngAfterViewInit() {
+    this.channelService.registerSearchInput(this.searchInput.nativeElement);
+  }
 
   @HostListener('window:resize')
   onResize() {

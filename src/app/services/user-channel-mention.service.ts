@@ -75,7 +75,6 @@ export class UserMentionService {
   }
 
   takeChannel(name: string, content: string): string {
-    debugger;
     const lastAtIndex = content.lastIndexOf('#');
     if (lastAtIndex !== -1) {
       const before = content.slice(0, lastAtIndex);

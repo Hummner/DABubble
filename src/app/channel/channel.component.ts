@@ -39,6 +39,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService);
@@ -69,8 +70,10 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   channelNameExists = false;
   windowWidth = window.innerWidth;
   isSending = false
+  stopAutoFokus = false;
 
-  constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
+  constructor(
+    private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -80,6 +83,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.getChannelInfo();
     this.setupMessagesSubscription();
     this.channelsService.focusRequest$.subscribe(() => {
+      this.stopAutoFokus = false;
       this.focusTextarea();
     });
   }
@@ -110,6 +114,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.scrollToBottom();
       this.initialScrollDone = true;
     }
+    this.focusTextarea();
   }
 
   checkWindowWidth() {
@@ -125,6 +130,28 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.windowWidth = width;
     this.checkWindowWidth();
     if (this.windowWidth >= 1400) {
+    }
+  }
+
+  @HostListener('window:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const clickedInsideTextarea = this.chatInput?.nativeElement.contains(event.target as Node);
+    const clickedChannelList = (event.target as HTMLElement).closest('.channel-item');
+    const clickedHeaderSearch = (event.target as HTMLElement).closest('.search-container');
+
+    if (clickedChannelList) return
+
+    this.removeFokusFromTextarea(clickedInsideTextarea, clickedHeaderSearch);
+  }
+
+  removeFokusFromTextarea(clickedInsideTextarea: boolean, clickedHeaderSearch: Element | null) {
+    if (!clickedInsideTextarea) {
+      this.stopAutoFokus = true;
+      this.chatInput.nativeElement.blur();
+
+      if (clickedHeaderSearch) {
+        this.channelsService.focusSearchInput();
+      }
     }
   }
 
@@ -317,12 +344,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   focusTextarea() {
-    if (this.chatInput && !this.loading) {
-      setTimeout(() => {
-        if (!this.textInput || this.textInput.trim() === '') {
-          this.chatInput.nativeElement.focus();
-        }
-      }, 1000);
+    if (this.chatInput && !this.loading && !this.stopAutoFokus) {
+      this.chatInput.nativeElement.focus();
     }
   }
 

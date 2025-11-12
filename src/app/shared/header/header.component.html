@@ -6,7 +6,7 @@
   </div>
 
   <div class="search-container">
-    <input id="search" type="search" placeholder="Devspace durchsuchen" (input)="this.searchService.onSearch($event)" />
+    <input #searchInput id="search" type="search" placeholder="Devspace durchsuchen" (input)="this.searchService.onSearch($event)" />
     <mat-icon class="search-icon">search</mat-icon>
     @if (this.searchService.searchText != '') {
     <div class="search-results-container">
@@ -22,7 +22,7 @@
             </a>
           }
           @if (this.searchService.searchText[0] == '#') {
-            @for (channel of this.navbarService.channelsObs$ | async; track channel) {
+            @for (channel of this.navbarService.hideChannelWithoutCurrentUser() | async; track channel) {
               @if (channel.name.toLowerCase().includes(this.searchService.searchText.slice(1))) {
                 <li class="search-result-item" (click)="this.navbarService.selectChannel(channel.channelId)">
                     <p>{{ channel.name }}</p>
@@ -84,7 +84,7 @@
         </button>
         <button class="mat-menu-item-btn" mat-menu-item (click)="logOut()">
           <img class="menu-resp" src="assets/icon/logout.svg" alt="" />
-          <p>Log Out</p>
+          <p>Ausloggen</p>
         </button>
       </div>
     </mat-menu>

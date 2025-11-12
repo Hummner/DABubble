@@ -16,6 +16,7 @@ export class ChannelsService implements OnDestroy {
   private channelSubject = new BehaviorSubject<ChannelInterface | null>(null);
   private messagesSubject = new BehaviorSubject<TicketInterface[]>([]);
   private focusRequest = new Subject<void>();
+  private searchInputRef: HTMLInputElement | null = null;
   firestoreService = inject(FirestoreService);
   focusRequest$ = this.focusRequest.asObservable();
   messages$ = this.messagesSubject.asObservable();
@@ -24,6 +25,10 @@ export class ChannelsService implements OnDestroy {
   channelURL!: string;
   unsubChannel?: () => void;
   unsubMessages?: () => void;
+
+  registerSearchInput(input: HTMLInputElement) {
+    this.searchInputRef = input;
+  }
 
   constructor() { }
 
@@ -256,5 +261,9 @@ export class ChannelsService implements OnDestroy {
 
   requestFocus() {
     this.focusRequest.next();
+  }
+
+  focusSearchInput() {
+    this.searchInputRef?.focus();
   }
 }

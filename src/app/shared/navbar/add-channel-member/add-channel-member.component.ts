@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
 import { FirestoreService } from '../../../services/firestore.service';
 import { NavbarInterface } from '../../../interfaces/navbar.interface';
-import { updateDoc, arrayUnion, Firestore, doc, docData } from '@angular/fire/firestore';
+import { updateDoc, arrayUnion, Firestore, doc } from '@angular/fire/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarService } from '../../../services/navbar.service';
 
@@ -98,7 +98,7 @@ export class AddChannelMemberComponent {
       this.allUsers = this.firestoreService.userList().filter(
         (user) =>
           user.name.toLowerCase().includes(this.searchText.toLowerCase()) 
-          && !this.members.find(m => m.id === user.uid)
+          && !this.members.find(m => m.id === user.uid) && user.uid !== this.userProfile()?.uid
       );
     }
   }
@@ -176,13 +176,11 @@ export class AddChannelMemberComponent {
     } else if (this.inviteMode === 1) {
       this.addAllMemmberToChannel();
     }
+    this.navigateToChannelAfterCreation();
   }
 
   navigateToChannelAfterCreation() {
     this.closeDialog();
-    setTimeout(() => {
-      this.navbarService.selectChannel(this.channelId);
-      this.router.navigateByUrl('/channel/' + this.channelId);
-    }, 1000);
+    this.navbarService.selectChannel(this.channelId);
   }
 }

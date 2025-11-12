@@ -15,7 +15,6 @@ export class NavbarService implements OnDestroy {
   private firestore = inject(Firestore);
   private stop!: Unsubscribe;
   userProfile = this.firestoreService.userProfile;
-
   private channels$ = new BehaviorSubject<NavbarInterface[]>([]);
   channelsObs$ = this.channels$.asObservable();
 
@@ -50,18 +49,24 @@ export class NavbarService implements OnDestroy {
   }
 
   selectChannel(channelId: string) {
-    this.channels$.subscribe((channels) => {
-      const selectedChannel = channels.find(
-        (channel) => channel.channelId === channelId
-      );
-      if (selectedChannel) {
-        this.searchService.searchText = '';
-        this.selectedChannelId$.next(channelId);
-        this.channelService.getChannel(selectedChannel.channelId);
-        this.router.navigateByUrl(`channel/${selectedChannel.channelId}`);
-        this.focusOnChannelTextarea();
-      }
-    });
+    this.searchService.searchText = '';
+    this.selectedChannelId$.next(channelId);
+    this.channelService.getChannel(channelId);
+    this.router.navigateByUrl(`channel/${channelId}`);
+    this.focusOnChannelTextarea();
+  }
+  
+  hideChannelWithoutCurrentUser() {
+    const filteredChannels$ = this.channelsObs$.pipe(
+      map(channels =>
+        channels.filter(channel =>
+          (channel.members ?? []).some(
+            member => member.id === this.currentUserId()
+          )
+        )
+      )
+    );
+    return filteredChannels$
   }
 
   getSelectedChannelId() {

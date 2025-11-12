@@ -142,7 +142,7 @@ form {
   flex-direction: column;
   gap: 8px;
   list-style: none;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   margin-top: 8px;
   padding-left: 8px;
   margin-right: 16px;
@@ -294,7 +294,8 @@ form {
   left: 20px;
   z-index: 1000;
   width: 100%;
-  max-width: 250px;
+  max-width: fit-content;
+  max-height: fit-content;
   height: 160px;
   overflow-y: auto;
   box-sizing: border-box;
