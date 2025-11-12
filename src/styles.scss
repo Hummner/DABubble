@@ -182,3 +182,17 @@ $breakpoint-lg: 992px;
     left: 14px;
   }
 }
+
+@keyframes messageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0) scale(1.02);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}

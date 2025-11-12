@@ -157,7 +157,7 @@
               <mat-menu #reactMenu="matMenu" class="emoji-menu-small">
                 <div class="emoji-menu-container">
                   @for (emoji of emojiService.sortedEmojis; track emojiService.emojiList) {
-                  <span class="emoji-in-popup" (click)="onEmojiClick(emoji); $event.stopPropagation()">{{ emoji.code }}</span>
+                  <span class="emoji-in-popup" (click)="onEmojiClick(emoji); $event.stopPropagation()"><img src="assets/emojis/{{ emoji.name }}.png" /></span>
                   }
                 </div>
               </mat-menu>
@@ -178,7 +178,7 @@
                 @for(channel of userMentionService.filteredChannelList(); track channel) {
                 <menu mat-menu-item class="channel-menu-item" (click)="takeChannel(channel.name)">
                   <img src="assets/icon/tag_channel.png" alt="" />
-                  <p>{{ channel.name }}</p>
+                  <p class="truncate">{{ channel.name }}</p>
                 </menu>
                 }
               </div>
@@ -189,7 +189,7 @@
                 @for(user of userMentionService.filteredUserList();track user){
                 <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
                   <img class="tagbox-img" [src]="user.imgUrl" alt="" />
-                  <p>{{ user.name }}</p>
+                  <p class="truncate">{{ user.name }}</p>
                 </menu>
                 }
               </div>

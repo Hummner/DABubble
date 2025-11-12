@@ -47,7 +47,7 @@ section {
   max-width: 100%;
   overflow: hidden;
 
-  > h2 {
+  >h2 {
     font-weight: bold;
     margin: 0;
     font-size: 24px;
@@ -106,14 +106,14 @@ section {
 }
 
 .first-message-title {
-  > h2 {
+  >h2 {
     font-weight: bold;
-    font-size: 24px;          
+    font-size: 24px;
   }
 }
 
 .first-message-text {
-  > p {
+  >p {
     font-size: 20px;
   }
 }
@@ -195,7 +195,7 @@ header {
   align-items: center;
   margin-right: -8px;
 
-  > img {
+  >img {
     object-fit: cover;
     width: 100%;
     height: 100%;
@@ -203,7 +203,7 @@ header {
     border: 1px solid white;
   }
 
-  > span {
+  >span {
     font-size: 18px;
     font-weight: 600;
     width: 100%;
@@ -259,7 +259,7 @@ footer {
     filter: brightness(0) saturate(100%) invert(43%) sepia(61%) saturate(6164%) hue-rotate(228deg) brightness(96%) contrast(97%);
   }
 
-  > img {
+  >img {
     width: 24px;
     height: 24px;
   }
@@ -276,12 +276,13 @@ footer {
   display: flex;
   flex: 1;
 
-  > textarea {
+  >textarea {
     width: 100%;
     height: 100%;
     border: none;
     resize: none;
     font-size: 18px;
+
     &:focus {
       outline: none;
     }
@@ -308,16 +309,23 @@ main {
 }
 
 .emoji-in-popup {
-  margin: 4px;
-  font-size: 20px;
-  padding: 6px;
-  cursor: pointer;
-  transform: scale(1);
-  transition: transform 75ms ease-in-out;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  >img {
+    width: 25px;
+    height: 25px;
+  }
 
   &:hover {
-    transform: scale(1.2);
+    cursor: pointer;
+    background-color: #eceefe;
   }
+
 }
 
 .backdrop {
@@ -385,7 +393,7 @@ main {
 
 .disabled {
   opacity: 0.5;
-  cursor:not-allowed
+  cursor: not-allowed
 }
 
 @import "_menu-container.channel.scss";
