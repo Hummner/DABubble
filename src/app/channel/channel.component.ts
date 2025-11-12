@@ -39,6 +39,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService);
@@ -71,7 +72,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   isSending = false
   stopAutoFokus = false;
 
-  constructor(private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
+  constructor(
+    private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -115,7 +117,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.focusTextarea();
   }
 
-
   checkWindowWidth() {
     if (window.innerWidth > 1024) {
       this.drawerMode = 'side';
@@ -134,15 +135,23 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   @HostListener('window:click', ['$event'])
   onClickOutside(event: MouseEvent) {
-    const clickedInside = this.chatInput?.nativeElement.contains(event.target as Node);
-    const clickedChannelList = (event.target as HTMLElement).closest('.channel-list');
-    console.log("clickedChannelList", clickedChannelList);
+    const clickedInsideTextarea = this.chatInput?.nativeElement.contains(event.target as Node);
+    const clickedChannelList = (event.target as HTMLElement).closest('.channel-item');
+    const clickedHeaderSearch = (event.target as HTMLElement).closest('.search-container');
 
     if (clickedChannelList) return
 
-    if (!clickedInside) {
+    this.removeFokusFromTextarea(clickedInsideTextarea, clickedHeaderSearch);
+  }
+
+  removeFokusFromTextarea(clickedInsideTextarea: boolean, clickedHeaderSearch: Element | null) {
+    if (!clickedInsideTextarea) {
       this.stopAutoFokus = true;
       this.chatInput.nativeElement.blur();
+
+      if (clickedHeaderSearch) {
+        this.channelsService.focusSearchInput();
+      }
     }
   }
 
