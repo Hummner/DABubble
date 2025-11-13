@@ -15,15 +15,20 @@
               <img class="ph-img" src="assets/icon/person_filled.png" alt="Name Placeholder Image" />
               @if((signupFormControl.name.touched || submitted )&& signupFormControl.name.errors?.['required']){
               <span class="error">Name is required</span>
+              } @if((signupFormControl.name.touched || submitted )&& signupFormControl.name.errors?.['whitespace']){
+              <span class="error">Name cannot contain only spaces</span>
               }
             </div>
             <div class="input-email">
               <input class="fs-18" type="text" formControlName="email" required placeholder="beispielname@email.com" />
               <img class="ph-img" src="assets/icon/mail.png" alt="Email Placeholder Image" />
-              @if((signupFormControl.email.touched || submitted )&& signupFormControl.email.errors?.['required']){
+              @if((signupFormControl.email.touched || submitted) && signupFormControl.email.errors?.['required']){
               <span class="error">Email is required</span>
-              } @if((signupFormControl.email.touched ||submitted) && signupFormControl.email.errors?.['invalidEmail']){
-              <span class="error">Invalid Email</span>
+              } @if((signupFormControl.email.touched || submitted) && signupFormControl.email.errors?.['whitespace']){
+              <span class="error">Email cannot contain only spaces</span>
+              } @if((signupFormControl.email.touched || submitted) && (signupFormControl.email.errors?.['email'] ||
+              signupFormControl.email.errors?.['invalidEmail']) && !signupFormControl.email.errors?.['whitespace']){
+              <span class="error">Invalid email format</span>
               } @if(errorMessage){
               <div>{{ errorMessage }}</div>
               }
@@ -47,12 +52,14 @@
             </div>
             <div class="input-checkbox">
               <input type="checkbox" class="checkbox" id="checkbox" required formControlName="privacyPolicy" />
-              <label for="checkbox">Ich stimme der <a [routerLink]="['/impressum']"><span class="blue span">Datenschutzerklärung</span></a> zu</label>
+              <label for="checkbox"
+                >Ich stimme der <a [routerLink]="['/impressum']"><span class="blue span">Datenschutzerklärung</span></a> zu</label
+              >
             </div>
           </div>
 
           <div class="btn-section">
-            <button [disabled]="isFormEmpty" [class.disabled]="isFormEmpty" type="submit" class="fs-18">Weiter</button>
+            <button [disabled]="isFormInvalid" [class.disabled]="isFormInvalid" type="submit" class="fs-18">Weiter</button>
           </div>
         </form>
       </div>
