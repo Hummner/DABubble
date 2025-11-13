@@ -61,15 +61,15 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    if (this.ticket.threads) {
-      this.getMessageId();
-      let ticketPath = this.ticket.threads.path.split('/').slice(3, 4).join('/');
-      if (this.messageId === ticketPath) {
-        setTimeout(() => {
-          this.openThreadPanel();
-        }, 20);
-      }
-    };
+    // if (this.ticket.threads) {
+    //   this.getMessageId();
+    //   let ticketPath = this.ticket.threads.path.split('/').slice(3, 4).join('/');
+    //   if (this.messageId === ticketPath) {
+    //     setTimeout(() => {
+    //       this.openThreadPanel();
+    //     }, 20);
+    //   }
+    // };
     if (this.ticket) {
       this.showName();
       this.time = this.showTime();
@@ -197,9 +197,9 @@ openThreadUrl() {
   // optional: const channelPath = path.split('/')[1];
 
   // 1) Trigger Laden
-  this.getThreadPath(path);
-  this.threadsService.getThreadsFromTicket(path, this.ticket);
-  this.threadsService.getCurrentTicket();
+  // this.getThreadPath(path);
+  // this.threadsService.getThreadsFromTicket(path);
+  // this.threadsService.getCurrentTicket();
 
   // 2) Auf erste Daten warten
   firstValueFrom(
@@ -214,14 +214,14 @@ openThreadUrl() {
   });
 }
 
-  openThreadPanel() {
-    if (this.ticket.threads?.path) {
-      this.getThreadPath(this.ticket.threads?.path)
-      this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
-      this.threadsService.getCurrentTicket()
-      this.openThread.emit()
-    }
-  }
+  // openThreadPanel() {
+  //   if (this.ticket.threads?.path) {
+  //     this.getThreadPath(this.ticket.threads?.path)
+  //     this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
+  //     this.threadsService.getCurrentTicket()
+  //     this.openThread.emit()
+  //   }
+  // }
 
   selectEmoji(emoji: { name: string, code: string }) {
     this.emojiService.selectEmoji(emoji.name)

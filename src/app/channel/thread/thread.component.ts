@@ -16,7 +16,7 @@ import { EmojiArrayService } from '../../services/emoji-array.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, distinctUntilChanged, flatMap } from 'rxjs/operators';
 import { ChannelsService } from '../../services/channels.service';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 
@@ -84,23 +84,23 @@ export class ThreadComponent implements OnInit, OnDestroy {
     // .subscribe(msgArray => {
     //   this.messages = msgArray
     //   console.log(this.messages);
-      
+
     // });
 
-    
-this.messagesSubscription = this.threadService.messagesSubscribe$
-  .subscribe(arr => {
-    if (!this.firstSeen) {          // erste Emission
-      this.firstSeen = true;
-      this.loading = false;
-    }
-    this.messages = (arr ?? []).map(m => ({
-      ...m,
-      reactions: m.reactions ? [...m.reactions] : []
-    }));
-    // bei OnPush:
-    // this.cdr.markForCheck();
-  });
+
+    this.messagesSubscription = this.threadService.messagesSubscribe$
+      .subscribe(arr => {
+        if (!this.firstSeen) {          // erste Emission
+          this.firstSeen = true;
+          this.loading = false;
+        }
+        this.messages = (arr ?? []).map(m => ({
+          ...m,
+          reactions: m.reactions ? [...m.reactions] : []
+        }));
+        // bei OnPush:
+        // this.cdr.markForCheck();
+      });
 
     this.currentTicketSubscription = this.threadService.currentTicketSubscribe$.pipe(
       filter((t): t is TicketInterface => !!t), distinctUntilChanged((a, b) => a.text === a.text && a.createdAt === b.createdAt)
@@ -113,8 +113,25 @@ this.messagesSubscription = this.threadService.messagesSubscribe$
     this.currentChannelSubscription = this.channelService.channel$.subscribe(channel => {
       this.members = channel?.members
       console.log("Members:", this.members);
-      
+
     })
+    let path = this.router.url
+
+    const parts = path.replace(/^\/+/, '').split('/');
+    // parts[0] = "channel"
+
+    parts[0] = "channels";
+    // jetzt ist es korrekt
+
+    const newPath = parts.join('/');
+    console.log(newPath);
+
+    let threadId = path.split("/")[4]
+    let ticketId = path.split("/")[2]
+    console.log("ids:", threadId, + " " + ticketId);
+
+    this.threadsService.getThreadsFromTicket(threadId, ticketId, newPath);
+    this.threadsService.getCurrentTicket();
 
     this.isThreadOpen = this.isThreadOpenFunc()
   }
