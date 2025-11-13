@@ -10,26 +10,31 @@
   position: relative;
 }
 
-
 .main-logo {
-  width:250px;
-  height:65px;
+  width: 257px;
+  height: 65px;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14.5px;
   transform-origin: 0% 50%;
+  margin-right:18px;
+  margin-top:2px;
 }
 
 .main-logo .logo {
+  margin-top: 1px;
   width: 60px;
-  height: 60px;
+  height: 59px;
+  margin-bottom:2px;
+  margin-left:-6.5px;
 }
 
 .main-logo .name {
-  width: 184px;
+  width: 260px;
   height: 29px;
   display: block;
   filter: invert(100%);
+  margin-top:0px;
 }
 
 .whole-img {
@@ -182,7 +187,7 @@
   height: auto !important;
   display: flex !important;
   align-items: center !important;
-  gap: 40px !important;
+  gap: 38px !important;
   transform: scale(0.4);
 }
 
@@ -204,7 +209,7 @@
 .animation-finished .greeting-name {
   position: static !important;
   left: auto !important;
-  width: 460px !important;
+  width: 470px !important;
   height: auto !important;
   display: block !important;
 }
