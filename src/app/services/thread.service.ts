@@ -26,14 +26,14 @@ export class ThreadService {
   constructor() { }
 
 
-  getThreadsFromTicket(threadPath: string, ticket: TicketInterface) {
+  getThreadsFromTicket(messageId: string, ticketId: string, url: string) {
     if (this.unsubMessages) {
       this.unsubMessages();
       console.log('alte snap destoyed');
     }
-    let getThreadRef = collection(this.firestore, threadPath);
-    this.threadPath = threadPath
-    this.currentTicketOpened = ticket
+    let getThreadRef = collection(this.firestore, "channels", ticketId, "messages", messageId, "threads"
+    );
+    this.threadPath = url + "/threads"
     let q = query(getThreadRef, orderBy('createdAt'))
     this.unsubMessages = onSnapshot(q, (msgList) => {
       let messageArray: TicketInterface[] = [];
@@ -43,6 +43,11 @@ export class ThreadService {
         messageArray.push(message)
       });
       this.messagesSubscribe.next(messageArray);
+      setInterval(() => {
+        console.log(messageArray);
+      }, 2000);
+      
+      
 
     });
   }
@@ -52,6 +57,8 @@ export class ThreadService {
     this.unsubCurrentTicket = onSnapshot(ticketPath, (ticket) => {
       let ticketData = ticket.data() as TicketInterface;;
       this.currentTicketSubscribe.next(ticketData);
+      console.log(ticketData);
+      
     });
   }
 

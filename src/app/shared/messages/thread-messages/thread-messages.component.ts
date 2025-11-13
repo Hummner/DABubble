@@ -96,6 +96,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     }
     this.currentUser = this.getCurrentUserId();
     this.time = this.showTime();
+    this.showName();
 
 
   }
@@ -218,7 +219,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   showName() {
-    if (!this.message) return
+    if (!this.message && !this.members) return
     const userIndex = this.findUser(this.message.senderId)
     if (userIndex >= 0 && this.members && this.isMember(userIndex, this.members)) {
       this.userName = this.members[userIndex]['name'];
@@ -242,10 +243,13 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   showText() {
+    if (!this.message) return
     if (this.textRef) {
+      
       this.textRef.nativeElement.innerHTML = "";
       let container = document.createElement('p');
       container.classList.add('text-link')
+      container.style.margin = '0';
       let text = this.message.text;
       let taggedUsers = this.getUserList(text);
       let taggedChannels = this.getChannelList(text)
