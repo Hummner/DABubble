@@ -15,6 +15,8 @@ export class ThreadService {
   private messagesSubscribe = new BehaviorSubject<TicketInterface[]>([])
   messagesSubscribe$ = this.messagesSubscribe.asObservable();
   private currentTicketSubscribe = new BehaviorSubject<TicketInterface | null>(null);
+  loadingThread$ = new BehaviorSubject<boolean>(true)
+  loadingCurrentTicket$ = new BehaviorSubject<boolean>(true)
   currentTicketSubscribe$ = this.currentTicketSubscribe.asObservable();
   currentTicketOpened!: TicketInterface;
   threadPath!: string;
@@ -27,15 +29,18 @@ export class ThreadService {
 
 
   getThreadsFromTicket(messageId: string, ticketId: string, url: string) {
-    if (this.unsubMessages) {
-      this.unsubMessages();
-      console.log('alte snap destoyed');
-    }
-    let getThreadRef = collection(this.firestore, "channels", ticketId, "messages", messageId, "threads"
-    );
-    this.threadPath = url + "/threads"
-    let q = query(getThreadRef, orderBy('createdAt'))
+    this.unsubMessages?.();
+    this.loadingThread$.next(true);
+
+    let getThreadRef = collection(this.firestore, "channels", ticketId, "messages", messageId, "threads");
+    this.threadPath = url + "/threads";
+
+    let q = query(getThreadRef, orderBy('createdAt'));
+    let first = true;
+
     this.unsubMessages = onSnapshot(q, (msgList) => {
+      if (first) { first = false; this.loadingThread$.next(false); }
+
       let messageArray: TicketInterface[] = [];
       this.threadMessageCount = msgList.docs.length
       msgList.forEach(msg => {
@@ -43,12 +48,6 @@ export class ThreadService {
         messageArray.push(message)
       });
       this.messagesSubscribe.next(messageArray);
-      setInterval(() => {
-        console.log(messageArray);
-      }, 2000);
-      
-      
-
     });
   }
 
@@ -57,15 +56,13 @@ export class ThreadService {
     this.unsubCurrentTicket = onSnapshot(ticketPath, (ticket) => {
       let ticketData = ticket.data() as TicketInterface;;
       this.currentTicketSubscribe.next(ticketData);
-      console.log(ticketData);
-      
     });
   }
 
   reemitCurrentTicket() {
     const v = this.currentTicketSubscribe.value;
     console.log(v);
-    
+
     if (v) this.currentTicketSubscribe.next({ ...v }); // neue Referenz erzwingen
   }
 

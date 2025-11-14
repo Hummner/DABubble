@@ -86,64 +86,69 @@ export class ThreadComponent implements OnInit, OnDestroy {
     //   console.log(this.messages);
 
     // });
+    this.setupLoadingSpinner();
+    this.setupMessagesSub();
+    this.setupCurrentTicketSub();
+    this.setupMembersSub();
+    this.setupThreadMessages();
 
 
+
+  }
+
+  setupLoadingSpinner() {
+    this.threadService.loadingThread$.subscribe((spinner) => {
+      this.loading = spinner
+      console.log(this.loading);
+
+    })
+  }
+
+  setupMessagesSub() {
     this.messagesSubscription = this.threadService.messagesSubscribe$
       .subscribe(arr => {
-        if (!this.firstSeen) {          // erste Emission
-          this.firstSeen = true;
-          this.loading = false;
-        }
         this.messages = (arr ?? []).map(m => ({
           ...m,
           reactions: m.reactions ? [...m.reactions] : []
         }));
-        // bei OnPush:
-        // this.cdr.markForCheck();
       });
+  }
 
+  setupCurrentTicketSub() {
     this.currentTicketSubscription = this.threadService.currentTicketSubscribe$.pipe(
       filter((t): t is TicketInterface => !!t), distinctUntilChanged((a, b) => a.text === a.text && a.createdAt === b.createdAt)
     ).subscribe(ticket => {
       this.currentTicket = ticket
-      console.log(this.currentTicket);
       this.messagesCount = this.messagesCounter();
     });
+  }
 
-    this.currentChannelSubscription = this.channelService.channel$.subscribe(channel => {
-      this.members = channel?.members
-      console.log("Members:", this.members);
+  setupMembersSub() {
+    this.currentChannelSubscription = this.channelService.channel$
+      .subscribe(c => this.members = c?.members);
+  }
 
-    })
-    let path = this.router.url
-
-    const parts = path.replace(/^\/+/, '').split('/');
-    // parts[0] = "channel"
-
-    parts[0] = "channels";
-    // jetzt ist es korrekt
-
-    const newPath = parts.join('/');
-    console.log(newPath);
-
-    let threadId = path.split("/")[4]
-    let ticketId = path.split("/")[2]
-    console.log("ids:", threadId, + " " + ticketId);
-
-    this.threadsService.getThreadsFromTicket(threadId, ticketId, newPath);
+  setupThreadMessages() {
+    let urlIds = this.getUrlIds()
+    this.threadsService.getThreadsFromTicket(urlIds.threadId, urlIds.ticketId, urlIds.apiPath);
     this.threadsService.getCurrentTicket();
+    this.isThreadOpen = this.isThreadOpenFunc();
+  }
 
-    this.isThreadOpen = this.isThreadOpenFunc()
+  getUrlIds() {
+    const parts = this.router.url.replace(/^\/+/, '').split('/');
+    parts[0] = 'channels';
+
+    const apiPath = parts.join('/');
+    const [, ticketId, , threadId] = parts;
+
+    return { ticketId: parts[1], threadId: parts[3], apiPath: apiPath }
   }
 
   isThreadOpenFunc() {
-    let path = this.router.url
-    let ticketPath = path.split("/")[4]
-    if (ticketPath) {
-      return true
-    } else {
-      return false
-    }
+    console.log(this.router.url.split('/')[4]);
+
+    return !!this.router.url.split('/')[4];
   }
 
   checkTheKey(event: KeyboardEvent) {
@@ -296,7 +301,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.messagesSubscription?.unsubscribe();
     this.currentTicketSubscription?.unsubscribe();
-    console.log("messagesSubctiption und currentTicketSubscription destroyed");
-
+    this.loading = false
   }
 }

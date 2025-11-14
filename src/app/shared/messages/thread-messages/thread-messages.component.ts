@@ -82,23 +82,14 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-
     if (changes['message']) {
       const nextMsg = changes['message'].currentValue as { reactions?: any[] } | undefined;
       this.reactions = nextMsg?.reactions ?? [];
-
       this.text = this.showText();
-      this.showName();
-      this.time = this.showTime();
-
-
     }
     this.currentUser = this.getCurrentUserId();
     this.time = this.showTime();
     this.showName();
-
-
   }
 
   onMouseEnter() {
@@ -219,11 +210,18 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   showName() {
-    if (!this.message && !this.members) return
-    const userIndex = this.findUser(this.message.senderId)
-    if (userIndex >= 0 && this.members && this.isMember(userIndex, this.members)) {
-      this.userName = this.members[userIndex]['name'];
-      this.userImg = this.members[userIndex]['imgUrl'];
+    if (!this.message?.senderId || !this.members) {
+      this.userName = "Guest";
+      this.userImg = "assets/img/profile.png";
+      return;
+    }
+
+    const userIndex = this.findUser(this.message.senderId);
+
+    if (userIndex >= 0 && this.isMember(userIndex, this.members)) {
+      const user = this.members[userIndex];
+      this.userName = user.name;
+      this.userImg = user.imgUrl;
     } else {
       this.userName = "Guest";
       this.userImg = "assets/img/profile.png";
@@ -245,15 +243,15 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   showText() {
     if (!this.message) return
     if (this.textRef) {
-      
-      this.textRef.nativeElement.innerHTML = "";
       let container = document.createElement('p');
-      container.classList.add('text-link')
-      container.style.margin = '0';
       let text = this.message.text;
       let taggedUsers = this.getUserList(text);
       let taggedChannels = this.getChannelList(text)
       let taggedArray = taggedUsers.concat(taggedChannels);
+
+      this.textRef.nativeElement.innerHTML = "";
+      container.classList.add('text-link')
+      container.style.margin = '0';
       if (taggedArray.length == 0) this.createTextElement(container, text)
       taggedArray.sort((a, b) => a.textIndex - b.textIndex)
       text = this.replaceTaggedText(taggedArray, text);
