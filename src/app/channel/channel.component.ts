@@ -42,6 +42,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('threadTrigger') threadTrigger!: MatDrawer;
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService);
