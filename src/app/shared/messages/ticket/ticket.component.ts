@@ -192,24 +192,15 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
 openThreadUrl() {
   const path = this.ticket.threads?.path;
   if (!path) return;
-
   const ticketpath = path.split('/')[3];
-  // optional: const channelPath = path.split('/')[1];
-
-  // 1) Trigger Laden
-  // this.getThreadPath(path);
-  // this.threadsService.getThreadsFromTicket(path);
-  // this.threadsService.getCurrentTicket();
-
-  // 2) Auf erste Daten warten
   firstValueFrom(
     this.threadsService.messagesSubscribe$
       .pipe(
-        filter(arr => Array.isArray(arr)), // nicht undefined/null
-        take(1) // nur erstes Mal
+        filter(arr => Array.isArray(arr)), 
+        take(1)
       )
   ).then(() => {
-    // 3) Jetzt ist sicher was da → navigieren
+
     this.router.navigate(['messages', ticketpath], { relativeTo: this.route });
   });
 }

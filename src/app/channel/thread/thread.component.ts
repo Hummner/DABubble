@@ -14,7 +14,7 @@ import { UserMentionService } from '../../services/user-channel-mention.service'
 import { EmojiServiceService } from '../../services/emoji.service';
 import { EmojiArrayService } from '../../services/emoji-array.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, distinctUntilChanged, flatMap } from 'rxjs/operators';
+import { filter, distinctUntilChanged, flatMap, map } from 'rxjs/operators';
 import { ChannelsService } from '../../services/channels.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -70,19 +70,34 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
   constructor(private router: Router, private route: ActivatedRoute) {
   }
 
-    ngAfterViewChecked() {
-    if (!this.initialScrollDone &&this.messages.length) {
+  ngAfterViewChecked() {
+    if (!this.initialScrollDone && this.messages.length) {
       this.scrollToBottom();
       this.initialScrollDone = true;
     }
   }
 
   ngOnInit(): void {
+    this.route.paramMap
+      .pipe(
+        map(params => params.get('messageId')),
+        distinctUntilChanged()
+      )
+      .subscribe(messageId => {
+        if (!messageId) return;
+        console.log(messageId);
+        this.setupThread();
+
+      });
+  }
+
+  setupThread() {
     this.setupLoadingSpinner();
     this.setupMessagesSub();
     this.setupCurrentTicketSub();
     this.setupMembersSub();
     this.setupThreadMessages();
+
   }
 
   setupLoadingSpinner() {
@@ -126,7 +141,6 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.threadsService.getThreadsFromTicket(urlIds.tikcetId, urlIds.channelId, urlIds.apiPath);
     this.threadsService.getCurrentTicket();
     this.isThreadOpen = this.isThreadOpenFunc();
-    this.scrollToBottom();
   }
 
   getUrlIds() {
@@ -227,7 +241,7 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   scrollToBottom(): void {
     try {
-      debugger
+
       this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
       // this.chatContainer.nativeElement.scrollIntoView({ behavior: "smooth", block: "end"})
     } catch (err) { }
