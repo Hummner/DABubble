@@ -350,7 +350,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
+  background: white
 }
 
 @include respond-to(ssm) {

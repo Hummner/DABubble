@@ -122,6 +122,15 @@ app-dashboard {
   width: 100%;
 }
 
+.laoding-spinner {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white
+}
+
 $breakpoint-sm: 576px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
