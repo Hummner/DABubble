@@ -28,11 +28,11 @@ export class ThreadService {
   constructor() { }
 
 
-  getThreadsFromTicket(messageId: string, ticketId: string, url: string) {
+  getThreadsFromTicket(ticketId: string, channelId: string, url: string) {
     this.unsubMessages?.();
     this.loadingThread$.next(true);
 
-    let getThreadRef = collection(this.firestore, "channels", ticketId, "messages", messageId, "threads");
+    let getThreadRef = collection(this.firestore, "channels", channelId, "messages", ticketId, "threads");
     this.threadPath = url + "/threads";
 
     let q = query(getThreadRef, orderBy('createdAt'));

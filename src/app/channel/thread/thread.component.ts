@@ -130,19 +130,28 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
   setupThreadMessages() {
     let urlIds = this.getUrlIds()
-    this.threadsService.getThreadsFromTicket(urlIds.threadId, urlIds.ticketId, urlIds.apiPath);
+    this.threadsService.getThreadsFromTicket(urlIds.tikcetId, urlIds.channelId, urlIds.apiPath);
     this.threadsService.getCurrentTicket();
     this.isThreadOpen = this.isThreadOpenFunc();
   }
 
   getUrlIds() {
-    const parts = this.router.url.replace(/^\/+/, '').split('/');
+    const parts = this.router.url.replace(/^\/+/, '').split('/')
     parts[0] = 'channels';
 
-    const apiPath = parts.join('/');
-    const [, ticketId, , threadId] = parts;
+    if (parts[3].includes('?')) {
+      parts[3] = this.removeParamFromUrl(parts)
+    }
 
-    return { ticketId: parts[1], threadId: parts[3], apiPath: apiPath }
+    const apiPath = parts.join('/');
+    const [, channelId, , tikcetId] = parts;
+
+    return { channelId: parts[1], tikcetId: parts[3], apiPath: apiPath }
+  }
+
+  removeParamFromUrl(parts: string[]) {
+    const removeParam = parts[3].split('?')
+    return parts[3] = removeParam[0]
   }
 
   isThreadOpenFunc() {
