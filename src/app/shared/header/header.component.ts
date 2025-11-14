@@ -2,6 +2,7 @@ import { Component, inject, OnInit, Input, Output, EventEmitter, HostListener, V
 import { MatIconModule } from '@angular/material/icon';
 import { FirestoreService } from '../../services/firestore.service';
 import { NgIf, DatePipe, AsyncPipe, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../services/auth.service';
@@ -18,7 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatIconModule, NgIf, MatMenuModule, UserProfileComponent, DatePipe, AsyncPipe, NgClass, MatProgressSpinnerModule],
+  imports: [MatIconModule, NgIf, MatMenuModule, UserProfileComponent, DatePipe, AsyncPipe, NgClass, MatProgressSpinnerModule, FormsModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

@@ -6,7 +6,7 @@
   </div>
 
   <div class="search-container">
-    <input #searchInput id="search" type="search" placeholder="Devspace durchsuchen" (input)="this.searchService.onSearch($event)" />
+    <input #searchInput id="search" type="search" [(ngModel)]="searchService.searchText" placeholder="Devspace durchsuchen" (input)="this.searchService.onSearch($event)" />
     <mat-icon class="search-icon">search</mat-icon>
     @if (this.searchService.searchText != '') {
     <div class="search-results-container">
