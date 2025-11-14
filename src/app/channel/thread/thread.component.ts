@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, inject, input, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, input, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { TicketInterface } from '../../interfaces/ticket.interface';
 import { Subscription } from 'rxjs';
@@ -27,12 +27,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss'
 })
-export class ThreadComponent implements OnInit, OnDestroy {
+export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
-
+  @ViewChild('chat') chatContainer!: ElementRef<HTMLInputElement>;
 
   @Output() close = new EventEmitter<void>;
   @Input() tickets?: TicketInterface[];
@@ -59,58 +59,51 @@ export class ThreadComponent implements OnInit, OnDestroy {
   textInput: string = "";
   messagesCount!: string;
   ticketPath!: string | void;
-  number?: number
+  number?: number;
   isCurrentEdited: boolean = false;
-  isSending = false
-  loading = true
-  firstSeen = false
+  isSending = false;
+  loading = true;
+  firstSeen = false;
+  initialScrollDone = false;
 
 
   constructor(private router: Router, private route: ActivatedRoute) {
   }
 
+    ngAfterViewChecked() {
+    if (!this.initialScrollDone &&this.messages.length) {
+      this.scrollToBottom();
+      this.initialScrollDone = true;
+    }
+  }
+
   ngOnInit(): void {
-
-    // this.messagesSubscription = this.threadService.messagesSubscribe$
-    // // .pipe(
-    // //   // filter((arr): arr is TicketInterface[] => Array.isArray(arr)), 
-    // //   // distinctUntilChanged((a, b) => {
-    // //   //   if (a.length !== b.length) return false;
-    // //   //   const la = a[a.length - 1];
-    // //   //   const lb = b[b.length - 1];
-    // //   //   return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
-    // //   // })
-    // // )
-    // .subscribe(msgArray => {
-    //   this.messages = msgArray
-    //   console.log(this.messages);
-
-    // });
     this.setupLoadingSpinner();
     this.setupMessagesSub();
     this.setupCurrentTicketSub();
     this.setupMembersSub();
     this.setupThreadMessages();
-
-
-
   }
 
   setupLoadingSpinner() {
     this.threadService.loadingThread$.subscribe((spinner) => {
-      this.loading = spinner
-      console.log(this.loading);
-
-    })
+      this.loading = spinner;
+    });
   }
 
   setupMessagesSub() {
     this.messagesSubscription = this.threadService.messagesSubscribe$
-      .subscribe(arr => {
-        this.messages = (arr ?? []).map(m => ({
-          ...m,
-          reactions: m.reactions ? [...m.reactions] : []
-        }));
+      .pipe(
+        filter((arr): arr is TicketInterface[] => Array.isArray(arr)),
+        distinctUntilChanged((a, b) => {
+          if (a.length !== b.length) return false;
+          const la = a[a.length - 1];
+          const lb = b[b.length - 1];
+          return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
+        })
+      )
+      .subscribe(msgArray => {
+        this.messages = msgArray;
       });
   }
 
@@ -133,6 +126,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
     this.threadsService.getThreadsFromTicket(urlIds.tikcetId, urlIds.channelId, urlIds.apiPath);
     this.threadsService.getCurrentTicket();
     this.isThreadOpen = this.isThreadOpenFunc();
+    this.scrollToBottom();
   }
 
   getUrlIds() {
@@ -155,8 +149,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
   }
 
   isThreadOpenFunc() {
-    console.log(this.router.url.split('/')[4]);
-
     return !!this.router.url.split('/')[4];
   }
 
@@ -186,6 +178,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
         await this.threadService.addMessageToThread(senderId, text).then(() => {
           this.textInput = "";
           this.isSending = false
+          this.scrollToBottom();
         });
       }
     } catch (err) {
@@ -230,6 +223,14 @@ export class ThreadComponent implements OnInit, OnDestroy {
       if (thisTicketDateDatefrom === lastTicketDateDatefrom) return isSame = true;
     }
     return false
+  }
+
+  scrollToBottom(): void {
+    try {
+      debugger
+      this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+      // this.chatContainer.nativeElement.scrollIntoView({ behavior: "smooth", block: "end"})
+    } catch (err) { }
   }
 
   convertToDate(dateToConvert: any): Date | null {
