@@ -79,6 +79,23 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
 
   ngOnInit(): void {
+
+    this.route.paramMap
+      .pipe(
+        map(params => params.get('ChannelId')),
+        distinctUntilChanged()
+      )
+      .subscribe(channelId => {
+        if (!channelId) return;
+        this.setupChannel();
+        
+
+
+      });
+
+  }
+
+  setupChannel() {
     this.loading = true;
     this.getActiveRoute();
     this.checkWindowWidth();
@@ -90,17 +107,8 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.focusTextarea();
     });
     this.setupThreadSubscripton()
+
   }
-
-  // setupThreadSubscripton() {
-  //   this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-  //     const child = this.route.firstChild
-  //     const hasThread = !!this.route.firstChild?.snapshot.paramMap.get('messageId');
-  //     this.isThreadOpen = hasThread
-  //   })
-
-
-  // }
 
   setupThreadSubscripton() {
     this.routerSub = this.router.events.pipe(
