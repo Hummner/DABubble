@@ -19,7 +19,7 @@
       <div class="error"
           *ngIf="form.get('channelName')?.hasError('exists') 
                   && form.get('channelName')?.dirty">
-        <p class="error-message">Channel name already exists</p>
+        <p class="error-message">Der Channelname existiert bereits</p>
       </div>
       <p class="field-label" for="desc">
         Beschreibung <span class="optional-text">(optional)</span>

@@ -14,16 +14,16 @@
               <input class="fs-18" type="text" formControlName="name" required placeholder="Name und Nachname" />
               <img class="ph-img" src="assets/icon/person_filled.png" alt="Name Placeholder Image" />
               @if((signupFormControl.name.touched || submitted )&& signupFormControl.name.errors?.['required']){
-              <span class="error">Name is required</span>
+              <span class="error">Name ist erforderlich</span>
               }
             </div>
             <div class="input-email">
               <input class="fs-18" type="text" formControlName="email" required placeholder="beispielname@email.com" />
               <img class="ph-img" src="assets/icon/mail.png" alt="Email Placeholder Image" />
               @if((signupFormControl.email.touched || submitted )&& signupFormControl.email.errors?.['required']){
-              <span class="error">Email is required</span>
+              <span class="error">E-Mail-Adresse ist erforderlich</span>
               } @if((signupFormControl.email.touched ||submitted) && signupFormControl.email.errors?.['invalidEmail']){
-              <span class="error">Invalid Email</span>
+              <span class="error">Ungültige E-Mail-Adresse</span>
               } @if(errorMessage){
               <div>{{ errorMessage }}</div>
               }
@@ -33,14 +33,14 @@
               <input class="fs-18" type="password" formControlName="password" required placeholder="Passwort" />
               <img class="ph-img" src="assets/icon/lock.png" alt="Password Placeholder Image" />
               @if((signupFormControl.password.touched || submitted)&& signupFormControl.password.errors?.['required']){
-              <span class="error">Password is required</span>}
+              <span class="error">Passwort ist erfolgreich</span>}
               <div
                 class="text-red-400 text-sm"
                 *ngIf="passwordFormField?.dirty && !signupFormControl.password.errors?.['required']"
               >
                 <ul class="error-pw-list">
                   <li *ngIf="passwordFormField?.touched && passwordFormField?.errors?.['minlength']" class="block error">
-                    Password must be at least 6 characters long
+                    Das Passwort muss mindestens sechs Zeichen lang sein.
                   </li>
                 </ul>
               </div>

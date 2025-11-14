@@ -153,7 +153,6 @@
       <mat-menu #emojiEditMenu="matMenu" class="small-emoji-menu-edit">
         @for(emoji of emojiService.sortedEmojis;track emojiService.emojiList){
         <div class="emoji-menu-item" (click)="addEmoji(emoji.code)">
-          <!-- <span class="emoji-in-popup">{{ emoji.code }}</span> -->
           <img src="assets/emojis/{{ emoji.name }}.png" />
         </div>
         }

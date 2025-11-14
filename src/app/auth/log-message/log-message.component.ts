@@ -9,7 +9,7 @@ import { Component, Input } from '@angular/core';
   styleUrl: './log-message.component.scss',
 })
 export class LogMessageComponent {
-  @Input() message = 'Default log message';
+  @Input() message = 'Standardprotokollmeldung';
   visible = false;
   show(duration = 3000) {
     this.visible = true;
