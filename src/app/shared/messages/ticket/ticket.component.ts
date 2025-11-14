@@ -16,6 +16,8 @@ import { UserMentionService } from '../../../services/user-channel-mention.servi
 import { DirectMessageService } from '../../../services/direct-message.service';
 import { NavbarService } from '../../../services/navbar.service';
 import { EmojiServiceService } from '../../../services/emoji.service';
+import { filter, take, switchMap } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-ticket',
@@ -59,14 +61,15 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    if (this.ticket.threads) {
-      this.getMessageId();
-      let ticketPath = this.ticket.threads.path.split('/').slice(3, 4).join('/');
-      if (this.messageId === ticketPath) {
-        setTimeout(() => {
-          this.openThreadPanel();
-        }, 20);
-      }};
+    // if (this.ticket.threads) {
+    //   this.getMessageId();
+    //   let ticketPath = this.ticket.threads.path.split('/').slice(3, 4).join('/');
+    //   if (this.messageId === ticketPath) {
+    //     setTimeout(() => {
+    //       this.openThreadPanel();
+    //     }, 20);
+    //   }
+    // };
     if (this.ticket) {
       this.showName();
       this.time = this.showTime();
@@ -186,24 +189,41 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     return name
   }
 
-  openThreadUrl() {
-      if (this.ticket.threads?.path) {
-        const ticketpath = this.ticket.threads?.path.split('/')[3]
-        const channelPath = this.ticket.threads?.path.split('/')[1]
-        this.router.navigate(['channel', channelPath, 'messages', ticketpath])
-      }
-  }
+openThreadUrl() {
+  const path = this.ticket.threads?.path;
+  if (!path) return;
 
-  openThreadPanel() {
-    if (this.ticket.threads?.path) {
-      this.getThreadPath(this.ticket.threads?.path)
-      this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
-      this.threadsService.getCurrentTicket()
-      this.openThread.emit()
-    }
-  }
+  const ticketpath = path.split('/')[3];
+  // optional: const channelPath = path.split('/')[1];
 
-  selectEmoji(emoji: {name:string, code: string}) {
+  // 1) Trigger Laden
+  // this.getThreadPath(path);
+  // this.threadsService.getThreadsFromTicket(path);
+  // this.threadsService.getCurrentTicket();
+
+  // 2) Auf erste Daten warten
+  firstValueFrom(
+    this.threadsService.messagesSubscribe$
+      .pipe(
+        filter(arr => Array.isArray(arr)), // nicht undefined/null
+        take(1) // nur erstes Mal
+      )
+  ).then(() => {
+    // 3) Jetzt ist sicher was da → navigieren
+    this.router.navigate(['messages', ticketpath], { relativeTo: this.route });
+  });
+}
+
+  // openThreadPanel() {
+  //   if (this.ticket.threads?.path) {
+  //     this.getThreadPath(this.ticket.threads?.path)
+  //     this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
+  //     this.threadsService.getCurrentTicket()
+  //     this.openThread.emit()
+  //   }
+  // }
+
+  selectEmoji(emoji: { name: string, code: string }) {
     this.emojiService.selectEmoji(emoji.name)
     this.addEmojiToTicket(emoji.code);
   }
@@ -354,11 +374,11 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     return taggedChannels
   }
 
-  showEmojiName(emoji: {emoji: string, users: string[]}) {
+  showEmojiName(emoji: { emoji: string, users: string[] }) {
     let emojiCode = emoji.emoji;
-    let emojiName = this.emojiService.emojiList.find( emo => {return emo.code === emojiCode})
+    let emojiName = this.emojiService.emojiList.find(emo => { return emo.code === emojiCode })
     if (emojiName) return emojiName.name
-    return 
+    return
   }
 
   getUserList(text: string) {

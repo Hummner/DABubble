@@ -56,15 +56,13 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   text!: void;
   moreEmoji: boolean = false;
   showPopupIndexNumber!: number;
+  reactions!: any;
 
   constructor(
-    private route: ActivatedRoute, private router: Router) {}
+    private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    if (this.message) {
-      this.showName();
-      this.time = this.showTime();
-    }
+    this.reactions = this.message?.reactions ?? [];
   }
 
   getChannelInfo() {
@@ -76,18 +74,22 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
 
   ngAfterViewInit() {
     setTimeout(() => {
+      this.showName();
+      this.time = this.showTime();
       this.text = this.showText();
     }, 1)
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['message']) {
-      if (this.textRef) {
-        this.text = this.showText();
-      }
+      const nextMsg = changes['message'].currentValue as { reactions?: any[] } | undefined;
+      this.reactions = nextMsg?.reactions ?? [];
+      this.text = this.showText();
     }
     this.currentUser = this.getCurrentUserId();
     this.time = this.showTime();
+    this.showName();
   }
 
   onMouseEnter() {
@@ -200,7 +202,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   isReaction() {
-    if (this.message.reactions.length == 0) {
+    if (this.message?.reactions.length == 0) {
       return false;
     } else {
       return true
@@ -208,17 +210,25 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   showName() {
-    const userIndex = this.findUser(this.message.senderId)
-    if (userIndex >= 0 && this.members && this.isMember(userIndex, this.members)) {
-      this.userName = this.members[userIndex]['name'];
-      this.userImg = this.members[userIndex]['imgUrl'];
+    if (!this.message?.senderId || !this.members) {
+      this.userName = "Guest";
+      this.userImg = "assets/img/profile.png";
+      return;
+    }
+
+    const userIndex = this.findUser(this.message.senderId);
+
+    if (userIndex >= 0 && this.isMember(userIndex, this.members)) {
+      const user = this.members[userIndex];
+      this.userName = user.name;
+      this.userImg = user.imgUrl;
     } else {
       this.userName = "Guest";
       this.userImg = "assets/img/profile.png";
     }
   }
 
-  
+
 
   async addEmojiToTicket(emoji: string) {
     let senderId = this.getCurrentUserId();
@@ -231,18 +241,23 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   showText() {
-    this.textRef.nativeElement.innerHTML = "";
-    let container = document.createElement('p');
-    container.classList.add('text-link')
-    let text = this.message.text;
-    let taggedUsers = this.getUserList(text);
-    let taggedChannels = this.getChannelList(text)
-    let taggedArray = taggedUsers.concat(taggedChannels);
-    if (taggedArray.length == 0) this.createTextElement(container, text)
-    taggedArray.sort((a, b) => a.textIndex - b.textIndex)
-    text = this.replaceTaggedText(taggedArray, text);
-    this.createTextElement(container, text)
-    this.createListener(taggedArray)
+    if (!this.message) return
+    if (this.textRef) {
+      let container = document.createElement('p');
+      let text = this.message.text;
+      let taggedUsers = this.getUserList(text);
+      let taggedChannels = this.getChannelList(text)
+      let taggedArray = taggedUsers.concat(taggedChannels);
+
+      this.textRef.nativeElement.innerHTML = "";
+      container.classList.add('text-link')
+      container.style.margin = '0';
+      if (taggedArray.length == 0) this.createTextElement(container, text)
+      taggedArray.sort((a, b) => a.textIndex - b.textIndex)
+      text = this.replaceTaggedText(taggedArray, text);
+      this.createTextElement(container, text)
+      this.createListener(taggedArray)
+    }
   }
 
   createListener(taggedArray: { name: string, id: string, textIndex: number, taggedType: string }[]) {
@@ -397,7 +412,10 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   }
 
   isCurrentUser() {
-    return (this.getCurrentUserId() === this.message.senderId)
+    if (this.message) {
+      return (this.getCurrentUserId() === this.message.senderId)
+    }
+    return
   }
 
   convertToDate(timestamp: Timestamp) {

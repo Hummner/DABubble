@@ -15,11 +15,15 @@ import { EmojiServiceService } from '../../services/emoji.service';
 import { EmojiArrayService } from '../../services/emoji-array.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, distinctUntilChanged, flatMap } from 'rxjs/operators';
+import { ChannelsService } from '../../services/channels.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+
 
 @Component({
   selector: 'app-thread',
   standalone: true,
-  imports: [MatIconModule, ThreadMessagesComponent, CommonModule, FormsModule, MatMenuModule],
+  imports: [MatIconModule, ThreadMessagesComponent, CommonModule, FormsModule, MatMenuModule, MatProgressSpinnerModule],
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss'
 })
@@ -41,10 +45,11 @@ export class ThreadComponent implements OnInit, OnDestroy {
   emojiService = inject(EmojiServiceService);
   emojiArray = inject(EmojiArrayService);
   threadsService = inject(ThreadService);
-
+  channelService = inject(ChannelsService)
   threadService = inject(ThreadService);
   private messagesSubscription?: Subscription;
   private currentTicketSubscription?: Subscription;
+  private currentChannelSubscription?: Subscription
   currentTicketSub!: TicketInterface;
   messages: TicketInterface[] = [];
   currentTicket!: TicketInterface;
@@ -57,6 +62,8 @@ export class ThreadComponent implements OnInit, OnDestroy {
   number?: number
   isCurrentEdited: boolean = false;
   isSending = false
+  loading = true
+  firstSeen = false
 
 
   constructor(private router: Router, private route: ActivatedRoute) {
@@ -64,26 +71,85 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.messagesSubscription = this.threadService.messagesSubscribe$.pipe(
-      filter((arr): arr is TicketInterface[] => Array.isArray(arr)), distinctUntilChanged((a, b) => {
-        if (a.length !== b.length) return false;
-        const la = a[a.length - 1];
-        const lb = b[b.length - 1];
-        return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
-      })
-    ).subscribe(msgArray => {
-      this.messages = msgArray
-    });
+    // this.messagesSubscription = this.threadService.messagesSubscribe$
+    // // .pipe(
+    // //   // filter((arr): arr is TicketInterface[] => Array.isArray(arr)), 
+    // //   // distinctUntilChanged((a, b) => {
+    // //   //   if (a.length !== b.length) return false;
+    // //   //   const la = a[a.length - 1];
+    // //   //   const lb = b[b.length - 1];
+    // //   //   return la?.createdAt === lb?.createdAt && la?.text === lb?.text;
+    // //   // })
+    // // )
+    // .subscribe(msgArray => {
+    //   this.messages = msgArray
+    //   console.log(this.messages);
 
+    // });
+    this.setupLoadingSpinner();
+    this.setupMessagesSub();
+    this.setupCurrentTicketSub();
+    this.setupMembersSub();
+    this.setupThreadMessages();
+
+
+
+  }
+
+  setupLoadingSpinner() {
+    this.threadService.loadingThread$.subscribe((spinner) => {
+      this.loading = spinner
+      console.log(this.loading);
+
+    })
+  }
+
+  setupMessagesSub() {
+    this.messagesSubscription = this.threadService.messagesSubscribe$
+      .subscribe(arr => {
+        this.messages = (arr ?? []).map(m => ({
+          ...m,
+          reactions: m.reactions ? [...m.reactions] : []
+        }));
+      });
+  }
+
+  setupCurrentTicketSub() {
     this.currentTicketSubscription = this.threadService.currentTicketSubscribe$.pipe(
       filter((t): t is TicketInterface => !!t), distinctUntilChanged((a, b) => a.text === a.text && a.createdAt === b.createdAt)
     ).subscribe(ticket => {
       this.currentTicket = ticket
-      console.log(this.currentTicket);
       this.messagesCount = this.messagesCounter();
     });
   }
 
+  setupMembersSub() {
+    this.currentChannelSubscription = this.channelService.channel$
+      .subscribe(c => this.members = c?.members);
+  }
+
+  setupThreadMessages() {
+    let urlIds = this.getUrlIds()
+    this.threadsService.getThreadsFromTicket(urlIds.threadId, urlIds.ticketId, urlIds.apiPath);
+    this.threadsService.getCurrentTicket();
+    this.isThreadOpen = this.isThreadOpenFunc();
+  }
+
+  getUrlIds() {
+    const parts = this.router.url.replace(/^\/+/, '').split('/');
+    parts[0] = 'channels';
+
+    const apiPath = parts.join('/');
+    const [, ticketId, , threadId] = parts;
+
+    return { ticketId: parts[1], threadId: parts[3], apiPath: apiPath }
+  }
+
+  isThreadOpenFunc() {
+    console.log(this.router.url.split('/')[4]);
+
+    return !!this.router.url.split('/')[4];
+  }
 
   checkTheKey(event: KeyboardEvent) {
     event.preventDefault();
@@ -172,10 +238,7 @@ export class ThreadComponent implements OnInit, OnDestroy {
 
   closeThread() {
     const channelPath = this.router.url.split('/')[2]
-    this.close.emit()
-    setTimeout(() => {
-      this.router.navigate(['channel', channelPath])
-    }, 500);
+    this.router.navigate(['channel', channelPath])
   }
 
   takeUser(name: string) {
@@ -238,7 +301,6 @@ export class ThreadComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.messagesSubscription?.unsubscribe();
     this.currentTicketSubscription?.unsubscribe();
-    console.log("messagesSubctiption und currentTicketSubscription destroyed");
-
+    this.loading = false
   }
 }

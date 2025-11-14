@@ -22,7 +22,7 @@
             </div>
             <div class="emoji-container" [ngClass]="{'reverse reverse-container' : isCurrentUser()}"
                 *ngIf="isReaction()">
-                @for (emoji of message.reactions; track $index) {
+                @for (emoji of reactions; track $index) {
                 <div *ngIf="$index < 7 || moreEmoji" class="emoji" (mouseenter)="showPopupIndex($index)"
                     (mouseleave)="showPopupIndexNumber = -1">
                     <div class="emoji-popup" *ngIf="$index == showPopupIndexNumber">
@@ -34,8 +34,8 @@
                     <span>{{ emoji.users.length }}</span>
                 </div>
                 }
-                    <div *ngIf="message.reactions.length > 7 && !moreEmoji" class="emoji-more" (click)="moreEmoji = true">
-                    +{{message.reactions.length - 7}} weitere</div>
+                    <div *ngIf="(reactions?.length ?? 0) > 7 && !moreEmoji" class="emoji-more" (click)="moreEmoji = true">
+                    +{{(reactions?.length ?? 0) - 7}} weitere</div>
                 <div *ngIf="moreEmoji" class="emoji-more" (click)="moreEmoji = false">Weniger anzeigen</div>
                 <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()"
                     (click)="$event.stopPropagation()" (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple"
