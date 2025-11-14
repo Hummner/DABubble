@@ -2,7 +2,6 @@ import { Injectable, inject, OnDestroy, computed } from '@angular/core';
 import { Firestore, collection, onSnapshot, Unsubscribe} from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { NavbarInterface } from '../interfaces/navbar.interface';
-import { SearchService } from './search.service';
 import { ChannelsService } from '../services/channels.service';
 import { DirectMessageService } from '../services/direct-message.service';
 import { FirestoreService } from '../services/firestore.service';
@@ -20,7 +19,6 @@ export class NavbarService implements OnDestroy {
 
   private channelService = inject(ChannelsService);
   private router = inject(Router);
-  private searchService = inject(SearchService);
   private selectedChannelId$ = new BehaviorSubject<string | null>(null);
   selectedChannelIdObs$ = this.selectedChannelId$.asObservable();
   readonly channelUsers = this.directMessageService.userIds;
@@ -49,8 +47,7 @@ export class NavbarService implements OnDestroy {
   }
 
   selectChannel(channelId: string) {
-    this.searchService.searchText = '';
-    this.selectedChannelId$.next(channelId);
+    this.nextSelectedChannelId(channelId);
     this.channelService.getChannel(channelId);
     this.router.navigateByUrl(`channel/${channelId}`);
     this.focusOnChannelTextarea();
@@ -67,6 +64,10 @@ export class NavbarService implements OnDestroy {
       )
     );
     return filteredChannels$
+  }
+
+  nextSelectedChannelId(channelId: string) {
+    this.selectedChannelId$.next(channelId);
   }
 
   getSelectedChannelId() {
@@ -91,7 +92,6 @@ export class NavbarService implements OnDestroy {
       currentUserId,
       clickedUserId
     );
-    this.searchService.searchText = '';
     this.router.navigateByUrl(`directMessages/${channelId}`);
     this.directMessageService.subDirectMessageChannel(channelId, currentUserId);
   }

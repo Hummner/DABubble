@@ -6,6 +6,7 @@ import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { AuthService } from './auth.service';
 import { DirectMessageService } from './direct-message.service';
 import { Router } from '@angular/router';
+import { NavbarService } from './navbar.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +25,7 @@ export class SearchService {
   private directMessageService = inject(DirectMessageService);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private navbarService = inject(NavbarService);
 
   constructor() {}
 
@@ -252,7 +254,7 @@ export class SearchService {
     this.isLoading = true;
     const allChannels = await this.channelService.getAllChannels();
     const allDirectMessages = await this.directMessageService.getAllDirectMessages();
-    
+
     this.foundMessageInChannel(allChannels, messageId);
     this.foundMessageInDM(allDirectMessages, messageId);
   }
@@ -304,6 +306,7 @@ export class SearchService {
       this.searchText = '';
       this.channelService.getChannel(channelId);
       this.router.navigateByUrl(`channel/${channelId}`);
+      this.navbarService.nextSelectedChannelId(channelId);
       return true;
     }
     return false;
@@ -317,6 +320,7 @@ export class SearchService {
       const ref = doc(this.firestore, `channels/${channelId}/messages/${msg.id}/threads/${messageId}`);
       const snap = await getDoc(ref);
       if (this.handleSnapIfExists(snap, 'channel', channelId, messageId, msg)) {
+        this.navbarService.nextSelectedChannelId(channelId);
         return true;
       };
     }
