@@ -14,21 +14,21 @@
               <input class="fs-18" type="text" formControlName="name" required placeholder="Name und Nachname" />
               <img class="ph-img" src="assets/icon/person_filled.png" alt="Name Placeholder Image" />
               @if((signupFormControl.name.touched || submitted )&& signupFormControl.name.errors?.['required']){
-              <span class="error">Name is required</span>
+              <span class="error">Name ist erforderlich</span>
               } @if((signupFormControl.name.touched || submitted )&& signupFormControl.name.errors?.['whitespace']){
-              <span class="error">Name cannot contain only spaces</span>
+              <span class="error">Der Name darf nicht nur aus Leerzeichen bestehen</span>
               }
             </div>
             <div class="input-email">
               <input class="fs-18" type="text" formControlName="email" required placeholder="beispielname@email.com" />
               <img class="ph-img" src="assets/icon/mail.png" alt="Email Placeholder Image" />
               @if((signupFormControl.email.touched || submitted) && signupFormControl.email.errors?.['required']){
-              <span class="error">Email is required</span>
+              <span class="error">E-Mail ist erforderlich</span>
               } @if((signupFormControl.email.touched || submitted) && signupFormControl.email.errors?.['whitespace']){
-              <span class="error">Email cannot contain only spaces</span>
+              <span class="error">Die E-Mail darf nicht nur aus Leerzeichen bestehen</span>
               } @if((signupFormControl.email.touched || submitted) && (signupFormControl.email.errors?.['email'] ||
               signupFormControl.email.errors?.['invalidEmail']) && !signupFormControl.email.errors?.['whitespace']){
-              <span class="error">Invalid email format</span>
+              <span class="error">Ungültiges E-Mail-Format</span>
               } @if(errorMessage){
               <div>{{ errorMessage }}</div>
               }
