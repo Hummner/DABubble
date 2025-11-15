@@ -164,13 +164,14 @@ $breakpoint-lg: 992px;
 
 @keyframes slideToTopSmall {
   0% {
-    left: calc(50% - 250px);
+    left: calc(50% - 200px);
     top: calc(50vh - 40px);
     transform: scale(1);
   }
   100% {
-    top: -22px;
-    transform: scale(1);
+    top: 18px;
+    left: calc(50% - 215px);
+    transform: scale(0.96);
   }
 }
 
