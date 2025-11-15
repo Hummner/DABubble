@@ -89,7 +89,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe(channelId => {
         if (!channelId) return;
         this.setupChannel();
-        
+
 
 
       });
@@ -120,6 +120,11 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       map(() => {
         let r = this.route;
         while (r.firstChild) r = r.firstChild;
+
+        // if (!r.snapshot || !r.snapshot.paramMap) {
+        //   return false;
+        // }
+
         return !!r.snapshot.paramMap.get('messageId');
       }),
       distinctUntilChanged()
