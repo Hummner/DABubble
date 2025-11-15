@@ -112,17 +112,15 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   setupThreadSubscripton() {
     this.routerSub = this.router.events.pipe(
-      // sorgt dafür, dass es auch beim initialen Laden einmal ausführt
       startWith(null),
       filter(ev => ev === null || ev instanceof NavigationEnd),
-      // immer bis zur tiefsten Route runter
       map(() => {
         let r = this.route;
         while (r.firstChild) r = r.firstChild;
 
-        // if (!r.snapshot || !r.snapshot.paramMap) {
-        //   return false;
-        // }
+        if (!r.snapshot || !r.snapshot.paramMap) {
+          return false;
+        }
 
         return !!r.snapshot.paramMap.get('messageId');
       }),
