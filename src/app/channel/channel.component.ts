@@ -42,8 +42,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
   @ViewChild('threadTrigger') threadTrigger!: MatDrawer;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('threadTrigger') threadTrigger!: MatDrawer;
-  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   channelsService = inject(ChannelsService);
   threadsServvice = inject(ThreadService);
@@ -76,13 +74,11 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   isSending = false
   private routerSub?: Subscription;
   stopAutoFokus = false;
-  private routerSub?: Subscription;
 
   constructor(
     private route: ActivatedRoute, private router: Router, private dialog: MatDialog, public userMentionService: UserMentionService) { }
 
   ngOnInit(): void {
-
     this.route.paramMap
       .pipe(
         map(params => params.get('ChannelId')),
@@ -91,11 +87,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe(channelId => {
         if (!channelId) return;
         this.setupChannel();
-
-
-
       });
-
   }
 
   setupChannel() {
@@ -198,8 +190,6 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     }
   }
-
-
 
   currentThreadPathRef(data: string) {
     this.currentThreadPath = data;
