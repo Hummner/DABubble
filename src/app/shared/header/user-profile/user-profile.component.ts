@@ -33,6 +33,7 @@ export class UserProfileComponent implements OnInit {
   currentProfilImageUrl = '';
   profileImageChosen = false;
   showTooltip = false;
+  isInvalidName = false;
 
   ngOnInit() {
     const user = this.userProfile();
@@ -41,11 +42,8 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  get isFormEmpty():boolean {
-    if(this.editableUser.name === ""){
-      return true;
-    }
-    return false;
+  get isFormValid(): boolean {
+    return this.editableUser?.name?.trim() !== '';
   }
 
   constructor(private firestoreService: FirestoreService) {}
@@ -70,6 +68,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   closeEdit() {
+    this.editableUser.name = this.editableUser.name.trim();
     this.user = { ...this.editableUser };
     this.saveName();
     this.channelService.updatedChannels(this.user);

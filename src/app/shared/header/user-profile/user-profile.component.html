@@ -51,7 +51,9 @@
         <input [(ngModel)]="editableUser.name" class="input-name" type="text" placeholder="{{ user.name }}" name="name" />
         <div class="btn-section">
           <button (click)="cancelEdit()">Abbrechen</button>
-          <button [disabled]="isFormEmpty" [class.disabled]="isFormEmpty"  class="button" (click)="closeEdit()">Speichern</button>
+          <button [disabled]="!isFormValid" [class.disabled]="!isFormValid" class="button" (click)="closeEdit()">
+            Speichern
+          </button>
         </div>
       </form>
     </mat-card-content>

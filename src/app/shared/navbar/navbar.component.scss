@@ -123,7 +123,7 @@
       font-size: 18px;
       margin: 0;
       white-space: nowrap;
-      overflow: hidden;           
+      overflow: hidden;
       text-overflow: ellipsis;
     }
 
@@ -205,6 +205,7 @@
 
     > p {
       margin: 0;
+      font-size:16px;
 
       &:hover {
         color: #535af1;
@@ -319,12 +320,12 @@
 
     .user-name {
       font-weight: bold;
-      font-size: 14px;
+      font-size: 16px;
       margin: 0;
     }
 
     .timestamp {
-      font-size: 10px;
+      font-size: 16px;
       color: #999;
       margin: 0;
     }

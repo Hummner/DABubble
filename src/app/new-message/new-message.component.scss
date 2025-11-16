@@ -22,7 +22,7 @@ section {
   margin: 0 45px;
   border-left: 4px solid #28a745;
   animation: slideIn 0.3s ease-out;
-  font-size: 14px;
+  font-size: 16px;
 
   span {
     display: flex;
@@ -105,7 +105,7 @@ header {
   color: white;
   padding: 6px 12px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 16px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -272,6 +272,7 @@ footer {
     height: 100%;
     border: none;
     resize: none;
+    font-size: 16px;
 
     &:focus {
       outline: none;
@@ -314,7 +315,7 @@ footer {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .option-content {

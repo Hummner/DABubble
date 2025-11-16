@@ -56,6 +56,10 @@
   }
 }
 
+.primary-button,.secondary-button{
+  font-size:16px;
+}
+
 .name-date {
   display: flex;
   gap: 24px;
@@ -69,6 +73,9 @@
   font-weight: bold;
   font-size: 18px;
 }
+  .time{
+    font-size:16px;
+  }
 
 .answers {
   display: flex;
@@ -79,7 +86,7 @@
 
 .msg-date {
   color: #686868;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .msg-answer {

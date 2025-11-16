@@ -200,8 +200,8 @@ header {
   border: none;
 }
 ::ng-deep .mat-menu-profile {
-  width: 280px !important;
-  height: 180px;
+  width: 220px !important;
+  height: 140px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -214,6 +214,13 @@ header {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  > .mat-menu-item-btn {
+    > span {
+      > p {
+        font-size: 24px;
+      }
+    }
+  }
 }
 
 ::ng-deep .menu-wrap {
