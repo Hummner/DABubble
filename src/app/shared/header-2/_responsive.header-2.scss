@@ -64,10 +64,11 @@
     transform-origin: 50% 50%;
     gap: 20px;
     > .logo {
-      width: 50px;
+      width: 60px;
     }
     > .name {
-      width: 150px;
+      width: 160px;
+      height: 26px;
     }
   }
 }
@@ -125,12 +126,17 @@
 
   .main-logo {
     transform-origin: 50% 50%;
-    gap: 20px;
+    gap: 10.4px;
+    margin-left: 81px;
     > .logo {
-      width: 50px;
+      width: 53px;
+      height: 52px;
+      margin-top: 5px;
     }
     > .name {
-      width: 150px;
+      width: 145px;
+      height: 21.6px;
+      margin-top: -1px;
     }
   }
 }
