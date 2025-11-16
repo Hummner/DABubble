@@ -83,8 +83,6 @@ export class NewMessageComponent {
       startWith(''),
       map((value) => this._filter(value || ''))
     );
-
-    console.log(this.localMessages);
   }
 
   private _filter(value: string): Array<{ type: 'user' | 'channel'; data: UserProfileInterface | NavbarInterface }> {
