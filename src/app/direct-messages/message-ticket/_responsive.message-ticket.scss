@@ -2,11 +2,44 @@
   .ticket {
     padding: 20px 24px;
   }
+  .ticket-edit {
+    padding: 20px 25px 20px 40px;
+  }
 }
 
 @media (max-width: 576px) {
   .member-img-ticket {
     width: 50px;
     height: 50px;
+  }
+  .primary-button,
+  .secondary-button {
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 470px) {
+  .primary-button,
+  .secondary-button {
+    padding: 10px 10px;
+  }
+  .ticket-edit {
+    padding: 20px 25px 20px 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .buttons{
+    display:flex;
+    gap:6px;
+  }
+  .primary-button,
+  .secondary-button {
+    padding: 7px 5px;
+  }
+
+  .ticket-edit{
+    align-items: center;
+    flex-direction: column-reverse;
   }
 }
