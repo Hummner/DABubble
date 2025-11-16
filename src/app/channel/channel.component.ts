@@ -40,6 +40,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
   @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('threadTrigger') threadTrigger!: MatDrawer;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('threadTrigger') threadTrigger!: MatDrawer;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
@@ -73,6 +74,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   channelNameExists = false;
   windowWidth = window.innerWidth;
   isSending = false
+  private routerSub?: Subscription;
   stopAutoFokus = false;
   private routerSub?: Subscription;
 
