@@ -195,11 +195,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     }
   }
 
-  private getNextLastIndex(
-    match: RegExpExecArray,
-    validUsers: string[],
-    validChannels: string[]
-  ): number {
+  private getNextLastIndex(match: RegExpExecArray, validUsers: string[], validChannels: string[]): number {
     const index = match.index;
     const mentionSymbol = match[1];
     let mentionName = match[2];
@@ -342,6 +338,10 @@ export class MessageTicketComponent implements OnChanges, OnInit {
     this.editViewChange.emit(this.editView);
   }
 
+  get isFormValid(): boolean {
+    return this.editedText?.trim() !== '';
+  }
+
   editText() {
     this.message.content = this.editedText;
     if (this.threadId) {
@@ -353,8 +353,7 @@ export class MessageTicketComponent implements OnChanges, OnInit {
   }
 
   addEmoji(emoji: any) {
-    this.message.content = this.emojiService.addEmojiToContent(emoji, this.message.content);
-    this.editedText = this.message.content;
+    this.editedText = this.emojiService.addEmojiToContent(emoji, this.editedText);
   }
 
   get isMobileDevice(): boolean {

@@ -158,12 +158,12 @@
         }
       </mat-menu>
       <div class="buttons">
-        <span class="secondary-button" (click)="closeEditView()">Abbrechen</span>
-        <span class="primary-button" (click)="editText()">Speichern</span>
+        <button class="secondary-button" (click)="closeEditView()">Abbrechen</button>
+        <button [disabled]="!isFormValid" [class.disabled]="!isFormValid" class="primary-button" (click)="editText()">Speichern</button>
       </div>
     </div>
   </div>
-  <div class="member-img-ticket">
+  <div class="member-img-ticket-edit">
     <img src="{{user?.imgUrl}}" alt="" />
   </div>
 </div>

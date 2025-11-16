@@ -18,7 +18,8 @@
   position: relative;
 }
 
-.member-img-ticket {
+.member-img-ticket,
+.member-img-ticket-edit {
   width: 70px;
   height: 70px;
   display: flex;
@@ -56,8 +57,21 @@
   }
 }
 
-.primary-button,.secondary-button{
-  font-size:16px;
+.primary-button,
+.secondary-button {
+  font-size: 16px;
+}
+
+.primary-button {
+  border: unset;
+}
+
+.disabled {
+  border: none;
+  border-radius: 25px;
+  cursor: not-allowed;
+  color: #fdfdfd;
+  background-color: #686868;
 }
 
 .name-date {
@@ -73,9 +87,9 @@
   font-weight: bold;
   font-size: 18px;
 }
-  .time{
-    font-size:16px;
-  }
+.time {
+  font-size: 16px;
+}
 
 .answers {
   display: flex;
@@ -273,9 +287,9 @@
   top: 0;
   left: 0;
   border-radius: 20px;
-  height:150px;
+  height: 150px;
   > .mat-mdc-menu-content {
-    display:flex;
+    display: flex;
     flex-wrap: wrap;
     > .emoji-menu-item {
       > img {
