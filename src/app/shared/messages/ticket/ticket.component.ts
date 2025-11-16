@@ -94,6 +94,10 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
+  get isFormValid(): boolean {
+    return this.editedText?.trim() !== '';
+  }
+
   onMouseEnter() {
     this.showMenu = true
   }

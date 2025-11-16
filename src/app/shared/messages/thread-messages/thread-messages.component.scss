@@ -181,22 +181,22 @@
 }
 
 .emoji-in-popup {
-  width: 40px;
-  height: 40px;
-  border-radius: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  >img {
-    width: 25px;
-    height: 25px;
-  }
+    >img {
+        width: 25px;
+        height: 25px;
+    }
 
-  &:hover {
-    cursor: pointer;
-    background-color: #eceefe;
-  }
+    &:hover {
+        cursor: pointer;
+        background-color: #eceefe;
+    }
 }
 
 .reverse {
@@ -356,6 +356,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.primary-button {
+    font-size: 16px;
+    border: solid 1px #444df2;
 }
 
 @import "_menu.thread-message.scss";

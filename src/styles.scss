@@ -36,7 +36,8 @@ a {
 
   &:disabled {
     background-color: #686868;
-    cursor: none;
+    cursor: not-allowed;
+    border: solid 1px #686868;
   }
 }
 
@@ -59,7 +60,7 @@ a {
 
   &:disabled {
     color: #686868;
-    cursor: none;
+    cursor: not-allowed;
   }
 }
 

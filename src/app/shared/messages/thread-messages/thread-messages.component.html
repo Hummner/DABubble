@@ -84,7 +84,7 @@
             <div [matMenuTriggerFor]="channelBoxMenu" #channelTrigger="matMenuTrigger"></div>
             <div class="buttons">
                 <span class="secondary-button" (click)="cancelEdit()">Abbrechen</span>
-                <span class="primary-button" (click)="editText()">Speichern</span>
+                <button class="primary-button" [disabled]="!isFormValid" [class.disabled]="!isFormValid" (click)="editText()">Speichern</button>
             </div>
         </div>
     </div>

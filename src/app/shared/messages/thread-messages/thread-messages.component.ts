@@ -370,6 +370,10 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     return
   }
 
+  get isFormValid(): boolean {
+    return this.editedText?.trim() !== '';
+  }
+
 }
 
 
