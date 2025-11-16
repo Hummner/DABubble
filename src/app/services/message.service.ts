@@ -15,7 +15,7 @@ export class MessageService {
 
   private internalList: Message[] = [];
 
-  constructor() {}
+  constructor() { }
 
   async addMessage(item: Message, docId: string) {
     const ref = this.getSubCollectionRef(docId);
@@ -150,4 +150,34 @@ export class MessageService {
       return groups;
     }, {} as { [date: string]: Message[] });
   }
+
+  renderPopUpText(isCurrentUserReacted: boolean, nameArray: string[], allUserCount: number) {
+    let name = "Guest"
+    if (isCurrentUserReacted && nameArray.length == 1) {
+      let lastName = nameArray[nameArray.length - 1];
+      name = `${lastName} und Du`;
+    } else if (isCurrentUserReacted && nameArray.length > 1) {
+      name = `Du und +${allUserCount}`
+    } else if (isCurrentUserReacted && nameArray.length == 0 && allUserCount == 0) {
+      name = "Du"
+    }
+    else if (!isCurrentUserReacted && nameArray.length == 1) {
+      name = nameArray[0];
+    } else if (!isCurrentUserReacted && nameArray.length > 1) {
+      let firsName = nameArray[0];
+      name = `${firsName} und +${allUserCount}`
+    } else if (allUserCount > 0) {
+      name = `Guest und +${allUserCount}`
+    }
+    return name
+  }
+
+  convertToDate(timestamp: Timestamp) {
+    const rawCreatedAt = timestamp
+    const createdAtDate = rawCreatedAt instanceof Timestamp ? rawCreatedAt.toDate() : null;
+    if (createdAtDate) return createdAtDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    return "-"
+  }
+
+
 }

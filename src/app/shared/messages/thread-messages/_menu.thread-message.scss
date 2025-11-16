@@ -1,0 +1,62 @@
+::ng-deep .tag-menu-item,
+::ng-deep .channel-menu-item {
+  >.mat-mdc-menu-item-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    >p {
+      margin: 0;
+      text-align: right;
+      width: 180px;
+    }
+  }
+}
+
+::ng-deep .tag-menu-item {
+  >.mat-mdc-menu-item-text {
+
+    >p {
+      width: 140px !important;
+    }
+  }
+}
+
+.tagbox-img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+  .member-img-ticket-edit {
+    display: none;
+  }
+
+
+@media (max-width: 576px) {
+  .member-img-ticket {
+    width: 50px;
+    height: 50px;
+  }
+
+  .ticket-edit {
+    padding: 8px 30px 8px 8px;
+  }
+
+  .primary-button {
+    padding: 6px 12px;
+  }
+
+  .secondary-button {
+    padding: 6px 12px;
+  }
+
+  .buttons {
+    gap: 6px;
+  }
+
+  .member-img-ticket-edit {
+    display: none;
+  }
+}

@@ -132,4 +132,61 @@ export class UserMentionService {
   findChannel(id: string) {
     this.router.navigateByUrl(`channel/${id}`);
   }
+
+  getChannelList(text: string) {
+    let channelList = this.getChannelWithUserMemmership();
+    let taggedChannels: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
+
+    channelList.forEach(channel => {
+      const isTagged = text.search(channel.name)
+      if (isTagged > 0) {
+        let taggedText = `#${channel.name}`
+        let textIndex = text.indexOf(taggedText)
+        taggedChannels.push({
+          name: channel.name,
+          id: channel.channelId,
+          textIndex: textIndex,
+          taggedType: "channel"
+        })
+      }
+    })
+    return taggedChannels
+  }
+
+  getUserList(text: string) {
+    let userList = this.filteredUserList();
+    let taggedUsers: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
+
+    userList.forEach(user => {
+      const isTagged = text.search(user.name);
+      if (isTagged > 0) {
+        let taggedText = `@${user.name}`
+        let textIndex = text.indexOf(taggedText)
+        taggedUsers.push({
+          name: user.name,
+          id: user.uid,
+          textIndex: textIndex,
+          taggedType: "user"
+        })
+      }
+
+    })
+    return taggedUsers
+  }
+
+  replaceTaggedText(taggedArray: { name: string, id: string, textIndex: number, taggedType: string }[], text: string, index:number) {
+    let replacedText = text;
+    taggedArray.forEach((tag) => {
+      if (tag.taggedType == "user") {
+        let customId = `${tag.id}_${tag.textIndex}_${index}`
+        replacedText = replacedText.replace(`@${tag.name}`,
+          `<span id="${customId}">@${tag.name}</span>`);
+      } else if (tag.taggedType == "channel") {
+        let customId = `${tag.id}_${tag.textIndex}_${index}`
+        replacedText = replacedText.replace(`#${tag.name}`,
+          `<span id="${customId}">#${tag.name}</span>`);
+      }
+    });
+    return replacedText
+  }
 }

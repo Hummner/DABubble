@@ -1,7 +1,8 @@
 <mat-menu class="emoji-menu-small" #reactMenu="matMenu">
     <div class="emoji-menu-container">
         @for (emoji of emojiService.sortedEmojis; track $index) {
-        <span class="emoji-in-popup" (click)="selectEmoji(emoji)"><img src="assets/emojis/{{ emoji.name }}.png" /></span>
+        <span class="emoji-in-popup" (click)="selectEmoji(emoji)"><img
+                src="assets/emojis/{{ emoji.name }}.png" /></span>
         }
     </div>
 </mat-menu>
@@ -43,7 +44,7 @@
                     <span>{{ emoji.users.length }}</span>
                 </div>
                 }
-                  <div *ngIf="ticket.reactions.length > 20 && !moreEmoji" class="emoji-more" (click)="moreEmoji = true">
+                <div *ngIf="ticket.reactions.length > 20 && !moreEmoji" class="emoji-more" (click)="moreEmoji = true">
                     +{{ticket.reactions.length - 20}} weitere</div>
                 <div *ngIf="moreEmoji" class="emoji-more" (click)="moreEmoji = false">Weniger anzeigen</div>
                 <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()"
@@ -54,8 +55,10 @@
         </div>
         <div class="emoji-menu" (click)="$event.stopPropagation()"
             [ngClass]="{ 'visible': showMenu, 'hidden': !showMenu, 'emoji-menu-reverse width-255' : isCurrentUser()}">
-            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[0])"><img src="assets/emojis/{{ emojiService.sortedEmojis[0].name }}.png" /></div>
-            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[1])"><img src="assets/emojis/{{ emojiService.sortedEmojis[1].name }}.png" /></div>
+            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[0])"><img
+                    src="assets/emojis/{{ emojiService.sortedEmojis[0].name }}.png" /></div>
+            <div class="emoji-menu-item" (click)="selectEmoji(emojiService.sortedEmojis[1])"><img
+                    src="assets/emojis/{{ emojiService.sortedEmojis[1].name }}.png" /></div>
             <div class="emoji-menu-item" [matMenuTriggerFor]="reactMenu" (menuOpened)="onEmojiMenuOpened()"
                 (menuClosed)="onEmojiMenuClosed()"><img class="hover-purple" src="assets/icon/add_reaction.svg">
             </div>
@@ -73,18 +76,54 @@
 </div>
 <div *ngIf="editView" class="ticket-edit">
     <div class="message-edit">
-        <textarea class="edit-textarea" [(ngModel)]="editedText" name="edit-textarea" id="edit_textarea"></textarea>
+        <textarea class="edit-textarea" [(ngModel)]="editedText" name="edit-textarea" id="edit_textarea" #chat_input
+            (input)="onInputChange($event)"></textarea>
         <div class="button-container">
-            <div class="input-icon">
-                <img src="assets/icon/reaction.png" alt="">
+
+            <div class="input-icon" [matMenuTriggerFor]="reactMenu" #reactMenuTrigger="matMenuTrigger"
+                (click)="openEmojiMenu(reactMenuTrigger)">
+                <img src="assets/icon/reaction.png" alt="" />
+                <mat-menu #reactMenu="matMenu" class="emoji-menu-small">
+                    <div class="emoji-menu-container">
+                        @for (emoji of emojiService.sortedEmojis; track emojiService.emojiList) {
+                        <span class="emoji-in-popup" (click)="onEmojiClick(emoji); $event.stopPropagation()"><img
+                                src="assets/emojis/{{ emoji.name }}.png" /></span>
+                        }
+                    </div>
+                </mat-menu>
             </div>
+            <div click-stop-propagation #mentionTrigger="matMenuTrigger" [matMenuTriggerFor]="tagBoxMenu"></div>
+            <div [matMenuTriggerFor]="channelBoxMenu" #channelTrigger="matMenuTrigger"></div>
             <div class="buttons">
-                <span class="secondary-button" (click)="editView = false">Abbrechen</span>
+                <span class="secondary-button" (click)="cancelEdit()">Abbrechen</span>
                 <span class="primary-button" (click)="editText()">Speichern</span>
             </div>
         </div>
     </div>
-    <div class="member-img-ticket">
+    <div class="member-img-ticket-edit">
         <img src={{userImg}} alt="">
     </div>
 </div>
+
+
+<mat-menu #channelBoxMenu="matMenu" class="channel-box-menu" yPosition="above">
+    <div class="channel-menu-wrap">
+        @for(channel of userMentionService.filteredChannelList(); track channel) {
+        <menu mat-menu-item class="channel-menu-item" (click)="takeChannel(channel.name)">
+            <img src="assets/icon/tag_channel.png" alt="" />
+            <p class="truncate">{{ channel.name }}</p>
+        </menu>
+        }
+    </div>
+</mat-menu>
+
+<mat-menu autoFocus="false" #tagBoxMenu="matMenu" class="tag-box-menu" yPosition="above">
+    <div class="tag-menu-wrap">
+        @for(user of userMentionService.filteredUserList();track user){
+        <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
+            <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+            <p class="truncate">{{ user.name }}</p>
+        </menu>
+        }
+    </div>
+</mat-menu>

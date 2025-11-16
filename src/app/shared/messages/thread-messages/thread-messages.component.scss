@@ -358,6 +358,8 @@
     justify-content: center;
 }
 
+@import "_menu.thread-message.scss";
+
 @media(max-width: 768px) {
     .ticket {
         padding: 20px 14px;

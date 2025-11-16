@@ -8,7 +8,6 @@ import { ThreadService } from '../../../services/thread.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChannelsService } from '../../../services/channels.service';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { EmojiArrayService } from '../../../services/emoji-array.service';
@@ -18,6 +17,7 @@ import { NavbarService } from '../../../services/navbar.service';
 import { EmojiServiceService } from '../../../services/emoji.service';
 import { filter, take, switchMap } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
+import { MessageService } from '../../../services/message.service';
 
 @Component({
   selector: 'app-ticket',
@@ -33,10 +33,14 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() ticket!: TicketInterface;
   @Input() members?: any[];
   @ViewChild('text') textRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
   userMentionService = inject(UserMentionService);
   directMsgService = inject(DirectMessageService);
   navbarService = inject(NavbarService);
   emojiService = inject(EmojiServiceService);
+  messageService = inject(MessageService);
   userName!: string;
   userImg!: string;
   time!: string;
@@ -61,15 +65,6 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    // if (this.ticket.threads) {
-    //   this.getMessageId();
-    //   let ticketPath = this.ticket.threads.path.split('/').slice(3, 4).join('/');
-    //   if (this.messageId === ticketPath) {
-    //     setTimeout(() => {
-    //       this.openThreadPanel();
-    //     }, 20);
-    //   }
-    // };
     if (this.ticket) {
       this.showName();
       this.time = this.showTime();
@@ -133,6 +128,13 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
     this.editedText = this.ticket.text;
   }
 
+  cancelEdit() {
+    this.editView = false;
+    setTimeout(() => {
+      this.showText()
+    }, 10);
+  }
+
   editText() {
     this.channelService.editTicketText(this.getTicketRef(), this.editedText).then(() => {
       this.ticket.text = this.editedText;
@@ -141,6 +143,14 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
         this.text = this.showText();
       }, 10);
     })
+  }
+
+  takeUser(name: string) {
+    this.editedText = this.userMentionService.takeUser(name, this.editedText);
+  }
+
+  takeChannel(name: string) {
+    this.editedText = this.userMentionService.takeChannel(name, this.editedText);
   }
 
   showPopupIndex(index: number) {
@@ -164,55 +174,37 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
         }
       }
     })
-    name = this.renderPopUpText(isCurrentUserReacted, nameArray, allUserCount)
+    name = this.messageService.renderPopUpText(isCurrentUserReacted, nameArray, allUserCount)
     return name
   }
 
-  renderPopUpText(isCurrentUserReacted: boolean, nameArray: string[], allUserCount: number) {
-    let name = "Guest"
-    if (isCurrentUserReacted && nameArray.length == 1) {
-      let lastName = nameArray[nameArray.length - 1];
-      name = `${lastName} und Du`;
-    } else if (isCurrentUserReacted && nameArray.length > 1) {
-      name = `Du und +${allUserCount}`
-    } else if (isCurrentUserReacted && nameArray.length == 0 && allUserCount == 0) {
-      name = "Du"
-    }
-    else if (!isCurrentUserReacted && nameArray.length == 1) {
-      name = nameArray[0];
-    } else if (!isCurrentUserReacted && nameArray.length > 1) {
-      let firsName = nameArray[0];
-      name = `${firsName} und +${allUserCount}`
-    } else if (allUserCount > 0) {
-      name = `Guest und +${allUserCount}`
-    }
-    return name
+  onInputChange(event: Event) {
+    this.userMentionService.onInputChange(this.editedText, this.mentionMenuTrigger, this.channelMenuTrigger, this.chatInput);
   }
 
-openThreadUrl() {
-  const path = this.ticket.threads?.path;
-  if (!path) return;
-  const ticketpath = path.split('/')[3];
-  firstValueFrom(
-    this.threadsService.messagesSubscribe$
-      .pipe(
-        filter(arr => Array.isArray(arr)), 
-        take(1)
-      )
-  ).then(() => {
+  addEmoji(emoji: any) {
+    this.editedText = this.emojiService.addEmojiToContent(emoji, this.editedText);
+  }
 
-    this.router.navigate(['messages', ticketpath], { relativeTo: this.route });
-  });
-}
+  onEmojiClick(emoji: any) {
+    this.addEmoji(emoji.code);
+    this.emojiService.selectEmoji(emoji.name);
+  }
 
-  // openThreadPanel() {
-  //   if (this.ticket.threads?.path) {
-  //     this.getThreadPath(this.ticket.threads?.path)
-  //     this.threadsService.getThreadsFromTicket(this.ticket.threads?.path, this.ticket);
-  //     this.threadsService.getCurrentTicket()
-  //     this.openThread.emit()
-  //   }
-  // }
+  openThreadUrl() {
+    const path = this.ticket.threads?.path;
+    if (!path) return;
+    const ticketpath = path.split('/')[3];
+    firstValueFrom(
+      this.threadsService.messagesSubscribe$
+        .pipe(
+          filter(arr => Array.isArray(arr)),
+          take(1)
+        )
+    ).then(() => {
+      this.router.navigate(['messages', ticketpath], { relativeTo: this.route });
+    });
+  }
 
   selectEmoji(emoji: { name: string, code: string }) {
     this.emojiService.selectEmoji(emoji.name)
@@ -300,12 +292,12 @@ openThreadUrl() {
     let container = document.createElement('p');
     container.classList.add('text-link')
     let text = this.ticket.text;
-    let taggedUsers = this.getUserList(text);
-    let taggedChannels = this.getChannelList(text)
+    let taggedUsers = this.userMentionService.getUserList(text);
+    let taggedChannels = this.userMentionService.getChannelList(text)
     let taggedArray = taggedUsers.concat(taggedChannels);
     if (taggedArray.length == 0) this.createTextElement(container, text)
     taggedArray.sort((a, b) => a.textIndex - b.textIndex)
-    text = this.replaceTaggedText(taggedArray, text);
+    text = this.userMentionService.replaceTaggedText(taggedArray, text, this.index);
     this.createTextElement(container, text)
     this.createListener(taggedArray)
   }
@@ -325,44 +317,9 @@ openThreadUrl() {
     })
   }
 
-  replaceTaggedText(taggedArray: { name: string, id: string, textIndex: number, taggedType: string }[], text: string) {
-    let replacedText = text;
-    taggedArray.forEach((tag) => {
-      if (tag.taggedType == "user") {
-        let customId = `${tag.id}_${tag.textIndex}_${this.index}`
-        replacedText = replacedText.replace(`@${tag.name}`,
-          `<span id="${customId}">@${tag.name}</span>`);
-      } else if (tag.taggedType == "channel") {
-        let customId = `${tag.id}_${tag.textIndex}_${this.index}`
-        replacedText = replacedText.replace(`#${tag.name}`,
-          `<span id="${customId}">#${tag.name}</span>`);
-      }
-    });
-    return replacedText
-  }
-
   createTextElement(container: HTMLParagraphElement, text: string) {
     container.innerHTML = text;
     this.textRef.nativeElement.appendChild(container);
-  }
-
-  getChannelList(text: string) {
-    let channelList = this.userMentionService.getChannelWithUserMemmership();
-    let taggedChannels: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
-    channelList.forEach(channel => {
-      const isTagged = text.search(channel.name)
-      if (isTagged > 0) {
-        let taggedText = `#${channel.name}`
-        let textIndex = text.indexOf(taggedText)
-        taggedChannels.push({
-          name: channel.name,
-          id: channel.channelId,
-          textIndex: textIndex,
-          taggedType: "channel"
-        })
-      }
-    })
-    return taggedChannels
   }
 
   showEmojiName(emoji: { emoji: string, users: string[] }) {
@@ -370,25 +327,6 @@ openThreadUrl() {
     let emojiName = this.emojiService.emojiList.find(emo => { return emo.code === emojiCode })
     if (emojiName) return emojiName.name
     return
-  }
-
-  getUserList(text: string) {
-    let userList = this.userMentionService.filteredUserList();
-    let taggedUsers: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
-    userList.forEach(user => {
-      const isTagged = text.search(user.name);
-      if (isTagged > 0) {
-        let taggedText = `@${user.name}`
-        let textIndex = text.indexOf(taggedText)
-        taggedUsers.push({
-          name: user.name,
-          id: user.uid,
-          textIndex: textIndex,
-          taggedType: "user"
-        })
-      }
-    })
-    return taggedUsers
   }
 
   findUser(uId: string): number {

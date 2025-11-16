@@ -16,6 +16,7 @@ import { ThreadService } from '../../../services/thread.service';
 import { UserMentionService } from '../../../services/user-channel-mention.service';
 import { NavbarService } from '../../../services/navbar.service';
 import { EmojiServiceService } from '../../../services/emoji.service';
+import { MessageService } from '../../../services/message.service';
 
 @Component({
   selector: 'app-thread-messages',
@@ -27,6 +28,9 @@ import { EmojiServiceService } from '../../../services/emoji.service';
 export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit {
 
   @ViewChild('text') textRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('mentionTrigger') mentionMenuTrigger!: MatMenuTrigger;
+  @ViewChild('channelTrigger') channelMenuTrigger!: MatMenuTrigger;
+  @ViewChild('chat_input') chatInput!: ElementRef<HTMLTextAreaElement>;
 
   @Input() tickets!: TicketInterface[];
   @Input() message!: TicketInterface;
@@ -42,7 +46,8 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
   channelService = inject(ChannelsService);
   threadService = inject(ThreadService);
   userMentionService = inject(UserMentionService);
-  navbarService = inject(NavbarService)
+  navbarService = inject(NavbarService);
+  messageService = inject(MessageService);
   currentUser?: string | null;
   channelId?: string;
   messageId?: string;
@@ -144,28 +149,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
         }
       }
     })
-    name = this.renderPopUpText(isCurrentUserReacted, nameArray, allUserCount)
-    return name
-  }
-
-  renderPopUpText(isCurrentUserReacted: boolean, nameArray: string[], allUserCount: number) {
-    let name = "Guest"
-    if (isCurrentUserReacted && nameArray.length == 1) {
-      let lastName = nameArray[nameArray.length - 1];
-      name = `${lastName} und Du`;
-    } else if (isCurrentUserReacted && nameArray.length > 1) {
-      name = `Du und +${allUserCount}`
-    } else if (isCurrentUserReacted && nameArray.length == 0 && allUserCount == 0) {
-      name = "Du"
-    }
-    else if (!isCurrentUserReacted && nameArray.length == 1) {
-      name = nameArray[0];
-    } else if (!isCurrentUserReacted && nameArray.length > 1) {
-      let firsName = nameArray[0];
-      name = `${firsName} und +${allUserCount}`
-    } else if (allUserCount > 0) {
-      name = `Guest und +${allUserCount}`
-    }
+    name = this.messageService.renderPopUpText(isCurrentUserReacted, nameArray, allUserCount)
     return name
   }
 
@@ -201,6 +185,34 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     })
   }
 
+  cancelEdit() {
+    this.editView = false;
+    setTimeout(() => {
+      this.showText()
+    }, 10);
+  }
+
+  onEmojiClick(emoji: any) {
+    this.addEmoji(emoji.code);
+    this.emojiService.selectEmoji(emoji.name);
+  }
+
+  addEmoji(emoji: any) {
+    this.editedText = this.emojiService.addEmojiToContent(emoji, this.editedText);
+  }
+
+  onInputChange(event: Event) {
+    this.userMentionService.onInputChange(this.editedText, this.mentionMenuTrigger, this.channelMenuTrigger, this.chatInput);
+  }
+
+  takeUser(name: string) {
+    this.editedText = this.userMentionService.takeUser(name, this.editedText);
+  }
+
+  takeChannel(name: string) {
+    this.editedText = this.userMentionService.takeChannel(name, this.editedText);
+  }
+
   isReaction() {
     if (this.message?.reactions.length == 0) {
       return false;
@@ -228,8 +240,6 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     }
   }
 
-
-
   async addEmojiToTicket(emoji: string) {
     let senderId = this.getCurrentUserId();
     let isEmoji: boolean = this.checkEmojiInArray(emoji);
@@ -245,8 +255,8 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     if (this.textRef) {
       let container = document.createElement('p');
       let text = this.message.text;
-      let taggedUsers = this.getUserList(text);
-      let taggedChannels = this.getChannelList(text)
+      let taggedUsers = this.userMentionService.getUserList(text);
+      let taggedChannels = this.userMentionService.getChannelList(text)
       let taggedArray = taggedUsers.concat(taggedChannels);
 
       this.textRef.nativeElement.innerHTML = "";
@@ -254,7 +264,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
       container.style.margin = '0';
       if (taggedArray.length == 0) this.createTextElement(container, text)
       taggedArray.sort((a, b) => a.textIndex - b.textIndex)
-      text = this.replaceTaggedText(taggedArray, text);
+      text = this.userMentionService.replaceTaggedText(taggedArray, text, this.index);
       this.createTextElement(container, text)
       this.createListener(taggedArray)
     }
@@ -275,67 +285,9 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     })
   }
 
-  replaceTaggedText(taggedArray: { name: string, id: string, textIndex: number, taggedType: string }[], text: string) {
-    let replacedText = text;
-    taggedArray.forEach((tag) => {
-      if (tag.taggedType == "user") {
-        let customId = `${tag.id}_${tag.textIndex}_${this.index}`
-        replacedText = replacedText.replace(`@${tag.name}`,
-          `<span id="${customId}">@${tag.name}</span>`);
-
-      } else if (tag.taggedType == "channel") {
-        let customId = `${tag.id}_${tag.textIndex}_${this.index}`
-        replacedText = replacedText.replace(`#${tag.name}`,
-          `<span id="${customId}">#${tag.name}</span>`);
-      }
-    });
-    return replacedText
-  }
-
   createTextElement(container: HTMLParagraphElement, text: string) {
     container.innerHTML = text;
     this.textRef.nativeElement.appendChild(container);
-  }
-
-  getChannelList(text: string) {
-    let channelList = this.userMentionService.getChannelWithUserMemmership();
-    let taggedChannels: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
-
-    channelList.forEach(channel => {
-      const isTagged = text.search(channel.name)
-      if (isTagged > 0) {
-        let taggedText = `#${channel.name}`
-        let textIndex = text.indexOf(taggedText)
-        taggedChannels.push({
-          name: channel.name,
-          id: channel.channelId,
-          textIndex: textIndex,
-          taggedType: "channel"
-        })
-      }
-    })
-    return taggedChannels
-  }
-
-  getUserList(text: string) {
-    let userList = this.userMentionService.filteredUserList();
-    let taggedUsers: { name: string, id: string, textIndex: number, taggedType: string }[] = [];
-
-    userList.forEach(user => {
-      const isTagged = text.search(user.name);
-      if (isTagged > 0) {
-        let taggedText = `@${user.name}`
-        let textIndex = text.indexOf(taggedText)
-        taggedUsers.push({
-          name: user.name,
-          id: user.uid,
-          textIndex: textIndex,
-          taggedType: "user"
-        })
-      }
-
-    })
-    return taggedUsers
   }
 
   getIndexOfEmoji(emoji: string) {
@@ -392,7 +344,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
 
   showTime(): string {
     if (this.message?.createdAt instanceof Date) return this.message.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    if (this.message?.createdAt instanceof Timestamp) return this.convertToDate(this.message.createdAt);
+    if (this.message?.createdAt instanceof Timestamp) return this.messageService.convertToDate(this.message.createdAt);
     return "No Time"
   }
 
@@ -418,12 +370,6 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     return
   }
 
-  convertToDate(timestamp: Timestamp) {
-    const rawCreatedAt = timestamp
-    const createdAtDate = rawCreatedAt instanceof Timestamp ? rawCreatedAt.toDate() : null;
-    if (createdAtDate) return createdAtDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    return "-"
-  }
 }
 
 
