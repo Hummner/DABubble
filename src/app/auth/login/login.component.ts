@@ -57,12 +57,15 @@ export class LoginComponent {
     });
   }
 
-  get isFormEmpty(){
-    const {email, password} = this.loginForm.value;
+  get isFormEmpty() {
+    const { email, password } = this.loginForm.value;
     return !email?.trim() || !password?.trim();
   }
 
-  guestLogin() {
+  guestLogin(event?: Event) {
+    event?.preventDefault();
+    this.submitted = false;
+    this.loginForm.reset();
     this.authService.signInAnonymously().subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard');
