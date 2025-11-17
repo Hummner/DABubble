@@ -85,7 +85,6 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
       )
       .subscribe(messageId => {
         if (!messageId) return;
-        console.log(messageId);
         this.setupThread();
 
       });

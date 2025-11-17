@@ -106,8 +106,6 @@ export class ThreadDirectMessageComponent implements OnInit, AfterViewChecked {
     if (this.scrollContainerThread?.nativeElement) {
       const el = this.scrollContainerThread.nativeElement;
       el.scrollTop = el.scrollHeight;
-    } else {
-      console.log('ScrollContainer not available');
     }
   }
 

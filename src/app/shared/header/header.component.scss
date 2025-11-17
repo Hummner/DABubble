@@ -259,6 +259,16 @@ header {
 
 
   &:hover {
+    background-color: transparent !important;
+  }
+  
+  &:nth-child(1):hover {
+    background-color: #eceefe !important;
+    border-radius: 30px;
+    color: blue;
+  }
+
+  &:nth-child(2):hover {
     background-color: #eceefe !important;
     border-radius: 30px;
     color: blue;

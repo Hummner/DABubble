@@ -372,6 +372,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
     let currentChannel = this.channelsService.getChannel(this.channelId);
     this.channelsService.deleteMember(currentChannel, userProfile);
     this.closeMenu(editChannelMenuTrigger);
+    this.router.navigateByUrl('/dashboard');
 
     let allChannels = this.channelsService.getAllChannels();
     for (const channel of await allChannels) {
