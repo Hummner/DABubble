@@ -44,18 +44,22 @@ export class DirectMessageService {
     const unsubSingle = onSnapshot(ref, (snapshot) => {
       const data = snapshot.data();
       if (data) {
-        const users = data['users'] || [];
-        this.userIdsSignal.set(users);
-        const secondUser = users.find((uid: string) => uid !== currentUserId);
-        if (users[0] === users[1]) {
-          this.subUserProfile(users[1]);
-        } else {
-          this.subUserProfile(secondUser);
-        }
+        this.processDMData(data, currentUserId);
         handleData?.(data);
       }
     });
     return unsubSingle;
+  }
+
+  processDMData(data: any, currentUserId: string) {
+    const users = data['users'] || [];
+    this.userIdsSignal.set(users);
+    const secondUser = users.find((uid: string) => uid !== currentUserId);
+    if (users[0] === users[1]) {
+      this.subUserProfile(users[1]);
+    } else {
+      this.subUserProfile(secondUser);
+    }
   }
 
   subDMList(handleData?: (dmList: DirectMessageInterface[]) => void): () => void {
@@ -99,7 +103,6 @@ export class DirectMessageService {
       users: doc.data()['users'] || [],
       ...doc.data()
     }));
-    console.log("All direct messages", directMessages);
     return directMessages;
   }
 }
