@@ -148,12 +148,14 @@
 
         @if (showMessage) {
         <ul  *ngIf="userProfile() as userA" class="direct-messages-list">
-          <li class="direct-messages-item">
-            <div class="avatar">
-              <img [src]="userA.imgUrl" alt="Elias Neumann" />
-            </div>
-            <p class="truncate">{{ userA.name }}</p><span>(Du)</span>
-          </li>
+          <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userA.uid)">
+            <li class="direct-messages-item" [ngClass]="{'selected':(userA.uid === this.navbarService.selectedUserId()) && isDirectMessageSelected}">
+              <div class="avatar">
+                <img [src]="userA.imgUrl" alt="Elias Neumann" />
+              </div>
+              <p class="truncate">{{ userA.name }}</p><span>(Du)</span>
+            </li>
+          </a>
           @for(userB of this.navbarService.getOtherUserList(); track userB){
           <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)"
             ><li class="direct-messages-item" [ngClass]="{'selected':(userB.uid === this.navbarService.selectedUserId()) && isDirectMessageSelected}">

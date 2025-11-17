@@ -3,6 +3,7 @@ import { Firestore, collection, doc, onSnapshot, query, where, getDocs, addDoc, 
 import { DirectMessageInterface } from '../interfaces/direct-message.interface';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { FirestoreService } from './firestore.service';
+import { user } from '@angular/fire/auth';
 @Injectable({
   providedIn: 'root',
 })
@@ -18,12 +19,14 @@ export class DirectMessageService {
   constructor(private firestoreService: FirestoreService) {}
 
   async getDMChannel(currentUserId: string, clickedUserId: string): Promise<string> {
-    const q = query(this.getDirectMessageChannelListRef(), where('users', 'array-contains', currentUserId));
+    const sortedIds = [currentUserId, clickedUserId].sort();
+    const q = query(this.getDirectMessageChannelListRef(), where('users', '==', sortedIds));
     const snapshot = await getDocs(q);
-    const existingDoc = snapshot.docs.find((doc) => doc.data()['users'].includes(clickedUserId));
-    if (existingDoc) return existingDoc.id;
+    if (!snapshot.empty) {
+      return snapshot.docs[0].id;
+    }
     const docRef = await addDoc(this.getDirectMessageChannelListRef(), {
-      users: [currentUserId, clickedUserId],
+      users: sortedIds,
     });
     return docRef.id;
   }
@@ -44,7 +47,9 @@ export class DirectMessageService {
         const users = data['users'] || [];
         this.userIdsSignal.set(users);
         const secondUser = users.find((uid: string) => uid !== currentUserId);
-        if (secondUser) {
+        if (users[0] === users[1]) {
+          this.subUserProfile(users[1]);
+        } else {
           this.subUserProfile(secondUser);
         }
         handleData?.(data);
@@ -94,6 +99,7 @@ export class DirectMessageService {
       users: doc.data()['users'] || [],
       ...doc.data()
     }));
+    console.log("All direct messages", directMessages);
     return directMessages;
   }
 }
