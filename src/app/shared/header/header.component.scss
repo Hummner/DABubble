@@ -257,10 +257,8 @@ header {
     display: none;
   }
 
+
   &:hover {
-    background-color: transparent !important;
-  }
-  &:nth-child(2):hover {
     background-color: #eceefe !important;
     border-radius: 30px;
     color: blue;
