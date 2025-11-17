@@ -226,7 +226,6 @@ export class ChannelsService implements OnDestroy {
   ngOnDestroy(): void {
     this.unsubChannel?.();
     this.unsubMessages?.();
-    console.log("Destroyed");
   }
 
   updateChannelName(channelId: string, name: string) {

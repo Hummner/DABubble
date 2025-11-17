@@ -61,8 +61,6 @@ export class ThreadService {
 
   reemitCurrentTicket() {
     const v = this.currentTicketSubscribe.value;
-    console.log(v);
-
     if (v) this.currentTicketSubscribe.next({ ...v }); // neue Referenz erzwingen
   }
 
@@ -74,15 +72,11 @@ export class ThreadService {
 
   getThreadMesssageRef(id: string) {
     let path = this.threadPath + `/${id}`;
-    console.log(path);
 
     if (id) {
       return doc(this.firestore, path)
     }
     return this.getTicketPathDoc(this.getTicketPath())
-
-
-
   }
 
   async addMessageToThread(senderId: string, text: string) {
@@ -99,7 +93,6 @@ export class ThreadService {
       await this.addLastAnswerDate(newMessage.createdAt)
     } catch (error) {
       console.error("Error by add a message", error);
-
     }
   }
 
@@ -107,7 +100,6 @@ export class ThreadService {
     let ticketPath = this.getTicketPath();
     await updateDoc(doc(this.firestore, ticketPath), { lastThread: time })
   }
-
 
   async increaseThreadCounter() {
     let ticketPath = this.getTicketPath();
@@ -122,13 +114,11 @@ export class ThreadService {
     return doc(this.firestore, ticketPath)
   }
 
-
   getMessageToJson(messageData: DocumentData, threadMessageId: string) {
     const rawCreatedAt = messageData['createdAt'];
     const createdAtDate = rawCreatedAt instanceof Timestamp ? rawCreatedAt.toDate() : null;
     if (createdAtDate) {
       this.threadTimes.push(createdAtDate);
-
     }
 
     let message: TicketInterface = {
@@ -138,12 +128,6 @@ export class ThreadService {
       text: messageData['text'],
       threadMessageId: threadMessageId
     }
-
-
     return message
-  }
-
-  getLastThread() {
-
   }
 }

@@ -51,7 +51,7 @@ export class ThreadDirectMessageService {
     if (message.id) {
       let ref = this.getSingleThreadRef(channelId, docId, threadId);
       await updateDoc(ref, this.messageService.getCleanJson(message)).catch((err) => {
-        console.log(err);
+        throw err;
       });
     }
   }

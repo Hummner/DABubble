@@ -278,7 +278,6 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
       let tagId = document.getElementById(customId)
       tagId?.addEventListener('click', (e) => {
         e.preventDefault();
-        console.log("click");
         if (tag.taggedType == "user") this.navbarService.findOrCreateDMchannel(tag.id, currentUser!)
         if (tag.taggedType == "channel") this.userMentionService.findChannel(tag.id)
       })

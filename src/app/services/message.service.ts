@@ -38,7 +38,7 @@ export class MessageService {
     if (docId) {
       let ref = this.getSingleMessageRef(channelId, docId);
       await updateDoc(ref, this.getCleanJson(message)).catch((err) => {
-        console.log(err);
+        throw err;
       });
     }
   }

@@ -186,8 +186,6 @@ export class DirectMessagesComponent implements OnInit, OnDestroy, AfterViewChec
     if (this.scrollContainer?.nativeElement) {
       const el = this.scrollContainer.nativeElement;
       el.scrollTop = el.scrollHeight + 100;
-    } else {
-      console.log('ScrollContainer not available');
     }
   }
 
