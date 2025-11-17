@@ -1,9 +1,9 @@
-import { Component, EventEmitter, inject, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FirestoreService } from '../../../services/firestore.service';
 import { NgIf, NgClass } from '@angular/common';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormsModule} from '@angular/forms';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
 import { ChannelsService } from '../../../services/channels.service';
 
@@ -16,7 +16,6 @@ import { ChannelsService } from '../../../services/channels.service';
 })
 export class UserProfileComponent implements OnInit {
   @Output() close = new EventEmitter();
-  @ViewChild('editForm') editForm!: NgForm;
   userProfile = this.firestoreService.userProfile;
   channelService = inject(ChannelsService);
   edit = false;
