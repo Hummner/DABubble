@@ -43,10 +43,12 @@ export class UserProfileComponent implements OnInit {
   }
 
   get isFormValid(): boolean {
-    return this.editableUser?.name?.trim() !== '';
+    const name = this.editableUser?.name?.trim() || '';
+    const namePattern = /^[A-Za-zÄÖÜäöüß -]+$/;
+    return namePattern.test(name);
   }
 
-  constructor(private firestoreService: FirestoreService) {}
+  constructor(private firestoreService: FirestoreService) { }
 
   closeProfileCard(event: any) {
     event?.stopPropagation();
