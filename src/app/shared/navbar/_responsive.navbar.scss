@@ -4,9 +4,11 @@
   .sidenav-container {
     width: 100%;
   }
+
   .toggle-navbar {
     display: none;
   }
+
   .navbar-header {
     display: none;
   }
@@ -22,7 +24,8 @@
     position: relative;
     border: 1px solid #adb0d9;
     padding-right: 20px;
-    > input {
+
+    >input {
       width: 90%;
       border: none;
       outline: none;
@@ -33,13 +36,14 @@
       font-size: 24px;
       line-height: 50px;
       vertical-align: middle;
+
       &::placeholder {
         font-size: 24px;
         color: #999;
       }
     }
 
-    > button {
+    >button {
       border: none;
       background-color: transparent;
       padding: 16px;
@@ -63,9 +67,9 @@
     border-radius: 100%;
     z-index: 999;
     padding: 20px;
-    cursor:pointer;
+    cursor: pointer;
 
-    > img {
+    >img {
       width: 40px;
       height: 40px;
     }
@@ -84,14 +88,16 @@
   .float-btn {
     width: 65px;
     height: 65px;
-    > img {
+
+    >img {
       width: 35px;
       height: 35px;
     }
   }
+
   .channel-list {
-    > .channel-item {
-      > p {
+    >.channel-item {
+      >p {
         font-size: 16px;
       }
     }
@@ -117,5 +123,11 @@
     left: 10px;
     width: 275px;
     max-height: 275px;
+  }
+}
+
+@media (min-width:1921px) {
+  .toggle-navbar {
+    left: 14px;
   }
 }

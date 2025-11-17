@@ -1,6 +1,9 @@
 :host {
-  display: block;
+  display: flex;
   height: 100%;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 section {
@@ -11,11 +14,18 @@ section {
 .main-layout {
   height: calc(100vh - 100px);
   display: flex;
+  width: 100%;
+  max-width: 1920px;
 }
 
 .auth-layout {
   height: 100%;
   justify-content: center;
+}
+
+.header {
+  width: 100%;
+  max-width: 1920px;
 }
 
 @import "_responsive.app.scss"
