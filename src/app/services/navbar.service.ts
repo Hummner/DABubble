@@ -1,5 +1,5 @@
 import { Injectable, inject, OnDestroy, computed } from '@angular/core';
-import { Firestore, collection, onSnapshot, Unsubscribe} from '@angular/fire/firestore';
+import { Firestore, collection, onSnapshot, Unsubscribe, doc, updateDoc, arrayUnion } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { NavbarInterface } from '../interfaces/navbar.interface';
 import { ChannelsService } from '../services/channels.service';
@@ -8,6 +8,7 @@ import { FirestoreService } from '../services/firestore.service';
 import { UserProfileInterface } from '../interfaces/user-profile.interface';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
+import { user } from '@angular/fire/auth';
 
 @Injectable({ providedIn: 'root' })
 export class NavbarService implements OnDestroy {
@@ -16,9 +17,10 @@ export class NavbarService implements OnDestroy {
   userProfile = this.firestoreService.userProfile;
   private channels$ = new BehaviorSubject<NavbarInterface[]>([]);
   channelsObs$ = this.channels$.asObservable();
-
   private channelService = inject(ChannelsService);
   private router = inject(Router);
+
+  private standardChannelInitialized = false;
   private selectedChannelId$ = new BehaviorSubject<string | null>(null);
   selectedChannelIdObs$ = this.selectedChannelId$.asObservable();
   readonly channelUsers = this.directMessageService.userIds;
@@ -84,6 +86,8 @@ export class NavbarService implements OnDestroy {
 
   getOtherUserList(): UserProfileInterface[] {
     const users = this.firestoreService.userList();
+    this.ensureStandardChannelMembersInitialized(users);
+    
     return users.filter((user) => user.uid !== this.userProfile()?.uid);
   }
 
@@ -94,5 +98,32 @@ export class NavbarService implements OnDestroy {
     );
     this.router.navigateByUrl(`directMessages/${channelId}`);
     this.directMessageService.subDirectMessageChannel(channelId, currentUserId);
+  }
+
+  ensureStandardChannelMembersInitialized(users: UserProfileInterface[]) {
+    if (!this.standardChannelInitialized && users.length > 0) {
+      this.standardChannelInitialized = true;
+      this.addAllMembersToStandardChannel(users);
+    }
+  }
+
+  addAllMembersToStandardChannel(users: UserProfileInterface[]) {
+    const members = users.map((user) => ({ 
+      id: user.uid,
+      role: user.uid === this.userProfile()?.uid ? 'admin' : 'member',
+      name: user.name,
+      imgUrl: user.imgUrl
+    }));
+    this.updateStandardChannel(members);
+  }
+
+  updateStandardChannel(members: any) {
+    const standardChannelId = 'oXAdebNL8QaqXWNrvULn'
+    const channelRef = doc(this.firestore, 'channels', standardChannelId);  
+       
+    updateDoc(channelRef, {
+      members: arrayUnion(...(members || [])),
+      channelId: standardChannelId
+    })
   }
 }
