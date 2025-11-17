@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -7,6 +7,18 @@ import { getAuth } from '@angular/fire/auth';
 import { FirestoreService } from '../../services/firestore.service';
 import { Header2Component } from '../../shared/header-2/header-2.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
+
+function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+  const isWhitespace = (control.value || '').trim().length === 0 && control.value.length > 0;
+  return isWhitespace ? { whitespace: true } : null;
+}
+
+function strictEmailValidator(control: AbstractControl): ValidationErrors | null {
+  if (!control.value) return null;
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const valid = emailPattern.test(control.value);
+  return valid ? null : { email: true };
+}
 
 @Component({
   selector: 'app-login',
@@ -24,14 +36,14 @@ export class LoginComponent {
   fireStore = inject(FirestoreService);
 
   loginForm = new FormGroup({
-    email: this.fb.nonNullable.control('', [Validators.required, Validators.email]),
+    email: this.fb.nonNullable.control('', [Validators.required, Validators.email, strictEmailValidator,noWhitespaceValidator]),
     password: new FormControl('', Validators.required),
   });
 
   errorMessage: string | null = null;
   emailFocused = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) { }
 
   get loginFormControl() {
     return this.loginForm.controls;

@@ -45,8 +45,8 @@
             <a [routerLink]="['/resetPassword']"><p class="fs-18 blue">Passwort vergessen?</p></a>
           </div>
           <div class="btn-section">
-            <button [disabled]="isFormEmpty" [class.disabled]="isFormEmpty" type="submit" class="fs-18">Anmelden</button
-            ><button type="button" class="button" (click)="guestLogin($event)" class="fs-18 blue">Gäste-Login</button>
+            <button [disabled]="loginForm.invalid" [class.disabled]="loginForm.invalid" type="submit" class="fs-18">Anmelden</button
+            ><button class="button" (click)="guestLogin()" class="fs-18 blue">Gäste-Login</button>
           </div>
         </form>
       </div>
