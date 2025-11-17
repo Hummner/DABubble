@@ -30,6 +30,7 @@ export class SearchService {
   constructor() {}
 
   async onSearch(event: Event) {
+    this.navbarService.clearSelectedChannelId();
     const value = (event.target as HTMLInputElement).value;
     this.searchText = value;
 
