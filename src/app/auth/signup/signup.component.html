@@ -11,7 +11,7 @@
           </div>
           <div class="input-section">
             <div class="input-name">
-              <input class="fs-18" type="text" formControlName="name" required placeholder="Name und Nachname" />
+              <input class="fs-18" type="text" formControlName="name" autocomplete="username" required placeholder="Name und Nachname" />
               <img class="ph-img" src="assets/icon/person_filled.png" alt="Name Placeholder Image" />
               @if((signupFormControl.name.touched || submitted )&& signupFormControl.name.errors?.['required']){
               <span class="error">Name ist erforderlich</span>
@@ -20,7 +20,7 @@
               }
             </div>
             <div class="input-email">
-              <input class="fs-18" type="text" formControlName="email" required placeholder="beispielname@email.com" />
+              <input class="fs-18" type="text" formControlName="email"  autocomplete="username" required placeholder="beispielname@email.com" />
               <img class="ph-img" src="assets/icon/mail.png" alt="Email Placeholder Image" />
               @if((signupFormControl.email.touched || submitted) && signupFormControl.email.errors?.['required']){
               <span class="error">E-Mail ist erforderlich</span>
@@ -35,7 +35,7 @@
             </div>
 
             <div class="input-password">
-              <input class="fs-18" type="password" formControlName="password" required placeholder="Passwort" />
+              <input class="fs-18" type="password" autocomplete="new-password" formControlName="password" required placeholder="Passwort" />
               <img class="ph-img" src="assets/icon/lock.png" alt="Password Placeholder Image" />
               @if((signupFormControl.password.touched || submitted)&& signupFormControl.password.errors?.['required']){
               <span class="error">Passwort ist erfolgreich</span>}

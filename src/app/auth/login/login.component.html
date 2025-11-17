@@ -18,6 +18,7 @@
                 class="fs-18"
                 type="text"
                 formControlName="email"
+                 autocomplete="username"
                 required
                 placeholder="beispielname@email.com"
                 (focus)="emailFocused = true"
@@ -32,7 +33,7 @@
               }
             </div>
             <div class="input-password">
-              <input class="fs-18" type="password" formControlName="password" required placeholder="Passwort" />
+              <input class="fs-18" type="password" autocomplete="current-password" formControlName="password" required placeholder="Passwort" />
               <img class="ph-img" src="assets/icon/lock.png" alt="" />
               @if((loginFormControl.password.touched || submitted)&& loginFormControl.password.errors?.['required']){
               <span class="error">Passwort ist erforderlich</span>} @if((loginFormControl.password.touched || submitted)&&
