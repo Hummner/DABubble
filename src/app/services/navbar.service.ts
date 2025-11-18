@@ -122,7 +122,7 @@ export class NavbarService implements OnDestroy {
   }
 
   updateStandardChannel(members: any) {
-    const standardChannelId = 'oXAdebNL8QaqXWNrvULn'
+    const standardChannelId = 'PfXgFYnrp6oCyK88ZsHA'
     const channelRef = doc(this.firestore, 'channels', standardChannelId);
 
     updateDoc(channelRef, {
