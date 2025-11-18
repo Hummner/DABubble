@@ -22,7 +22,7 @@
         <ul *ngIf="userProfile() as userA" class="search-result-list">
           @for (userB of this.searchService.filteredUsers; track userB) {
           <a (click)="this.navbarService.findOrCreateDMchannel(userA.uid,userB.uid)">
-            <li class="search-result-item" [ngClass]="{'selected': userB.uid === navbarService.selectedUserId() || userA.uid === userB.uid}">
+            <li class="search-result-item" [ngClass]="{'selected':userB.uid === this.navbarService.selectedUserId()}">
               <div class="avatar">
                 <img [src]="userB.imgUrl" alt="User avatar" />
               </div>
