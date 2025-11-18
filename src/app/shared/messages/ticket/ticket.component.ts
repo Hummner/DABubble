@@ -270,13 +270,12 @@ export class TicketComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   showName() {
-    const userIndex = this.findUser(this.ticket.senderId);
-    if (userIndex >= 0 && this.members && this.isMember(userIndex, this.members)) {
-      this.userName = this.members[userIndex]['name'];
-      this.userImg = this.members[userIndex]['imgUrl'];
-    } else {
-      this.userName = "Guest";
-      this.userImg = "assets/img/profile.png"
+    const allUsers = this.firestoreService.userList();
+    
+    if (allUsers) {
+      const user = allUsers.find(user => user.uid == this.ticket.senderId);
+      this.userName = user?.name || "Gast";
+      this.userImg = user?.imgUrl || "assets/img/profile.png"
     }
   }
 

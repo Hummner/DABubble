@@ -30,7 +30,7 @@
         </main>
         <footer>
             <div class="text-area">
-                <textarea (keyup)="checkTheKey($event)" [(ngModel)]="textInput" name="chat_input" id="chat_input"
+                <textarea (keyup)="checkTheKey($event)" [(ngModel)]="textInput" name="chat_input" id="chat_input" #chat_input
                     placeholder="Antworten..." (input)="onInputChange($event)"></textarea>
             </div>
             <div class="input-buttons">

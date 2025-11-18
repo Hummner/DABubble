@@ -221,22 +221,14 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     }
   }
 
-  showName() {
-    if (!this.message?.senderId || !this.members) {
-      this.userName = "Guest";
-      this.userImg = "assets/img/profile.png";
-      return;
-    }
 
-    const userIndex = this.findUser(this.message.senderId);
-
-    if (userIndex >= 0 && this.isMember(userIndex, this.members)) {
-      const user = this.members[userIndex];
-      this.userName = user.name;
-      this.userImg = user.imgUrl;
-    } else {
-      this.userName = "Guest";
-      this.userImg = "assets/img/profile.png";
+ showName() {
+    const allUsers = this.firestoreService.userList();
+  
+    if (allUsers) {
+      const user = allUsers.find(user => user.uid == this.message.senderId);
+      this.userName = user?.name || "Gast";
+      this.userImg = user?.imgUrl || "assets/img/profile.png"
     }
   }
 
