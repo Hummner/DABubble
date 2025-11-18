@@ -28,14 +28,17 @@ export class NavbarService implements OnDestroy {
   readonly selectedUserId = computed(() => {
     const users = this.channelUsers();
     const current = this.currentUserId();
+    const other = users.find(uid => uid !== current);
+    const self = users.every(uid => uid === users[0]);
     this.clearSelectedChannelId();
     if (!users || !current) return null;
-      return users.find((uid) => uid !== current) ?? null;
-    });
+    if (other) return other;
+    return self ? users[0] : null;
+  });
 
   constructor(
-      private firestoreService: FirestoreService,
-      private directMessageService: DirectMessageService,
+    private firestoreService: FirestoreService,
+    private directMessageService: DirectMessageService,
   ) {
     const colRef = collection(this.firestore, 'channels');
     this.stop = onSnapshot(colRef, snap => {
@@ -54,7 +57,7 @@ export class NavbarService implements OnDestroy {
     this.router.navigateByUrl(`channel/${channelId}`);
     this.focusOnChannelTextarea();
   }
-  
+
   hideChannelWithoutCurrentUser() {
     const filteredChannels$ = this.channelsObs$.pipe(
       map(channels =>
@@ -87,7 +90,7 @@ export class NavbarService implements OnDestroy {
   getOtherUserList(): UserProfileInterface[] {
     const users = this.firestoreService.userList();
     this.ensureStandardChannelMembersInitialized(users);
-    
+
     return users.filter((user) => user.uid !== this.userProfile()?.uid);
   }
 
@@ -108,7 +111,7 @@ export class NavbarService implements OnDestroy {
   }
 
   addAllMembersToStandardChannel(users: UserProfileInterface[]) {
-    const members = users.map((user) => ({ 
+    const members = users.map((user) => ({
       id: user.uid,
       role: user.uid === this.userProfile()?.uid ? 'admin' : 'member',
       name: user.name,
@@ -119,8 +122,8 @@ export class NavbarService implements OnDestroy {
 
   updateStandardChannel(members: any) {
     const standardChannelId = 'oXAdebNL8QaqXWNrvULn'
-    const channelRef = doc(this.firestore, 'channels', standardChannelId);  
-       
+    const channelRef = doc(this.firestore, 'channels', standardChannelId);
+
     updateDoc(channelRef, {
       members: arrayUnion(...(members || [])),
       channelId: standardChannelId
