@@ -1,6 +1,6 @@
 @import "../../mixins";
 
-@media (max-width: 1400px) {
+@media (max-width: 1500px) {
   ::ng-deep .container {
     >.mat-drawer-content {
       margin: 0 !important;
@@ -19,6 +19,10 @@
   .truncate {
     max-width: 400px !important;
   }
+
+  .margin-30 {
+    margin-right: 15px !important;
+  }
 }
 
 @media (max-width: 1200px) {
@@ -33,7 +37,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@include respond-to(lg) {
   .menu-container-resp {
     display: flex;
     flex-direction: column;
@@ -78,7 +82,7 @@
   }
 }
 
-@include respond-to(md) {
+@include respond-to(lg) {
   .content {
     border-radius: unset;
   }
@@ -107,7 +111,6 @@
   }
 
   .created-by-name {
-    // margin: 0;
     font-size: 20px;
   }
 

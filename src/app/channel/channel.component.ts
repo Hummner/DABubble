@@ -154,7 +154,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   checkWindowWidth() {
-    if (window.innerWidth > 1024) {
+    if (window.innerWidth > 1500) {
       this.drawerMode = 'side';
     } else {
       this.drawerMode = 'over';
@@ -165,7 +165,7 @@ export class ChannelComponent implements OnInit, OnDestroy, AfterViewChecked {
   onResize(width: number) {
     this.windowWidth = width;
     this.checkWindowWidth();
-    if (this.windowWidth >= 1400) {
+    if (this.windowWidth >= 1500) {
     }
   }
 

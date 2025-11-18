@@ -1,6 +1,6 @@
 <section>
   <div class="backdrop" *ngIf="menuOpen" (click)="menuOpen = false"></div>
-  <mat-drawer-container class="container" autosize [class.margin-30]="isThreadOpen && windowWidth < 1400">
+  <mat-drawer-container class="container" autosize [class.margin-30]="isThreadOpen && windowWidth < 1500">
     <mat-drawer #drawer [mode]="drawerMode" class="example-sidenav" position="end"
       [class.example-sidenav-100]="isThreadOpen && windowWidth < 1400" [(opened)]="isThreadOpen">
       <!-- <app-thread  [isThreadOpen]="isThreadOpen" [members]="channel?.members"
