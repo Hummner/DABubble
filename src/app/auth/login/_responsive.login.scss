@@ -9,13 +9,8 @@
     padding-top: 30px;
   }
   .create-acc {
-    border: none;
-    border: 2px solid #444df2;
+    border: 1px solid #444df2;
     border-radius: 50px;
-    padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
-    font-weight: 700;
   }
 }
 
@@ -56,6 +51,10 @@
     height: 25px;
     top: 12px;
   }
+
+  .resp-button {
+    padding: 4px 8px;
+  }
 }
 
 @include respond-to(ssm) {
@@ -94,10 +93,7 @@
   }
 
   .btn-section {
-    > button {
-      height: 40px;
-      width: 120px;
-    }
+    gap: 20px;
   }
 
   button {
@@ -131,14 +127,6 @@
   }
   .ph-img {
     top: 8px;
-  }
-
-  .btn-section {
-    gap: 20px;
-    > button {
-      height: 30px;
-      width: 110px;
-    }
   }
 
   .error {

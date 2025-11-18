@@ -45,15 +45,15 @@
             <a [routerLink]="['/resetPassword']"><p class="fs-18 blue">Passwort vergessen?</p></a>
           </div>
           <div class="btn-section">
-            <button [disabled]="loginForm.invalid" [class.disabled]="loginForm.invalid" type="submit" class="fs-18">Anmelden</button
-            ><button class="button" (click)="guestLogin()" class="fs-18 blue">Gäste-Login</button>
+            <button [disabled]="loginForm.invalid" [class.disabled]="loginForm.invalid" type="submit" class="primary-button fs-18 resp-button bold">Anmelden</button>
+            <span (click)="guestLogin()" class="fs-18 bold secondary-button resp-button">Gäste-Login</span>
           </div>
         </form>
       </div>
       <div class="resp-footer">
         <p class="fs-18">Neu bei DABubble?</p>
         <a [routerLink]="['signup']">
-          <button class="fs-18 blue create-acc">Konto erstellen</button>
+          <button class="fs-18 secondary-button bold create-acc resp-button">Konto erstellen</button>
         </a>
       </div>
     </div>

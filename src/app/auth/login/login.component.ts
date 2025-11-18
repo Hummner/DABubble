@@ -7,6 +7,7 @@ import { getAuth } from '@angular/fire/auth';
 import { FirestoreService } from '../../services/firestore.service';
 import { Header2Component } from '../../shared/header-2/header-2.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
+import { ClickStopPropagation } from "../../click-stop-propagation.directive";
 
 function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
   const isWhitespace = (control.value || '').trim().length === 0 && control.value.length > 0;
@@ -23,7 +24,7 @@ function strictEmailValidator(control: AbstractControl): ValidationErrors | null
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, Header2Component, FooterComponent],
+  imports: [ReactiveFormsModule, RouterLink, Header2Component, FooterComponent, ClickStopPropagation],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })

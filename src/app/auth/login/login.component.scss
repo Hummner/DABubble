@@ -26,7 +26,13 @@ app-footer {
 }
 
 .create-acc {
-  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: transparent !important;
+
+  &:hover {
+    background-color: #444df2 !important;
+  }
 }
 
 .login-dialog {
@@ -37,7 +43,7 @@ app-footer {
   border-radius: 30px;
   box-shadow: 0 2px 10px #00000014;
 
-  > form {
+  >form {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -52,12 +58,14 @@ app-footer {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  > h1 {
+
+  >h1 {
     font-family: "Nunito";
     font-size: 46px;
     font-weight: 600;
   }
-  > p {
+
+  >p {
     font-size: 20px;
   }
 }
@@ -68,12 +76,14 @@ app-footer {
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  > .input-email,
+
+  >.input-email,
   .input-password {
     height: 80px;
     width: 100%;
     position: relative;
-    > input {
+
+    >input {
       width: 100%;
       background-color: #eceefe;
       outline: none;
@@ -89,7 +99,7 @@ app-footer {
 .error {
   color: rgb(226, 24, 24);
   font-size: 16px;
-  margin-left:80px;
+  margin-left: 80px;
 }
 
 .ph-img {
@@ -99,51 +109,34 @@ app-footer {
   top: 15px;
   left: 20px;
 }
+
 .btn-section {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   gap: 40px;
-  > button {
-    border: none;
-    border-radius: 25px;
-    height: 50px;
-    width: 130px;
-    cursor: pointer;
-    font-weight: 700;
-  }
-  > :nth-child(1) {
-    color: #fdfdfd;
-    background-color: #444df2;
-  }
 }
 
 .separator-section {
   width: 100%;
   display: flex;
   align-items: center;
-  > .separator {
+
+  >.separator {
     width: 100%;
     height: 1px;
     background-color: #adb0d9;
   }
-  > p {
+
+  >p {
     margin: 0;
     padding: 5px;
   }
 }
+
 .resp-footer {
   display: none;
-}
-
-.btn-section {
-  > .disabled {
-    border: none;
-    border-radius: 25px;
-    height: 50px;
-    width: 130px;
-    cursor: not-allowed;
-    color: #fdfdfd;
-    background-color: #686868;
-  }
 }
 
 @import "./responsive.login";
