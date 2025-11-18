@@ -108,6 +108,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logOut() {
+    this.navbarService.standardChannelInitialized = false;
     this.authService.logout();
     this.router.navigateByUrl('/');
   }

@@ -109,10 +109,12 @@ export class FirestoreService implements OnDestroy {
   async getGuestLoginData(uid: string) {
     const data = {
       createdAt: new Date().toISOString(),
+      email: '',
       role: 'guest',
-      name: 'Guest',
+      name: 'Gast',
       imgUrl: 'assets/img/profile.png',
       isAnonymous: true,
+      uid: '',
     };
     const userDoc = doc(this.firestore, `users/${uid}`);
     await setDoc(userDoc, data);

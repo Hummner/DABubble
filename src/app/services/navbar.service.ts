@@ -20,7 +20,7 @@ export class NavbarService implements OnDestroy {
   private channelService = inject(ChannelsService);
   private router = inject(Router);
 
-  private standardChannelInitialized = false;
+  standardChannelInitialized = false;
   private selectedChannelId$ = new BehaviorSubject<string | null>(null);
   selectedChannelIdObs$ = this.selectedChannelId$.asObservable();
   readonly channelUsers = this.directMessageService.userIds;
