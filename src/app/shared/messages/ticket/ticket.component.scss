@@ -216,6 +216,7 @@
 
 ::ng-deep .text-link {
   margin: 0 !important;
+  word-break: break-all;
 
   span {
     border-radius: 20px !important;
