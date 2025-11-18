@@ -95,6 +95,7 @@ export class NavbarService implements OnDestroy {
   }
 
   async findOrCreateDMchannel(currentUserId: string, clickedUserId: string) {
+    this.clearSelectedChannelId();
     const channelId = await this.directMessageService.getDMChannel(
       currentUserId,
       clickedUserId
