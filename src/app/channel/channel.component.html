@@ -2,16 +2,14 @@
   <div class="backdrop" *ngIf="menuOpen" (click)="menuOpen = false"></div>
   <mat-drawer-container class="container" autosize [class.margin-30]="isThreadOpen && windowWidth < 1500">
     <mat-drawer #drawer [mode]="drawerMode" class="example-sidenav" position="end"
-      [class.example-sidenav-100]="isThreadOpen && windowWidth < 1400" [(opened)]="isThreadOpen">
-      <!-- <app-thread  [isThreadOpen]="isThreadOpen" [members]="channel?.members"
-        [tickets]="channel?.messages" (close)="drawer.toggle()"></app-thread> -->
+      [class.example-sidenav-100]="isThreadOpen && windowWidth < 1500" [(opened)]="isThreadOpen">
         <router-outlet></router-outlet>
     </mat-drawer>
-    <div class="content" [class.hide-content]="isThreadOpen && windowWidth < 1400">
+    <div class="content" [class.hide-content]="isThreadOpen && windowWidth < 1500">
       <header>
         <div class="channel-name" [matMenuTriggerFor]="editChannelMenu" (click)="openMenu(editChannelTrigger)"
           #editChannelTrigger="matMenuTrigger">
-          <h2 class="truncate"># {{ channel?.name }}</h2>
+          <h2># {{ channel?.name }}</h2>
           <mat-icon>keyboard_arrow_down</mat-icon>
           <mat-menu #editChannelMenu="matMenu" (closed)="menuOpen = false" class="edit-channel-menu-container">
             <div class="edit-channel-menu" (click)="$event.stopPropagation()">
@@ -31,7 +29,7 @@
                   }
                 </div>
                 <div class="name-input-wrapper">
-                  <input #nameInput [readonly]="!editName" [ngClass]="{ 'border-on-focus': editName }" type="text"
+                  <input #nameInput ng-maxlength="5" [readonly]="!editName" [ngClass]="{ 'border-on-focus': editName }" type="text"
                     class="channel-name-input no-border" value="{{ channel?.name }}" />
                 </div>
                 <span *ngIf="channelNameExists" class="error-message">Channel-Name existiert bereits</span>
@@ -79,7 +77,7 @@
             }
           </div>
           @for (members of channel?.members; track $index) {
-            @if (members.name === userProfile()?.name && members.createdAt === userProfile()?.createdAt) {
+            @if (members.name === userProfile()?.name && members.createdAt === userProfile()?.createdAt && channel?.name != 'Willkommen bei DaBubble') {
               <div class="add-member-icon am-icon" (click)="addMemberDialog()">
                 <img src="assets/icon/person_add.png" alt="" />
               </div>
@@ -106,7 +104,7 @@
                 </div>
               }
               @for (member of channel?.members; track $index) {
-                @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt) {
+                @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt && channel?.name != 'Willkommen bei DaBubble') {
                   <div class="members-menu-add margin-16" (click)="addMemberDialog()">
                     <div class="add-member-icon" >
                       <img src="assets/icon/person_add.png" />
