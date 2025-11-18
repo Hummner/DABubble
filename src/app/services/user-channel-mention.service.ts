@@ -13,7 +13,7 @@ export class UserMentionService {
   filteredUserList = computed(() =>
     this.firestoreService
       .userList()
-      .filter((user) => user.uid !== this.firestoreService.userProfile()?.uid && user.name !== 'Guest')
+      .filter((user) => user.name !== 'Guest')
   );
   filteredChannelList = signal<NavbarInterface[]>([]);
   channels = toSignal(inject(NavbarService).channelsObs$, {
