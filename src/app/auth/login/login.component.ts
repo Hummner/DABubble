@@ -24,7 +24,7 @@ function strictEmailValidator(control: AbstractControl): ValidationErrors | null
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, Header2Component, FooterComponent, ClickStopPropagation],
+  imports: [ReactiveFormsModule, RouterLink, Header2Component, FooterComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
