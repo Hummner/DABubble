@@ -221,7 +221,6 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
     }
   }
 
-
  showName() {
     const allUsers = this.firestoreService.userList();
   
