@@ -108,7 +108,7 @@ export class FirestoreService implements OnDestroy {
 
   async getGuestLoginData(uid: string) {
     const data = {
-      createdAt: new Date().toISOString(),
+      createdAt: Date.now().toString(),
       email: '',
       role: 'guest',
       name: 'Gast',
