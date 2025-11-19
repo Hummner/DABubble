@@ -66,6 +66,11 @@
   border: unset;
 }
 
+.buttons {
+  display: flex;
+  gap: 24px;
+}
+
 .disabled {
   border: none;
   border-radius: 25px;

@@ -9,13 +9,13 @@
   <mat-drawer-container
     class="container"
     autosize
-    [class.hidden-dm]="isThreadOpen && windowWidth < 1400"
-    [class.margin-30]="isThreadOpen && windowWidth < 1400"
+    [class.hidden-dm]="isThreadOpen && windowWidth < 1500"
+    [class.margin-30]="isThreadOpen && windowWidth < 1500"
   >
     <mat-drawer
       #drawer
       class="example-sidenav"
-      [class.example-sidenav-100]="isThreadOpen && windowWidth < 1400"
+      [class.example-sidenav-100]="isThreadOpen && windowWidth < 1500"
       mode="side"
       position="end"
       [(opened)]="isThreadOpen"
