@@ -224,7 +224,7 @@ export class ThreadMessagesComponent implements OnInit, OnChanges, AfterViewInit
  showName() {
     const allUsers = this.firestoreService.userList();
   
-    if (allUsers && this.message.senderId) {
+    if (allUsers && this.message?.senderId) {
       const user = allUsers.find(user => user.uid == this.message.senderId);
       this.userName = user?.name || "Gast";
       this.userImg = user?.imgUrl || "assets/img/profile.png"
