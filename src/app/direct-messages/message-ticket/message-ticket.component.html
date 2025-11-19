@@ -85,7 +85,7 @@
         <div class="restEmoji" *ngIf="hasMoreReactions && !allEmoji" (click)="toggleEmojiAmount()">
           <span class="lessEmojiText">Weniger</span>
         </div>
-        <div
+        <div *ngIf="reactionsAll.length > 0"
           class="emoji-menu-item"
           [matMenuTriggerFor]="emojiMenu"
           #emojiEditTrigger="matMenuTrigger"
