@@ -27,7 +27,7 @@
   padding: 60px;
   border-radius: 30px;
   box-shadow: 0 2px 10px #00000014;
-  margin-top: 150px;
+  margin-top: 15px;
 
   > form {
     display: flex;
@@ -89,7 +89,7 @@
 }
 
 .input-password {
-  height: 140px !important;
+  height: 90px !important;
 }
 
 .error {
@@ -136,6 +136,13 @@
   vertical-align: middle;
   transition: background 0.2s ease;
   cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.checkbox-label {
+  font-size: 18px;
+  text-align: center;
+
 }
 
 .input-checkbox > label:hover::before {
