@@ -1,5 +1,5 @@
 import { Injectable, inject, OnDestroy, computed } from '@angular/core';
-import { Firestore, collection, onSnapshot, Unsubscribe, doc, updateDoc, arrayUnion } from '@angular/fire/firestore';
+import { Firestore, collection, onSnapshot, Unsubscribe, doc, updateDoc, arrayUnion, getDoc } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { NavbarInterface } from '../interfaces/navbar.interface';
 import { ChannelsService } from '../services/channels.service';
@@ -121,12 +121,17 @@ export class NavbarService implements OnDestroy {
     this.updateStandardChannel(members);
   }
 
-  updateStandardChannel(members: any) {
+    async updateStandardChannel(members: any) {
     const standardChannelId = 'PfXgFYnrp6oCyK88ZsHA'
     const channelRef = doc(this.firestore, 'channels', standardChannelId);
+    const snapshot = await getDoc(channelRef);
+    const existingMembers = snapshot.data()?.['members'] || [];
 
-    updateDoc(channelRef, {
-      members: arrayUnion(...(members || [])),
+    const newMembers = members.filter((member: any) => !existingMembers.some((m: any) => m.id === member.id));
+    if (newMembers.length === 0) return
+
+    await updateDoc(channelRef, {
+      members: arrayUnion(...newMembers),
       channelId: standardChannelId
     })
   }

@@ -82,8 +82,7 @@
             }
           </div>
           @for (members of channel?.members; track $index) {
-          @if (members.name === userProfile()?.name && members.createdAt === userProfile()?.createdAt && channel?.name
-          != 'Willkommen bei DaBubble') {
+          @if (members.name === userProfile()?.name && members.createdAt === userProfile()?.createdAt) {
           <div class="add-member-icon am-icon" (click)="addMemberDialog()">
             <img src="assets/icon/person_add.png" alt="" />
           </div>
@@ -110,15 +109,14 @@
               </div>
               }
               @for (member of channel?.members; track $index) {
-              @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt && channel?.name
-              != 'Willkommen bei DaBubble') {
-              <div class="members-menu-add margin-16" (click)="addMemberDialog()">
-                <div class="add-member-icon">
-                  <img src="assets/icon/person_add.png" />
+                @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt) {
+                <div class="members-menu-add margin-16" (click)="addMemberDialog()">
+                  <div class="add-member-icon">
+                    <img src="assets/icon/person_add.png" />
+                  </div>
+                  <span>Mitglieder hinzufügen</span>
                 </div>
-                <span>Mitglieder hinzufügen</span>
-              </div>
-              }
+                }
               }
             </div>
           </div>
