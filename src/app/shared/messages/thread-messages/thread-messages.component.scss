@@ -305,6 +305,7 @@
     padding: 20px 45px;
     gap: 24px;
     background-color: #ECEEFE;
+    container-type: inline-size;
 }
 
 .edit-textarea {
@@ -367,6 +368,10 @@
 
 @media(max-width: 768px) {
     .ticket {
+        padding: 20px 14px;
+    }
+
+    .ticket-edit {
         padding: 20px 14px;
     }
 
