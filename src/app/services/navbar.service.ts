@@ -1,5 +1,5 @@
 import { Injectable, inject, OnDestroy, computed } from '@angular/core';
-import { Firestore, collection, onSnapshot, Unsubscribe, doc, updateDoc, arrayUnion, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, onSnapshot, Unsubscribe, doc, updateDoc, arrayUnion, getDoc, getDocs, CollectionReference, DocumentData } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { NavbarInterface } from '../interfaces/navbar.interface';
 import { ChannelsService } from '../services/channels.service';
@@ -121,9 +121,11 @@ export class NavbarService implements OnDestroy {
     this.updateStandardChannel(members);
   }
 
-    async updateStandardChannel(members: any) {
-    const standardChannelId = 'PfXgFYnrp6oCyK88ZsHA'
-    const channelRef = doc(this.firestore, 'channels', standardChannelId);
+  async updateStandardChannel(members: any) {
+    let publicChannelId = await this.getPublicChannelId()
+    if (!publicChannelId) return
+
+    const channelRef = doc(this.firestore, 'channels', publicChannelId);
     const snapshot = await getDoc(channelRef);
     const existingMembers = snapshot.data()?.['members'] || [];
 
@@ -132,7 +134,22 @@ export class NavbarService implements OnDestroy {
 
     await updateDoc(channelRef, {
       members: arrayUnion(...newMembers),
-      channelId: standardChannelId
+      channelId: publicChannelId
     })
+  }
+
+  async getPublicChannelId() {
+    let channelsCollection = this.getChannelsCollection()
+    let docs = await this.getChannelsDocs(channelsCollection)
+    let id = docs.docs.find(doc => doc.data()['name'] === 'Public')?.id;
+    return id
+  }
+
+  getChannelsCollection() {
+    return collection(this.firestore, "channels")
+  }
+
+  async getChannelsDocs(channelsCollection: CollectionReference<DocumentData, DocumentData>) {
+    return await getDocs(channelsCollection)
   }
 }
