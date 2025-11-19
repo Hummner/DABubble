@@ -39,28 +39,23 @@ section {
 }
 
 .channel-name {
-display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    padding: 6px 10px;
-    flex: 1 1 0;
-    min-width: 0 !important;
-    overflow: hidden;
-    width: 0;
+  display: flex;
+  align-items: center;
+  
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  width: 0;
+}
 
-
-  >h2 {
-    font-weight: bold;
-    margin: 0;
-    font-size: 24px;
-    /* flex: 1 1 0; */
-    min-width: 0 !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    
-  }
+.channel-name-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 6px 10px;
+  max-width: 100%;
+  min-width: 0;
 
   &:hover {
     border-radius: 30px;
@@ -72,6 +67,25 @@ display: flex;
     }
   }
 }
+
+.channel-name-wrap h2 {
+  margin: 0;
+  font-weight: bold;
+  font-size: 24px;
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.channel-name-wrap mat-icon {
+  flex: 0 0 auto;
+}
+
+
+
 
 .error-message {
   color: #ff0000;

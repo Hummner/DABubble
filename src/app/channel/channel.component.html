@@ -3,14 +3,19 @@
   <mat-drawer-container class="container" autosize [class.margin-30]="isThreadOpen && windowWidth < 1500">
     <mat-drawer #drawer [mode]="drawerMode" class="example-sidenav" position="end"
       [class.example-sidenav-100]="isThreadOpen && windowWidth < 1500" [(opened)]="isThreadOpen">
-        <router-outlet></router-outlet>
+      <router-outlet></router-outlet>
     </mat-drawer>
     <div class="content" [class.hide-content]="isThreadOpen && windowWidth < 1500">
       <header>
         <div class="channel-name" [matMenuTriggerFor]="editChannelMenu" (click)="openMenu(editChannelTrigger)"
           #editChannelTrigger="matMenuTrigger">
-          <h2># {{ channel?.name }}</h2>
-          <mat-icon>keyboard_arrow_down</mat-icon>
+          <div class="channel-name-wrap">
+            <h2># {{ channel?.name }}</h2>
+            <mat-icon>keyboard_arrow_down</mat-icon>
+
+          </div>
+
+
           <mat-menu #editChannelMenu="matMenu" (closed)="menuOpen = false" class="edit-channel-menu-container">
             <div class="edit-channel-menu" (click)="$event.stopPropagation()">
               <div class="edit-channel-header">
@@ -22,15 +27,15 @@
                 <div class="channel-name-menu-header">
                   <h3>Channel-Name</h3>
                   @for (member of channel?.members; track $index) {
-                    @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt) {
-                      <span *ngIf="!editName" (click)="editChannel('editName')">Bearbeiten</span>
-                      <span *ngIf="editName" (click)="editChannelClose('editName')">Speichern</span>
-                    }
+                  @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt) {
+                  <span *ngIf="!editName" (click)="editChannel('editName')">Bearbeiten</span>
+                  <span *ngIf="editName" (click)="editChannelClose('editName')">Speichern</span>
+                  }
                   }
                 </div>
                 <div class="name-input-wrapper">
-                  <input #nameInput ng-maxlength="5" [readonly]="!editName" [ngClass]="{ 'border-on-focus': editName }" type="text"
-                    class="channel-name-input no-border" value="{{ channel?.name }}" />
+                  <input #nameInput ng-maxlength="5" [readonly]="!editName" [ngClass]="{ 'border-on-focus': editName }"
+                    type="text" class="channel-name-input no-border" value="{{ channel?.name }}" />
                 </div>
                 <span *ngIf="channelNameExists" class="error-message">Channel-Name existiert bereits</span>
               </div>
@@ -38,10 +43,10 @@
                 <div class="channel-name-menu-header">
                   <h3>Beschreibung</h3>
                   @for (member of channel?.members; track $index) {
-                    @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt) {
-                      <span *ngIf="!editDisc" (click)="editChannel('editDisc')">Bearbeiten</span>
-                      <span *ngIf="editDisc" (click)="editChannelClose('editDisc')">Speichern</span>
-                    }
+                  @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt) {
+                  <span *ngIf="!editDisc" (click)="editChannel('editDisc')">Bearbeiten</span>
+                  <span *ngIf="editDisc" (click)="editChannelClose('editDisc')">Speichern</span>
+                  }
                   }
                 </div>
                 <textarea #discInput [ngClass]="{ 'border-on-focus': editDisc }" [readonly]="!editDisc"
@@ -53,10 +58,10 @@
               </div>
               <div class="edit-channel-footer">
                 @for (member of channel?.members; track $index) {
-                  @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt) {
+                @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt) {
                 <span (click)="leaveChannel(this.userProfile(), editChannelTrigger)" class="primary-button">Channel
                   verlassen</span>
-                  }
+                }
                 }
               </div>
             </div>
@@ -66,26 +71,27 @@
           <div class="members-container" [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger"
             (click)="openMenu(menuTrigger)">
             @for (member of channel?.members?.slice(0, 3); track $index) {
-              <div class="member-img">
-                <img [src]="member?.imgUrl" alt="" />
-              </div>
+            <div class="member-img">
+              <img [src]="member?.imgUrl" alt="" />
+            </div>
             }
             @if ((channel?.members?.length ?? 0) > 3) {
-              <div class="member-img">
-                <span>+{{ (channel?.members?.length ?? 0) - 3 }}</span>
-              </div>
+            <div class="member-img">
+              <span>+{{ (channel?.members?.length ?? 0) - 3 }}</span>
+            </div>
             }
           </div>
           @for (members of channel?.members; track $index) {
-            @if (members.name === userProfile()?.name && members.createdAt === userProfile()?.createdAt && channel?.name != 'Willkommen bei DaBubble') {
-              <div class="add-member-icon am-icon" (click)="addMemberDialog()">
-                <img src="assets/icon/person_add.png" alt="" />
-              </div>
-              <div [matMenuTriggerFor]="menu"
-                #menuTrigger="matMenuTrigger" (click)="openMenu(menuTrigger)" class="add-member-icon-resp">
-                <img src="assets/icon/person_add.png" alt="" />
-              </div>
-            }
+          @if (members.name === userProfile()?.name && members.createdAt === userProfile()?.createdAt && channel?.name
+          != 'Willkommen bei DaBubble') {
+          <div class="add-member-icon am-icon" (click)="addMemberDialog()">
+            <img src="assets/icon/person_add.png" alt="" />
+          </div>
+          <div [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger" (click)="openMenu(menuTrigger)"
+            class="add-member-icon-resp">
+            <img src="assets/icon/person_add.png" alt="" />
+          </div>
+          }
           }
         </div>
         <mat-menu (closed)="menuOpen = false" xPosition="before" #menu="matMenu" class="members-menu-container">
@@ -96,23 +102,24 @@
             </div>
             <div class="members-menu-list">
               @for (member of channel?.members; track $index) {
-                <div class="members-menu-listelement">
-                  <div class="member-img margin-16">
-                    <img [src]="member?.imgUrl" alt="" />
-                  </div>
-                  <div class="member-menu-name">{{ member?.name }}</div>
+              <div class="members-menu-listelement">
+                <div class="member-img margin-16">
+                  <img [src]="member?.imgUrl" alt="" />
                 </div>
+                <div class="member-menu-name">{{ member?.name }}</div>
+              </div>
               }
               @for (member of channel?.members; track $index) {
-                @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt && channel?.name != 'Willkommen bei DaBubble') {
-                  <div class="members-menu-add margin-16" (click)="addMemberDialog()">
-                    <div class="add-member-icon" >
-                      <img src="assets/icon/person_add.png" />
-                    </div>
-                    <span>Mitglieder hinzufügen</span>
-                  </div>
-                  }
-                }
+              @if (member.name === userProfile()?.name && member.createdAt === userProfile()?.createdAt && channel?.name
+              != 'Willkommen bei DaBubble') {
+              <div class="members-menu-add margin-16" (click)="addMemberDialog()">
+                <div class="add-member-icon">
+                  <img src="assets/icon/person_add.png" />
+                </div>
+                <span>Mitglieder hinzufügen</span>
+              </div>
+              }
+              }
             </div>
           </div>
         </mat-menu>
@@ -156,7 +163,8 @@
               <mat-menu #reactMenu="matMenu" class="emoji-menu-small">
                 <div class="emoji-menu-container">
                   @for (emoji of emojiService.sortedEmojis; track emojiService.emojiList) {
-                  <span class="emoji-in-popup" (click)="onEmojiClick(emoji); $event.stopPropagation()"><img src="assets/emojis/{{ emoji.name }}.png" /></span>
+                  <span class="emoji-in-popup" (click)="onEmojiClick(emoji); $event.stopPropagation()"><img
+                      src="assets/emojis/{{ emoji.name }}.png" /></span>
                   }
                 </div>
               </mat-menu>
@@ -171,7 +179,7 @@
               #channelTrigger="matMenuTrigger" (click)="tagInputChannelStart()">
               <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
             </div>
-            
+
             <mat-menu #channelBoxMenu="matMenu" class="channel-box-menu" yPosition="above">
               <div class="channel-menu-wrap">
                 @for(channel of userMentionService.filteredChannelList(); track channel) {
