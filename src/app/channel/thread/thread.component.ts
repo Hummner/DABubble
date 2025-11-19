@@ -1,7 +1,7 @@
-import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, input, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, inject, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild, HostListener } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { TicketInterface } from '../../interfaces/ticket.interface';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { ThreadService } from '../../services/thread.service';
 import { ThreadMessagesComponent } from '../../shared/messages/thread-messages/thread-messages.component';
 import { AuthService } from '../../services/auth.service';
@@ -17,8 +17,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { filter, distinctUntilChanged, flatMap, map } from 'rxjs/operators';
 import { ChannelsService } from '../../services/channels.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-
 
 @Component({
   selector: 'app-thread',
@@ -66,14 +64,15 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
   firstSeen = false;
   initialScrollDone = false;
 
-
-  constructor(private router: Router, private route: ActivatedRoute) {
-  }
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
   ngAfterViewChecked() {
     if (!this.initialScrollDone && this.messages.length) {
       this.scrollToBottom();
       this.initialScrollDone = true;
+    }
+    if (this.loading) {
+      this.chatInput?.nativeElement.focus();
     }
   }
 
@@ -86,8 +85,8 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe(messageId => {
         if (!messageId) return;
         this.setupThread();
-
       });
+    
   }
 
   setupThread() {
@@ -96,7 +95,6 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.setupCurrentTicketSub();
     this.setupMembersSub();
     this.setupThreadMessages();
-
   }
 
   setupLoadingSpinner() {
@@ -179,7 +177,6 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     }
   }
-
 
   async addMessageToThread() {
     if (!this.canSendMessage()) return
