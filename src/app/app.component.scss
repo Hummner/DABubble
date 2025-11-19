@@ -15,7 +15,6 @@ section {
   height: calc(100vh - 100px);
   display: flex;
   width: 100%;
-  max-width: 1920px;
 }
 
 .auth-layout {
@@ -26,7 +25,6 @@ section {
 
 .header {
   width: 100%;
-  max-width: 1920px;
 }
 
 @import "_responsive.app.scss"
