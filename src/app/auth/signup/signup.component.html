@@ -5,13 +5,15 @@
       <div class="signup-dialog">
         <form [formGroup]="signupForm" class="form" (ngSubmit)="onSubmit()">
           <div class="title-section">
-            <a [routerLink]="['/']"><img class="go-back-arrow" src="assets/icon/arrow_back.svg" alt="Go Back Arrow" /></a>
+            <a [routerLink]="['/']"><img class="go-back-arrow" src="assets/icon/arrow_back.svg"
+                alt="Go Back Arrow" /></a>
             <h1 class="blue">Konto erstellen</h1>
             <p>Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues DABubble-Konto.</p>
           </div>
           <div class="input-section">
             <div class="input-name">
-              <input class="fs-18" type="text" formControlName="name" autocomplete="username" required placeholder="Name und Nachname" />
+              <input class="fs-18" type="text" formControlName="name" autocomplete="username" required
+                placeholder="Name und Nachname" />
               <img class="ph-img" src="assets/icon/person_filled.png" alt="Name Placeholder Image" />
               @if((signupFormControl.name.touched || submitted )&& signupFormControl.name.errors?.['required']){
               <span class="error">Name ist erforderlich</span>
@@ -20,31 +22,44 @@
               }
             </div>
             <div class="input-email">
-              <input class="fs-18" type="text" formControlName="email"  autocomplete="username" required placeholder="beispielname@email.com" />
+              <input class="fs-18" type="text" formControlName="email" autocomplete="username" required
+                placeholder="beispielname@email.com" />
               <img class="ph-img" src="assets/icon/mail.png" alt="Email Placeholder Image" />
-              @if((signupFormControl.email.touched || submitted) && signupFormControl.email.errors?.['required']){
+
+              @if ((signupFormControl.email.touched || submitted)
+              && signupFormControl.email.errors?.['required']) {
               <span class="error">E-Mail ist erforderlich</span>
-              } @if((signupFormControl.email.touched || submitted) && signupFormControl.email.errors?.['whitespace']){
+              }
+
+              @if ((signupFormControl.email.touched || submitted)
+              && signupFormControl.email.errors?.['whitespace']) {
               <span class="error">Die E-Mail darf nicht nur aus Leerzeichen bestehen</span>
-              } @if((signupFormControl.email.touched || submitted) && (signupFormControl.email.errors?.['email'] ||
-              signupFormControl.email.errors?.['invalidEmail']) && !signupFormControl.email.errors?.['whitespace']){
+              }
+
+              @if ((signupFormControl.email.touched || submitted)
+              && (signupFormControl.email.errors?.['email']
+              || signupFormControl.email.errors?.['invalidEmail'])
+              && !signupFormControl.email.errors?.['whitespace']
+              && !signupFormControl.email.errors?.['required']) {
               <span class="error">Ungültiges E-Mail-Format</span>
-              } @if(errorMessage){
+              }
+
+              @if (errorMessage) {
               <div>{{ errorMessage }}</div>
               }
             </div>
 
             <div class="input-password">
-              <input class="fs-18" type="password" autocomplete="new-password" formControlName="password" required placeholder="Passwort" />
+              <input class="fs-18" type="password" autocomplete="new-password" formControlName="password" required
+                placeholder="Passwort" />
               <img class="ph-img" src="assets/icon/lock.png" alt="Password Placeholder Image" />
               @if((signupFormControl.password.touched || submitted)&& signupFormControl.password.errors?.['required']){
               <span class="error">Passwort ist erfolgreich</span>}
-              <div
-                class="text-red-400 text-sm"
-                *ngIf="passwordFormField?.dirty && !signupFormControl.password.errors?.['required']"
-              >
+              <div class="text-red-400 text-sm"
+                *ngIf="passwordFormField?.dirty && !signupFormControl.password.errors?.['required']">
                 <ul class="error-pw-list">
-                  <li *ngIf="passwordFormField?.touched && passwordFormField?.errors?.['minlength']" class="block error">
+                  <li *ngIf="passwordFormField?.touched && passwordFormField?.errors?.['minlength']"
+                    class="block error">
                     Das Passwort muss mindestens sechs Zeichen lang sein.
                   </li>
                 </ul>
@@ -52,14 +67,20 @@
             </div>
             <div class="input-checkbox">
               <input type="checkbox" class="checkbox" id="checkbox" required formControlName="privacyPolicy" />
-              <label for="checkbox" class="checkbox-label"
-                >Ich stimme der <a [routerLink]="['/impressum']"><span class="blue span">Datenschutzerklärung</span></a> zu</label
-              >
+              <label for="checkbox" class="checkbox-label">Ich stimme der <a [routerLink]="['/impressum']"><span
+                    class="blue span">Datenschutzerklärung</span></a> zu</label>
+
+              <span class="block error m-0"
+                *ngIf="privacyPolicyCheckbox?.invalid && (privacyPolicyCheckbox?.touched || submitted)">
+                Zustimmung erforderlich.
+              </span>
+
             </div>
+
           </div>
 
           <div class="btn-section">
-            <button [disabled]="isFormInvalid" [class.disabled]="isFormInvalid" type="submit" class="fs-18">Weiter</button>
+            <button [class.disabled]="isFormInvalid" type="submit" class="fs-18">Weiter</button>
           </div>
         </form>
       </div>

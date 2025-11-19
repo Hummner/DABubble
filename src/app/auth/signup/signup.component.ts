@@ -14,7 +14,7 @@ function noWhitespaceValidator(control: AbstractControl): ValidationErrors | nul
 }
 
 function strictEmailValidator(control: AbstractControl): ValidationErrors | null {
-  if (!control.value) return null; 
+  if (!control.value) return null;
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const valid = emailPattern.test(control.value);
   return valid ? null : { email: true };
@@ -38,12 +38,12 @@ export class SignupComponent {
     name: new FormControl('', [Validators.required, noWhitespaceValidator]),
     email: new FormControl('', [Validators.required, strictEmailValidator, noWhitespaceValidator]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    privacyPolicy: new FormControl('', Validators.requiredTrue),
+    privacyPolicy: new FormControl(false, Validators.requiredTrue),
   });
 
   errorMessage: string | null = null;
 
-  constructor() {}
+  constructor() { }
 
   get passwordFormField() {
     return this.signupForm.get('password');
@@ -51,6 +51,10 @@ export class SignupComponent {
 
   get signupFormControl() {
     return this.signupForm.controls;
+  }
+
+  get privacyPolicyCheckbox() {
+    return this.signupForm.get('privacyPolicy')
   }
 
   get isFormEmpty() {
@@ -64,6 +68,12 @@ export class SignupComponent {
 
   onSubmit() {
     this.submitted = true;
+
+    if (this.signupForm.invalid) {
+      this.signupForm.markAllAsTouched();
+      return;
+    }
+
     const rawForm = this.signupForm.getRawValue();
     this.authService.register(rawForm.name!.trim(), rawForm.email!.trim(), rawForm.password!).subscribe({
       next: () => {

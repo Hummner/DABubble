@@ -26,7 +26,10 @@
       font-size: 35px;
     }
   }
+
 }
+
+
 
 @include respond-to(sm) {
   .signup-dialog {
@@ -71,7 +74,8 @@
     top: 12px;
   }
   .error {
-    font-size: 10px;
+    font-size: 14px !important;
+    margin-left: 70px;
   }
 
   .error-pw-list {
@@ -127,12 +131,16 @@
     }
   }
 
+  .checkbox-label {
+    font-size: 16px;
+  }
+
   button {
     font-size: 16px;
   }
 
   .error {
-    font-size: 10px;
+    margin-left: 50px;
   }
 }
 

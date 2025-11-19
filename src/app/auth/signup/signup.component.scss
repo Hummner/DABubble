@@ -12,6 +12,7 @@
   display: flex;
   flex-direction: column;
 }
+
 .content {
   display: flex;
   justify-content: center;
@@ -28,7 +29,7 @@
   border-radius: 30px;
   box-shadow: 0 2px 10px #00000014;
 
-  > form {
+  >form {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -44,18 +45,22 @@
   flex-direction: column;
   gap: 20px;
   position: relative;
-  > h1 {
+
+  >h1 {
     font-family: "Nunito";
     font-size: 46px;
     font-weight: 600;
   }
-  > p {
+
+  >p {
     font-size: 20px;
   }
-  > a {
+
+  >a {
     position: absolute;
     cursor: pointer;
-    > img {
+
+    >img {
       width: 25px;
       height: 25px;
     }
@@ -68,13 +73,15 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  > .input-email,
+
+  >.input-email,
   .input-password,
   .input-name {
     height: 80px;
     width: 100%;
     position: relative;
-    > input {
+
+    >input {
       width: 100%;
       background-color: #eceefe;
       outline: none;
@@ -94,12 +101,14 @@
 .error {
   color: rgb(226, 24, 24);
   font-size: 16px;
-  margin-left:80px;
+  margin-left: 80px;
 }
+
 .error-pw-list {
   font-size: 16px;
   padding: 10px;
-  > li {
+
+  >li {
     list-style-type: none;
   }
 }
@@ -117,14 +126,25 @@
 }
 
 .input-checkbox {
-  > .checkbox {
+  >.checkbox {
     display: none;
   }
 }
+
+.m-0 {
+  margin: 0 !important;
+}
+
 .input-checkbox {
   position: relative;
+  position: relative;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.input-checkbox > label::before {
+
+.input-checkbox>label::before {
   content: "";
   display: inline-block;
   width: 20px;
@@ -144,13 +164,15 @@
 
 }
 
-.input-checkbox > label:hover::before {
+.input-checkbox>label:hover::before {
   background-image: url("../../../assets/icon/checkbox-default-hover.png");
 }
-.input-checkbox > input[type="checkbox"]:checked + label::before {
+
+.input-checkbox>input[type="checkbox"]:checked+label::before {
   background-image: url("../../../assets/icon/checkbox-checked-default.png");
 }
-.input-checkbox > input[type="checkbox"]:checked + label:hover::before {
+
+.input-checkbox>input[type="checkbox"]:checked+label:hover::before {
   background-image: url("../../../assets/icon/checkbox-checked-hover.png");
 }
 
@@ -160,7 +182,8 @@
 
 .btn-section {
   display: flex;
-  > button {
+
+  >button {
     border: none;
     border-radius: 25px;
     height: 50px;
@@ -172,7 +195,7 @@
 }
 
 .btn-section {
-  > .disabled {
+  >.disabled {
     border: none;
     border-radius: 25px;
     height: 50px;
@@ -182,13 +205,15 @@
     background-color: #686868;
   }
 }
+
 .signup-footer {
   background-color: #eceefe;
   position: absolute;
   bottom: 20px;
   display: flex;
   gap: 30px;
-  > p {
+
+  >p {
     cursor: pointer;
   }
 }

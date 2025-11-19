@@ -23,6 +23,16 @@ app-footer {
   background-color: #eceefe;
 }
 
+.disabled {
+  padding: 12px 25px;
+  border-radius: 25px;
+  color: white;
+  border: none;
+  background-color: #686868;
+  cursor: not-allowed;
+}
+
+
 .create-acc {
   font-size: 18px;
   font-weight: bold;

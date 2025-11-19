@@ -8,6 +8,7 @@
     justify-content: center;
     padding-top: 30px;
   }
+
   .create-acc {
     border: 1px solid #444df2;
     border-radius: 50px;
@@ -26,20 +27,25 @@
     height: 550px;
     padding: 40px;
   }
+
   .title-section {
     height: 100px;
     gap: 0;
-    > h1 {
+
+    >h1 {
       font-size: 33px;
     }
-    > p {
+
+    >p {
       font-size: 16px;
     }
   }
-  .input-section > .input-email,
-  .input-section > .input-password {
+
+  .input-section>.input-email,
+  .input-section>.input-password {
     height: 60px;
-    > input {
+
+    >input {
       height: 40px;
       padding: 25px;
       padding-left: 70px;
@@ -69,23 +75,28 @@
   .title-section {
     height: 130px;
     gap: 0;
-    > h1 {
+
+    >h1 {
       font-size: 28px;
     }
   }
+
   p {
     font-size: 15px;
   }
-  .input-section > .input-email,
-  .input-section > .input-password {
+
+  .input-section>.input-email,
+  .input-section>.input-password {
     height: 50px;
-    > input {
+
+    >input {
       height: 35px;
       padding: 20px;
       padding-left: 60px;
       font-size: 15px;
     }
   }
+
   .ph-img {
     width: 20px;
     height: 20px;
@@ -94,6 +105,11 @@
 
   .btn-section {
     gap: 20px;
+  }
+
+  .error {
+    font-size: 14px;
+    margin-left: 25px;
   }
 
   button {
@@ -111,34 +127,36 @@
   }
 
   .title-section {
-    > p {
+    >p {
       font-size: 15px;
     }
   }
-  .input-section > .input-email,
-  .input-section > .input-password {
+
+  .input-section>.input-email,
+  .input-section>.input-password {
     height: 50px;
-    > input {
+
+    >input {
       height: 30px;
       padding: 17px;
       padding-left: 50px;
       font-size: 14px;
     }
   }
+
   .ph-img {
     top: 8px;
   }
 
-  .error {
-    font-size: 13px;
-  }
   .title-section {
     height: 110px;
-    > p {
+
+    >p {
       padding: 0;
       margin: 0;
     }
-    > h1 {
+
+    >h1 {
       margin: 0;
     }
   }
