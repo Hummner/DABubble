@@ -374,6 +374,13 @@
   padding: 20px 45px 20px 50px;
   gap: 24px;
   background-color: #eceefe;
+  container-type: inline-size;
+}
+
+@container (max-width: 576px) {
+  .member-img-ticket-edit {
+    display: none;
+  }
 }
 
 .edit-textarea {
