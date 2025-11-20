@@ -45,6 +45,17 @@
   }
 }
 
+@include respond-to(sm) {
+  app-user-card {
+    position: fixed;
+    top: 0 !important;
+    width: 100% !important;
+    right: unset !important;
+    transform: unset;
+    left: unset;
+  }
+}
+
 @include respond-to(ssm) {
 
   ::ng-deep .tag-box-menu,

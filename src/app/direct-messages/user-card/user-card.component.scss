@@ -1,3 +1,5 @@
+@import "../../../mixins";
+
 .profile-img {
   width: 200px;
   height: 200px;
@@ -99,4 +101,12 @@ p{
   font-weight: 700;
   font-size: 20px !important;
   margin: 0;
+}
+
+@include respond-to(sm) {
+  .user-card {
+    width: 100%;
+    height: 100vh;
+    border-radius: unset;
+  }
 }
