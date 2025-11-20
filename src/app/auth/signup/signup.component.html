@@ -62,6 +62,10 @@
                     class="block error">
                     Das Passwort muss mindestens sechs Zeichen lang sein.
                   </li>
+                  <li *ngIf="passwordFormField?.touched && passwordFormField?.errors?.['whitespace']"
+                    class="block error">
+                    Das Passwort darf keine Leerzeichen enthalten.
+                  </li>
                 </ul>
               </div>
             </div>

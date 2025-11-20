@@ -8,9 +8,14 @@ import { NgIf } from '@angular/common';
 import { Header2Component } from '../../shared/header-2/header-2.component';
 import { FooterComponent } from '../../shared/footer/footer.component';
 
-function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+function noLeadingWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
   const isWhitespace = (control.value || '').trim().length === 0 && control.value.length > 0;
   return isWhitespace ? { whitespace: true } : null;
+}
+
+function noInnerWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+  const hasWhitespace = /\s/.test(control.value || '');
+  return hasWhitespace ? { whitespace: true } : null;
 }
 
 function strictEmailValidator(control: AbstractControl): ValidationErrors | null {
@@ -35,9 +40,9 @@ export class SignupComponent {
   disabled = true;
 
   signupForm = new FormGroup({
-    name: new FormControl('', [Validators.required, noWhitespaceValidator]),
-    email: new FormControl('', [Validators.required, strictEmailValidator, noWhitespaceValidator]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    name: new FormControl('', [Validators.required, noLeadingWhitespaceValidator]),
+    email: new FormControl('', [Validators.required, strictEmailValidator, noLeadingWhitespaceValidator]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6), noInnerWhitespaceValidator]),
     privacyPolicy: new FormControl(false, Validators.requiredTrue),
   });
 
