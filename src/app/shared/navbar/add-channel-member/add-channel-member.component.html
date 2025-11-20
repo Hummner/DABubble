@@ -25,13 +25,13 @@
             [value]="2" />
           <span>Bestimmte Leute hinzufügen</span>
         </label>
-        <ul class="member-list" >
+        <ul *ngIf="inviteMode === 2" class="member-list" >
             @for(member of this.members; track member){
                 <li class="member-item">
                   <div class="avatar">
                     <img [src]="member.imgUrl" alt="Elise Roth" />
                   </div>
-                  <p>{{ member.name }}</p>
+                  <p class="truncate">{{ member.name }}</p>
                   <span 
                     (click)="deleteMember(member.id)" 
                     class="material-symbols-outlined">
@@ -63,7 +63,7 @@
                         <div class="avatar">
                           <img [src]="user.imgUrl" alt="Elise Roth" />
                         </div>
-                        <p>{{ user.name }}</p>
+                        <p class="truncate">{{ user.name }}</p>
                     </li>
                     }
                   }
