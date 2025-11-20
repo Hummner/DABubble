@@ -82,7 +82,7 @@
   }
 
   p {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .input-section>.input-email,
@@ -93,7 +93,7 @@
       height: 35px;
       padding: 20px;
       padding-left: 60px;
-      font-size: 15px;
+      font-size: 16px;
     }
   }
 
@@ -108,8 +108,9 @@
   }
 
   .error {
-    font-size: 14px;
-    margin-left: 25px;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
   }
 
   button {
@@ -128,7 +129,7 @@
 
   .title-section {
     >p {
-      font-size: 15px;
+      font-size: 16px;
     }
   }
 
@@ -140,7 +141,7 @@
       height: 30px;
       padding: 17px;
       padding-left: 50px;
-      font-size: 14px;
+      font-size: 16px;
     }
   }
 

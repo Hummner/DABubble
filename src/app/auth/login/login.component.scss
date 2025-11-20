@@ -107,7 +107,8 @@ app-footer {
 .error {
   color: rgb(226, 24, 24);
   font-size: 16px;
-  margin-left: 80px;
+  display: flex;
+  justify-content: center;
 }
 
 .ph-img {
