@@ -102,6 +102,10 @@
     font-size: 15px;
   }
 
+  .input-section {
+    gap: 28px;
+  }
+
   .input-section > .input-email,
   .input-section > .input-password,
   .input-section > .input-name {
@@ -137,6 +141,10 @@
   button {
     font-size: 16px;
   }
+
+  .error {
+    margin-left: 60px;
+  }
 }
 
 @include respond-to(sssm) {
@@ -162,7 +170,7 @@
     }
   }
   .input-section {
-    gap: 0px;
+    gap: 16px;
   }
   .input-section > .input-email,
   .input-section > .input-password,
@@ -202,5 +210,6 @@
 
   .input-checkbox {
     text-align: center;
+    height: 60px;
   }
 }
