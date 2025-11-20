@@ -103,6 +103,10 @@
     font-size: 15px;
   }
 
+  .input-section {
+    gap: 28px;
+  }
+
   .input-section > .input-email,
   .input-section > .input-password,
   .input-section > .input-name {
@@ -140,7 +144,7 @@
   }
 
   .error {
-    margin-left: 50px;
+    margin-left: 60px;
   }
 }
 
@@ -167,7 +171,7 @@
     }
   }
   .input-section {
-    gap: 0px;
+    gap: 16px;
   }
   .input-section > .input-email,
   .input-section > .input-password,
@@ -210,5 +214,6 @@
 
   .input-checkbox {
     text-align: center;
+    height: 60px;
   }
 }
