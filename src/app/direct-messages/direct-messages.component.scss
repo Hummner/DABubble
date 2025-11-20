@@ -266,14 +266,14 @@ app-user-card {
   position: absolute;
   top: 10%;
   right: 30%;
-  z-index: 1000;
+  z-index: 2,
 }
 
 .custom-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 900;
+  z-index: 2;
   opacity: 0;
   pointer-events: none;
   transition: opacity 150ms ease;
