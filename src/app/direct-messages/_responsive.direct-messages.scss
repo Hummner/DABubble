@@ -10,19 +10,43 @@
   section {
     padding-bottom: 0;
   }
+
   .container {
     padding: 0;
     margin: 0;
   }
+
   .icons {
     gap: 15px;
   }
+
   .content {
     border-radius: 0px;
+  }
+
+  .dm-msg-name {
+    >img {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  .first-msg {
+    padding: 20px 12px;
+  }
+
+  footer {
+    margin: 25px 12px !important;
+
+  }
+
+  header {
+    padding: 25px 12px;
   }
 }
 
 @include respond-to(ssm) {
+
   ::ng-deep .tag-box-menu,
   ::ng-deep .channel-box-menu {
     width: 300px !important;

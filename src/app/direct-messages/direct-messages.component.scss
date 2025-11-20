@@ -42,6 +42,7 @@ section {
   display: flex;
   gap: 20px;
   align-items: center;
+  max-width: 100%;
   > .dm-img {
     position: relative;
     > .message-to-img {

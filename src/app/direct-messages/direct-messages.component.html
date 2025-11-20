@@ -29,7 +29,7 @@
             <img class="message-to-img" [src]="secondUser.imgUrl" alt="MessageTo-Image" />
             <img class="status-img" src="assets/icon/Online.png" alt="Status Image" />
           </div>
-          <p>{{ secondUser.name }}</p>
+          <p class="truncate">{{ secondUser.name }}</p>
         </div>
       </header>
       <main>
@@ -40,12 +40,12 @@
           <div class="first-msg">
             <div class="dm-msg-name">
               <img [src]="secondUser.imgUrl" alt="" />
-              <p>{{ secondUser.name }}</p>
+              <p class="truncate">{{ secondUser.name }}</p>
             </div>
             <div class="dm-msg-info">
               <p>
                 Diese Unterhaltung findet nur zwischen
-                <span (click)="openProfileView()" class="purple">&#64;{{ secondUser.name }}</span>
+                <span (click)="openProfileView()" class="purple truncate">&#64;{{ secondUser.name }}</span>
                 und dir statt.
               </p>
             </div>

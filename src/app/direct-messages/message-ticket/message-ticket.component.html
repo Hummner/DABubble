@@ -20,15 +20,15 @@
     <div class="message-content">
       <div>
         <div class="name-date" [ngClass]="{ reverse: currentUserText }">
-          <span class="msg-name"> {{ user?.name }}</span>
+          <span class="msg-name truncate"> {{ user?.name }}</span>
           <p class="time" *ngIf="isTimestamp(message.createdAt)">
-            {{ message.createdAt.toDate() | date : "HH:mm" }}
+            {{ message.createdAt.toDate() | date : "HH:mm" }} Uhr
           </p>
         </div>
       </div>
 
       <div class="message-wrapper" [ngClass]="{ reverse: currentUserText }">
-        <div class="message" [ngClass]="{ 'reverse-backround': currentUserText }">
+        <div class="message truncate-wrap" [ngClass]="{ 'reverse-backround': currentUserText }">
           <p>
             <ng-container *ngFor="let token of parsedMessageTokens">
               <ng-container *ngIf="token.type === 'text'">
@@ -58,7 +58,7 @@
             {{ message.threadCount }} Antwort }
           </span>
           <span class="msg-date" *ngIf="isTimestamp(message.lastThreadCreatedAt)"
-            >Letzte Antwort {{ message.lastThreadCreatedAt.toDate() | date : "dd/MM/yyyy HH:mm" }}</span
+            >Letzte Antwort {{ message.lastThreadCreatedAt.toDate() | date : "HH:mm" }} Uhr</span
           >
         </div>
       </div>

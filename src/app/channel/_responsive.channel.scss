@@ -183,10 +183,12 @@
   }
 }
 
-// @include respond-to(ssm) {
-//   ::ng-deep .add-member-box {
-//     top: 0 !important;
-//     right: 0 !important;
-//     width:100vw !important;
-//   }
-// }
+@include respond-to(ssm) {
+  footer {
+    margin: 24px 12px;
+  }
+
+  .first-message {
+    padding: 25px 12px;
+  }
+}

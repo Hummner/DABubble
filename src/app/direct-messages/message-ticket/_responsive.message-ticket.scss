@@ -2,11 +2,13 @@
   .ticket {
     padding: 20px 24px;
   }
+
   .ticket-edit {
     padding: 20px 25px 20px 30px;
   }
-  .member-img-ticket-edit{
-    display:none;
+
+  .member-img-ticket-edit {
+    display: none;
   }
 }
 
@@ -15,29 +17,36 @@
     width: 50px;
     height: 50px;
   }
-  .primary-button,
-  .secondary-button {
-     padding: 6px 12px;
-  }
-}
 
-@media (max-width: 470px) {
   .primary-button,
   .secondary-button {
     padding: 6px 12px;
   }
+}
+
+@media (max-width: 470px) {
+
+  .primary-button,
+  .secondary-button {
+    padding: 6px 12px;
+  }
+
   .ticket-edit {
     padding: 20px 25px 20px 20px;
+  }
+
+  .ticket {
+    padding: 20px 12px;
   }
 }
 
 @media (max-width: 400px) {
-  .buttons{
-    display:flex;
-    gap:6px;
+  .buttons {
+    display: flex;
+    gap: 6px;
   }
 
-  .ticket-edit{
+  .ticket-edit {
     align-items: center;
     flex-direction: column-reverse;
   }
