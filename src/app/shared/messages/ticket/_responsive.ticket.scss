@@ -1,6 +1,19 @@
+@container ticket (max-width:700px) {
+  .member-img-ticket {
+    width: 50px;
+    height: 50px;
+  }
+
+  .ticket {
+    gap: 12px !important;
+  }
+}
+
+
 @media (max-width: 768px) {
   .ticket {
     padding: 20px 14px;
+    gap: 12px;
   }
 
   .ticket-edit {
@@ -24,7 +37,7 @@
   }
 
   .ticket-edit {
-    
+
     padding: 8px 30px 8px 8px;
   }
 

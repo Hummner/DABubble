@@ -16,6 +16,8 @@
   gap: 24px;
   padding: 20px 45px;
   position: relative;
+  container-type: inline-size;
+  container-name: ticket;
 }
 
 .member-img-ticket {
@@ -26,6 +28,7 @@
   align-items: center;
   border-radius: 100%;
   overflow: hidden;
+  flex-shrink: 0;
 
   >img {
     width: 100%;
@@ -39,6 +42,7 @@
   flex-direction: column;
   gap: 8px;
   flex: 1;
+  min-width: 0;
 }
 
 .message {
