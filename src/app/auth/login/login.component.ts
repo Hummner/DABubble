@@ -16,7 +16,7 @@ function noWhitespaceValidator(control: AbstractControl): ValidationErrors | nul
 
 function strictEmailValidator(control: AbstractControl): ValidationErrors | null {
   if (!control.value) return null;
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const emailPattern = /^(?!.*\.\.)([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,3}$/;
   const valid = emailPattern.test(control.value);
   return valid ? null : { email: true };
 }
