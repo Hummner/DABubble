@@ -101,7 +101,10 @@
 .error {
   color: rgb(226, 24, 24);
   font-size: 16px;
-  margin-left: 80px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .error-pw-list {
