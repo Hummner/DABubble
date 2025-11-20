@@ -18,7 +18,7 @@
               @if((signupFormControl.name.touched || submitted )&& signupFormControl.name.errors?.['required']){
               <span class="error">Name ist erforderlich</span>
               } @if((signupFormControl.name.touched || submitted )&& signupFormControl.name.errors?.['whitespace']){
-              <span class="error">Der Name darf nicht nur aus Leerzeichen bestehen</span>
+              <span class="error">Ungültiger Name</span>
               }
             </div>
             <div class="input-email">
@@ -33,7 +33,7 @@
 
               @if ((signupFormControl.email.touched || submitted)
               && signupFormControl.email.errors?.['whitespace']) {
-              <span class="error">Die E-Mail darf nicht nur aus Leerzeichen bestehen</span>
+              <span class="error">Keine Leerzeichen erlaubt</span>
               }
 
               @if ((signupFormControl.email.touched || submitted)
@@ -55,18 +55,13 @@
               <img class="ph-img" src="assets/icon/lock.png" alt="Password Placeholder Image" />
               @if((signupFormControl.password.touched || submitted)&& signupFormControl.password.errors?.['required']){
               <span class="error">Passwort ist erfolgreich</span>}
-              <div class="text-red-400 text-sm"
-                *ngIf="passwordFormField?.dirty && !signupFormControl.password.errors?.['required']">
-                <ul class="error-pw-list">
-                  <li *ngIf="passwordFormField?.touched && passwordFormField?.errors?.['minlength']"
-                    class="block error">
-                    Das Passwort muss mindestens sechs Zeichen lang sein.
-                  </li>
-                  <li *ngIf="passwordFormField?.touched && passwordFormField?.errors?.['whitespace']"
-                    class="block error">
-                    Das Passwort darf keine Leerzeichen enthalten.
-                  </li>
-                </ul>
+              <div class="text-red-400 text-sm">
+                @if((passwordFormField?.touched && passwordFormField?.errors?.['whitespace'] && !passwordFormField?.errors?.['required'])){
+                  <span class="error">Keine Leerzeichen erlaubt</span>
+                }
+                @if((passwordFormField?.touched && passwordFormField?.errors?.['minlength'] && !passwordFormField?.errors?.['required'] && !passwordFormField?.errors?.['whitespace'])) {
+                  <span class="error">Mind. 6 Zeichen</span>
+                }
               </div>
             </div>
             <div class="input-checkbox">
