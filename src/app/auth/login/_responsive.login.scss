@@ -39,6 +39,12 @@
     >p {
       font-size: 16px;
     }
+
+
+  }
+
+  .error {
+    margin-left: 20px;
   }
 
   .input-section>.input-email,
@@ -107,12 +113,6 @@
     gap: 20px;
   }
 
-  .error {
-    font-size: 16px;
-    display: flex;
-    justify-content: center;
-  }
-
   button {
     font-size: 16px;
   }
@@ -160,5 +160,9 @@
     >h1 {
       margin: 0;
     }
+  }
+
+  .error {
+    margin-left: 10px;
   }
 }

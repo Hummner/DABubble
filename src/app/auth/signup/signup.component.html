@@ -69,7 +69,7 @@
               <label for="checkbox" class="checkbox-label">Ich stimme der <a [routerLink]="['/impressum']"><span
                     class="blue span">Datenschutzerklärung</span></a> zu</label>
 
-              <span class="block error m-0"
+              <span class="block error checkbox-error"
                 *ngIf="privacyPolicyCheckbox?.invalid && (privacyPolicyCheckbox?.touched || submitted)">
                 Zustimmung erforderlich.
               </span>
