@@ -181,6 +181,10 @@
       font-size: 16px;
     }
   }
+
+  .menu-container {
+    padding: 20px 20px;
+  }
 }
 
 @include respond-to(ssm) {
