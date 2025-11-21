@@ -1,9 +1,9 @@
-import { Component, EventEmitter, inject, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FirestoreService } from '../../../services/firestore.service';
 import { NgIf, NgClass } from '@angular/common';
-import { FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
 import { ChannelsService } from '../../../services/channels.service';
 
@@ -23,6 +23,7 @@ export class UserProfileComponent implements OnInit {
   user!: UserProfileInterface;
   editableUser!: UserProfileInterface;
   temporaryName!: string | null;
+  temporaryImg!: string | null;
   profileImageUrls = [
     'assets/img/elias_neumann.svg',
     'assets/img/elise_roth.svg',
@@ -58,6 +59,7 @@ export class UserProfileComponent implements OnInit {
 
   openEditProfile() {
     this.temporaryName = this.editableUser.name;
+    this.temporaryImg = this.editableUser.imgUrl;
     this.edit = true;
   }
 
@@ -87,11 +89,16 @@ export class UserProfileComponent implements OnInit {
   }
 
   cancelEdit() {
-    if (this.temporaryName) {
-      this.editableUser.name = this.temporaryName
-      this.temporaryName = null
+    if (this.temporaryName && this.temporaryImg) {
+      this.editableUser.name = this.temporaryName;
+      this.temporaryName = null;
+      this.editableUser.imgUrl = this.temporaryImg;
+      this.currentProfilImageUrl = this.temporaryImg;
+      this.temporaryImg = null;
+    
       setTimeout(() => {
         this.edit = false;
+        this.editImg = false;
       });
     }
   }
