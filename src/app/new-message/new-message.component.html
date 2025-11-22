@@ -12,45 +12,31 @@
               <span class="remove-tag" (click)="removeTag(i)">×</span>
             </div>
             <div class="input-wrapper">
-              <input
-                #addressInput
-                class="inline-input-address"
-                [formControl]="addressControl"
-                [matAutocomplete]="auto"
-                (input)="onInputChange($event)"
-                (focus)="onFocus()"
-                (blur)="onBlur()"
-              />
+              <input #addressInput class="inline-input-address" [formControl]="addressControl" [matAutocomplete]="auto"
+                (input)="onInputChange($event)" (focus)="onFocus()" (blur)="onBlur()" />
             </div>
-            <span
-              *ngIf="selectedTags().length === 0 && (!addressControl.value || addressControl.value.length === 0)"
-              class="placeholder-text"
-            >
+            <span *ngIf="selectedTags().length === 0 && (!addressControl.value || addressControl.value.length === 0)"
+              class="placeholder-text">
               An #channel, oder &#64;jemand...
             </span>
           </div>
-          <mat-autocomplete
-            #auto="matAutocomplete"
-            [displayWith]="displayFn"
-            (optionSelected)="selectOption($event.option.value)"
-          >
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+            (optionSelected)="selectOption($event.option.value)">
             <mat-optgroup label="Benutzer" *ngIf="filteredUsers().length > 0">
-              <mat-option *ngFor="let user of filteredUsers()" [value]="{ type: 'user', data: user }" class="user-option">
+              <mat-option *ngFor="let user of filteredUsers()" [value]="{ type: 'user', data: user }"
+                class="user-option">
                 <div class="option-content">
                   <img [src]="user.imgUrl" alt="" class="option-avatar" />
-                  <span>&#64;{{ user.name }}</span>
+                  <span class="truncate">&#64;{{ user.name }}</span>
                 </div>
               </mat-option>
             </mat-optgroup>
             <mat-optgroup label="Kanäle" *ngIf="filteredChannels().length > 0">
-              <mat-option
-                *ngFor="let channel of filteredChannels()"
-                [value]="{ type: 'channel', data: channel }"
-                class="channel-option"
-              >
+              <mat-option *ngFor="let channel of filteredChannels()" [value]="{ type: 'channel', data: channel }"
+                class="channel-option">
                 <div class="option-content">
                   <div class="channel-icon">#</div>
-                  <span>#{{ channel.name }}</span>
+                  <span class="truncate">#{{ channel.name }}</span>
                 </div>
               </mat-option>
             </mat-optgroup>
@@ -70,48 +56,27 @@
       </main>
       <footer>
         <div class="text-area">
-          <textarea
-            [(ngModel)]="content"
-            class="textarea"
-            #inputNew
-            name="chat_input"
-            id="chat_input"
-            placeholder="Starte eine neue Nachricht"
-            (input)="onInputChange($event)"
-            (keydown)="onKeyDown($event)"
-          ></textarea>
+          <textarea [(ngModel)]="content" class="textarea" #inputNew name="chat_input" id="chat_input"
+            placeholder="Starte eine neue Nachricht" (input)="onInputChange($event)"
+            (keydown)="onKeyDown($event)"></textarea>
         </div>
         <div class="input-buttons">
           <div class="icons">
-            <div class="input-icon" [matMenuTriggerFor]="emojiNewMessageMenu" #emojiNewMessageMenuTrigger="matMenuTrigger">
+            <div class="input-icon" [matMenuTriggerFor]="emojiNewMessageMenu"
+              #emojiNewMessageMenuTrigger="matMenuTrigger">
               <img src="assets/icon/reaction.png" alt="" />
             </div>
-            <div
-              class="input-icon"
-              click-stop-propagation
-              #mentionTriggerNew="matMenuTrigger"
-              [matMenuTriggerFor]="tagBoxMenuNew"
-              (click)="tagInputStart()"
-            >
+            <div class="input-icon" click-stop-propagation #mentionTriggerNew="matMenuTrigger"
+              [matMenuTriggerFor]="tagBoxMenuNew" (click)="tagInputStart()">
               <img src="assets/icon/tag_icon.png" alt="" />
             </div>
-            <div
-              class="input-icon"
-              click-stop-propagation
-              [matMenuTriggerFor]="channelBoxMenuNew"
-              #channelTriggerNew="matMenuTrigger"
-              (click)="tagInputChannelStart()"
-            >
+            <div class="input-icon" click-stop-propagation [matMenuTriggerFor]="channelBoxMenuNew"
+              #channelTriggerNew="matMenuTrigger" (click)="tagInputChannelStart()">
               <img class="channel-icon" src="assets/icon/tag_channel.png" alt="" />
             </div>
           </div>
-          <div
-            class="send-icon"
-            (click)="addLocalMessage()"
-            [class.sending]="isSending()"
-            [class.disabled]="!canSendMessage()"
-            [attr.disabled]="!canSendMessage()"
-          >
+          <div class="send-icon" (click)="addLocalMessage()" [class.sending]="isSending()"
+            [class.disabled]="!canSendMessage()" [attr.disabled]="!canSendMessage()">
             <img *ngIf="!isSending()" src="assets/icon/send.png" alt="" />
             <div *ngIf="isSending()" class="sending-spinner">⏳</div>
           </div>
@@ -131,8 +96,8 @@
             @for(user of userMentionService.filteredUserList();track user){
             <menu mat-menu-item class="tag-menu-item" (click)="takeUser(user.name)">
               <div class="wrapper">
-              <img class="tagbox-img" [src]="user.imgUrl" alt="" />
-              <p class="truncate">{{ user.name }}</p>
+                <img class="tagbox-img" [src]="user.imgUrl" alt="" />
+                <p class="truncate">{{ user.name }}</p>
               </div>
             </menu>
             }
@@ -142,8 +107,10 @@
           <div class="channel-menu-wrap">
             @for(channel of userMentionService.filteredChannelList(); track channel) {
             <menu mat-menu-item class="channel-menu-item" (click)="takeChannel(channel.name)">
-              <img src="assets/icon/tag_channel.png" alt="" />
-              <p class="truncate">{{ channel.name }}</p>
+              <div class="wrapper">
+                <img src="assets/icon/tag_channel.png" alt="" />
+                <p class="truncate">{{ channel.name }}</p>
+              </div>
             </menu>
             }
           </div>

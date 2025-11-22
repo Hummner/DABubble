@@ -126,6 +126,10 @@
   &.mat-mdc-option-active {
     background-color: #eceefe !important;
   }
+
+  >span {
+    width: 100%;
+  }
 }
 
 ::ng-deep footer .cdk-overlay-pane:has(.small-emoji-menu-message) {
@@ -150,7 +154,6 @@
 }
 
 ::ng-deep body .cdk-overlay-container .cdk-overlay-pane .mat-mdc-autocomplete-panel {
-  min-width: 400px !important;
   max-width: 500px !important;
 }
 
