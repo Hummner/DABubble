@@ -1,6 +1,6 @@
 import { inject, signal, WritableSignal } from '@angular/core';
 import { Injectable, OnDestroy } from '@angular/core';
-import { Firestore, collection, setDoc } from '@angular/fire/firestore';
+import { Firestore, collection, orderBy, query, setDoc } from '@angular/fire/firestore';
 import { doc, onSnapshot, updateDoc } from '@angular/fire/firestore';
 import { user } from '@angular/fire/auth';
 import { AuthService } from './auth.service';
@@ -33,7 +33,8 @@ export class FirestoreService implements OnDestroy {
 
   subUserList(callback?: (users: UserProfileInterface[]) => void) {
     const ref = this.getUsersRef();
-    const unsub = onSnapshot(ref, (list) => {
+    const q = query(ref, orderBy('name'))
+    const unsub = onSnapshot(q, (list) => {
       const userList: UserProfileInterface[] = [];
       list.forEach((element) => {
         userList.push(this.toUserProfile(element.data(), element.id));

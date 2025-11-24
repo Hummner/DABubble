@@ -27,7 +27,7 @@ export class AuthService {
 
   signInAnonymously(): Observable<void> {
     const promise = signInAnonymously(this.firebaseAuth)
-      .then(() => {})
+      .then(() => { })
       .catch((err) => {
         const errorCode = err.code;
         const errorMessage = err.message;
@@ -50,5 +50,13 @@ export class AuthService {
     const promise = sendPasswordResetEmail(auth, email, actionCodeSettings).then(() => {
     });
     return from(promise);
+  }
+
+  formatFullName(name: string): string {
+    return name
+      .trim()
+      .split(/\s+/)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join(' ');
   }
 }

@@ -80,7 +80,11 @@ export class SignupComponent {
     }
 
     const rawForm = this.signupForm.getRawValue();
-    this.authService.register(rawForm.name!.trim(), rawForm.email!.trim(), rawForm.password!).subscribe({
+    const formattedName = this.authService.formatFullName(rawForm.name!);
+    console.log(rawForm.name!);
+
+    debugger
+    this.authService.register(formattedName, rawForm.email!.trim(), rawForm.password!).subscribe({
       next: () => {
         this.router.navigateByUrl('/avatarSelection');
       },
@@ -91,8 +95,10 @@ export class SignupComponent {
           this.signupForm.get('password')?.setErrors({ incorrect: true });
         } else if (err.code === 'auth/invalid-credential') {
           this.signupForm.get('password')?.setErrors({ invalid: true });
+        } else if (err.code === 'auth/email-already-in-use') {
+          this.signupForm.get('email')?.setErrors({ emailInUse: true });
         }
-      },
+      }
     });
   }
 }

@@ -10,6 +10,9 @@
             <h1 class="blue">Konto erstellen</h1>
             <p>Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues DABubble-Konto.</p>
           </div>
+          <div class="error m-0" *ngIf="signupForm.get('email')?.hasError('emailInUse')">
+            Diese E-Mail wird bereits verwendet.
+          </div>
           <div class="input-section">
             <div class="input-name">
               <input class="fs-18" type="text" formControlName="name" autocomplete="username" required
@@ -56,11 +59,13 @@
               @if((signupFormControl.password.touched || submitted)&& signupFormControl.password.errors?.['required']){
               <span class="error">Passwort ist erfolgreich</span>}
               <div class="text-red-400 text-sm">
-                @if((passwordFormField?.touched && passwordFormField?.errors?.['whitespace'] && !passwordFormField?.errors?.['required'])){
-                  <span class="error">Keine Leerzeichen erlaubt</span>
+                @if((passwordFormField?.touched && passwordFormField?.errors?.['whitespace'] &&
+                !passwordFormField?.errors?.['required'])){
+                <span class="error">Keine Leerzeichen erlaubt</span>
                 }
-                @if((passwordFormField?.touched && passwordFormField?.errors?.['minlength'] && !passwordFormField?.errors?.['required'] && !passwordFormField?.errors?.['whitespace'])) {
-                  <span class="error">Mind. 6 Zeichen</span>
+                @if((passwordFormField?.touched && passwordFormField?.errors?.['minlength'] &&
+                !passwordFormField?.errors?.['required'] && !passwordFormField?.errors?.['whitespace'])) {
+                <span class="error">Mind. 6 Zeichen</span>
                 }
               </div>
             </div>
