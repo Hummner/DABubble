@@ -81,9 +81,6 @@ export class SignupComponent {
 
     const rawForm = this.signupForm.getRawValue();
     const formattedName = this.authService.formatFullName(rawForm.name!);
-    console.log(rawForm.name!);
-
-    debugger
     this.authService.register(formattedName, rawForm.email!.trim(), rawForm.password!).subscribe({
       next: () => {
         this.router.navigateByUrl('/avatarSelection');
