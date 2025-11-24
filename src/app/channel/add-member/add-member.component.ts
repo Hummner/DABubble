@@ -99,7 +99,7 @@ export class AddMemberComponent implements OnInit, AfterViewInit {
   fillInterfaceWithMember(data: any) {
     const newMember = {
       id: data.uid,
-      role: data.uid === this.userProfile()?.uid ? 'admin' : 'member',
+      role: 'member',
       name: data.name,
       imgUrl: data.imgUrl,
     };

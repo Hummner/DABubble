@@ -114,7 +114,7 @@ export class NavbarService implements OnDestroy {
   addAllMembersToStandardChannel(users: UserProfileInterface[]) {
     const members = users.map((user) => ({
       id: user.uid,
-      role: user.uid === this.userProfile()?.uid ? 'admin' : 'member',
+      role: 'member',
       name: user.name,
       imgUrl: user.imgUrl
     }));
