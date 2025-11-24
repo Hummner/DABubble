@@ -6,6 +6,7 @@ import { NgIf, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserProfileInterface } from '../../../interfaces/user-profile.interface';
 import { ChannelsService } from '../../../services/channels.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -18,6 +19,7 @@ export class UserProfileComponent implements OnInit {
   @Output() close = new EventEmitter();
   userProfile = this.firestoreService.userProfile;
   channelService = inject(ChannelsService);
+  authService = inject(AuthService)
   edit = false;
   editImg = false;
   user!: UserProfileInterface;
@@ -74,7 +76,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   closeEdit() {
-    this.editableUser.name = this.editableUser.name.trim();
+    this.editableUser.name = this.authService.formatFullName(this.editableUser.name)
     this.user = { ...this.editableUser };
     this.saveName();
     this.channelService.updatedChannels(this.user);
