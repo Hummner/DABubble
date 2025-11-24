@@ -4,6 +4,7 @@
   .signup-dialog {
     width: 500px;
     padding: 40px;
+    min-height: 620px;
   }
   .resp-footer {
     display: flex;
@@ -39,7 +40,6 @@
 @include respond-to(sm) {
   .signup-dialog {
     width: 400px;
-    height: 600px;
   }
   .title-section {
     height: 100px;
@@ -90,7 +90,7 @@
 @include respond-to(ssm) {
   .signup-dialog {
     width: 340px;
-
+    min-height: 500px;
     padding: 20px;
     padding-top: 30px;
     padding-bottom: 30px;
@@ -151,7 +151,6 @@
 @include respond-to(sssm) {
   .signup-dialog {
     width: 280px;
-    height: 560px;
     padding: 18px;
     padding-top: 30px;
     padding-bottom: 30px;
