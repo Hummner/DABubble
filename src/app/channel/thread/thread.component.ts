@@ -64,15 +64,17 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
   firstSeen = false;
   initialScrollDone = false;
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute) { }
 
   ngAfterViewChecked() {
     if (!this.initialScrollDone && this.messages.length) {
       this.scrollToBottom();
       this.initialScrollDone = true;
     }
-    if (this.loading) {
-      this.chatInput?.nativeElement.focus();
+    if (this.loading && this.chatInput) {
+      setTimeout(() => {
+        this.chatInput.nativeElement.focus();
+      }, 100);
     }
   }
 
@@ -86,7 +88,6 @@ export class ThreadComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (!messageId) return;
         this.setupThread();
       });
-    
   }
 
   setupThread() {
